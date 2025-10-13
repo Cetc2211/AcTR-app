@@ -1,0 +1,4 @@
+# Ignorar archivos generados por Next.js
+.next/
+node_modules/.evi
+node_modules
