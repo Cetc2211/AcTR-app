@@ -32,7 +32,7 @@ async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
 
     const result = await model.generateContent(prompt);
     const response = result.response;
-    const text = response.text; // Usar directamente 'response.text' o 'response.text()' dependiendo de la versión
+      const text = response.text(); // Usar directamente 'response.text' o 'response.text()' dependiendo de la versión
 
     if (!text) {
       throw new Error("La IA no generó una respuesta de texto.");
