@@ -19,7 +19,7 @@ async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
     
     try {
         const response = await ai.generate({
-            model: 'gemini-pro',
+            model: 'gemini-pro-latest',
             prompt,
             config: {
                 temperature: 0.5,
