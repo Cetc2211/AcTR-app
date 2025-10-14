@@ -1,74 +1,60 @@
 'use server';
 
-// Función central para llamar a la API de Google AI (Gemini)
-async function callGeminiAI(prompt: string, apiKey: string): Promise<string> {
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+
+// This is a server-side file. It should not be imported directly into client components.
+
+async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
   if (!apiKey) {
     throw new Error("No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.");
   }
-
-  const API_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
+  
+  // Configure Genkit on-the-fly for each request.
+  // This ensures the latest API key from settings is used.
+  const ai = genkit({
+    plugins: [googleAI({ apiKey: apiKey })],
+  });
+  
   try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ "text": prompt }]
-        }],
-        generationConfig: {
-          temperature: 0.5,
-          maxOutputTokens: 2048,
-        },
+    const response = await ai.generate({
+      model: 'gemini-1.5-flash-latest',
+      prompt,
+      config: {
+        temperature: 0.5,
         safetySettings: [
-          { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-          { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-          { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" },
-          { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }
-        ]
-      }),
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_ONLY_HIGH"
+            },
+        ],
+      },
     });
-
-    if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({ error: { message: response.statusText } }));
-        const errorMessage = errorBody.error?.message || `Error ${response.status}`;
-        
-        if (response.status === 400) {
-            throw new Error(`Clave API de Google inválida o malformada. Verifica que la clave sea correcta y que esté habilitada para usarse con la API de Google AI.`);
-        }
-        if (response.status === 404) {
-             throw new Error(`El modelo solicitado no se encontró. Verifica que el nombre del modelo sea correcto. Error: ${errorMessage}`);
-        }
-        throw new Error(`Error del servicio de IA: ${errorMessage}`);
+    return response.text;
+  } catch (e: any) {
+    console.error("Genkit AI Error:", e);
+    // Improve error message for common API key issues
+    if (e.message && (e.message.includes('API key not valid') || e.message.includes('invalid api key'))) {
+        throw new Error("La clave API de Google AI proporcionada no es válida. Verifica que sea correcta.");
     }
-
-    const data = await response.json();
-
-    if (!data.candidates || !data.candidates[0].content.parts[0].text) {
-      throw new Error('Respuesta inválida de la API de Gemini');
+     if (e.message && e.message.includes('not found')) {
+      throw new Error(`El modelo no fue encontrado o no está disponible. Asegúrate de usar un modelo válido como 'gemini-1.5-flash-latest'.`);
     }
-
-    return data.candidates[0].content.parts[0].text;
-
-  } catch (error: any) {
-    console.error("Gemini AI Error:", error);
-    throw new Error(error.message || 'Error al conectar con el servicio de IA.');
+    throw new Error(`Error del servicio de IA: ${e.message || 'Error desconocido'}`);
   }
 }
 
-// Funciones exportadas
+
 export async function generateFeedback(prompt: string, apiKey: string): Promise<string> {
-  return await callGeminiAI(prompt, apiKey);
+    return await callGoogleAI(prompt, apiKey);
 }
 
 export async function generateGroupAnalysis(prompt: string, apiKey: string): Promise<string> {
-  return await callGeminiAI(prompt, apiKey);
+    return await callGoogleAI(prompt, apiKey);
 }
 
 export async function generateSemesterAnalysis(prompt: string, apiKey: string): Promise<string> {
-  return await callGeminiAI(prompt, apiKey);
+    return await callGoogleAI(prompt, apiKey);
 }
 
 // Función para probar la clave API
@@ -79,10 +65,10 @@ export async function testApiKey(apiKey: string): Promise<boolean> {
 
   try {
     const testPrompt = "Responde únicamente con la palabra 'OK' si este mensaje llega correctamente.";
-    const response = await callGeminiAI(testPrompt, apiKey);
-    return response.includes('OK');
+    const response = await callGoogleAI(testPrompt, apiKey);
+    return response.trim() === 'OK';
   } catch (error) {
     console.error('Error testing Google AI API key:', error);
-    throw error;
+    throw error; // Re-throw the specific error from callGoogleAI
   }
 }
