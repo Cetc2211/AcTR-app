@@ -5,7 +5,7 @@ import { get, set, del, clear } from 'idb-keyval';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
-import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis } from '@/ai/generate';
+import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis } from '@/lib/gemini';
 
 
 // TYPE DEFINITIONS
@@ -521,7 +521,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ESTRUCTURA DE LA RETROALIMENTACIÓN:
         1.  **Resumen General:** Inicia con un párrafo que resuma el desempeño general del estudiante en el parcial.
         2.  **Fortalezas:** Identifica y destaca 1 o 2 áreas donde el estudiante demostró un buen rendimiento. Sé específico (ej. "mostró un excelente dominio en el proyecto...").
-        3.  **Áreas de Oportunidad:** Señala 1 o 2 áreas específicas que requieren mejora. Conecta el bajo rendimiento en un criterio con una posible causa (ej. "La calificación en 'Actividades' es baja, lo que sugiere una posible inconsistencia en la entrega de tareas...").
+        3.  **Áreas de Oportunidad:** Señala 1 o 2 áreas específicas que requieren mejora. Conecta el bajo rendimiento en un criterio con una posible causa (ej. "La calificación en 'Actividades' es baja, lo que sugiere una inconsistencia en la entrega de tareas...").
         4.  **Recomendaciones Concretas:** Ofrece 2 o 3 pasos o acciones claras y prácticas que el estudiante puede tomar para mejorar en el siguiente parcial.
         5.  **Cierre Motivacional:** Termina con una frase de aliento que motive al estudiante.
         
