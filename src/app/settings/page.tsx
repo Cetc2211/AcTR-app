@@ -33,7 +33,7 @@ import type { Group, Student, StudentObservation, PartialId, SpecialNote, Partia
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NoteDialog } from '@/components/note-dialog';
-import { testApiKey } from '@/ai/generate';
+import { testApiKey } from '@/lib/gemini';
 
 
 type ExportData = {
