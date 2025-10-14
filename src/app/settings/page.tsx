@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,7 @@ import type { Group, Student, StudentObservation, PartialId, SpecialNote, Partia
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NoteDialog } from '@/components/note-dialog';
+import { testApiKey } from '@/ai/generate';
 
 
 type ExportData = {
@@ -60,6 +60,7 @@ export default function SettingsPage() {
     const [isImporting, setIsImporting] = useState(false);
     const [importFile, setImportFile] = useState<File | null>(null);
     const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+    const [isTestingKey, setIsTestingKey] = useState(false);
     
     useEffect(() => {
         if(!isLoading && settings) {
@@ -229,7 +230,20 @@ export default function SettingsPage() {
             addSpecialNote(noteData);
         }
     };
-
+    
+    const handleTestApiKey = async () => {
+        setIsTestingKey(true);
+        try {
+            const isValid = await testApiKey(localSettings.apiKey);
+            if (isValid) {
+                toast({ title: '¡Éxito!', description: 'Tu clave de API de Google AI es válida.' });
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error de API', description: error.message });
+        } finally {
+            setIsTestingKey(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -247,6 +261,51 @@ export default function SettingsPage() {
             Personaliza la aplicación, gestiona tu horario y administra tus datos.
             </p>
         </div>
+         <Card>
+            <CardHeader>
+                <CardTitle>Integración con Inteligencia Artificial</CardTitle>
+                <CardDescription>
+                    Para usar las funciones de IA, provee tu propia clave API gratuita de Google AI Studio.
+                    <br />
+                    <a 
+                      href="https://aistudio.google.com/app/apikey" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Obtén tu clave API gratuita de Google AI aquí
+                    </a>
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="apiKey">API Key de Google AI</Label>
+                        <div className="flex items-center gap-2">
+                            <KeyRound className="h-4 w-4 text-muted-foreground"/>
+                            <Input
+                                id="apiKey"
+                                type="password"
+                                value={localSettings.apiKey}
+                                onChange={handleInputChange}
+                                placeholder="Pega tu clave API de Google AI aquí"
+                            />
+                            <Button 
+                                variant="secondary" 
+                                onClick={handleTestApiKey}
+                                disabled={isTestingKey || !localSettings.apiKey}
+                            >
+                                {isTestingKey ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : 'Probar Clave'}
+                            </Button>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Tu clave se almacena localmente y solo se usa para generar informes.
+                        </p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
         <Card>
             <CardHeader>
             <CardTitle>Personalización</CardTitle>
@@ -371,35 +430,10 @@ export default function SettingsPage() {
             <CardContent>
                 <ThemeSwitcher selectedTheme={localSettings.theme} onThemeChange={handleThemeChange} />
             </CardContent>
-            <Separator className="my-4" />
-            <CardHeader>
-                <CardTitle>Integración con Inteligencia Artificial</CardTitle>
-                <CardDescription>
-                    Para usar las funciones de IA, provee tu propia clave API de Google AI (Gemini). La clave se guarda de forma segura en tu navegador.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-2">
-                    <Label htmlFor="apiKey">API Key de Google AI</Label>
-                    <div className="flex items-center gap-2">
-                        <KeyRound className="h-4 w-4 text-muted-foreground" />
-                        <Input
-                            id="apiKey"
-                            type="password"
-                            value={localSettings.apiKey}
-                            onChange={handleInputChange}
-                            placeholder="Pega tu clave API aquí"
-                        />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                        Puedes obtener tu clave desde <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google AI Studio</a>.
-                    </p>
-                </div>
-            </CardContent>
             <CardFooter className="border-t px-6 py-4">
             <Button onClick={handleSave} disabled={isSaving}>
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                Guardar Cambios de Personalización
+                Guardar Cambios
             </Button>
             </CardFooter>
         </Card>
