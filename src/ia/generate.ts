@@ -58,7 +58,7 @@ async function callGeminiAI(prompt: string, apiKey: string): Promise<string> {
   }
 }
 
-// Funciones exportadas - MISMAS FIRMAS que antes
+// Funciones exportadas
 export async function generateFeedback(prompt: string, apiKey: string): Promise<string> {
   return await callGeminiAI(prompt, apiKey);
 }
