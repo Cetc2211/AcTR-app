@@ -3,47 +3,43 @@
 // Importa las dependencias necesarias.
 // Como es una API Route (que se ejecuta en el servidor), NO necesita la directiva 'use server'.
 import { NextResponse } from 'next/server';
-import { genkit } from 'genkit';
-import { googleAI } from '@genkit-ai/googleai';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
 // Mueve la lógica de la llamada a la IA aquí.
 async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
-    // La lógica de la IA se mantiene igual, pero ahora se ejecuta en esta API Route.
     if (!apiKey) {
         throw new Error("No se ha configurado una clave API de Google AI válida.");
     }
-    
-    const ai = genkit({
-        plugins: [googleAI({ apiKey })],
-    });
-    
+    const genAI = new GoogleGenerativeAI(apiKey);
     try {
-        const response = await ai.generate({
-            model: 'gemini-pro-latest',
-            prompt,
-            config: {
+        const model = genAI.getGenerativeModel({
+            model: "gemini-pro",
+            generationConfig: {
                 temperature: 0.5,
-                safetySettings: [
-                    {
-                        category: "HARM_CATEGORY_HARASSMENT",
-                        threshold: "BLOCK_ONLY_HIGH"
-                    },
-                ],
             },
+            safetySettings: [
+                {
+                    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+                    threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+                },
+            ],
         });
-
-        const text = response.text;
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
         if (!text) {
             throw new Error("La IA no generó una respuesta de texto.");
         }
-        
         return text;
-
     } catch (e: any) {
-        console.error("Genkit AI Error:", e);
+        console.error("Google Generative AI Error:", e);
         let errorMessage = `Error del servicio de IA: ${e.message || 'Error desconocido'}`;
-        if (e.message && e.message.includes('API key not valid')) {
+        if (e.message && (e.message.includes('API key not valid') || e.message.includes('invalid api key'))) {
             errorMessage = "La clave API de Google AI proporcionada no es válida.";
+        } else if (e.message && e.message.includes('permission denied')) {
+            errorMessage = "Permiso denegado. Revisa que tu clave API esté habilitada para el modelo.";
+        } else if (e.message && e.message.includes('not found')) {
+            errorMessage = `Error del servicio de IA: El modelo no fue encontrado o no está disponible.`;
         }
         throw new Error(errorMessage);
     }
