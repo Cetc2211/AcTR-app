@@ -235,7 +235,7 @@ export default function StudentProfilePage() {
   }
 
   const handleGenerateAIFeedback = async () => {
-    if (!student) return;
+    if (!student || !settings.apiKey) return;
     setIsGeneratingFeedback(true);
 
     const activePartialStats = studentStatsByPartial.find(s => s.partialId === activePartialId);
@@ -260,7 +260,7 @@ export default function StudentProfilePage() {
       toast({
         variant: 'destructive',
         title: 'Error al generar retroalimentación',
-        description: error.message || 'No se pudo conectar con el servicio de IA.',
+        description: error.message || 'No se pudo conectar con el servicio de IA. Asegúrate de que tu clave de API sea correcta en Ajustes.',
       });
     } finally {
       setIsGeneratingFeedback(false);
@@ -449,15 +449,15 @@ export default function StudentProfilePage() {
                   <CardDescription>Análisis personalizado del docente sobre el rendimiento del estudiante.</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="secondary" size="sm" onClick={handleGenerateAIFeedback} disabled={isGeneratingFeedback || isEditingFeedback}>
-                    {isGeneratingFeedback ? <Loader2 className="mr-2 animate-spin" /> : <Sparkles className="mr-2" />}
-                    Generar con IA
-                  </Button>
                   {!isEditingFeedback && (
                       <Button variant="outline" size="sm" onClick={() => setIsEditingFeedback(true)}>
                           <Edit className="mr-2" /> Editar
                       </Button>
                   )}
+                   <Button size="sm" onClick={handleGenerateAIFeedback} disabled={isGeneratingFeedback || !settings.apiKey}>
+                      {isGeneratingFeedback ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                      Generar con IA
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -484,7 +484,7 @@ export default function StudentProfilePage() {
                     </div>
                 ) : (
                     <div className="prose prose-sm max-w-none dark:prose-invert mt-2 whitespace-pre-wrap min-h-[100px] p-3 bg-muted/30 rounded-md text-justify">
-                        {currentFeedback || <p className="text-muted-foreground italic">No hay retroalimentación para este parcial. Haz clic en "Editar" para agregar una o usa la IA para generar una sugerencia.</p>}
+                        {currentFeedback || <p className="text-muted-foreground italic">No hay retroalimentación para este parcial. Haz clic en "Editar" para agregar una.</p>}
                     </div>
                 )}
               </CardContent>
