@@ -5,6 +5,7 @@ import { get, set, del, clear } from 'idb-keyval';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
+import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis } from '@/ai/generate';
 
 
 // TYPE DEFINITIONS
@@ -508,79 +509,82 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
     }, [allPartialsData, groups]);
     
-    // --- AI FEATURES ---
     const generateFeedbackWithAI = useCallback(async (student: Student, stats: StudentStats): Promise<string> => {
-        if (!settings.apiKey) {
-            throw new Error("No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.");
-        }
-        const prompt = `Eres un asistente de docentes experto en pedagogía. Genera una retroalimentación constructiva y personalizada para ${student.name}.
-        DATOS: Calificación: ${stats.finalGrade.toFixed(0)}%, Asistencia: ${stats.attendance.rate.toFixed(0)}%.
-        Desglose: ${stats.criteriaDetails.map(c => `${c.name}: ${c.earned.toFixed(0)}%`).join(', ')}.
-        Bitácora: ${stats.observations.length > 0 ? stats.observations.map(o => `${o.type}: ${o.details}`).join('; ') : "Sin observaciones."}
-        INSTRUCCIONES: Inicia con fortalezas, luego áreas de oportunidad y finaliza con recomendaciones claras. Tono de apoyo. Sin despedidas. **Bajo ninguna circunstancia utilices asteriscos (*) para dar formato o enfatizar texto.** La redacción debe ser en prosa natural.`;
+        const prompt = `Como asistente educativo experto, crea una retroalimentación detallada y constructiva para el estudiante ${student.name}.
         
-        const response = await fetch('/api/generate-feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, apiKey: settings.apiKey }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Error desconocido al comunicarse con el servidor de IA.');
-        }
+        DATOS CLAVE:
+        - Calificación Final del Parcial: ${stats.finalGrade.toFixed(1)}%
+        - Tasa de Asistencia: ${stats.attendance.rate.toFixed(1)}%
+        - Desglose de Calificación: ${stats.criteriaDetails.map(c => `${c.name}: ${c.earned.toFixed(1)}%`).join(', ')}
+        - Observaciones Recientes en Bitácora: ${stats.observations.length > 0 ? stats.observations.map(o => `(${o.type}) ${o.details}`).join('; ') : 'Ninguna.'}
         
-        return data.feedbackText;
+        ESTRUCTURA DE LA RETROALIMENTACIÓN:
+        1.  **Resumen General:** Inicia con un párrafo que resuma el desempeño general del estudiante en el parcial.
+        2.  **Fortalezas:** Identifica y destaca 1 o 2 áreas donde el estudiante demostró un buen rendimiento. Sé específico (ej. "mostró un excelente dominio en el proyecto...").
+        3.  **Áreas de Oportunidad:** Señala 1 o 2 áreas específicas que requieren mejora. Conecta el bajo rendimiento en un criterio con una posible causa (ej. "La calificación en 'Actividades' es baja, lo que sugiere una posible inconsistencia en la entrega de tareas...").
+        4.  **Recomendaciones Concretas:** Ofrece 2 o 3 pasos o acciones claras y prácticas que el estudiante puede tomar para mejorar en el siguiente parcial.
+        5.  **Cierre Motivacional:** Termina con una frase de aliento que motive al estudiante.
+        
+        REQUISITOS:
+        -   **Lenguaje:** Utiliza un tono profesional, pero cercano y alentador. Evita la jerga demasiado técnica.
+        -   **Formato:** Usa viñetas o listas numeradas para que la información sea fácil de digerir.
+        -   **Idioma:** Toda la retroalimentación debe estar en español.
+        -   **No incluyas el desglose de calificación en la respuesta final, solo úsalo como contexto.**`;
+        
+        return await generateFeedback(prompt, settings.apiKey);
     }, [settings.apiKey]);
-
+    
     const generateGroupAnalysisWithAI = useCallback(async (group: Group, summary: any, recoverySummary: any, atRisk: StudentWithRisk[], observations: (StudentObservation & { studentName: string })[]) => {
-        if (!settings.apiKey) {
-            throw new Error("No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.");
-        }
-        const prompt = `Actúa como analista educativo. Redacta un análisis narrativo profesional y objetivo para el grupo ${group.subject} en el ${getPartialLabel(activePartialId)}.
-        DATOS: ${summary.totalStudents} estudiantes, promedio ${summary.groupAverage.toFixed(1)}%, aprobación ${(summary.approvedCount / summary.totalStudents * 100).toFixed(1)}%, asistencia ${summary.attendanceRate.toFixed(1)}%.
-        RIESGO: ${atRisk.length} estudiantes en riesgo.
-        BITÁCORA: ${observations.length} observaciones.
-        RECUPERACIÓN: ${recoverySummary.recoveryStudentsCount} estudiantes la necesitaron.
-        INSTRUCCIONES: Redacta en párrafos fluidos. Analiza el panorama general, correlaciones (asistencia/rendimiento), efectividad de la recuperación y finaliza con una recomendación formal a directivos y tutores para dar seguimiento a los casos de riesgo. **Bajo ninguna circunstancia utilices asteriscos (*) para dar formato o enfatizar texto.** La redacción debe ser en prosa natural.`;
+        const prompt = `Eres un pedagogo experto analizando el rendimiento de un grupo de estudiantes. Genera un análisis narrativo profesional para un informe académico.
 
-        const response = await fetch('/api/generate-feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, apiKey: settings.apiKey }),
-        });
+DATOS DEL GRUPO:
+-   Asignatura: ${group.subject}
+-   Total de Estudiantes: ${summary.totalStudents}
+-   Promedio General: ${summary.groupAverage.toFixed(1)}%
+-   Tasa de Aprobación: ${((summary.approvedCount / summary.totalStudents) * 100).toFixed(1)}% (${summary.approvedCount} de ${summary.totalStudents} aprobados)
+-   Tasa de Asistencia General: ${summary.attendanceRate.toFixed(1)}%
+-   Estudiantes en Riesgo (Alto o Medio): ${atRisk.length}
+-   Observaciones Recientes Clave: ${observations.slice(0, 3).map(o => `${o.studentName}: ${o.details}`).join('; ') || 'Ninguna destacada.'}
 
-        const data = await response.json();
+ESTRUCTURA DEL ANÁLISIS:
+1.  **Análisis General del Rendimiento:** Comienza con un párrafo que resuma el desempeño general del grupo, interpretando el promedio y la tasa de aprobación.
+2.  **Análisis de Asistencia:** Comenta sobre la tasa de asistencia y su posible impacto en el rendimiento académico.
+3.  **Identificación de Patrones:** Menciona si observas algún patrón general. ¿El grupo es homogéneo o heterogéneo? ¿Hay fortalezas o debilidades comunes?
+4.  **Alumnado en Riesgo:** Enfócate en el número de estudiantes en riesgo. Sin nombrar a los estudiantes, describe las posibles causas (bajas calificaciones, inasistencias).
+5.  **Recomendaciones y Estrategias:** Propón 2 o 3 estrategias o acciones pedagógicas que se podrían implementar en el siguiente parcial para mejorar el rendimiento del grupo y apoyar a los estudiantes en riesgo.
+6.  **Conclusión:** Cierra con una perspectiva general para el futuro del grupo.
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Error desconocido al comunicarse con el servidor de IA.');
-        }
-        
-        return data.feedbackText;
-    }, [settings.apiKey, activePartialId]);
+REQUISITOS:
+-   **Tono:** Profesional, objetivo y propositivo.
+-   **Idioma:** Español.
+-   **Formato:** Párrafos bien estructurados. No uses listas o viñetas.`;
 
+        return await generateGroupAnalysis(prompt, settings.apiKey);
+    }, [settings.apiKey]);
+    
     const generateSemesterAnalysisWithAI = useCallback(async (group: Group, summary: any) => {
-        if (!settings.apiKey) {
-            throw new Error("No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.");
-        }
-        const prompt = `Actúa como analista educativo. Redacta un análisis narrativo profesional y objetivo para el grupo ${group.subject} sobre su rendimiento SEMESTRAL.
-        DATOS CONSOLIDADOS DEL SEMESTRE: ${summary.totalStudents} estudiantes, promedio final ${summary.groupAverage.toFixed(1_0)}%, aprobación ${(summary.approvedCount / summary.totalStudents * 100).toFixed(1)}%, asistencia ${summary.attendanceRate.toFixed(1)}%.
-        INSTRUCCIONES: Compara el rendimiento entre parciales, identifica tendencias, celebra mejoras y señala desafíos persistentes. Ofrece una conclusión general sobre el progreso del grupo durante el semestre. **Bajo ninguna circunstancia utilices asteriscos (*) para dar formato o enfatizar texto.** La redacción debe ser en prosa natural.`;
+        const prompt = `Eres un director académico redactando el análisis final de un informe semestral para un grupo.
 
-        const response = await fetch('/api/generate-feedback', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt, apiKey: settings.apiKey }),
-        });
+DATOS FINALES DEL SEMESTRE:
+-   Asignatura: ${group.subject}
+-   Total de Estudiantes: ${summary.totalStudents}
+-   Promedio General Final: ${summary.groupAverage.toFixed(1)}%
+-   Tasa de Aprobación Final: ${((summary.approvedCount / summary.totalStudents) * 100).toFixed(1)}% (${summary.approvedCount} de ${summary.totalStudents} aprobados)
+-   Tasa de Asistencia Consolidada: ${summary.attendanceRate.toFixed(1)}%
 
-        const data = await response.json();
+ESTRUCTURA DEL ANÁLISIS SEMESTRAL:
+1.  **Conclusión General del Semestre:** Inicia con una valoración global del desempeño del grupo a lo largo del semestre. ¿Cumplieron las expectativas? ¿Hubo progreso?
+2.  **Análisis de Resultados Finales:** Interpreta la tasa de aprobación y el promedio final. ¿Son resultados positivos? ¿Qué indican sobre el aprendizaje consolidado?
+3.  **Reflexión sobre el Proceso:** Comenta brevemente sobre la trayectoria del grupo. ¿Fue un semestre estable, de mejora constante, o con altibajos? Relaciona la asistencia con los resultados.
+4.  **Perspectivas a Futuro:** Basado en los resultados, ofrece una breve perspectiva o recomendación para los estudiantes en su siguiente etapa académica.
+5.  **Cierre Formal:** Concluye el análisis de forma concisa y profesional.
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Error desconocido al comunicarse con el servidor de IA.');
-        }
-        
-        return data.feedbackText;
+REQUISITOS:
+-   **Tono:** Formal, conclusivo y evaluativo.
+-   **Idioma:** Español.
+-   **Formato:** Un único párrafo o dos párrafos cortos. Debe ser un resumen ejecutivo y directo.`;
+
+        return await generateSemesterAnalysis(prompt, settings.apiKey);
     }, [settings.apiKey]);
 
 
