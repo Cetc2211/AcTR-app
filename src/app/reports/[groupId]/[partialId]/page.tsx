@@ -250,7 +250,7 @@ export default function GroupReportPage() {
   };
   
   const handleGenerateAIAnalysis = async () => {
-    if (!group || !summary || !recoverySummary) return;
+    if (!group || !summary || !recoverySummary || !settings.apiKey) return;
     
     setIsGeneratingAnalysis(true);
     try {
@@ -264,7 +264,7 @@ export default function GroupReportPage() {
         toast({
             variant: 'destructive',
             title: 'Error al generar análisis',
-            description: e.message || 'No se pudo conectar con el servicio de IA.',
+            description: e.message || 'No se pudo conectar con el servicio de IA. Asegúrate de que tu clave de API sea correcta en Ajustes.',
         });
     } finally {
         setIsGeneratingAnalysis(false);
@@ -389,23 +389,21 @@ export default function GroupReportPage() {
                     <CardTitle>Análisis y Observaciones</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div data-hide-for-pdf="true">
-                        <div className="flex justify-between items-center mb-2">
-                            <h4 className="font-semibold text-base">Análisis Narrativo</h4>
-                            <div className='flex items-center gap-2'>
-                               <Button variant="secondary" size="sm" onClick={handleGenerateAIAnalysis} disabled={isGeneratingAnalysis}>
-                                    {isGeneratingAnalysis ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
-                                    Generar con IA
-                                </Button>
-                               <Button size="sm" onClick={handleSaveAnalysis} disabled={isSaving}>
-                                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4"/>}
-                                    Guardar Análisis
-                                </Button>
-                            </div>
+                    <div className="flex justify-between items-center mb-2" data-hide-for-pdf="true">
+                        <h4 className="font-semibold text-base">Análisis Narrativo</h4>
+                        <div className='flex items-center gap-2'>
+                           <Button size="sm" onClick={handleSaveAnalysis} disabled={isSaving}>
+                                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4"/>}
+                                Guardar Análisis
+                            </Button>
+                             <Button size="sm" onClick={handleGenerateAIAnalysis} disabled={isGeneratingAnalysis || !settings.apiKey}>
+                                {isGeneratingAnalysis ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                                Generar con IA
+                            </Button>
                         </div>
                     </div>
                     <Textarea 
-                        placeholder="Escribe aquí tu análisis cualitativo sobre el rendimiento general del grupo, fortalezas, áreas de oportunidad y estrategias a seguir..."
+                        placeholder="Análisis cualitativo del rendimiento general del grupo..."
                         value={narrativeAnalysis}
                         onChange={(e) => setNarrativeAnalysis(e.target.value)}
                         rows={8}
@@ -439,6 +437,7 @@ export default function GroupReportPage() {
                             alt="Firma del docente"
                             fill
                             style={{ objectFit: 'contain' }}
+                            sizes="(max-width: 768px) 100vw, 256px"
                         />
                     )}
                 </div>
