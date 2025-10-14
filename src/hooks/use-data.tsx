@@ -5,7 +5,7 @@ import { get, set, del, clear } from 'idb-keyval';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
-import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis } from '@/lib/gemini';
+import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis, testApiKey } from '@/lib/gemini';
 
 
 // TYPE DEFINITIONS
