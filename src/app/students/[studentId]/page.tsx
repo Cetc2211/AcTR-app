@@ -25,7 +25,7 @@ import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDeta
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
 import { WhatsAppDialog } from '@/components/whatsapp-dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { generateStudentFeedback } from '@/ai/flows/generate-student-feedback-flow';
+import { generateStudentFeedback } from '../../../ai/generate-student-feedback-flow';
 
 export default function StudentProfilePage() {
   const params = useParams();
