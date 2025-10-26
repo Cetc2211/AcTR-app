@@ -15,4 +15,4 @@ configureGenkit({
   enableTracingAndMetrics: true,
 });
 
-export { genkit as ai } from 'genkit';
+export const ai = genkit;
