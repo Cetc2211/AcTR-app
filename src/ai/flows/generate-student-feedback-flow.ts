@@ -2,7 +2,28 @@
 'use server';
 
 import { z } from 'zod';
-import { ai } from '../genkit';
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
+
+let apiKey = '';
+
+if (typeof window !== 'undefined') {
+  const storedSettings = localStorage.getItem('app_settings');
+  if (storedSettings) {
+    apiKey = JSON.parse(storedSettings).apiKey;
+  }
+}
+
+export const ai = genkit({
+  plugins: [
+    googleAI({
+      apiKey: apiKey || process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY,
+    }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
+});
+
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),
