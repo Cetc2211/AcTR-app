@@ -1,3 +1,4 @@
+
 'use server';
 
 import { genkit } from 'genkit';
@@ -17,7 +18,6 @@ export async function testApiKey(apiKey: string): Promise<boolean> {
     // Configure a temporary Genkit instance with the new key
     const testAI = genkit({
       plugins: [googleAI({ apiKey })],
-      logLevel: 'silent',
     });
 
     // Make a simple, low-cost request to validate the key
