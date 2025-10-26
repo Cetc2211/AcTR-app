@@ -253,7 +253,7 @@ export default function StudentProfilePage() {
     }
 
     setIsGeneratingFeedback(true);
-    toast({ title: 'Generando retroalimentación con IA...', description: 'Esto puede tardar unos segundos.' });
+    toast({ title: 'Generando retroalimentación con IA...', description: 'Esto puede tomar unos segundos.' });
 
     try {
         const result = await generateStudentFeedback({
