@@ -2,7 +2,7 @@
 'use server';
 
 import { genkit } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
+import { googleAI } from '@/ai/generate';
 
 /**
  * Tests if the provided Google AI API key is valid by making a simple request.
@@ -30,7 +30,7 @@ export async function testApiKey(apiKey: string): Promise<boolean> {
     return true;
   } catch (error: any) {
     console.error("API Key validation failed:", error);
-    if (error.message && error.message.includes('API key not valid')) {
+    if (error.message && (error.message.includes('API key not valid') || error.message.includes('permission_denied'))) {
         throw new Error('La clave de API proporcionada no es válida. Por favor, revísala.');
     }
     throw new Error('No se pudo validar la clave de API. Verifica tu conexión o la clave.');
