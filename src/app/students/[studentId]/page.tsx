@@ -25,6 +25,7 @@ import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDeta
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
 import { WhatsAppDialog } from '@/components/whatsapp-dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { generateStudentFeedback } from '@/ai/flows';
 
 export default function StudentProfilePage() {
   const params = useParams();
@@ -41,7 +42,6 @@ export default function StudentProfilePage() {
     activePartialId,
     partialData,
     setStudentFeedback,
-    generateFeedbackWithAI,
   } = useData();
 
   const [studentStatsByPartial, setStudentStatsByPartial] = useState<StudentStats[]>([]);
@@ -234,36 +234,47 @@ export default function StudentProfilePage() {
       setIsEditingFeedback(false);
   }
 
-  const handleGenerateAIFeedback = async () => {
-    if (!student || !settings.apiKey) return;
-    setIsGeneratingFeedback(true);
+  const handleGenerateFeedback = async () => {
+    if (!student) return;
 
-    const activePartialStats = studentStatsByPartial.find(s => s.partialId === activePartialId);
-    if (!activePartialStats) {
+    if (!settings.apiKey) {
       toast({
         variant: 'destructive',
-        title: 'Faltan datos',
-        description: 'No hay datos de calificación para este estudiante en el parcial activo.',
+        title: 'Falta Clave de API',
+        description: 'Por favor, configura tu clave de API de Google AI en la página de Ajustes.',
       });
-      setIsGeneratingFeedback(false);
       return;
     }
 
+    const activePartialStats = studentStatsByPartial.find(s => s.partialId === activePartialId);
+    if (!activePartialStats) {
+      toast({ variant: 'destructive', title: 'Faltan Datos', description: `No hay datos de calificación para el ${getPartialLabel(activePartialId)}.` });
+      return;
+    }
+
+    setIsGeneratingFeedback(true);
+    toast({ title: 'Generando retroalimentación con IA...', description: 'Esto puede tardar unos segundos.' });
+
     try {
-      const result = await generateFeedbackWithAI(student, activePartialStats);
-      setCurrentFeedback(result);
-      toast({
-        title: 'Retroalimentación generada',
-        description: 'La IA ha creado una sugerencia de retroalimentación.',
-      });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error al generar retroalimentación',
-        description: error.message || 'No se pudo conectar con el servicio de IA. Asegúrate de que tu clave de API sea correcta en Ajustes.',
-      });
+        const result = await generateStudentFeedback({
+            studentName: student.name,
+            partial: getPartialLabel(activePartialId),
+            finalGrade: activePartialStats.finalGrade,
+            attendanceRate: activePartialStats.attendance.rate,
+            criteria: activePartialStats.criteriaDetails.map(c => ({ name: c.name, earnedPercentage: c.earned })),
+            observations: activePartialStats.observations.map(o => o.details),
+        });
+        setCurrentFeedback(result);
+        toast({ title: '¡Retroalimentación generada!', description: 'La IA ha completado el análisis del estudiante.' });
+    } catch (e) {
+        console.error(e);
+        toast({
+            variant: 'destructive',
+            title: 'Error de IA',
+            description: 'No se pudo generar la retroalimentación. Verifica tu clave API y la conexión.',
+        });
     } finally {
-      setIsGeneratingFeedback(false);
+        setIsGeneratingFeedback(false);
     }
   };
 
@@ -454,7 +465,7 @@ export default function StudentProfilePage() {
                           <Edit className="mr-2" /> Editar
                       </Button>
                   )}
-                   <Button size="sm" onClick={handleGenerateAIFeedback} disabled={isGeneratingFeedback || !settings.apiKey}>
+                  <Button variant="outline" size="sm" onClick={handleGenerateFeedback} disabled={isGeneratingFeedback || !studentStatsByPartial.some(s => s.partialId === activePartialId)}>
                       {isGeneratingFeedback ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
                       Generar con IA
                   </Button>
