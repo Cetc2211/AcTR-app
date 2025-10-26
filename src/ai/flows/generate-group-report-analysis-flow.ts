@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { ai } from '@/ai/genkit';
+import { ai } from '../genkit';
 
 const GroupReportInputSchema = z.object({
     groupName: z.string().describe('The name of the subject or group.'),
@@ -48,7 +48,7 @@ export const generateGroupReportAnalysis = ai.defineFlow(
 
     const llmResponse = await ai.generate({
       prompt: prompt,
-      model: 'googleai/gemini-2.0-flash',
+      model: 'googleai/gemini-1.5-flash-latest',
       config: { temperature: 0.5 },
     });
 
