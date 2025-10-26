@@ -1,8 +1,7 @@
-
 'use server';
 
 import { genkit } from 'genkit';
-import { googleAI } from '@/ai/generate';
+import { googleAI } from '@genkit-ai/google-genai';
 
 /**
  * Tests if the provided Google AI API key is valid by making a simple request.
