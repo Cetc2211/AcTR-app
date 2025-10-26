@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { ai } from '../genkit';
+import { ai } from '@/ai/genkit';
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),
