@@ -26,7 +26,7 @@ import type { PartialId, StudentObservation, Group, StudentWithRisk, RecoveryGra
 import { getPartialLabel } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { generateGroupReportAnalysis } from '@/ai/flows';
+import { generateGroupReportAnalysis } from '@/ai/flows/generate-group-report-analysis-flow';
 
 
 type ReportSummary = {
@@ -441,32 +441,4 @@ export default function GroupReportPage() {
                                 ))}
                             </div>
                         </div>
-                    )}
-                </CardContent>
-            </Card>
-        </section>
-
-        <footer className="border-t mt-8 pt-6 text-sm">
-            <p className="prose dark:prose-invert max-w-none text-justify">
-              Sin más por el momento, quedo a sus órdenes para cualquier aclaración.
-            </p>
-            <div className="mt-16 pt-4 text-center">
-                <div className="inline-block relative h-20 w-64">
-                    {settings.signature && (
-                        <Image 
-                            src={settings.signature}
-                            alt="Firma del docente"
-                            fill
-                            style={{ objectFit: 'contain' }}
-                            sizes="(max-width: 768px) 100vw, 256px"
-                        />
-                    )}
-                </div>
-                <div className="border-t border-foreground w-64 mx-auto mt-2"></div>
-                <p className="font-semibold mt-2">{group.facilitator || 'Docente'}</p>
-            </div>
-        </footer>
-      </Card>
-    </div>
-  );
-}
+                 
