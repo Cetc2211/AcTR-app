@@ -25,7 +25,7 @@ import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDeta
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
 import { WhatsAppDialog } from '@/components/whatsapp-dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { generateStudentFeedback } from '../../../ai/generate-student-feedback-flow';
+import { generateStudentFeedback } from '@/ai/flows/generate-student-feedback-flow';
 
 export default function StudentProfilePage() {
   const params = useParams();
@@ -266,12 +266,12 @@ export default function StudentProfilePage() {
         });
         setCurrentFeedback(result);
         toast({ title: '¡Retroalimentación generada!', description: 'La IA ha completado el análisis del estudiante.' });
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
         toast({
             variant: 'destructive',
             title: 'Error de IA',
-            description: 'No se pudo generar la retroalimentación. Verifica tu clave API y la conexión.',
+            description: e.message || 'No se pudo generar la retroalimentación. Verifica tu clave API y la conexión.',
         });
     } finally {
         setIsGeneratingFeedback(false);
