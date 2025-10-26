@@ -52,6 +52,6 @@ export const generateGroupReportAnalysis = ai.defineFlow(
       config: { temperature: 0.5 },
     });
 
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
