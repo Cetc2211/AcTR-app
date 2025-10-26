@@ -56,6 +56,6 @@ export const generateStudentFeedback = ai.defineFlow(
       config: { temperature: 0.7 },
     });
 
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
