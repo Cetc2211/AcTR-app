@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Download, CheckCircle, XCircle, TrendingUp, BarChart, Users, Eye, AlertTriangle, Loader2, Sparkles, BookText, Save, FileClock } from 'lucide-react';
+import { ArrowLeft, Download, CheckCircle, XCircle, TrendingUp, BarChart, Users, Eye, AlertTriangle, Loader2, BookText, Save, FileClock } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -45,7 +45,6 @@ export default function SemesterReportPage() {
       atRiskStudents,
       allObservations,
       isLoading: isDataLoading,
-      generateSemesterAnalysisWithAI,
       fetchPartialData
   } = useData();
   
@@ -129,7 +128,7 @@ export default function SemesterReportPage() {
       const textarea = input.querySelector('textarea');
       const analysisDiv = document.createElement('div');
       if (textarea) {
-        analysisDiv.innerHTML = textarea.value.replace(/\n/g, '<br>');
+        analysisDiv.innerHTML = textarea.value.replace(/\\n/g, '<br>');
         analysisDiv.className = textarea.className;
         analysisDiv.style.whiteSpace = 'pre-wrap';
         analysisDiv.style.minHeight = textarea.style.minHeight || '100px';
@@ -163,27 +162,7 @@ export default function SemesterReportPage() {
     }
   };
   
-  const handleGenerateAIAnalysis = async () => {
-    if (!group || !summary || !settings.apiKey) return;
-    
-    setIsGeneratingAnalysis(true);
-    try {
-        const analysis = await generateSemesterAnalysisWithAI(group, summary);
-        setNarrativeAnalysis(analysis);
-        toast({
-            title: 'Análisis generado',
-            description: 'La IA ha creado un análisis narrativo del semestre.',
-        });
-    } catch(e: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Error al generar análisis',
-            description: e.message || 'No se pudo conectar con el servicio de IA. Asegúrate de que tu clave de API sea correcta en Ajustes.',
-        });
-    } finally {
-        setIsGeneratingAnalysis(false);
-    }
-  };
+  // Removed AI generation function
 
   if (isDataLoading || !summary) {
     return <div className="flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin" /> <span className="ml-2">Generando informe semestral...</span></div>;
@@ -284,10 +263,7 @@ export default function SemesterReportPage() {
                 <CardContent className="space-y-4">
                     <div className="flex justify-between items-center mb-2" data-hide-for-pdf="true">
                         <h4 className="font-semibold text-base">Análisis Narrativo</h4>
-                         <Button size="sm" onClick={handleGenerateAIAnalysis} disabled={isGeneratingAnalysis || !settings.apiKey}>
-                            {isGeneratingAnalysis ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
-                            Generar con IA
-                        </Button>
+                         {/* Removed AI generation button */}
                     </div>
                     <Textarea 
                         placeholder="Análisis cualitativo del rendimiento del grupo durante el semestre..."
