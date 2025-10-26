@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Download, CheckCircle, XCircle, TrendingUp, BarChart, Users, Eye, AlertTriangle, Loader2, Sparkles, BookText, Save } from 'lucide-react';
+import { ArrowLeft, Download, CheckCircle, XCircle, TrendingUp, BarChart, Users, Eye, AlertTriangle, Loader2, BookText, Save, Sparkles } from 'lucide-react';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -26,6 +26,7 @@ import type { PartialId, StudentObservation, Group, StudentWithRisk, RecoveryGra
 import { getPartialLabel } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { generateGroupReportAnalysis } from '@/ai/flows';
 
 
 type ReportSummary = {
@@ -56,7 +57,6 @@ export default function GroupReportPage() {
       allObservations,
       partialData,
       isLoading: isDataLoading,
-      generateGroupAnalysisWithAI,
       setGroupAnalysis,
       activeGroup,
   } = useData();
@@ -203,7 +203,7 @@ export default function GroupReportPage() {
       const textarea = input.querySelector('textarea');
       const analysisDiv = document.createElement('div');
       if (textarea) {
-        analysisDiv.innerHTML = textarea.value.replace(/\n/g, '<br>');
+        analysisDiv.innerHTML = textarea.value.replace(/\\n/g, '<br>');
         analysisDiv.className = textarea.className;
         analysisDiv.style.whiteSpace = 'pre-wrap';
         analysisDiv.style.minHeight = textarea.style.minHeight || '100px';
@@ -249,28 +249,49 @@ export default function GroupReportPage() {
     }
   };
   
-  const handleGenerateAIAnalysis = async () => {
-    if (!group || !summary || !recoverySummary || !settings.apiKey) return;
-    
+  const handleGenerateAnalysis = async () => {
+    if (!group || !summary) {
+        toast({variant: 'destructive', title: 'Faltan datos', description: 'No se pueden generar análisis sin datos del grupo.'})
+        return;
+    }
+
+    if (!settings.apiKey) {
+      toast({
+        variant: 'destructive',
+        title: 'Falta Clave de API',
+        description: 'Por favor, configura tu clave de API de Google AI en la página de Ajustes.',
+      });
+      return;
+    }
+
     setIsGeneratingAnalysis(true);
+    toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
+
     try {
-        const analysis = await generateGroupAnalysisWithAI(group, summary, recoverySummary, atRiskStudentsForGroup, recentObservations);
-        setNarrativeAnalysis(analysis);
-        toast({
-            title: 'Análisis generado',
-            description: 'La IA ha creado un análisis narrativo del grupo.',
+        const result = await generateGroupReportAnalysis({
+            groupName: group.subject,
+            partial: getPartialLabel(partialId),
+            totalStudents: summary.totalStudents,
+            approvedCount: summary.approvedCount,
+            failedCount: summary.failedCount,
+            groupAverage: summary.groupAverage,
+            attendanceRate: summary.attendanceRate,
+            atRiskStudentCount: atRiskStudentsForGroup.length
         });
-    } catch(e: any) {
+        setNarrativeAnalysis(result);
+        toast({ title: '¡Análisis generado!', description: 'La IA ha completado el análisis del grupo.' });
+    } catch(e) {
+        console.error(e);
         toast({
             variant: 'destructive',
-            title: 'Error al generar análisis',
-            description: e.message || 'No se pudo conectar con el servicio de IA. Asegúrate de que tu clave de API sea correcta en Ajustes.',
+            title: 'Error de IA',
+            description: 'No se pudo generar el análisis. Verifica tu clave API y la conexión.',
         });
     } finally {
         setIsGeneratingAnalysis(false);
     }
   };
-
+  
   const handleSaveAnalysis = async () => {
     setIsSaving(true);
     try {
@@ -396,8 +417,8 @@ export default function GroupReportPage() {
                                 {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4"/>}
                                 Guardar Análisis
                             </Button>
-                             <Button size="sm" onClick={handleGenerateAIAnalysis} disabled={isGeneratingAnalysis || !settings.apiKey}>
-                                {isGeneratingAnalysis ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4"/>}
+                             <Button size="sm" onClick={handleGenerateAnalysis} disabled={isGeneratingAnalysis}>
+                                {isGeneratingAnalysis ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
                                 Generar con IA
                             </Button>
                         </div>
