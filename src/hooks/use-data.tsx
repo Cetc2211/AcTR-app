@@ -5,7 +5,6 @@ import { get, set, del, clear } from 'idb-keyval';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
-import { generateFeedback, generateGroupAnalysis, generateSemesterAnalysis, testApiKey } from '@/lib/gemini';
 
 
 // TYPE DEFINITIONS
@@ -111,11 +110,6 @@ interface DataContextType {
     calculateDetailedFinalGrade: (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => { finalGrade: number; criteriaDetails: CriteriaDetail[]; isRecovery: boolean };
     getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
     fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
-    
-    // AI Features
-    generateFeedbackWithAI: (student: Student, stats: StudentStats) => Promise<string>;
-    generateGroupAnalysisWithAI: (group: Group, summary: any, recoverySummary: any, atRisk: StudentWithRisk[], observations: (StudentObservation & { studentName: string })[]) => Promise<string>;
-    generateSemesterAnalysisWithAI: (group: Group, summary: any) => Promise<string>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -509,84 +503,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
     }, [allPartialsData, groups]);
     
-    const generateFeedbackWithAI = useCallback(async (student: Student, stats: StudentStats): Promise<string> => {
-        const prompt = `Como asistente educativo experto, crea una retroalimentación detallada y constructiva para el estudiante ${student.name}.
-        
-        DATOS CLAVE:
-        - Calificación Final del Parcial: ${stats.finalGrade.toFixed(1)}%
-        - Tasa de Asistencia: ${stats.attendance.rate.toFixed(1)}%
-        - Desglose de Calificación: ${stats.criteriaDetails.map(c => `${c.name}: ${c.earned.toFixed(1)}%`).join(', ')}
-        - Observaciones Recientes en Bitácora: ${stats.observations.length > 0 ? stats.observations.map(o => `(${o.type}) ${o.details}`).join('; ') : 'Ninguna.'}
-        
-        ESTRUCTURA DE LA RETROALIMENTACIÓN:
-        1.  **Resumen General:** Inicia con un párrafo que resuma el desempeño general del estudiante en el parcial.
-        2.  **Fortalezas:** Identifica y destaca 1 o 2 áreas donde el estudiante demostró un buen rendimiento. Sé específico (ej. "mostró un excelente dominio en el proyecto...").
-        3.  **Áreas de Oportunidad:** Señala 1 o 2 áreas específicas que requieren mejora. Conecta el bajo rendimiento en un criterio con una posible causa (ej. "La calificación en 'Actividades' es baja, lo que sugiere una inconsistencia en la entrega de tareas...").
-        4.  **Recomendaciones Concretas:** Ofrece 2 o 3 pasos o acciones claras y prácticas que el estudiante puede tomar para mejorar en el siguiente parcial.
-        5.  **Cierre Motivacional:** Termina con una frase de aliento que motive al estudiante.
-        
-        REQUISITOS:
-        -   **Lenguaje:** Utiliza un tono profesional, pero cercano y alentador. Evita la jerga demasiado técnica.
-        -   **Formato:** Usa viñetas o listas numeradas para que la información sea fácil de digerir.
-        -   **Idioma:** Toda la retroalimentación debe estar en español.
-        -   **No incluyas el desglose de calificación en la respuesta final, solo úsalo como contexto.**`;
-        
-        return await generateFeedback(prompt, settings.apiKey);
-    }, [settings.apiKey]);
-    
-    const generateGroupAnalysisWithAI = useCallback(async (group: Group, summary: any, recoverySummary: any, atRisk: StudentWithRisk[], observations: (StudentObservation & { studentName: string })[]) => {
-        const prompt = `Eres un pedagogo experto analizando el rendimiento de un grupo de estudiantes. Genera un análisis narrativo profesional para un informe académico.
-
-DATOS DEL GRUPO:
--   Asignatura: ${group.subject}
--   Total de Estudiantes: ${summary.totalStudents}
--   Promedio General: ${summary.groupAverage.toFixed(1)}%
--   Tasa de Aprobación: ${((summary.approvedCount / summary.totalStudents) * 100).toFixed(1)}% (${summary.approvedCount} de ${summary.totalStudents} aprobados)
--   Tasa de Asistencia General: ${summary.attendanceRate.toFixed(1)}%
--   Estudiantes en Riesgo (Alto o Medio): ${atRisk.length}
--   Observaciones Recientes Clave: ${observations.slice(0, 3).map(o => `${o.studentName}: ${o.details}`).join('; ') || 'Ninguna destacada.'}
-
-ESTRUCTURA DEL ANÁLISIS:
-1.  **Análisis General del Rendimiento:** Comienza con un párrafo que resuma el desempeño general del grupo, interpretando el promedio y la tasa de aprobación.
-2.  **Análisis de Asistencia:** Comenta sobre la tasa de asistencia y su posible impacto en el rendimiento académico.
-3.  **Identificación de Patrones:** Menciona si observas algún patrón general. ¿El grupo es homogéneo o heterogéneo? ¿Hay fortalezas o debilidades comunes?
-4.  **Alumnado en Riesgo:** Enfócate en el número de estudiantes en riesgo. Sin nombrar a los estudiantes, describe las posibles causas (bajas calificaciones, inasistencias).
-5.  **Recomendaciones y Estrategias:** Propón 2 o 3 estrategias o acciones pedagógicas que se podrían implementar en el siguiente parcial para mejorar el rendimiento del grupo y apoyar a los estudiantes en riesgo.
-6.  **Conclusión:** Cierra con una perspectiva general para el futuro del grupo.
-
-REQUISITOS:
--   **Tono:** Profesional, objetivo y propositivo.
--   **Idioma:** Español.
--   **Formato:** Párrafos bien estructurados. No uses listas o viñetas.`;
-
-        return await generateGroupAnalysis(prompt, settings.apiKey);
-    }, [settings.apiKey]);
-    
-    const generateSemesterAnalysisWithAI = useCallback(async (group: Group, summary: any) => {
-        const prompt = `Eres un director académico redactando el análisis final de un informe semestral para un grupo.
-
-DATOS FINALES DEL SEMESTRE:
--   Asignatura: ${group.subject}
--   Total de Estudiantes: ${summary.totalStudents}
--   Promedio General Final: ${summary.groupAverage.toFixed(1)}%
--   Tasa de Aprobación Final: ${((summary.approvedCount / summary.totalStudents) * 100).toFixed(1)}% (${summary.approvedCount} de ${summary.totalStudents} aprobados)
--   Tasa de Asistencia Consolidada: ${summary.attendanceRate.toFixed(1)}%
-
-ESTRUCTURA DEL ANÁLISIS SEMESTRAL:
-1.  **Conclusión General del Semestre:** Inicia con una valoración global del desempeño del grupo a lo largo del semestre. ¿Cumplieron las expectativas? ¿Hubo progreso?
-2.  **Análisis de Resultados Finales:** Interpreta la tasa de aprobación y el promedio final. ¿Son resultados positivos? ¿Qué indican sobre el aprendizaje consolidado?
-3.  **Reflexión sobre el Proceso:** Comenta brevemente sobre la trayectoria del grupo. ¿Fue un semestre estable, de mejora constante, o con altibajos? Relaciona la asistencia con los resultados.
-4.  **Perspectivas a Futuro:** Basado en los resultados, ofrece una breve perspectiva o recomendación para los estudiantes en su siguiente etapa académica.
-5.  **Cierre Formal:** Concluye el análisis de forma concisa y profesional.
-
-REQUISITOS:
--   **Tono:** Formal, conclusivo y evaluativo.
--   **Idioma:** Español.
--   **Formato:** Un único párrafo o dos párrafos cortos. Debe ser un resumen ejecutivo y directo.`;
-
-        return await generateSemesterAnalysis(prompt, settings.apiKey);
-    }, [settings.apiKey]);
-
 
     return (
         <DataContext.Provider value={{
@@ -596,7 +512,6 @@ REQUISITOS:
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData,
-            generateFeedbackWithAI, generateGroupAnalysisWithAI, generateSemesterAnalysisWithAI
         }}>
             {children}
         </DataContext.Provider>
