@@ -3,9 +3,6 @@
 import { z } from 'zod';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { get } from 'idb-keyval';
-import type { AppSettings } from '@/lib/placeholder-data';
-import { defaultSettings } from '@/hooks/use-data';
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),
@@ -19,22 +16,21 @@ const StudentFeedbackInputSchema = z.object({
   observations: z.array(z.string()).describe('List of observations from the behavioral log.'),
 });
 
-async function getAiInstance() {
-    const settings: AppSettings = await get('app_settings') || defaultSettings;
-    if (!settings.apiKey) {
-        throw new Error("La clave de API de Google AI no está configurada. Por favor, configúrala en Ajustes.");
-    }
-    return genkit({
+// Define a new schema that includes the API key
+const FlowInputSchema = StudentFeedbackInputSchema.extend({
+    apiKey: z.string().min(1, { message: "La clave de API no puede estar vacía." }),
+});
+
+export const generateStudentFeedback = async (input: z.infer<typeof FlowInputSchema>): Promise<string> => {
+    // Initialize Genkit on the fly with the provided API key
+    const ai = genkit({
         plugins: [
             googleAI({
-                apiKey: settings.apiKey,
+                apiKey: input.apiKey,
             }),
         ],
     });
-}
 
-export const generateStudentFeedback = async (input: z.infer<typeof StudentFeedbackInputSchema>): Promise<string> => {
-    const ai = await getAiInstance();
     const flow = ai.defineFlow(
       {
         name: 'generateStudentFeedbackFlow',
@@ -78,5 +74,8 @@ export const generateStudentFeedback = async (input: z.infer<typeof StudentFeedb
         return llmResponse.text;
       }
     );
-    return await flow(input);
+
+    // Exclude apiKey from the data passed to the actual flow logic
+    const { apiKey, ...flowData } = input;
+    return await flow(flowData);
 };
