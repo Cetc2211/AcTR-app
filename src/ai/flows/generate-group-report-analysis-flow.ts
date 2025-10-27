@@ -3,9 +3,6 @@
 import { z } from 'zod';
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
-import { get } from 'idb-keyval';
-import type { AppSettings } from '@/lib/placeholder-data';
-import { defaultSettings } from '@/hooks/use-data';
 
 const GroupReportInputSchema = z.object({
     groupName: z.string().describe('The name of the subject or group.'),
@@ -18,26 +15,25 @@ const GroupReportInputSchema = z.object({
     atRiskStudentCount: z.number().describe('The number of students identified as being at risk.'),
 });
 
-async function getAiInstance() {
-    const settings: AppSettings = await get('app_settings') || defaultSettings;
-    if (!settings.apiKey) {
-        throw new Error("La clave de API de Google AI no está configurada. Por favor, configúrala en Ajustes.");
-    }
-    return genkit({
+// Define a new schema that includes the API key
+const FlowInputSchema = GroupReportInputSchema.extend({
+    apiKey: z.string().min(1, { message: "La clave de API no puede estar vacía." }),
+});
+
+export const generateGroupReportAnalysis = async (input: z.infer<typeof FlowInputSchema>): Promise<string> => {
+    // Initialize Genkit on the fly with the provided API key
+    const ai = genkit({
         plugins: [
             googleAI({
-                apiKey: settings.apiKey,
+                apiKey: input.apiKey,
             }),
         ],
     });
-}
 
-export const generateGroupReportAnalysis = async (input: z.infer<typeof GroupReportInputSchema>): Promise<string> => {
-    const ai = await getAiInstance();
     const flow = ai.defineFlow(
       {
         name: 'generateGroupReportAnalysisFlow',
-        inputSchema: GroupReportInputSchema,
+        inputSchema: GroupReportInputSchema, // The flow itself doesn't need the apiKey
         outputSchema: z.string(),
       },
       async (flowInput) => {
@@ -74,5 +70,8 @@ export const generateGroupReportAnalysis = async (input: z.infer<typeof GroupRep
         return llmResponse.text;
       }
     );
-    return await flow(input);
+
+    // Exclude apiKey from the data passed to the actual flow logic
+    const { apiKey, ...flowData } = input;
+    return await flow(flowData);
 };
