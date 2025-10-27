@@ -33,8 +33,7 @@ import type { Group, Student, StudentObservation, PartialId, SpecialNote, Partia
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NoteDialog } from '@/components/note-dialog';
-import { genkit } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
+import { testApiKeyAction } from './actions';
 
 
 type ExportData = {
@@ -46,32 +45,6 @@ type ExportData = {
   settings: AppSettings;
   partialsData: AllPartialsData; 
 };
-
-// Server action to test the API key
-async function testApiKeyAction(apiKey: string): Promise<{ success: boolean; error?: string }> {
-    'use server';
-    if (!apiKey) {
-        return { success: false, error: 'La clave de API no puede estar vacía.' };
-    }
-
-    try {
-        const testAI = genkit({
-            plugins: [googleAI({ apiKey })],
-        });
-        await testAI.generate({
-            model: 'gemini-1.5-flash-latest',
-            prompt: 'Test',
-            config: { temperature: 0 },
-        });
-        return { success: true };
-    } catch (error: any) {
-        if (error.message && (error.message.includes('API key not valid') || error.message.includes('permission_denied'))) {
-            return { success: false, error: 'La clave de API proporcionada no es válida. Por favor, revísala.' };
-        }
-        return { success: false, error: 'No se pudo validar la clave de API. Verifica tu conexión o la clave.' };
-    }
-}
-
 
 export default function SettingsPage() {
     const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote } = useData();
