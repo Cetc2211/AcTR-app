@@ -21,7 +21,7 @@ const FlowInputSchema = StudentFeedbackInputSchema.extend({
     apiKey: z.string().min(1, { message: "La clave de API no puede estar vacía." }),
 });
 
-export const generateStudentFeedback = async (input: z.infer<typeof FlowInputSchema>): Promise<string> => {
+export async function generateStudentFeedback(input: z.infer<typeof FlowInputSchema>): Promise<string> {
     // Initialize Genkit on the fly with the provided API key
     const ai = genkit({
         plugins: [
