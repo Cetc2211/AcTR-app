@@ -276,16 +276,17 @@ export default function GroupReportPage() {
             failedCount: summary.failedCount,
             groupAverage: summary.groupAverage,
             attendanceRate: summary.attendanceRate,
-            atRiskStudentCount: atRiskStudentsForGroup.length
+            atRiskStudentCount: atRiskStudentsForGroup.length,
+            apiKey: settings.apiKey,
         });
         setNarrativeAnalysis(result);
         toast({ title: '¡Análisis generado!', description: 'La IA ha completado el análisis del grupo.' });
-    } catch(e) {
+    } catch(e: any) {
         console.error(e);
         toast({
             variant: 'destructive',
             title: 'Error de IA',
-            description: 'No se pudo generar el análisis. Verifica tu clave API y la conexión.',
+            description: e.message || 'No se pudo generar el análisis. Verifica tu clave API y la conexión.',
         });
     } finally {
         setIsGeneratingAnalysis(false);
