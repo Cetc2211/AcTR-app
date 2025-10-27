@@ -263,6 +263,7 @@ export default function StudentProfilePage() {
             attendanceRate: activePartialStats.attendance.rate,
             criteria: activePartialStats.criteriaDetails.map(c => ({ name: c.name, earnedPercentage: c.earned })),
             observations: activePartialStats.observations.map(o => o.details),
+            apiKey: settings.apiKey,
         });
         setCurrentFeedback(result);
         toast({ title: '¡Retroalimentación generada!', description: 'La IA ha completado el análisis del estudiante.' });
