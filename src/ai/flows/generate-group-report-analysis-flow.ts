@@ -20,7 +20,7 @@ const FlowInputSchema = GroupReportInputSchema.extend({
     apiKey: z.string().min(1, { message: "La clave de API no puede estar vacía." }),
 });
 
-export const generateGroupReportAnalysis = async (input: z.infer<typeof FlowInputSchema>): Promise<string> => {
+export async function generateGroupReportAnalysis(input: z.infer<typeof FlowInputSchema>): Promise<string> {
     // Initialize Genkit on the fly with the provided API key
     const ai = genkit({
         plugins: [
