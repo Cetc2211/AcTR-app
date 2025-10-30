@@ -1,6 +1,6 @@
 'use server';
 
-import { genkit } from 'genkit';
+import { genkit } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 // Server action to test the API key
@@ -10,19 +10,20 @@ export async function testApiKeyAction(apiKey: string): Promise<{ success: boole
     }
 
     try {
-        const testAI = genkit({
-            plugins: [googleAI({ apiKey })],
-        });
-        await testAI.generate({
-            model: 'gemini-1.5-flash-latest',
+        const model = googleAI({ apiKey }).model('gemini-1.5-flash-latest');
+        
+        await genkit.generate({
+            model: model,
             prompt: 'Test',
             config: { temperature: 0 },
         });
+
         return { success: true };
     } catch (error: any) {
-        if (error.message && (error.message.includes('API key not valid') || error.message.includes('permission_denied'))) {
+        console.error("API Key Test Error:", error);
+        if (error.message && (error.message.includes('API key not valid') || error.message.includes('permission_denied') || error.message.includes('invalid api key'))) {
             return { success: false, error: 'La clave de API proporcionada no es válida. Por favor, revísala.' };
         }
-        return { success: false, error: 'No se pudo validar la clave de API. Verifica tu conexión o la clave.' };
+        return { success: false, error: 'No se pudo validar la clave de API. Verifica tu conexión, que la API esté habilitada en tu proyecto de Google Cloud, o la propia clave.' };
     }
 }
