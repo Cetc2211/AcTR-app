@@ -26,7 +26,7 @@ import type { PartialId, StudentObservation, Group, StudentWithRisk, RecoveryGra
 import { getPartialLabel } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { generateGroupReportAnalysis } from '@/ai/flows/generate-group-report-analysis-flow';
+import { generateGroupReportAnalysis } from '@/ai';
 
 
 type ReportSummary = {
