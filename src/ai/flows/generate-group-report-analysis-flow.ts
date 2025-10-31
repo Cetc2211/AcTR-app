@@ -2,8 +2,7 @@
 
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
-import { genkit } from 'genkit';
+import { generateGroupAnalysis } from '@/lib/generate';
 
 const GroupReportInputSchema = z.object({
     groupName: z.string().describe('The name of the subject or group.'),
@@ -15,6 +14,7 @@ const GroupReportInputSchema = z.object({
     attendanceRate: z.number().describe('The average attendance rate of the group as a percentage.'),
     atRiskStudentCount: z.number().describe('The number of students identified as being at risk.'),
     apiKey: z.string().optional().describe('The user-provided Google AI API key.'),
+  aiModel: z.string().optional().describe('Optional preferred AI model (e.g., gemini-2.5-flash)'),
 });
 
 export type GroupReportInput = z.infer<typeof GroupReportInputSchema>;
@@ -25,15 +25,7 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
     inputSchema: GroupReportInputSchema,
     outputSchema: z.string(),
   },
-  async ({ apiKey, ...flowInput}) => {
-    
-    // Initialize a per-request Genkit instance with the user's API key.
-    // Note: the googleAI plugin does not expose a `.model()` method on the plugin
-    // type; instead we create a genkit instance and pass the model name to `generate`.
-    const perRequestAi = genkit({
-      plugins: [googleAI({ apiKey: apiKey || process.env.GEMINI_API_KEY })],
-    });
-    
+  async ({ apiKey, aiModel, ...flowInput}) => {
     const prompt = `
       Eres un asistente pedagógico experto en análisis de datos académicos.
       Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
@@ -58,13 +50,8 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
       Formato de salida: Un único párrafo de texto. No uses listas ni viñetas.
     `;
 
-    const llmResponse = await perRequestAi.generate({
-      model: 'gemini-1.5-flash-latest',
-      prompt: prompt,
-      config: { temperature: 0.5 },
-    });
-
-    return llmResponse.text;
+    const res = await generateGroupAnalysis(prompt, apiKey || process.env.GEMINI_API_KEY || '', aiModel);
+    return res.text;
   }
 );
 

@@ -316,6 +316,38 @@ export default function SettingsPage() {
                             Tu clave se almacena localmente y solo se usa para generar informes.
                         </p>
                     </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="aiModel">Modelo de IA preferido</Label>
+                            <p className="text-xs text-muted-foreground">Selecciona el modelo que deseas usar para generar los informes. Si tu clave no tiene acceso al modelo seleccionado, el servidor intentará fallbacks automáticos.</p>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    id="aiModel"
+                                    className="input"
+                                    value={localSettings.aiModel || ''}
+                                    onChange={async (e) => {
+                                        const newModel = e.target.value;
+                                        const updated = { ...localSettings, aiModel: newModel } as typeof localSettings;
+                                        setLocalSettings(updated);
+                                        try {
+                                            // Persist immediately so user doesn't have to click Guardar
+                                            await setSettings(updated);
+                                            toast({ title: 'Ajustes guardados', description: `Modelo IA: ${newModel}` });
+                                        } catch (err) {
+                                            console.error('Error saving AI model setting', err);
+                                            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la selección de modelo.' });
+                                        }
+                                    }}
+                                >
+                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (recomendado)</option>
+                                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                                    <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                                </select>
+                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = 'gemini-2.5-flash'; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: 'Se ha seleccionado gemini-2.5-flash como predeterminado.' }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
+                                    Predeterminado
+                                </Button>
+                            </div>
+                        </div>
                 </div>
             </CardContent>
         </Card>

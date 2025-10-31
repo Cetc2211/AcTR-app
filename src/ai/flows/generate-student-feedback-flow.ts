@@ -2,8 +2,7 @@
 
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
-import { genkit } from 'genkit';
+import { generateFeedback } from '@/lib/generate';
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),
@@ -16,6 +15,7 @@ const StudentFeedbackInputSchema = z.object({
   })).describe('Breakdown of the grade by evaluation criteria.'),
   observations: z.array(z.string()).describe('List of observations from the behavioral log.'),
   apiKey: z.string().optional().describe('The user-provided Google AI API key.'),
+  aiModel: z.string().optional().describe('Optional preferred AI model'),
 });
 
 export type StudentFeedbackInput = z.infer<typeof StudentFeedbackInputSchema>;
@@ -26,13 +26,7 @@ const generateStudentFeedbackFlow = ai.defineFlow(
     inputSchema: StudentFeedbackInputSchema,
     outputSchema: z.string(),
   },
-  async ({ apiKey, ...flowInput }) => {
-    
-    // Initialize a per-request Genkit instance with the user's API key.
-    const perRequestAi = genkit({
-      plugins: [googleAI({ apiKey: apiKey || process.env.GEMINI_API_KEY })],
-    });
-    
+  async ({ apiKey, aiModel, ...flowInput }) => {
     const { studentName, partial, finalGrade, attendanceRate, criteria, observations } = flowInput;
 
     const topCriteria = criteria.sort((a, b) => b.earnedPercentage - a.earnedPercentage).slice(0, 2);
@@ -60,13 +54,8 @@ const generateStudentFeedbackFlow = ai.defineFlow(
       Formato de salida: Un único párrafo de texto.
     `;
 
-    const llmResponse = await perRequestAi.generate({
-      model: 'gemini-1.5-flash-latest',
-      prompt: prompt,
-      config: { temperature: 0.7 },
-    });
-
-    return llmResponse.text;
+    const res = await generateFeedback(prompt, apiKey || process.env.GEMINI_API_KEY || '', aiModel);
+    return res;
   }
 );
 

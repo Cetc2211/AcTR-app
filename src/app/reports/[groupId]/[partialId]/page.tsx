@@ -74,6 +74,7 @@ export default function GroupReportPage() {
   const [isGeneratingAnalysis, setIsGeneratingAnalysis] = useState(false);
   const [isApiKeyValid, setIsApiKeyValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastUsedModel, setLastUsedModel] = useState<string | null>(null);
 
   useEffect(() => {
     setNarrativeAnalysis(groupAnalysis || '');
@@ -315,7 +316,7 @@ export default function GroupReportPage() {
     const res = await fetch('/api/generate-ia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, apiKey: settings.apiKey }),
+      body: JSON.stringify({ prompt, apiKey: settings.apiKey, model: settings.aiModel }),
     });
 
     const data = await res.json();
@@ -325,7 +326,8 @@ export default function GroupReportPage() {
     }
 
     setNarrativeAnalysis(data.text || '');
-    toast({ title: '¡Análisis generado!', description: 'La IA ha completado el análisis del grupo.' });
+    setLastUsedModel(data.model || settings.aiModel || null);
+    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo. Modelo usado: ${data.model || settings.aiModel || 'desconocido'}` });
   } catch(e: any) {
     console.error(e);
     toast({
@@ -417,6 +419,12 @@ export default function GroupReportPage() {
                     <span>{format(new Date(), 'PPP', {locale: es})}</span>
                 </div>
            </div>
+           {lastUsedModel && (
+             <div className="pt-2 text-sm text-muted-foreground">
+               <span className="font-semibold">Modelo IA usado: </span>
+               <span>{lastUsedModel}</span>
+             </div>
+           )}
         </header>
 
         <section className="space-y-6">

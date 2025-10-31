@@ -33,7 +33,8 @@ export const defaultSettings: AppSettings = {
     facilitatorName: "",
     scheduleImageUrl: "",
     teacherPhoto: "",
-    whatsappContactNumber: ""
+    whatsappContactNumber: "",
+    aiModel: 'gemini-2.5-flash',
 };
 
 const defaultPartialData: PartialData = {

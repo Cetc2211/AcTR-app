@@ -153,6 +153,7 @@ export type AppSettings = {
     logo: string;
     theme: string;
     apiKey: string;
+  aiModel?: string;
     signature: string;
     facilitatorName: string;
     scheduleImageUrl: string;
