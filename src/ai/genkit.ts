@@ -1,13 +1,13 @@
 'use server';
 
-import { genkit, configureGenkit } from 'genkit';
+import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 // This configures Genkit for the entire application.
 // By NOT providing an apiKey here, we ensure that each flow
 // is responsible for providing its own key, which aligns with
 // the multi-user API key requirement.
-configureGenkit({
+const ai = genkit({
   plugins: [
     googleAI(),
   ],
@@ -17,4 +17,4 @@ configureGenkit({
 
 // We export the configured genkit instance as 'ai'.
 // Flows will import this instance to define themselves.
-export { genkit as ai };
+export { ai };
