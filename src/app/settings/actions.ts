@@ -1,7 +1,7 @@
 'use server';
 
-import { genkit } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import { genkit } from 'genkit';
 
 // Server action to test the API key
 export async function testApiKeyAction(apiKey: string): Promise<{ success: boolean; error?: string }> {
@@ -10,10 +10,10 @@ export async function testApiKeyAction(apiKey: string): Promise<{ success: boole
     }
 
     try {
-        const model = googleAI({ apiKey }).model('gemini-1.5-flash-latest');
-        
-        await genkit.generate({
-            model: model,
+        const perRequestAi = genkit({ plugins: [googleAI({ apiKey })] });
+
+        await perRequestAi.generate({
+            model: 'gemini-1.5-flash-latest',
             prompt: 'Test',
             config: { temperature: 0 },
         });

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -61,6 +62,7 @@ export default function SettingsPage() {
     const [importFile, setImportFile] = useState<File | null>(null);
     const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
     const [isTestingKey, setIsTestingKey] = useState(false);
+    const [isApiKeyValid, setIsApiKeyValid] = useState<boolean | null>(null);
     
     useEffect(() => {
         if(!isLoading && settings) {
@@ -70,7 +72,14 @@ export default function SettingsPage() {
             setScheduleImagePreview(settings.scheduleImageUrl);
             setTeacherPhotoPreview(settings.teacherPhoto);
         }
+        // reset validation when settings load
+        setIsApiKeyValid(null);
     }, [settings, isLoading]);
+
+    useEffect(() => {
+        // reset validation flag when the API key value changes locally
+        setIsApiKeyValid(null);
+    }, [localSettings.apiKey]);
     
     const handleSave = async () => {
         setIsSaving(true);
@@ -236,8 +245,10 @@ export default function SettingsPage() {
         const result = await testApiKeyAction(localSettings.apiKey);
         if (result.success) {
             toast({ title: '¡Éxito!', description: 'Tu clave de API de Google AI es válida.' });
+            setIsApiKeyValid(true);
         } else {
             toast({ variant: 'destructive', title: 'Error de API', description: result.error });
+            setIsApiKeyValid(false);
         }
         setIsTestingKey(false);
     };
@@ -294,6 +305,12 @@ export default function SettingsPage() {
                             >
                                 {isTestingKey ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : 'Probar Clave'}
                             </Button>
+                            {isApiKeyValid === true && (
+                                <Badge className="ml-2 bg-green-600 text-white">Clave válida</Badge>
+                            )}
+                            {isApiKeyValid === false && (
+                                <Badge variant="destructive" className="ml-2">Clave inválida</Badge>
+                            )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                             Tu clave se almacena localmente y solo se usa para generar informes.

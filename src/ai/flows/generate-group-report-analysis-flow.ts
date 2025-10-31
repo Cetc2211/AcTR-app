@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import { genkit } from 'genkit';
 
 const GroupReportInputSchema = z.object({
     groupName: z.string().describe('The name of the subject or group.'),
@@ -26,8 +27,12 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
   },
   async ({ apiKey, ...flowInput}) => {
     
-    // Initialize the Google AI model dynamically with the user's API key.
-    const model = googleAI({ apiKey: apiKey || process.env.GEMINI_API_KEY }).model('gemini-1.5-flash-latest');
+    // Initialize a per-request Genkit instance with the user's API key.
+    // Note: the googleAI plugin does not expose a `.model()` method on the plugin
+    // type; instead we create a genkit instance and pass the model name to `generate`.
+    const perRequestAi = genkit({
+      plugins: [googleAI({ apiKey: apiKey || process.env.GEMINI_API_KEY })],
+    });
     
     const prompt = `
       Eres un asistente pedagógico experto en análisis de datos académicos.
@@ -53,9 +58,9 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
       Formato de salida: Un único párrafo de texto. No uses listas ni viñetas.
     `;
 
-    const llmResponse = await ai.generate({
+    const llmResponse = await perRequestAi.generate({
+      model: 'gemini-1.5-flash-latest',
       prompt: prompt,
-      model: model,
       config: { temperature: 0.5 },
     });
 

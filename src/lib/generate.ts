@@ -32,7 +32,22 @@ async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
     });
     return response.text;
   } catch (e: any) {
-    console.error("Genkit AI Error:", e);
+    // Log error with as much context as is safe (avoid logging API keys)
+    try {
+      const safeInfo = {
+        message: e?.message,
+        name: e?.name,
+        // if the library provides a status or code, include it
+        code: e?.code || e?.status,
+      };
+      console.error("Genkit AI Error:", JSON.stringify(safeInfo));
+      if (e?.response) {
+        // response may be large - log only status and a short snippet if available
+        console.error("Genkit AI response info:", { status: e.response?.status, bodySnippet: String(e.response?.body)?.slice(0, 200) });
+      }
+    } catch (logErr) {
+      console.error('Error while logging Genkit AI error', logErr);
+    }
     // Improve error message for common API key issues
     if (e.message && (e.message.includes('API key not valid') || e.message.includes('invalid api key'))) {
         throw new Error("La clave API de Google AI proporcionada no es válida. Verifica que sea correcta.");

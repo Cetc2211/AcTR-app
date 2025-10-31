@@ -11,8 +11,6 @@ const ai = genkit({
   plugins: [
     googleAI(),
   ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
 });
 
 // We export the configured genkit instance as 'ai'.
