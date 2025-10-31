@@ -55,6 +55,19 @@ async function callGoogleAI(prompt: string, apiKey: string): Promise<string> {
      if (e.message && e.message.includes('not found')) {
       throw new Error(`El modelo no fue encontrado o no está disponible. Asegúrate de usar un modelo válido como 'gemini-1.5-flash-latest'.`);
     }
+    // Handle model-not-found errors specifically to provide actionable feedback to the user
+    const msg = (e?.originalMessage || e?.message || '').toString().toLowerCase();
+    if (msg.includes('model') && msg.includes('not found')) {
+      // Try to extract the model name for a clearer message
+      const m = (e?.originalMessage || e?.message || '').toString();
+      const modelMatch = m.match(/Model '\s*([^']+)\s*' not found/i) || m.match(/Model "\s*([^\"]+)\s*" not found/i);
+      const modelName = modelMatch ? modelMatch[1] : undefined;
+      if (modelName) {
+        throw new Error(`El modelo '${modelName}' no está disponible para la clave API proporcionada. Verifica que tu clave tenga permisos para usar ese modelo o prueba con otra clave.`);
+      }
+      throw new Error('El modelo solicitado no fue encontrado. Verifica que tu clave API tenga acceso al modelo solicitado.');
+    }
+
     throw new Error(`Error del servicio de IA: ${e.message || 'Error desconocido'}`);
   }
 }
