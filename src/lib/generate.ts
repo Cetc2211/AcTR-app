@@ -21,11 +21,8 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Build a prioritized list of models to try: requested first, then fallbacks
   const fallbackCandidates = [
     ...(requestedModel ? [requestedModel] : []),
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
+    'gemini-pro',           // Modelo principal de texto
+    'gemini-pro-vision',    // Modelo para contenido con imágenes (fallback)
   ];
 
   const triedModels: string[] = [];
@@ -55,29 +52,56 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
           message: e?.message,
           name: e?.name,
           code: e?.code || e?.status,
+          modelTried: model,
+          isModelNotFound: (e?.originalMessage || e?.message || '').toString().toLowerCase().includes('not found'),
+          responseStatus: e?.response?.status,
+          responseType: e?.response?.type,
         };
-        console.error(`Genkit AI Error for model=${model}:`, JSON.stringify(safeInfo));
-        if (e?.response) {
-          console.error(`Genkit AI response info for model=${model}:`, { status: e.response?.status, bodySnippet: String(e.response?.body)?.slice(0, 200) });
+        console.error(`[Genkit AI Error] Intento fallido para modelo=${model}:`, JSON.stringify(safeInfo, null, 2));
+        
+        if (e?.response?.body) {
+          const bodySnippet = String(e.response.body).slice(0, 200);
+          console.error(`[Genkit AI Response] Detalle para modelo=${model}:`, { 
+            bodyPreview: bodySnippet,
+            contentType: e.response.headers?.['content-type']
+          });
         }
       } catch (logErr) {
-        console.error('Error while logging Genkit AI error', logErr);
+        console.error('[Error de Logging] No se pudo registrar el error de Genkit:', logErr);
       }
 
       const msg = (e?.originalMessage || e?.message || '').toString().toLowerCase();
-      // If error is model-not-found, continue to next fallback
+      // Si el modelo no se encuentra, intentar el siguiente
       if (msg.includes('model') && msg.includes('not found')) {
-        console.warn(`Model not found for requested model '${model}'. Trying next fallback if available.`);
-        continue; // try next model
+        console.warn(`[Genkit Fallback] Modelo '${model}' no encontrado o no disponible. Probando siguiente modelo...`);
+        continue; // Probar siguiente modelo
       }
 
-      // For API key invalid errors, give a clear message
+      // Para errores de clave API, dar mensaje claro
       if (msg.includes('api key') || msg.includes('invalid') || msg.includes('not authorized') || msg.includes('permission')) {
-        throw new Error('La clave API de Google AI proporcionada no es válida o no tiene permisos. Verifica la clave.');
+        throw new Error(
+          'La clave API de Google AI proporcionada no es válida o no tiene acceso a los modelos de Gemini. ' +
+          'Verifica que: \n' +
+          '1. La clave API sea correcta\n' +
+          '2. Tengas acceso a la API de Gemini\n' +
+          '3. Tu cuenta tenga permisos para los modelos solicitados'
+        );
       }
 
-      // For other errors, stop and rethrow a friendly message
-      throw new Error(`Error del servicio de IA: ${e?.message || 'Error desconocido'}`);
+      // Para errores de cuota o límites
+      if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('capacity')) {
+        throw new Error(
+          'Se ha alcanzado el límite de uso de la API. ' +
+          'Esto puede ocurrir si:\n' +
+          '1. Has excedido tu cuota gratuita\n' +
+          '2. Hay muchas solicitudes simultáneas\n' +
+          'Intenta nuevamente en unos minutos o contacta al soporte si persiste.'
+        );
+      }
+
+      // Para otros errores, detener y relanzar con mensaje amigable
+      throw new Error(`Error del servicio de IA: ${e?.message || 'Error desconocido'}\n` +
+        'Si el problema persiste, verifica tu conexión e intenta con otro modelo en Ajustes.');
     }
   }
 
