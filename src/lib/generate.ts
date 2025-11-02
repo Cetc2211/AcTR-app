@@ -19,10 +19,13 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   });
 
   // Build a prioritized list of models to try: requested first, then fallbacks
+  // Orden alineado con Google AI Studio (texto): 2.5-pro → 2.5-flash → 2.0-flash → 2.0-flash-lite
   const fallbackCandidates = [
     ...(requestedModel ? [requestedModel] : []),
-    'gemini-pro',           // Modelo principal de texto
-    'gemini-pro-vision',    // Modelo para contenido con imágenes (fallback)
+    'gemini-2.5-pro',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-lite',
   ];
 
   const triedModels: string[] = [];

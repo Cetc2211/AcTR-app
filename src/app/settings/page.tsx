@@ -338,12 +338,12 @@ export default function SettingsPage() {
                                         }
                                     }}
                                 >
-                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (recomendado)</option>
+                                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (recomendado)</option>
+                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                                     <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
                                     <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
-                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
                                 </select>
-                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = 'gemini-2.5-flash'; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: 'Se ha seleccionado gemini-2.5-flash como predeterminado.' }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
+                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = 'gemini-2.5-pro'; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: 'Se ha seleccionado gemini-2.5-pro como predeterminado.' }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
                                     Predeterminado
                                 </Button>
                             </div>
