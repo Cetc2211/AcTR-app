@@ -297,7 +297,35 @@ export default function GroupReportPage() {
       }
     }
 
-    // Build the same prompt that the server expects
+    // Intento principal: endpoint estructurado
+    const input = {
+      subject: group.subject,
+      partialLabel: getPartialLabel(partialId),
+      totalStudents: summary.totalStudents,
+      approvedCount: summary.approvedCount,
+      failedCount: summary.failedCount,
+      groupAverage: summary.groupAverage,
+      attendanceRate: summary.attendanceRate,
+      participationRate: summary.participationRate,
+      atRiskCount: atRiskStudentsForGroup.length,
+      recentObservations: recentObservations.map(o => `${o.studentName} (${o.type}): ${o.details}`),
+      tone: 'formal' as const,
+    };
+
+    const resGA = await fetch('/api/generate-group-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: settings.apiKey, model: settings.aiModel, input }),
+    });
+    const dataGA = await resGA.json();
+    if (resGA.ok && dataGA.ok && dataGA.analysis) {
+      setNarrativeAnalysis(dataGA.analysis);
+      setLastUsedModel(dataGA.model || settings.aiModel || null);
+      toast({ title: '¡Análisis generado!', description: `Modelo usado: ${dataGA.model || settings.aiModel || 'desconocido'}` });
+      return;
+    }
+
+    // Fallback legacy a /api/generate-ia con prompt libre
     const prompt = `
     Eres un asistente pedagógico experto en análisis de datos académicos.
     Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
