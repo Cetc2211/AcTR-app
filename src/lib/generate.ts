@@ -1,4 +1,4 @@
-'use server';
+ok 'use server';
 
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
@@ -28,12 +28,18 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Normalizamos el modelo solicitado: si no es válido, lo ignoramos
   const requestedFirst = requestedModel && allowedModels.includes(requestedModel as any) ? [requestedModel] : [];
 
-  // Construimos la lista priorizada sin duplicados
-  const fallbackCandidates = Array.from(new Set<string>([...requestedFirst, ...allowedModels]));
+    // Build a prioritized list of models to try: requested first, then fallbacks
+  // Use official, stable model names for broad compatibility.
+  const fallbackCandidates = [
+    ...(requestedModel ? [requestedModel] : []),
+    'gemini-1.5-flash-latest',
+    'gemini-pro',
+  ];
 
+  const uniqueCandidates = Array.from(new Set(fallbackCandidates));
   const triedModels: string[] = [];
 
-  for (const model of fallbackCandidates) {
+  for (const model of uniqueCandidates) {
     if (!model) continue;
     triedModels.push(model);
     try {
