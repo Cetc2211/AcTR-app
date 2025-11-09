@@ -1,136 +1,164 @@
 'use server';
 
-import { genkit } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from '@google/generative-ai';
 
 // This is a server-side file. It should not be imported directly into client components.
 
 type CallResult = { text: string; model: string };
 
-async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: string): Promise<CallResult> {
+/**
+ * Calls the Google AI API with a given prompt and API key, trying a list of candidate models.
+ * This function is designed to work with simple, free-tier API keys from Google AI Studio.
+ *
+ * @param prompt The text prompt to send to the model.
+ * @param apiKey The user's Google AI API key.
+ * @param requestedModel An optional preferred model to try first.
+ * @returns A promise that resolves to an object containing the generated text and the model used.
+ */
+async function callGoogleAI(
+  prompt: string,
+  apiKey: string,
+  requestedModel?: string,
+): Promise<CallResult> {
   if (!apiKey) {
-    throw new Error("No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.");
+    throw new Error(
+      'No se ha configurado una clave API de Google AI válida. Ve a Ajustes para agregarla.',
+    );
   }
-  
-  // Configure Genkit on-the-fly for each request.
-  // This ensures the latest API key from settings is used.
-  const ai = genkit({
-    plugins: [googleAI({ apiKey: apiKey, location: 'us-central1' })],
-  });
 
-  // Lista de modelos válidos conocidos (texto)
-  const allowedModels = [
-    'gemini-2.5-pro',
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-  ] as const;
+  const genAI = new GoogleGenerativeAI(apiKey);
 
-  // Normalizamos el modelo solicitado: si no es válido, lo ignoramos
-  const requestedFirst = requestedModel && allowedModels.includes(requestedModel as any) ? [requestedModel] : [];
-
-    // Build a prioritized list of models to try: requested first, then fallbacks
-  // Use official, stable model names for broad compatibility.
+  // Build a prioritized list of models to try.
+  // 'gemini-1.5-flash-latest' is the recommended and most capable model for free-tier API keys from AI Studio.
   const fallbackCandidates = [
-    ...(requestedModel ? [requestedModel] : []),
+    requestedModel,
     'gemini-1.5-flash-latest',
-    'gemini-pro',
-  ];
+    'gemini-pro', // A solid fallback if 1.5-flash is unavailable for any reason.
+  ].filter(Boolean) as string[]; // Filter out undefined/null if requestedModel is not provided
 
   const uniqueCandidates = Array.from(new Set(fallbackCandidates));
   const triedModels: string[] = [];
+  let lastError: any = null;
 
-  for (const model of uniqueCandidates) {
-    if (!model) continue;
-    triedModels.push(model);
+  for (const modelName of uniqueCandidates) {
+    triedModels.push(modelName);
     try {
-      const response = await ai.generate({
-        model,
-        prompt,
-        config: {
-          temperature: 0.5,
-          safetySettings: [
-            {
-              category: 'HARM_CATEGORY_HARASSMENT',
-              threshold: 'BLOCK_ONLY_HIGH',
-            },
-          ],
-        },
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        safetySettings: [
+          {
+            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+          },
+          {
+            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+          },
+        ],
       });
-      return { text: response.text, model };
+
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      const text = response.text();
+
+      return { text, model: modelName };
     } catch (e: any) {
-      // Log error with as much context as is safe (avoid logging API keys)
-      try {
-        const safeInfo = {
-          message: e?.message,
-          name: e?.name,
-          code: e?.code || e?.status,
-          modelTried: model,
-          isModelNotFound: (e?.originalMessage || e?.message || '').toString().toLowerCase().includes('not found'),
-          responseStatus: e?.response?.status,
-          responseType: e?.response?.type,
-        };
-        console.error(`[Genkit AI Error] Intento fallido para modelo=${model}:`, JSON.stringify(safeInfo, null, 2));
-        
-        if (e?.response?.body) {
-          const bodySnippet = String(e.response.body).slice(0, 200);
-          console.error(`[Genkit AI Response] Detalle para modelo=${model}:`, { 
-            bodyPreview: bodySnippet,
-            contentType: e.response.headers?.['content-type']
-          });
-        }
-      } catch (logErr) {
-        console.error('[Error de Logging] No se pudo registrar el error de Genkit:', logErr);
+      lastError = e;
+      const errorMessage = e.toString().toLowerCase();
+      console.error(
+        `[Google AI Error] Intento fallido para modelo=${modelName}:`,
+        e.message,
+      );
+
+      // If the model is not found or permission is denied for it, try the next one.
+      if (
+        errorMessage.includes('not found') ||
+        errorMessage.includes('permission denied') ||
+        e.status === 404
+      ) {
+        console.warn(
+          `[Google AI Fallback] Modelo '${modelName}' no encontrado o no accesible. Probando siguiente...`,
+        );
+        continue;
       }
 
-      const msg = (e?.originalMessage || e?.message || '').toString().toLowerCase();
-      // Si el modelo no se encuentra, intentar el siguiente
-      if (msg.includes('model') && msg.includes('not found')) {
-        console.warn(`[Genkit Fallback] Modelo '${model}' no encontrado o no disponible. Probando siguiente modelo...`);
-        continue; // Probar siguiente modelo
-      }
-
-      // Para errores de clave API, dar mensaje claro
-      if (msg.includes('api key') || msg.includes('invalid') || msg.includes('not authorized') || msg.includes('permission')) {
+      // Handle specific API key errors
+      if (errorMessage.includes('api key not valid')) {
         throw new Error(
-          'La clave API de Google AI proporcionada no es válida o no tiene acceso a los modelos de Gemini. ' +
-          'Verifica que: \n' +
-          '1. La clave API sea correcta\n' +
-          '2. Tengas acceso a la API de Gemini\n' +
-          '3. Tu cuenta tenga permisos para los modelos solicitados'
+          'La clave API de Google AI proporcionada no es válida. ' +
+            'Por favor, verifica que la copiaste correctamente desde Google AI Studio.',
         );
       }
 
-      // Para errores de cuota o límites
-      if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('capacity')) {
+      // Handle quota errors
+      if (errorMessage.includes('quota') || e.status === 429) {
         throw new Error(
-          'Se ha alcanzado el límite de uso de la API. ' +
-          'Esto puede ocurrir si:\n' +
-          '1. Has excedido tu cuota gratuita\n' +
-          '2. Hay muchas solicitudes simultáneas\n' +
-          'Intenta nuevamente en unos minutos o contacta al soporte si persiste.'
+          'Has excedido la cuota de uso para tu clave de API. ' +
+            'El plan gratuito tiene límites. Por favor, intenta de nuevo más tarde.',
         );
       }
 
-      // Para otros errores, detener y relanzar con mensaje amigable
-      throw new Error(`Error del servicio de IA: ${e?.message || 'Error desconocido'}\n` +
-        'Si el problema persiste, verifica tu conexión e intenta con otro modelo en Ajustes.');
+      // For other errors, don't continue, as it's likely a fundamental issue.
+      break;
     }
   }
 
-  // If we reached here, none of the candidate models succeeded
-  throw new Error(`Ningún modelo disponible respondió correctamente. Modelos intentados: ${triedModels.join(', ')}. Verifica tu clave o selecciona otro modelo en Ajustes.`);
+  // If we looped through all candidates and none succeeded, throw a comprehensive error.
+  let finalErrorMessage = `Ningún modelo disponible respondió correctamente. Modelos intentados: ${triedModels.join(
+    ', ',
+  )}.`;
+
+  if (lastError) {
+    const specificError = lastError.toString().toLowerCase();
+    if (specificError.includes('api key not valid')) {
+      finalErrorMessage =
+        'La clave API de Google AI no es válida. Asegúrate de obtenerla de Google AI Studio.';
+    } else if (specificError.includes('quota')) {
+      finalErrorMessage =
+        'Se ha excedido la cuota de uso de la API. Intenta de nuevo más tarde.';
+    } else {
+      finalErrorMessage += ` Último error: ${lastError.message}`;
+    }
+  }
+
+  throw new Error(finalErrorMessage);
 }
-export async function generateFeedback(prompt: string, apiKey: string, model?: string): Promise<string> {
+
+export async function generateFeedback(
+  prompt: string,
+  apiKey: string,
+  model?: string,
+): Promise<string> {
   const res = await callGoogleAI(prompt, apiKey, model);
   return res.text;
 }
 
-export async function generateGroupAnalysis(prompt: string, apiKey: string, model?: string): Promise<{ text: string; model: string }> {
+export async function generateGroupAnalysis(
+  prompt: string,
+  apiKey: string,
+  model?: string,
+): Promise<{ text: string; model: string }> {
   const res = await callGoogleAI(prompt, apiKey, model);
   return { text: res.text, model: res.model };
 }
 
-export async function generateSemesterAnalysis(prompt: string, apiKey: string, model?: string): Promise<string> {
+export async function generateSemesterAnalysis(
+  prompt: string,
+  apiKey: string,
+  model?: string,
+): Promise<string> {
   const res = await callGoogleAI(prompt, apiKey, model);
   return res.text;
 }
@@ -142,11 +170,13 @@ export async function testApiKey(apiKey: string): Promise<boolean> {
   }
 
   try {
-    const testPrompt = "Responde únicamente con la palabra 'OK' si este mensaje llega correctamente.";
+    const testPrompt =
+      "Responde únicamente con la palabra 'OK' si este mensaje llega correctamente.";
     const response = await callGoogleAI(testPrompt, apiKey);
-    return response.text.trim() === 'OK';
+    // Be lenient with the check, as the model might add extra whitespace.
+    return response.text.trim().toUpperCase() === 'OK';
   } catch (error) {
     console.error('Error testing Google AI API key:', error);
-    throw error; // Re-throw the specific error from callGoogleAI
+    throw error; // Re-throw the specific, user-friendly error from callGoogleAI
   }
 }
