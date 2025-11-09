@@ -25,7 +25,8 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
     inputSchema: GroupReportInputSchema,
     outputSchema: z.string(),
   },
-  async ({ apiKey, aiModel, ...flowInput }: { apiKey?: string; aiModel?: string; [key: string]: any }) => {
+  async (input: GroupReportInput) => {
+    const { apiKey, aiModel, ...flowInput } = input;
     const prompt = `
       Eres un asistente pedagógico experto en análisis de datos académicos.
       Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
