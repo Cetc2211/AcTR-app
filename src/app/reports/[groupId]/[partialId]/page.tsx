@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Download, CheckCircle, XCircle, TrendingUp, BarChart, Users, Eye, AlertTriangle, Loader2, BookText, Save, Sparkles } from 'lucide-react';
@@ -26,8 +26,8 @@ import type { PartialId, StudentObservation, Group, StudentWithRisk, RecoveryGra
 import { getPartialLabel } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { generateGroupReportAnalysis } from '@/ai';
-import { testApiKeyAction } from '@/app/settings/actions';
+// Nota: Evitamos importar módulos server-only (@/ai) en componentes cliente.
+// Nota: Validamos la API key vía un endpoint para evitar importar server actions en cliente.
 
 
 type ReportSummary = {
@@ -279,16 +279,53 @@ export default function GroupReportPage() {
     // First, ensure the API key works (verify once per session or until it changes)
     if (!isApiKeyValid) {
       setIsGeneratingAnalysis(true);
-      const testResult = await testApiKeyAction(settings.apiKey);
-      setIsGeneratingAnalysis(false);
-      if (!testResult.success) {
-        toast({ variant: 'destructive', title: 'Clave inválida', description: testResult.error || 'La clave API no es válida.' });
-        return;
+      try {
+        const res = await fetch('/api/test-ai-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: settings.apiKey }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          toast({ variant: 'destructive', title: 'Clave inválida', description: data.error || 'La clave API no es válida.' });
+          setIsGeneratingAnalysis(false);
+          return;
+        }
+        setIsApiKeyValid(true);
+      } finally {
+        setIsGeneratingAnalysis(false);
       }
-      setIsApiKeyValid(true);
     }
 
-    // Build the same prompt that the server expects
+    // Intento principal: endpoint estructurado
+    const input = {
+      subject: group.subject,
+      partialLabel: getPartialLabel(partialId),
+      totalStudents: summary.totalStudents,
+      approvedCount: summary.approvedCount,
+      failedCount: summary.failedCount,
+      groupAverage: summary.groupAverage,
+      attendanceRate: summary.attendanceRate,
+      participationRate: summary.participationRate,
+      atRiskCount: atRiskStudentsForGroup.length,
+      recentObservations: recentObservations.map(o => `${o.studentName} (${o.type}): ${o.details}`),
+      tone: 'formal' as const,
+    };
+
+    const resGA = await fetch('/api/generate-group-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: settings.apiKey, model: settings.aiModel, input }),
+    });
+    const dataGA = await resGA.json();
+    if (resGA.ok && dataGA.ok && dataGA.analysis) {
+      setNarrativeAnalysis(dataGA.analysis);
+      setLastUsedModel(dataGA.model || settings.aiModel || null);
+      toast({ title: '¡Análisis generado!', description: `Modelo usado: ${dataGA.model || settings.aiModel || 'desconocido'}` });
+      return;
+    }
+
+    // Fallback legacy a /api/generate-ia con prompt libre
     const prompt = `
     Eres un asistente pedagógico experto en análisis de datos académicos.
     Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
@@ -364,7 +401,23 @@ export default function GroupReportPage() {
   }
 
   if (!group) {
-    return notFound();
+    return (
+      <div className="p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Grupo no encontrado</CardTitle>
+            <CardDescription>
+              No pudimos localizar el grupo solicitado. Verifica el enlace o regresa a Informes.
+            </CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Button asChild>
+              <Link href="/reports">Volver a Informes</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
   }
 
   return (

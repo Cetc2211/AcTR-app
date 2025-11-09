@@ -10,7 +10,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Download, User, Mail, Phone, Loader2, MessageSquare, BookText, Edit, Save, XCircle, Sparkles } from 'lucide-react';
@@ -25,7 +25,7 @@ import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDeta
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
 import { WhatsAppDialog } from '@/components/whatsapp-dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { generateStudentFeedback } from '@/ai';
+// Nota: Evitamos importar módulos server-only (@/ai) en componentes cliente.
 
 export default function StudentProfilePage() {
   const params = useParams();
@@ -256,17 +256,72 @@ export default function StudentProfilePage() {
     toast({ title: 'Generando retroalimentación con IA...', description: 'Esto puede tomar unos segundos.' });
 
     try {
-        const result = await generateStudentFeedback({
-            studentName: student.name,
-            partial: getPartialLabel(activePartialId),
-            finalGrade: activePartialStats.finalGrade,
-            attendanceRate: activePartialStats.attendance.rate,
-            criteria: activePartialStats.criteriaDetails.map(c => ({ name: c.name, earnedPercentage: c.earned })),
-            observations: activePartialStats.observations.map(o => o.details),
-            apiKey: settings.apiKey,
+        // 1) Construimos el input tipado para el endpoint estructurado
+        const topCriteriaList = [...activePartialStats.criteriaDetails]
+          .sort((a, b) => b.earned - a.earned)
+          .slice(0, 2)
+          .map(c => c.name);
+        const bottomCriteriaList = [...activePartialStats.criteriaDetails]
+          .sort((a, b) => a.earned - b.earned)
+          .slice(0, 2)
+          .map(c => c.name);
+
+        const primaryGroup = studentGroups[0];
+        const input = {
+          studentName: student.name,
+          subject: primaryGroup?.subject || 'Asignatura',
+          partialLabel: getPartialLabel(activePartialId),
+          finalGrade: activePartialStats.finalGrade,
+          attendanceRate: activePartialStats.attendance.rate,
+          topCriteria: topCriteriaList,
+          bottomCriteria: bottomCriteriaList,
+          observations: activePartialStats.observations.map(o => o.details),
+          tone: 'empatico' as const,
+        };
+
+        // 2) Intentamos primero el endpoint estructurado
+        const resEval = await fetch('/api/generate-evaluation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: settings.apiKey, model: settings.aiModel, input }),
         });
-        setCurrentFeedback(result);
-        toast({ title: '¡Retroalimentación generada!', description: 'La IA ha completado el análisis del estudiante.' });
+        const dataEval = await resEval.json();
+        if (resEval.ok && dataEval.ok && dataEval.feedback) {
+          setCurrentFeedback(dataEval.feedback);
+          toast({ title: '¡Retroalimentación generada!', description: `Modelo usado: ${dataEval.model || settings.aiModel || 'desconocido'}` });
+          return;
+        }
+
+        // 3) Fallback: si el nuevo endpoint falla, usamos el legacy prompt
+        const promptFallback = `
+Eres un docente experimentado y empático. Tu objetivo es redactar una retroalimentación constructiva y personalizada para un estudiante llamado ${student.name} sobre su rendimiento en el ${getPartialLabel(activePartialId)}.
+La retroalimentación debe ser balanceada, reconociendo fortalezas y señalando áreas de oportunidad de manera clara y motivadora.
+
+Datos del estudiante:
+- Calificación Final: ${activePartialStats.finalGrade.toFixed(1)}%
+- Tasa de Asistencia: ${activePartialStats.attendance.rate.toFixed(1)}%
+- Criterios con mejor desempeño: ${topCriteriaList.join(', ') || 'N/A'}
+- Criterios con menor desempeño: ${bottomCriteriaList.join(', ') || 'N/A'}
+- Observaciones en bitácora: ${activePartialStats.observations.length > 0 ? activePartialStats.observations.map(o => o.details).join('; ') : 'Ninguna'}
+
+Redacta un único párrafo siguiendo esta estructura:
+1) Saludo y reconocimiento ligado a una fortaleza
+2) Área principal a mejorar (menciona criterios con bajo desempeño)
+3) Sugerencia accionable concreta
+4) Cierre motivacional
+        `;
+
+        const res = await fetch('/api/generate-ia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptFallback, apiKey: settings.apiKey, model: settings.aiModel }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          throw new Error(data.error || 'Error en la API de generación');
+        }
+        setCurrentFeedback(data.text || '');
+        toast({ title: '¡Retroalimentación generada!', description: `Modelo usado: ${data.model || settings.aiModel || 'desconocido'}` });
     } catch (e: any) {
         console.error(e);
         toast({
@@ -289,7 +344,23 @@ export default function StudentProfilePage() {
   }
   
   if (!student) {
-      return notFound();
+      return (
+        <div className="p-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Estudiante no encontrado</CardTitle>
+              <CardDescription>
+                No pudimos localizar al estudiante solicitado. Verifica el enlace o regresa a Informes.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+              <Button asChild>
+                <Link href="/reports">Volver</Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      );
   }
 
   const allSemesterObservations = Object.values(allObservations)
