@@ -26,7 +26,7 @@ const generateStudentFeedbackFlow = ai.defineFlow(
     inputSchema: StudentFeedbackInputSchema,
     outputSchema: z.string(),
   },
-  async ({ apiKey, aiModel, ...flowInput }) => {
+  async ({ apiKey, aiModel, ...flowInput }: { apiKey?: string; aiModel?: string; [key: string]: any }) => {
     const { studentName, partial, finalGrade, attendanceRate, criteria, observations } = flowInput;
 
     const topCriteria = criteria.sort((a, b) => b.earnedPercentage - a.earnedPercentage).slice(0, 2);
