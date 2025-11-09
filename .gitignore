@@ -2,3 +2,4 @@
 .next/
 node_modules/.evi
 node_modules
+tsconfig.tsbuildinfo

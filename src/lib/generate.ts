@@ -15,7 +15,7 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Configure Genkit on-the-fly for each request.
   // This ensures the latest API key from settings is used.
   const ai = genkit({
-    plugins: [googleAI({ apiKey: apiKey, location: 'us-central1' })],
+    plugins: [googleAI({ apiKey: apiKey })],
   });
 
   // Lista de modelos válidos conocidos (texto)
@@ -23,6 +23,8 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
     'gemini-2.5-pro',
     'gemini-2.5-flash',
     'gemini-2.0-flash',
+    'gemini-1.5-pro',
+    'gemini-1.5-flash',
   ] as const;
 
   // Normalizamos el modelo solicitado: si no es válido, lo ignoramos
@@ -32,8 +34,8 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Use official, stable model names for broad compatibility.
   const fallbackCandidates = [
     ...(requestedModel ? [requestedModel] : []),
-    'gemini-1.5-flash-latest',
-    'gemini-pro',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro',
   ];
 
   const uniqueCandidates = Array.from(new Set(fallbackCandidates));
