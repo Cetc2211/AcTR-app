@@ -15,7 +15,7 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Configure Genkit on-the-fly for each request.
   // This ensures the latest API key from settings is used.
   const ai = genkit({
-    plugins: [googleAI({ apiKey: apiKey })],
+    plugins: [googleAI({ apiKey: apiKey, location: 'us-central1' })],
   });
 
   // Lista de modelos válidos conocidos (texto)
