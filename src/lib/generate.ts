@@ -2,6 +2,7 @@
 
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
+import { FALLBACK_MODELS, normalizeModel, describeModel } from '@/lib/ai-models';
 
 // This is a server-side file. It should not be imported directly into client components.
 
@@ -20,13 +21,12 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
 
   // Build a prioritized list of models to try: requested first, then fallbacks
   // Orden alineado con Google AI Studio (texto): 2.5-pro → 2.5-flash → 2.0-flash → 2.0-flash-lite
-  const fallbackCandidates = [
-    ...(requestedModel ? [requestedModel] : []),
-    'gemini-2.5-pro',
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-  ];
+  const requested = requestedModel ? normalizeModel(requestedModel) : undefined;
+  const fallbackCandidates = Array.from(
+    new Set(
+      [requested, ...FALLBACK_MODELS].filter(Boolean) as string[],
+    ),
+  );
 
   const triedModels: string[] = [];
 
@@ -109,7 +109,8 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   }
 
   // If we reached here, none of the candidate models succeeded
-  throw new Error(`Ningún modelo disponible respondió correctamente. Modelos intentados: ${triedModels.join(', ')}. Verifica tu clave o selecciona otro modelo en Ajustes.`);
+  const humanModels = triedModels.map(describeModel);
+  throw new Error(`Ningún modelo disponible respondió correctamente. Modelos intentados: ${humanModels.join(', ')}. Verifica tu clave o selecciona otro modelo en Ajustes.`);
 }
 export async function generateFeedback(prompt: string, apiKey: string, model?: string): Promise<string> {
   const res = await callGoogleAI(prompt, apiKey, model);

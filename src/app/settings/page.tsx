@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeSwitcher, themes } from '@/components/theme-switcher';
 import { Separator } from '@/components/ui/separator';
@@ -35,6 +35,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NoteDialog } from '@/components/note-dialog';
 import { testApiKeyAction } from './actions';
+import { MODEL_OPTIONS, DEFAULT_MODEL, normalizeModel, describeModel } from '@/lib/ai-models';
 
 
 type ExportData = {
@@ -63,10 +64,14 @@ export default function SettingsPage() {
     const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
     const [isTestingKey, setIsTestingKey] = useState(false);
     const [isApiKeyValid, setIsApiKeyValid] = useState<boolean | null>(null);
+    const getModelLabel = useMemo(() => {
+        return (value: string) => MODEL_OPTIONS.find(opt => opt.value === value)?.label || describeModel(value);
+    }, []);
     
     useEffect(() => {
         if(!isLoading && settings) {
-            setLocalSettings(settings);
+            const normalizedModel = normalizeModel(settings.aiModel);
+            setLocalSettings({ ...settings, aiModel: normalizedModel });
             setLogoPreview(settings.logo);
             setSignaturePreview(settings.signature);
             setScheduleImagePreview(settings.scheduleImageUrl);
@@ -323,27 +328,26 @@ export default function SettingsPage() {
                                 <select
                                     id="aiModel"
                                     className="input"
-                                    value={localSettings.aiModel || ''}
+                                    value={normalizeModel(localSettings.aiModel) || DEFAULT_MODEL}
                                     onChange={async (e) => {
-                                        const newModel = e.target.value;
+                                        const newModel = normalizeModel(e.target.value);
                                         const updated = { ...localSettings, aiModel: newModel } as typeof localSettings;
                                         setLocalSettings(updated);
                                         try {
                                             // Persist immediately so user doesn't have to click Guardar
                                             await setSettings(updated);
-                                            toast({ title: 'Ajustes guardados', description: `Modelo IA: ${newModel}` });
+                                            toast({ title: 'Ajustes guardados', description: `Modelo IA: ${getModelLabel(newModel)}` });
                                         } catch (err) {
                                             console.error('Error saving AI model setting', err);
                                             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la selección de modelo.' });
                                         }
                                     }}
                                 >
-                                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (recomendado)</option>
-                                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                                    <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+                                    {MODEL_OPTIONS.map(({ value, label }) => (
+                                        <option key={value} value={value}>{label}</option>
+                                    ))}
                                 </select>
-                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = 'gemini-2.5-pro'; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: 'Se ha seleccionado gemini-2.5-pro como predeterminado.' }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
+                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = DEFAULT_MODEL; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: `Se ha seleccionado ${getModelLabel(defaultModel)} como predeterminado.` }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
                                     Predeterminado
                                 </Button>
                             </div>

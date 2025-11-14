@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { get, set, del, clear } from 'idb-keyval';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
+import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
 
@@ -34,7 +35,7 @@ export const defaultSettings: AppSettings = {
     scheduleImageUrl: "",
     teacherPhoto: "",
     whatsappContactNumber: "",
-    aiModel: 'gemini-2.5-flash',
+    aiModel: DEFAULT_MODEL,
 };
 
 const defaultPartialData: PartialData = {
@@ -46,6 +47,14 @@ const defaultPartialData: PartialData = {
     recoveryGrades: {},
     feedbacks: {},
     groupAnalysis: '',
+};
+
+const normalizeSettingsValue = (settings: AppSettings): AppSettings => {
+    const aiModel = normalizeModel(settings.aiModel);
+    if (aiModel === settings.aiModel) {
+        return settings;
+    }
+    return { ...settings, aiModel };
 };
 
 // --- DATA CONTEXT & PROVIDER ---
@@ -158,7 +167,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setAllObservationsState(loadedObservations || {});
                 setSpecialNotesState(loadedSpecialNotes || []);
                 setAllPartialsDataState(loadedPartialsData || {});
-                setSettingsState(loadedSettings || defaultSettings);
+                const resolvedSettings = normalizeSettingsValue(loadedSettings || defaultSettings);
+                setSettingsState(resolvedSettings);
+                if (loadedSettings && resolvedSettings.aiModel !== loadedSettings.aiModel) {
+                    await set('app_settings', resolvedSettings);
+                }
                 
                 if (loadedActiveGroupId && (loadedGroups || []).some(g => g.id === loadedActiveGroupId)) {
                     setActiveGroupIdState(loadedActiveGroupId);
@@ -201,8 +214,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const setAllPartialsData = createSetterWithStorage(setAllPartialsDataState, 'app_partialsData', allPartialsData);
     
     const setSettings = useCallback(async (newSettings: AppSettings) => {
-        setSettingsState(newSettings);
-        await set('app_settings', newSettings);
+        const normalizedSettings = normalizeSettingsValue(newSettings);
+        setSettingsState(normalizedSettings);
+        await set('app_settings', normalizedSettings);
     }, []);
 
     const setActiveGroupId = useCallback(async (groupId: string | null) => {

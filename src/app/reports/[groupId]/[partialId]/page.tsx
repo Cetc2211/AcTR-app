@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { generateGroupReportAnalysis } from '@/ai';
 import { testApiKeyAction } from '@/app/settings/actions';
+import { normalizeModel, describeModel } from '@/lib/ai-models';
 
 
 type ReportSummary = {
@@ -75,6 +76,7 @@ export default function GroupReportPage() {
   const [isApiKeyValid, setIsApiKeyValid] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastUsedModel, setLastUsedModel] = useState<string | null>(null);
+  const friendlyModelName = useMemo(() => lastUsedModel ? describeModel(lastUsedModel) : null, [lastUsedModel]);
 
   useEffect(() => {
     setNarrativeAnalysis(groupAnalysis || '');
@@ -326,8 +328,10 @@ export default function GroupReportPage() {
     }
 
     setNarrativeAnalysis(data.text || '');
-    setLastUsedModel(data.model || settings.aiModel || null);
-    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo. Modelo usado: ${data.model || settings.aiModel || 'desconocido'}` });
+    const reportedModel = data.model || settings.aiModel || null;
+    const resolvedModel = reportedModel ? normalizeModel(reportedModel) : null;
+    setLastUsedModel(resolvedModel);
+    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo. Modelo usado: ${resolvedModel ? describeModel(resolvedModel) : 'desconocido'}` });
   } catch(e: any) {
     console.error(e);
     toast({
@@ -419,10 +423,13 @@ export default function GroupReportPage() {
                     <span>{format(new Date(), 'PPP', {locale: es})}</span>
                 </div>
            </div>
-           {lastUsedModel && (
+           {lastUsedModel && friendlyModelName && (
              <div className="pt-2 text-sm text-muted-foreground">
                <span className="font-semibold">Modelo IA usado: </span>
-               <span>{lastUsedModel}</span>
+               <span>{friendlyModelName}</span>
+               {friendlyModelName !== lastUsedModel && (
+                 <span className="ml-1 text-xs">({lastUsedModel})</span>
+               )}
              </div>
            )}
         </header>

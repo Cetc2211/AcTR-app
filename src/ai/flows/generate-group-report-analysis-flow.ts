@@ -14,7 +14,7 @@ const GroupReportInputSchema = z.object({
     attendanceRate: z.number().describe('The average attendance rate of the group as a percentage.'),
     atRiskStudentCount: z.number().describe('The number of students identified as being at risk.'),
     apiKey: z.string().optional().describe('The user-provided Google AI API key.'),
-  aiModel: z.string().optional().describe('Optional preferred AI model (e.g., gemini-2.5-flash)'),
+  aiModel: z.string().optional().describe('Optional preferred AI model (e.g., models/gemini-1.5-pro-latest)'),
 });
 
 export type GroupReportInput = z.infer<typeof GroupReportInputSchema>;
