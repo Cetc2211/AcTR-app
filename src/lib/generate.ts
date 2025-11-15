@@ -22,11 +22,10 @@ async function callGoogleAI(prompt: string, apiKey: string, requestedModel?: str
   // Build a prioritized list of models to try: requested first, then fallbacks
   // Orden alineado con Google AI Studio (texto): 2.5-pro → 2.5-flash → 2.0-flash → 2.0-flash-lite
   const requested = requestedModel ? normalizeModel(requestedModel) : undefined;
-  const fallbackCandidates = Array.from(
-    new Set(
-      [requested, ...FALLBACK_MODELS].filter(Boolean) as string[],
-    ),
-  );
+  const baseList = [requested, ...FALLBACK_MODELS];
+  // Include REST-style prefixed variants for robustness
+  const withPrefixed = baseList.flatMap(m => m ? [m, `models/${m}-latest`] : []);
+  const fallbackCandidates = Array.from(new Set(withPrefixed.filter(Boolean)));
 
   const triedModels: string[] = [];
 
@@ -132,13 +131,16 @@ export async function testApiKey(apiKey: string): Promise<boolean> {
   if (!apiKey) {
     throw new Error('Por favor, introduce tu clave API de Google AI');
   }
-
   try {
-    const testPrompt = "Responde únicamente con la palabra 'OK' si este mensaje llega correctamente.";
+    const testPrompt = 'Dí solamente OK.';
     const response = await callGoogleAI(testPrompt, apiKey);
-    return response.text.trim() === 'OK';
+    const txt = (response.text || '').trim().toLowerCase();
+    // Aceptar variaciones comunes
+    if (txt === 'ok' || txt.startsWith('ok')) return true;
+    // Si llegó cualquier texto sin error, la clave funciona
+    return txt.length > 0;
   } catch (error) {
     console.error('Error testing Google AI API key:', error);
-    throw error; // Re-throw the specific error from callGoogleAI
+    throw error;
   }
 }
