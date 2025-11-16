@@ -383,7 +383,7 @@ const RecordsPage = () => {
             <CardContent className="text-center p-12">
                  <BookOpenCheck className="h-12 w-12 mx-auto text-muted-foreground" />
                  <h3 className="mt-4 text-lg font-semibold">Genera un acta</h3>
-                 <p className="mt-1 text-muted-foreground">Haz clic en "Generar Acta" para ver los resultados.</p>
+                 <p className="mt-1 text-muted-foreground">Haz clic en &quot;Generar Acta&quot; para ver los resultados.</p>
             </CardContent>
           )}
 

@@ -383,9 +383,9 @@ export default function GroupReportPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold">Informe General del Grupo</h1>
-              <p className="text-muted-foreground">
-                  Resumen global de "{group.subject}" para el {getPartialLabel(partialId)}
-              </p>
+                <p className="text-muted-foreground">
+                  Resumen global de &quot;{group.subject}&quot; para el {getPartialLabel(partialId)}
+                </p>
             </div>
          </div>
          <div className='flex items-center gap-2 flex-wrap' data-hide-for-pdf="true">

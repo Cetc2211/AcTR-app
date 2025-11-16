@@ -168,7 +168,7 @@ export default function GroupGradesPage() {
             <div>
             <h1 className="text-3xl font-bold">Registrar Calificaciones</h1>
             <p className="text-muted-foreground">
-                Grupo "{activeGroup.subject}" - {getPartialLabel(activePartialId)}.
+                Grupo &quot;{activeGroup.subject}&quot; - {getPartialLabel(activePartialId)}.
             </p>
             </div>
          </div>

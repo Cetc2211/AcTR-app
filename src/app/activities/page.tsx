@@ -250,7 +250,7 @@ export default function ActivitiesPage() {
                     {activities.length === 0 && studentsToDisplay.length > 0 && (
                         <TableRow>
                             <TableCell colSpan={1} className="text-center h-24">
-                            Aún no hay actividades registradas. <br/> Haz clic en "Registrar Nueva Actividad" para empezar.
+                            Aún no hay actividades registradas. <br/> Haz clic en &quot;Registrar Nueva Actividad&quot; para empezar.
                             </TableCell>
                         </TableRow>
                     )}

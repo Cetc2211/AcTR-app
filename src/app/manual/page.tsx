@@ -112,7 +112,7 @@ export default function ManualPage() {
                         <strong>Criterios Automáticos:</strong> Los criterios "Actividades", "Portafolio" y "Participación" se calculan solos basados en los registros que hagas en sus respectivas secciones. No necesitas ponerles un valor esperado.
                     </li>
                     <li>
-                        <strong>Registro de Calificaciones:</strong> Una vez definidos los criterios, ve a "Registrar Calificaciones". En la tabla, solo ingresa el valor "logrado" por el estudiante en los criterios manuales. El sistema calculará el porcentaje ganado y la calificación final del parcial en tiempo real.
+                        <strong>Registro de Calificaciones:</strong> Una vez definidos los criterios, ve a &quot;Registrar Calificaciones&quot;. En la tabla, solo ingresa el valor &quot;logrado&quot; por el estudiante en los criterios manuales. El sistema calculará el porcentaje ganado y la calificación final del parcial en tiempo real.
                     </li>
                 </ul>
               </AccordionContent>
@@ -131,7 +131,7 @@ export default function ManualPage() {
                 </p>
                 <ul>
                     <li>
-                        <strong>Asistencia:</strong> Haz clic en "Registrar Asistencia de Hoy" para añadir la columna del día actual. Luego, marca las casillas de los estudiantes presentes.
+                        <strong>Asistencia:</strong> Haz clic en &quot;Registrar Asistencia de Hoy&quot; para añadir la columna del día actual. Luego, marca las casillas de los estudiantes presentes.
                     </li>
                     <li>
                         <strong>Participaciones:</strong> Funciona igual que la asistencia. El sistema no te dejará registrar una participación si el estudiante tiene una inasistencia ese mismo día.

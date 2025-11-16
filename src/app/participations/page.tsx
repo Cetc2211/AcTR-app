@@ -146,7 +146,7 @@ export default function ParticipationsPage() {
                         <TableCell colSpan={participationDates.length + 1} className="text-center h-24">
                            {activeGroup 
                            ? "Este grupo no tiene estudiantes." 
-                           : "No hay un grupo activo. Por favor, selecciona uno en la sección de 'Grupos'."
+                          : "No hay un grupo activo. Por favor, selecciona uno en la sección de \"Grupos\"."
                            }
                         </TableCell>
                     </TableRow>
@@ -154,7 +154,7 @@ export default function ParticipationsPage() {
                  {participationDates.length === 0 && studentsToDisplay.length > 0 && (
                     <TableRow>
                         <TableCell colSpan={1} className="text-center h-24">
-                           Ve a la página de Asistencia para registrar nuevas fechas o haz clic en "Registrar Participaciones de Hoy" para empezar.
+                           Ve a la página de Asistencia para registrar nuevas fechas o haz clic en &quot;Registrar Participaciones de Hoy&quot; para empezar.
                         </TableCell>
                     </TableRow>
                 )}

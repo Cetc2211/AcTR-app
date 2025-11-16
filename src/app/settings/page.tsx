@@ -162,7 +162,7 @@ export default function SettingsPage() {
             };
 
             const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(exportData, null, 2))}`;
-            const link = document.createElement("a");
+            const link = document.createElement('a');
             link.href = jsonString;
             link.download = `academic_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
             link.click();
@@ -570,7 +570,7 @@ export default function SettingsPage() {
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>¿Confirmas la importación?</AlertDialogTitle>
                                     <AlertDialogDescription>
-                                        Esta acción sobreescribirá permanentemente TODOS tus datos actuales con los datos del archivo "{importFile.name}". Esta acción no se puede deshacer.
+                                        Esta acción sobreescribirá permanentemente TODOS tus datos actuales con los datos del archivo &quot;{importFile.name}&quot;. Esta acción no se puede deshacer.
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

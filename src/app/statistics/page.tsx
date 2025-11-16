@@ -128,7 +128,7 @@ export default function StatisticsPage() {
             topStudents: studentGrades.slice(0,5).map(s => ({name: s.student.name, grade: parseFloat(s.grade.toFixed(1))})),
             participationDistribution,
         };
-    }, [activeGroup, activePartialId, calculateFinalGrade, getStudentRiskLevel, partialData, attendance, participations]);
+    }, [activeGroup, calculateFinalGrade, getStudentRiskLevel, attendance, participations]);
 
     const approvalData = useMemo(() => {
         if (!activeGroupStats) return [];

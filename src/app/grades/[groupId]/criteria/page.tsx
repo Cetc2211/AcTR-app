@@ -190,7 +190,7 @@ export default function GroupCriteriaPage() {
         <div>
           <h1 className="text-3xl font-bold">Criterios de Evaluación</h1>
           <p className="text-muted-foreground">
-            Gestiona los rubros para el grupo "{activeGroup.subject}". Estos criterios se aplicarán a todos los parciales.
+            Gestiona los rubros para el grupo &quot;{activeGroup.subject}&quot;. Estos criterios se aplicarán a todos los parciales.
           </p>
         </div>
       </div>

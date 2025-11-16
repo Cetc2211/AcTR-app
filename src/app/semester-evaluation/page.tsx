@@ -134,7 +134,7 @@ export default function SemesterEvaluationPage() {
                      <Presentation className="mx-auto h-12 w-12 text-muted-foreground" />
                     <CardTitle>Faltan Criterios de Evaluación</CardTitle>
                     <CardDescription>
-                       Para calcular la evaluación semestral, primero debes <Link href={`/grades/${activeGroup.id}/criteria`} className="text-primary underline">definir los criterios de evaluación</Link> para el grupo "{activeGroup.subject}".
+                       Para calcular la evaluación semestral, primero debes <Link href={`/grades/${activeGroup.id}/criteria`} className="text-primary underline">definir los criterios de evaluación</Link> para el grupo &quot;{activeGroup.subject}&quot;.
                     </CardDescription>
                 </CardHeader>
             </Card>

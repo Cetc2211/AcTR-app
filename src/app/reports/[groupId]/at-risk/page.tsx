@@ -263,7 +263,7 @@ export default function AtRiskReportPage() {
             <div>
               <h1 className="text-3xl font-bold">Informe de Estudiantes en Riesgo</h1>
               <p className="text-muted-foreground">
-                  Análisis detallado para el grupo "{group.subject}".
+                  Análisis detallado para el grupo &quot;{group.subject}&quot;.
               </p>
             </div>
          </div>

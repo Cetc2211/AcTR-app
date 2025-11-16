@@ -496,7 +496,11 @@ export default function StudentProfilePage() {
                     </div>
                 ) : (
                     <div className="prose prose-sm max-w-none dark:prose-invert mt-2 whitespace-pre-wrap min-h-[100px] p-3 bg-muted/30 rounded-md text-justify">
-                        {currentFeedback || <p className="text-muted-foreground italic">No hay retroalimentación para este parcial. Haz clic en "Editar" para agregar una.</p>}
+                        {currentFeedback || (
+                          <p className="text-muted-foreground italic">
+                            No hay retroalimentación para este parcial. Haz clic en &quot;Editar&quot; para agregar una.
+                          </p>
+                        )}
                     </div>
                 )}
               </CardContent>

@@ -86,7 +86,7 @@ export default function ReportsPage() {
         totalAttendanceRecords: presentCount,
         criteriaCount: activeGroup.criteria.length,
     };
-  }, [activeGroup, calculateFinalGrade, groupAverages, partialData, activePartialId, isLoading, attendance]);
+    }, [activeGroup, calculateFinalGrade, groupAverages, isLoading, attendance]);
   
   if (isLoading) {
       return (

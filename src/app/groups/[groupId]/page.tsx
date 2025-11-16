@@ -682,7 +682,7 @@ export default function GroupDetailsPage() {
                             <DialogHeader>
                             <DialogTitle>Agregar Nuevos Estudiantes al Grupo</DialogTitle>
                             <DialogDescription>
-                                Añade nuevos estudiantes a "{activeGroup.subject}". Pega columnas de datos para agregarlos en masa.
+                                Añade nuevos estudiantes a &quot;{activeGroup.subject}&quot;. Pega columnas de datos para agregarlos en masa.
                             </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4 max-h-[400px] overflow-y-auto">

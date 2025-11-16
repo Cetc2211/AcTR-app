@@ -184,9 +184,9 @@ export default function SemesterReportPage() {
             </Button>
             <div>
               <h1 className="text-3xl font-bold">Informe General Semestral</h1>
-              <p className="text-muted-foreground">
-                  Resumen de todo el semestre para "{group.subject}"
-              </p>
+                <p className="text-muted-foreground">
+                  Resumen de todo el semestre para &quot;{group.subject}&quot;
+                </p>
             </div>
          </div>
          <div className='flex items-center gap-2 flex-wrap' data-hide-for-pdf="true">
