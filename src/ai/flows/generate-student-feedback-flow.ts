@@ -2,7 +2,6 @@
 
 import { z } from 'zod';
 import { ai } from '@/ai/genkit';
-import { generateFeedback } from '@/lib/generate';
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),

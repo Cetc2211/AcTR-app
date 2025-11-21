@@ -278,22 +278,13 @@ export default function SettingsPage() {
             <CardHeader>
                 <CardTitle>Integración con Inteligencia Artificial</CardTitle>
                 <CardDescription>
-                    Para usar las funciones de IA, provee tu propia clave API gratuita de Google AI Studio.
-                    <br />
-                    <a 
-                      href="https://aistudio.google.com/app/apikey" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Obtén tu clave API gratuita de Google AI aquí
-                    </a>
+                    El sistema utiliza un servicio de IA gestionado. La configuración de clave personal es opcional.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="apiKey">API Key de Google AI</Label>
+                        <Label htmlFor="apiKey">API Key de Google AI (Opcional)</Label>
                         <div className="flex items-center gap-2">
                             <KeyRound className="h-4 w-4 text-muted-foreground"/>
                             <Input
@@ -301,14 +292,14 @@ export default function SettingsPage() {
                                 type="password"
                                 value={localSettings.apiKey}
                                 onChange={handleInputChange}
-                                placeholder="Pega tu clave API de Google AI aquí"
+                                placeholder="Opcional: Tu clave API de Google AI"
                             />
                             <Button 
                                 variant="secondary" 
                                 onClick={handleTestApiKey}
-                                disabled={isTestingKey || !localSettings.apiKey}
+                                disabled={isTestingKey}
                             >
-                                {isTestingKey ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : 'Probar Clave'}
+                                {isTestingKey ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : 'Probar Conexión'}
                             </Button>
                             {isApiKeyValid === true && (
                                 <Badge className="ml-2 bg-green-600 text-white">Clave válida</Badge>
