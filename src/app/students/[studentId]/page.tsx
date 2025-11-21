@@ -237,14 +237,8 @@ export default function StudentProfilePage() {
   const handleGenerateFeedback = async () => {
     if (!student) return;
 
-    if (!settings.apiKey) {
-      toast({
-        variant: 'destructive',
-        title: 'Falta Clave de API',
-        description: 'Por favor, configura tu clave de API de Google AI en la página de Ajustes.',
-      });
-      return;
-    }
+    // Removed client-side API key check as backend now handles authentication via Secret Manager
+    // if (!settings.apiKey) { ... }
 
     const activePartialStats = studentStatsByPartial.find(s => s.partialId === activePartialId);
     if (!activePartialStats) {
