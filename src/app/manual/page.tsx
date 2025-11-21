@@ -74,7 +74,7 @@ export default function ManualPage() {
               </AccordionTrigger>
               <AccordionContent className="prose prose-sm dark:prose-invert max-w-none pt-2">
                 <p>
-                  Es el núcleo de la organización. Un "grupo" representa una clase, materia o asignatura que impartes.
+                  Es el núcleo de la organización. Un &quot;grupo&quot; representa una clase, materia o asignatura que impartes.
                 </p>
                 <ul>
                     <li>
