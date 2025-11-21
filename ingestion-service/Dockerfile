@@ -7,8 +7,9 @@ WORKDIR /app
 # Copy the dependencies file to the working directory
 COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip and install any needed packages specified in requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the content of the local src directory to the working directory
 COPY . .
@@ -19,5 +20,5 @@ EXPOSE 8080
 # Define environment variable
 ENV PORT 8080
 
-# Run main.py when the container launches
-CMD ["python", "main.py"]
+# Run gunicorn when the container launches
+CMD ["gunicorn", "--bind", ":8080", "--workers", "1", "--threads", "8", "--timeout", "0", "main:app"]

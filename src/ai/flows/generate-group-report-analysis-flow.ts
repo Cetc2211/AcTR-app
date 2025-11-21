@@ -26,32 +26,38 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async ({ apiKey, aiModel, ...flowInput}) => {
-    const prompt = `
-      Eres un asistente pedagógico experto en análisis de datos académicos.
-      Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
-      Utiliza un tono formal pero comprensible, enfocado en la mejora continua.
+    try {
+      const response = await fetch('https://backend-service-263108580734.us-central1.run.app/generate-group-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          group_name: flowInput.groupName,
+          partial: flowInput.partial,
+          stats: {
+            totalStudents: flowInput.totalStudents,
+            approvedCount: flowInput.approvedCount,
+            failedCount: flowInput.failedCount,
+            groupAverage: flowInput.groupAverage.toFixed(1),
+            attendanceRate: flowInput.attendanceRate.toFixed(1),
+            atRiskStudentCount: flowInput.atRiskStudentCount
+          }
+        })
+      });
 
-      Aquí están los datos del grupo para el ${flowInput.partial}:
-      - Asignatura: ${flowInput.groupName}
-      - Total de Estudiantes: ${flowInput.totalStudents}
-      - Estudiantes Aprobados: ${flowInput.approvedCount}
-      - Estudiantes Reprobados: ${flowInput.failedCount}
-      - Calificación Promedio del Grupo: ${flowInput.groupAverage.toFixed(1)}/100
-      - Tasa de Asistencia General: ${flowInput.attendanceRate.toFixed(1)}%
-      - Estudiantes en Riesgo: ${flowInput.atRiskStudentCount}
+      if (!response.ok) {
+        console.error('Error calling Cloud Run Group AI service:', response.status, response.statusText);
+        throw new Error('Error al comunicarse con el servicio de IA para grupos.');
+      }
 
-      Basado en estos datos, redacta un párrafo de análisis que aborde los siguientes puntos:
-      1.  **Análisis General**: Comienza con una visión general del rendimiento del grupo. Menciona el índice de aprobación y la calificación promedio, comparándolos con un estándar esperado (puedes asumir que un promedio sobre 70 es aceptable y una tasa de aprobación sobre 80% es buena).
-      2.  **Asistencia**: Comenta sobre la tasa de asistencia. Si es baja, resalta su impacto negativo en el aprendizaje. Si es alta, reconócela como una fortaleza.
-      3.  **Áreas de Enfoque**: Identifica las áreas clave que requieren atención. Menciona el número de estudiantes reprobados y en riesgo como el principal punto de enfoque.
-      4.  **Recomendaciones**: Ofrece 1 o 2 recomendaciones generales y accionables para el grupo. Por ejemplo, "implementar sesiones de tutoría entre pares" o "realizar un repaso de los temas con mayor dificultad".
-      5.  **Conclusión Positiva**: Termina con una nota alentadora que motive tanto a los estudiantes como al docente a seguir mejorando.
+      const data = await response.json();
+      return data.report;
 
-      Formato de salida: Un único párrafo de texto. No uses listas ni viñetas.
-    `;
-
-    const res = await generateGroupAnalysis(prompt, apiKey || process.env.GEMINI_API_KEY || '', aiModel);
-    return res.text;
+    } catch (error) {
+      console.error('Failed to generate group report via Cloud Run:', error);
+      throw new Error('No se pudo generar el análisis del grupo en este momento.');
+    }
   }
 );
 

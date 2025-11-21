@@ -290,48 +290,26 @@ export default function GroupReportPage() {
       setIsApiKeyValid(true);
     }
 
-    // Build the same prompt that the server expects
-    const prompt = `
-    Eres un asistente pedagógico experto en análisis de datos académicos.
-    Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
-    Utiliza un tono formal pero comprensible, enfocado en la mejora continua.
-
-    Aquí están los datos del grupo para el ${getPartialLabel(partialId)}:
-    - Asignatura: ${group.subject}
-    - Total de Estudiantes: ${summary.totalStudents}
-    - Estudiantes Aprobados: ${summary.approvedCount}
-    - Estudiantes Reprobados: ${summary.failedCount}
-    - Calificación Promedio del Grupo: ${summary.groupAverage.toFixed(1)}/100
-    - Tasa de Asistencia General: ${summary.attendanceRate.toFixed(1)}%
-    - Estudiantes en Riesgo: ${atRiskStudentsForGroup.length}
-
-    Basado en estos datos, redacta un párrafo de análisis que aborde los siguientes puntos:
-    1.  **Análisis General**: Comienza con una visión general del rendimiento del grupo. Menciona el índice de aprobación y la calificación promedio, comparándolos con un estándar esperado (puedes asumir que un promedio sobre 70 es aceptable y una tasa de aprobación sobre 80% es buena).
-    2.  **Asistencia**: Comenta sobre la tasa de asistencia. Si es baja, resalta su impacto negativo en el aprendizaje. Si es alta, reconócela como una fortaleza.
-    3.  **Áreas de Enfoque**: Identifica las áreas clave que requieren atención. Menciona el número de estudiantes reprobados y en riesgo como el principal punto de enfoque.
-    4.  **Recomendaciones**: Ofrece 1 o 2 recomendaciones generales y accionables para el grupo. Por ejemplo, "implementar sesiones de tutoría entre pares" o "realizar un repaso de los temas con mayor dificultad".
-    5.  **Conclusión Positiva**: Termina con una nota alentadora que motive tanto a los estudiantes como al docente a seguir mejorando.
-
-    Formato de salida: Un único párrafo de texto. No uses listas ni viñetas.
-  `;
-
-    const res = await fetch('/api/generate-ia', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, apiKey: settings.apiKey, model: settings.aiModel }),
+    // Call the server action which now uses the Cloud Run service
+    const analysisText = await generateGroupReportAnalysis({
+      groupName: group.subject,
+      partial: getPartialLabel(partialId),
+      totalStudents: summary.totalStudents,
+      approvedCount: summary.approvedCount,
+      failedCount: summary.failedCount,
+      groupAverage: summary.groupAverage,
+      attendanceRate: summary.attendanceRate,
+      atRiskStudentCount: atRiskStudentsForGroup.length,
+      apiKey: settings.apiKey,
+      aiModel: settings.aiModel
     });
 
-    const data = await res.json();
-    if (!res.ok || !data.ok) {
-      console.error('AI API error', data);
-      throw new Error(data.error || 'Error en la API de generación');
-    }
-
-    setNarrativeAnalysis(data.text || '');
-    const reportedModel = data.model || settings.aiModel || null;
-    const resolvedModel = reportedModel ? normalizeModel(reportedModel) : null;
-    setLastUsedModel(resolvedModel);
-    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo. Modelo usado: ${resolvedModel ? describeModel(resolvedModel) : 'desconocido'}` });
+    setNarrativeAnalysis(analysisText || '');
+    // Note: The server action returns just the text string, so we don't get the model name back directly 
+    // unless we change the return type. For now, we assume the requested model was used.
+    setLastUsedModel(settings.aiModel || null);
+    
+    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo.` });
   } catch(e: any) {
     console.error(e);
     toast({
