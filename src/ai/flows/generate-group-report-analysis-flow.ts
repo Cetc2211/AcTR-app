@@ -1,8 +1,6 @@
 'use server';
 
 import { z } from 'zod';
-import { ai } from '@/ai/genkit';
-import { generateGroupAnalysis } from '@/lib/generate';
 
 const GroupReportInputSchema = z.object({
     groupName: z.string().describe('The name of the subject or group.'),
@@ -19,13 +17,8 @@ const GroupReportInputSchema = z.object({
 
 export type GroupReportInput = z.infer<typeof GroupReportInputSchema>;
 
-const generateGroupReportAnalysisFlow = ai.defineFlow(
-  {
-    name: 'generateGroupReportAnalysisFlow',
-    inputSchema: GroupReportInputSchema,
-    outputSchema: z.string(),
-  },
-  async ({ apiKey, aiModel, ...flowInput}) => {
+export async function generateGroupReportAnalysis(input: GroupReportInput): Promise<string> {
+    const { apiKey, aiModel, ...flowInput} = input;
     try {
       const response = await fetch('https://backend-service-263108580734.us-central1.run.app/generate-group-report', {
         method: 'POST',
@@ -58,9 +51,4 @@ const generateGroupReportAnalysisFlow = ai.defineFlow(
       console.error('Failed to generate group report via Cloud Run:', error);
       throw new Error('No se pudo generar el análisis del grupo en este momento.');
     }
-  }
-);
-
-export async function generateGroupReportAnalysis(input: GroupReportInput): Promise<string> {
-    return await generateGroupReportAnalysisFlow(input);
-};
+}
