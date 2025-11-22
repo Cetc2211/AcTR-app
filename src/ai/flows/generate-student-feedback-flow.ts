@@ -1,6 +1,8 @@
 'use server';
 
 import { z } from 'zod';
+import { ai } from '@/ai/genkit';
+import { generateFeedback } from '@/lib/generate';
 
 const StudentFeedbackInputSchema = z.object({
   studentName: z.string().describe("The student's name."),
@@ -18,8 +20,13 @@ const StudentFeedbackInputSchema = z.object({
 
 export type StudentFeedbackInput = z.infer<typeof StudentFeedbackInputSchema>;
 
-export async function generateStudentFeedback(input: StudentFeedbackInput): Promise<string> {
-    const { apiKey, aiModel, ...flowInput } = StudentFeedbackInputSchema.parse(input);
+const generateStudentFeedbackFlow = ai.defineFlow(
+  {
+    name: 'generateStudentFeedbackFlow',
+    inputSchema: StudentFeedbackInputSchema,
+    outputSchema: z.string(),
+  },
+  async ({ apiKey, aiModel, ...flowInput }) => {
     const { studentName, partial, finalGrade, attendanceRate, criteria, observations } = flowInput;
 
     const topCriteria = criteria.sort((a, b) => b.earnedPercentage - a.earnedPercentage).slice(0, 2);
@@ -60,4 +67,9 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
       console.error('Failed to generate feedback via Cloud Run:', error);
       throw new Error('No se pudo generar la retroalimentación en este momento.');
     }
+  }
+);
+
+export async function generateStudentFeedback(input: StudentFeedbackInput): Promise<string> {
+    return await generateStudentFeedbackFlow(input);
 };

@@ -9,10 +9,8 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instala las dependencias.
-# Actualizamos pip primero para evitar advertencias y luego instalamos los requerimientos.
 # --no-cache-dir reduce el tamaño de la imagen.
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia el resto del código de la aplicación.
 COPY . .

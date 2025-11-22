@@ -3,7 +3,6 @@ gunicorn
 google-cloud-storage
 google-cloud-aiplatform
 google-cloud-secret-manager
-cloud-sql-python-connector
-pg8000
+cloud-sql-python-connector[pg8000]
 SQLAlchemy
 pypdf

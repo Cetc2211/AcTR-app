@@ -265,18 +265,29 @@ export default function GroupReportPage() {
         return;
     }
 
-    // Removed client-side API key check as backend now handles authentication via Secret Manager
-    // if (!settings.apiKey) { ... }
+    if (!settings.apiKey) {
+      toast({
+        variant: 'destructive',
+        title: 'Falta Clave de API',
+        description: 'Por favor, configura tu clave de API de Google AI en la página de Ajustes.',
+      });
+      return;
+    }
 
   setIsGeneratingAnalysis(true);
   toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
 
   try {
-    // Optional: Check connectivity instead of validating key
+    // First, ensure the API key works (verify once per session or until it changes)
     if (!isApiKeyValid) {
-      // We can skip this or just do a connectivity check if desired.
-      // For now, let's assume connectivity is fine or will be caught by the main call.
-      setIsApiKeyValid(true); 
+      setIsGeneratingAnalysis(true);
+      const testResult = await testApiKeyAction(settings.apiKey);
+      setIsGeneratingAnalysis(false);
+      if (!testResult.success) {
+        toast({ variant: 'destructive', title: 'Clave inválida', description: testResult.error || 'La clave API no es válida.' });
+        return;
+      }
+      setIsApiKeyValid(true);
     }
 
     // Call the server action which now uses the Cloud Run service
