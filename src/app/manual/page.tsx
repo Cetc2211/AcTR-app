@@ -48,7 +48,7 @@ export default function ManualPage() {
                     <strong>Personalización:</strong> Aquí puedes poner el nombre de tu institución y subir su logo. Estos elementos aparecerán en todos los informes que generes, dándoles un aspecto profesional y personalizado. También puedes subir una imagen de tu firma.
                   </li>
                   <li>
-                    <strong>Clave API de Google AI:</strong> Este campo es <strong>crucial</strong> para las funciones de Inteligencia Artificial. Sin una clave API válida, los botones "Generar con IA" para crear análisis de grupo o retroalimentación para estudiantes no funcionarán. Puedes obtener tu clave de forma gratuita desde <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google AI Studio</a>.
+                    <strong>Clave API de Google AI:</strong> Este campo es <strong>crucial</strong> para las funciones de Inteligencia Artificial. Sin una clave API válida, los botones &quot;Generar con IA&quot; para crear análisis de grupo o retroalimentación para estudiantes no funcionarán. Puedes obtener tu clave de forma gratuita desde <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google AI Studio</a>.
                   </li>
                   <li>
                     <strong>Temas Visuales:</strong> Cambia la paleta de colores de toda la aplicación para que se ajuste a tus preferencias.
@@ -57,8 +57,8 @@ export default function ManualPage() {
                     <strong>Copia de Seguridad y Restauración:</strong> Esta es una función vital para proteger tu trabajo.
                     <ul>
                       <li><strong>Exportar:</strong> Te permite descargar un archivo único (en formato JSON) que contiene absolutamente todos tus datos. Guarda este archivo en un lugar seguro.</li>
-                      <li><strong>¿Cuándo es crucial exportar?</strong> Como todos tus datos se guardan en el navegador, es <strong>absolutamente obligatorio</strong> hacer una copia de seguridad antes de limpiar el historial, la caché o los "datos de sitios" de tu navegador, ya que esa acción <strong>borrará toda tu información de la aplicación.</strong> También es indispensable si planeas usar la aplicación en un nuevo ordenador.</li>
-                      <li><strong>Importar:</strong> Si necesitas restaurar tu información, simplemente usa la opción de "Importar" y selecciona el archivo que guardaste. Esta acción reemplazará todos los datos actuales con los del archivo de respaldo.</li>
+                      <li><strong>¿Cuándo es crucial exportar?</strong> Como todos tus datos se guardan en el navegador, es <strong>absolutamente obligatorio</strong> hacer una copia de seguridad antes de limpiar el historial, la caché o los &quot;datos de sitios&quot; de tu navegador, ya que esa acción <strong>borrará toda tu información de la aplicación.</strong> También es indispensable si planeas usar la aplicación en un nuevo ordenador.</li>
+                      <li><strong>Importar:</strong> Si necesitas restaurar tu información, simplemente usa la opción de &quot;Importar&quot; y selecciona el archivo que guardaste. Esta acción reemplazará todos los datos actuales con los del archivo de respaldo.</li>
                     </ul>
                   </li>
                 </ul>
@@ -74,14 +74,14 @@ export default function ManualPage() {
               </AccordionTrigger>
               <AccordionContent className="prose prose-sm dark:prose-invert max-w-none pt-2">
                 <p>
-                  Es el núcleo de la organización. Un "grupo" representa una clase, materia o asignatura que impartes.
+                  Es el núcleo de la organización. Un &quot;grupo&quot; representa una clase, materia o asignatura que impartes.
                 </p>
                 <ul>
                     <li>
                         <strong>Creación:</strong> Crea nuevos grupos especificando el nombre de la asignatura, semestre y facilitador.
                     </li>
                     <li>
-                        <strong>Gestión de Estudiantes:</strong> La función "Agregar Estudiantes" te permite pegar listas de datos (nombres, correos, etc.) directamente desde una hoja de cálculo para registrar a múltiples estudiantes de una sola vez, ahorrándote mucho tiempo.
+                        <strong>Gestión de Estudiantes:</strong> La función &quot;Agregar Estudiantes&quot; te permite pegar listas de datos (nombres, correos, etc.) directamente desde una hoja de cálculo para registrar a múltiples estudiantes de una sola vez, ahorrándote mucho tiempo.
                     </li>
                     <li>
                         <strong>Gestión de Parciales:</strong> Usa las pestañas en la parte superior (Primer, Segundo, Tercer Parcial) para cambiar el contexto de toda la información. Las calificaciones, asistencia y riesgo se ajustan al parcial seleccionado.
@@ -106,10 +106,10 @@ export default function ManualPage() {
                 </p>
                 <ul>
                     <li>
-                        <strong>Criterios de Evaluación:</strong> Antes de calificar, debes ir a "Gestionar Criterios". Aquí defines los rubros (Ej. Examen, Actividades, Proyecto), su peso porcentual (la suma no debe exceder 100) y el valor esperado (Ej. 10 tareas, 100 puntos en el examen).
+                        <strong>Criterios de Evaluación:</strong> Antes de calificar, debes ir a &quot;Gestionar Criterios&quot;. Aquí defines los rubros (Ej. Examen, Actividades, Proyecto), su peso porcentual (la suma no debe exceder 100) y el valor esperado (Ej. 10 tareas, 100 puntos en el examen).
                     </li>
                      <li>
-                        <strong>Criterios Automáticos:</strong> Los criterios "Actividades", "Portafolio" y "Participación" se calculan solos basados en los registros que hagas en sus respectivas secciones. No necesitas ponerles un valor esperado.
+                        <strong>Criterios Automáticos:</strong> Los criterios &quot;Actividades&quot;, &quot;Portafolio&quot; y &quot;Participación&quot; se calculan solos basados en los registros que hagas en sus respectivas secciones. No necesitas ponerles un valor esperado.
                     </li>
                     <li>
                         <strong>Registro de Calificaciones:</strong> Una vez definidos los criterios, ve a &quot;Registrar Calificaciones&quot;. En la tabla, solo ingresa el valor &quot;logrado&quot; por el estudiante en los criterios manuales. El sistema calculará el porcentaje ganado y la calificación final del parcial en tiempo real.
