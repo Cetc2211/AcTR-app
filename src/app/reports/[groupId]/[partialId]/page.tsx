@@ -265,55 +265,56 @@ export default function GroupReportPage() {
         return;
     }
 
-    // Check removed: Backend now handles authentication via Secret Manager
-    // if (!settings.apiKey) { ... }
-
-  setIsGeneratingAnalysis(true);
-  toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
-
-  try {
-    // First, ensure the API key works (verify once per session or until it changes)
-    if (!isApiKeyValid) {
-      setIsGeneratingAnalysis(true);
-      const testResult = await testApiKeyAction(settings.apiKey);
-      setIsGeneratingAnalysis(false);
-      if (!testResult.success) {
-        toast({ variant: 'destructive', title: 'Clave inválida', description: testResult.error || 'La clave API no es válida.' });
+    if (!settings.apiKey) {
+        toast({variant: 'destructive', title: 'Clave API requerida', description: 'Por favor configura tu clave API en Configuración.'})
         return;
-      }
-      setIsApiKeyValid(true);
     }
 
-    // Call the server action which now uses the Cloud Run service
-    const analysisText = await generateGroupReportAnalysis({
-      groupName: group.subject,
-      partial: getPartialLabel(partialId),
-      totalStudents: summary.totalStudents,
-      approvedCount: summary.approvedCount,
-      failedCount: summary.failedCount,
-      groupAverage: summary.groupAverage,
-      attendanceRate: summary.attendanceRate,
-      atRiskStudentCount: atRiskStudentsForGroup.length,
-      apiKey: settings.apiKey,
-      aiModel: settings.aiModel
-    });
+    setIsGeneratingAnalysis(true);
+    toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
 
-    setNarrativeAnalysis(analysisText || '');
-    // Note: The server action returns just the text string, so we don't get the model name back directly 
-    // unless we change the return type. For now, we assume the requested model was used.
-    setLastUsedModel(settings.aiModel || null);
-    
-    toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo.` });
-  } catch(e: any) {
-    console.error(e);
-    toast({
-      variant: 'destructive',
-      title: 'Error de IA',
-      description: e.message || 'No se pudo generar el análisis. Verifica tu clave API y la conexión.',
-    });
-  } finally {
-    setIsGeneratingAnalysis(false);
-  }
+    try {
+      // First, ensure the API key works (verify once per session or until it changes)
+      if (!isApiKeyValid) {
+        const testResult = await testApiKeyAction(settings.apiKey);
+        if (!testResult.success) {
+          toast({ variant: 'destructive', title: 'Clave inválida', description: testResult.error || 'La clave API no es válida.' });
+          setIsGeneratingAnalysis(false);
+          return;
+        }
+        setIsApiKeyValid(true);
+      }
+
+      // Call the server action which now uses the Cloud Run service
+      const analysisText = await generateGroupReportAnalysis({
+        groupName: group.subject,
+        partial: getPartialLabel(partialId),
+        totalStudents: summary.totalStudents,
+        approvedCount: summary.approvedCount,
+        failedCount: summary.failedCount,
+        groupAverage: summary.groupAverage,
+        attendanceRate: summary.attendanceRate,
+        atRiskStudentCount: atRiskStudentsForGroup.length,
+        apiKey: settings.apiKey,
+        aiModel: settings.aiModel
+      });
+
+      setNarrativeAnalysis(analysisText || '');
+      // Note: The server action returns just the text string, so we don't get the model name back directly 
+      // unless we change the return type. For now, we assume the requested model was used.
+      setLastUsedModel(settings.aiModel || null);
+      
+      toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo.` });
+    } catch(e: any) {
+      console.error(e);
+      toast({
+        variant: 'destructive',
+        title: 'Error de IA',
+        description: e.message || 'No se pudo generar el análisis. Verifica tu clave API y la conexión.',
+      });
+    } finally {
+      setIsGeneratingAnalysis(false);
+    }
   };
   
   const handleSaveAnalysis = async () => {
