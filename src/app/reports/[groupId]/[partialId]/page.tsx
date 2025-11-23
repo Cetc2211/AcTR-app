@@ -265,14 +265,8 @@ export default function GroupReportPage() {
         return;
     }
 
-    if (!settings.apiKey) {
-      toast({
-        variant: 'destructive',
-        title: 'Falta Clave de API',
-        description: 'Por favor, configura tu clave de API de Google AI en la página de Ajustes.',
-      });
-      return;
-    }
+    // Check removed: Backend now handles authentication via Secret Manager
+    // if (!settings.apiKey) { ... }
 
   setIsGeneratingAnalysis(true);
   toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
