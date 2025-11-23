@@ -35,7 +35,8 @@ export async function generateGroupReportAnalysis(input: GroupReportInput): Prom
             groupAverage: flowInput.groupAverage.toFixed(1),
             attendanceRate: flowInput.attendanceRate.toFixed(1),
             atRiskStudentCount: flowInput.atRiskStudentCount
-          }
+          },
+          api_key: apiKey || undefined  // Pass the API key to the backend
         })
       });
 

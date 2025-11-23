@@ -44,7 +44,8 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
         body: JSON.stringify({
           student_name: studentName,
           subject: `Evaluación del ${partial}`, // Usamos el parcial como contexto de la asignatura/periodo
-          grades: gradesDescription
+          grades: gradesDescription,
+          api_key: apiKey || undefined  // Pass the API key to the backend
         })
       });
 

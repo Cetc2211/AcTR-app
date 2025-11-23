@@ -20,18 +20,29 @@ def add_cors_headers(response):
     return response
 
 # --- Función auxiliar para obtener el modelo configurado ---
-def get_configured_model():
-    project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi') 
-    secret_id = "vertex-ai-api-key" 
+def get_configured_model(api_key=None):
+    """
+    Obtiene el modelo de IA configurado.
+    Primero intenta usar la clave API proporcionada.
+    Si no está disponible, intenta obtenerla desde Secret Manager.
+    """
     
-    try:
-        secret_client = secretmanager.SecretManagerServiceClient()
-        secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-        secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
-        vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
-    except Exception as e:
-        logger.error(f"Error al acceder a Secret Manager para '{secret_id}': {e}")
-        raise Exception("Error de configuración: No se pudo obtener la clave API.")
+    vertex_ai_api_key = api_key
+    
+    # Si no se proporcionó clave API, intentar obtenerla desde Secret Manager
+    if not vertex_ai_api_key:
+        project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi') 
+        secret_id = "vertex-ai-api-key" 
+        
+        try:
+            secret_client = secretmanager.SecretManagerServiceClient()
+            secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+            secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
+            vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
+        except Exception as e:
+            logger.error(f"Error al acceder a Secret Manager para '{secret_id}': {e}")
+            logger.info("Se requiere una clave API en la solicitud o estar configurada en Secret Manager.")
+            raise Exception("Error de configuración: No se pudo obtener la clave API. Asegúrate de incluir 'api_key' en la solicitud o configura Google Secret Manager.")
 
     try:
         genai.configure(api_key=vertex_ai_api_key)
@@ -57,12 +68,13 @@ def generate_report():
     student_name = data.get('student_name')
     grades = data.get('grades') 
     subject = data.get('subject')
+    api_key = data.get('api_key')
     
     if not all([student_name, grades, subject]):
         return jsonify({"error": "Datos de entrada incompletos. Se requieren 'student_name', 'grades' y 'subject'."}), 400
 
     try:
-        model = get_configured_model()
+        model = get_configured_model(api_key)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -106,12 +118,13 @@ def generate_group_report():
     group_name = data.get('group_name')
     partial = data.get('partial')
     stats = data.get('stats') # Expecting a dict with stats
+    api_key = data.get('api_key')
 
     if not all([group_name, partial, stats]):
         return jsonify({"error": "Faltan datos requeridos (group_name, partial, stats)."}), 400
 
     try:
-        model = get_configured_model()
+        model = get_configured_model(api_key)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
