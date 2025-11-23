@@ -2,6 +2,11 @@ from flask import Flask, request, jsonify
 from google.cloud import secretmanager
 import google.generativeai as genai
 import os
+import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -13,6 +18,28 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
     response.headers['Access-Control-Allow-Methods'] = 'POST,OPTIONS'
     return response
+
+# --- Función auxiliar para obtener el modelo configurado ---
+def get_configured_model():
+    project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi') 
+    secret_id = "vertex-ai-api-key" 
+    
+    try:
+        secret_client = secretmanager.SecretManagerServiceClient()
+        secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+        secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
+        vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
+    except Exception as e:
+        logger.error(f"Error al acceder a Secret Manager para '{secret_id}': {e}")
+        raise Exception("Error de configuración: No se pudo obtener la clave API.")
+
+    try:
+        genai.configure(api_key=vertex_ai_api_key)
+        # Usar un modelo estable
+        return genai.GenerativeModel('gemini-1.5-pro') 
+    except Exception as e:
+        logger.error(f"Error al inicializar Vertex AI o cargar el modelo: {e}")
+        raise Exception("Error de inicialización de IA.")
 
 # Ruta de verificación de estado (health check)
 @app.route('/', methods=['GET'])
@@ -34,31 +61,12 @@ def generate_report():
     if not all([student_name, grades, subject]):
         return jsonify({"error": "Datos de entrada incompletos. Se requieren 'student_name', 'grades' y 'subject'."}), 400
 
-    # --- Obtener la clave API de Vertex AI desde Secret Manager ---
-    # El ID del proyecto de GCP se debe configurar como una variable de entorno en Cloud Run
-    project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi') 
-    secret_id = "vertex-ai-api-key" 
-    
     try:
-        secret_client = secretmanager.SecretManagerServiceClient()
-        secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-        secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
-        vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
+        model = get_configured_model()
     except Exception as e:
-        print(f"Error al acceder a Secret Manager para '{secret_id}': {e}")
-        return jsonify({"error": "No se pudo obtener la clave API de Vertex AI. Verifique la configuración de Secret Manager y los permisos de la cuenta de servicio."}), 500
-
-    # --- Inicializar el cliente de Vertex AI con la clave API ---
-    try:
-        genai.configure(api_key=vertex_ai_api_key)
-        model = genai.GenerativeModel('gemini-1.5-pro-latest') 
-    except Exception as e:
-        print(f"Error al inicializar Vertex AI o cargar el modelo: {e}")
-        return jsonify({"error": "No se pudo inicializar el modelo de IA. Verifique la clave API y la disponibilidad del modelo."}), 500
+        return jsonify({"error": str(e)}), 500
 
     # --- Construir el prompt para la IA ---
-    # ADÁPTALO para que la IA genere los informes que necesitas.
-    # Sé lo más específico posible en las instrucciones para la IA.
     prompt = f"""
     Eres un asistente de evaluación académica para profesores. Tu tarea es generar un informe detallado y constructivo sobre el rendimiento académico de un estudiante.
 
@@ -86,7 +94,7 @@ def generate_report():
         report_content = response_ia.text
         return jsonify({"report": report_content}), 200
     except Exception as e:
-        print(f"Error al generar contenido con Vertex AI: {e}")
+        logger.error(f"Error al generar contenido con Vertex AI: {e}")
         return jsonify({"error": "Fallo en la generación del informe de IA. Intente de nuevo o revise los datos."}), 500
 
 @app.route('/generate-group-report', methods=['POST'])
@@ -102,23 +110,10 @@ def generate_group_report():
     if not all([group_name, partial, stats]):
         return jsonify({"error": "Faltan datos requeridos (group_name, partial, stats)."}), 400
 
-    # --- Obtener API Key (Reutilizar lógica o refactorizar en función auxiliar) ---
-    project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi')
-    secret_id = "vertex-ai-api-key"
     try:
-        secret_client = secretmanager.SecretManagerServiceClient()
-        secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-        secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
-        vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
+        model = get_configured_model()
     except Exception as e:
-        print(f"Error Secret Manager: {e}")
-        return jsonify({"error": "Error de configuración de credenciales."}), 500
-
-    try:
-        genai.configure(api_key=vertex_ai_api_key)
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
-    except Exception as e:
-        return jsonify({"error": "Error inicializando modelo IA."}), 500
+        return jsonify({"error": str(e)}), 500
 
     # --- Prompt para Grupo ---
     prompt = f"""
@@ -149,8 +144,9 @@ def generate_group_report():
         response = model.generate_content(prompt)
         return jsonify({"report": response.text}), 200
     except Exception as e:
-        print(f"Error Vertex AI Group: {e}")
+        logger.error(f"Error Vertex AI Group: {e}")
         return jsonify({"error": "Error generando reporte de grupo."}), 500
+
 
 # Iniciar el servidor Flask
 if __name__ == '__main__':

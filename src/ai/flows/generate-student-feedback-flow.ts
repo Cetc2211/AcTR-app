@@ -49,8 +49,9 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
       });
 
       if (!response.ok) {
-        console.error('Error calling Cloud Run AI service:', response.status, response.statusText);
-        throw new Error('Error al comunicarse con el servicio de IA.');
+        const errorBody = await response.text();
+        console.error('Error calling Cloud Run AI service:', response.status, response.statusText, errorBody);
+        throw new Error(`Error del servicio de IA (${response.status}): ${errorBody}`);
       }
 
       const data = await response.json();

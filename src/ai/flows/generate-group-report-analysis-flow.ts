@@ -40,8 +40,9 @@ export async function generateGroupReportAnalysis(input: GroupReportInput): Prom
       });
 
       if (!response.ok) {
-        console.error('Error calling Cloud Run Group AI service:', response.status, response.statusText);
-        throw new Error('Error al comunicarse con el servicio de IA para grupos.');
+        const errorBody = await response.text();
+        console.error('Error calling Cloud Run Group AI service:', response.status, response.statusText, errorBody);
+        throw new Error(`Error del servicio de IA (${response.status}): ${errorBody}`);
       }
 
       const data = await response.json();
