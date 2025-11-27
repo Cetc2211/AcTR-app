@@ -23,7 +23,6 @@ app = Flask(__name__)
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "academic-tracker-qeoxi")
 REGION = os.environ.get("GCP_REGION", "us-central1")
 # Instance connection name format: "project:region:instance"
-# You must set this env var in Cloud Run
 DB_INSTANCE_CONNECTION_NAME = os.environ.get("DB_INSTANCE_CONNECTION_NAME", "academic-tracker-qeoxi:us-central1:ingestion-academic-db")
 DB_USER = os.environ.get("DB_USER", "postgres")
 DB_NAME = os.environ.get("DB_NAME", "academic_db") # Adjust if different
@@ -36,15 +35,16 @@ connector = Connector()
 # Initialize Vertex AI
 vertexai.init(project=PROJECT_ID, location=REGION)
 
+# --- CORRECCIÓN #1: USAR VARIABLE DE ENTORNO DB_PASSWORD ---
 def get_db_password():
-    """Retrieve DB password from Secret Manager."""
-    try:
-        secret_name = f"projects/{PROJECT_ID}/secrets/ingestion-db-credentials/versions/latest"
-        response = secret_client.access_secret_version(request={"name": secret_name})
-        return response.payload.data.decode("UTF-8")
-    except Exception as e:
-        logger.error(f"Error fetching secret: {e}")
-        raise
+    """Retrieve DB password from environment variable (DB_PASSWORD)."""
+    # Esto usa la variable que pasamos en el comando gcloud run deploy, ignorando Secret Manager.
+    db_pass = os.environ.get("DB_PASSWORD")
+    if not db_pass:
+        logger.error("DB_PASSWORD environment variable is not set.")
+        raise ValueError("DB_PASSWORD environment variable is required and missing.")
+    return db_pass
+# -----------------------------------------------------------
 
 def get_db_connection():
     """Creates a connection to the Cloud SQL database."""
@@ -68,12 +68,19 @@ def get_db_connection():
     return pool
 
 # Global DB Pool
-db_pool = get_db_connection()
+try:
+    db_pool = get_db_connection()
+except (ValueError, Exception) as e:
+    logger.error(f"Error initializing DB connection pool: {e}")
+    db_pool = None # Asignar None si falla para manejarlo en init_db
 
 def init_db():
     """Initializes the database schema if it doesn't exist."""
+    if db_pool is None:
+         logger.warning("DB Pool not initialized due to previous error. Skipping schema creation.")
+         return
+
     # Note: In a real production scenario, use migration tools like Alembic.
-    # This is for demonstration/prototype purposes.
     with db_pool.connect() as conn:
         # Enable pgvector extension
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
@@ -157,10 +164,14 @@ def generate_summary(text_content):
     """Generates a summary using Vertex AI."""
     if not text_content:
         return ""
-    model = GenerativeModel("gemini-1.5-pro-preview-0409")
+    
+    # --- CORRECCIÓN #2: CAMBIAR MODELO PREVIEW POR ESTABLE ---
+    model = GenerativeModel("gemini-1.5-pro") 
+    
     prompt = f"Summarize the following academic document in a concise paragraph:\n\n{text_content[:10000]}"
     response = model.generate_content(prompt)
     return response.text
+# ---------------------------------------------------------
 
 @app.route('/', methods=['POST'])
 def ingest_event():
@@ -176,7 +187,6 @@ def ingest_event():
         logger.info(f"Received event: {event}")
 
         # Handle different event formats (Direct GCS trigger vs Eventarc)
-        # Eventarc usually wraps the GCS event in the body
         if 'bucket' in event: # Direct GCS notification
             bucket_name = event['bucket']
             file_name = event['name']
@@ -225,12 +235,13 @@ def ingest_event():
                 logger.error(f"Vertex AI processing failed: {e}")
 
         # 3. Store in Cloud SQL
+        # Verificar si el pool se inicializó correctamente antes de usarlo
+        if db_pool is None:
+            logger.error("Skipping database storage due to failed connection pool initialization.")
+            return jsonify({"status": "failure", "message": "Database connection failed during initialization."}), 500
+
         with db_pool.connect() as conn:
             # Insert Document Metadata
-            # Note: student_id and course_id would typically be extracted from metadata 
-            # or filename conventions (e.g., "student123_course456_report.pdf")
-            # For now, we insert NULLs or placeholders.
-            
             result = conn.execute(text("""
                 INSERT INTO documents (filename, gcs_path, document_type, summary, status)
                 VALUES (:filename, :gcs_path, :dtype, :summary, :status)
