@@ -1,167 +1,293 @@
-from flask import Flask, request, jsonify
-from google.cloud import secretmanager
-import google.generativeai as genai
 import os
 import logging
+import json
+from flask import Flask, request, jsonify
+from google.cloud import storage
+from google.cloud import secretmanager
+from google.cloud.sql.connector import Connector, IPTypes
+import sqlalchemy
+from sqlalchemy import text
+import vertexai
+from vertexai.language_models import TextEmbeddingModel
+from vertexai.generative_models import GenerativeModel
+import pypdf
+import io
 
-# Configurar logging
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configuración de CORS
-@app.after_request
-def add_cors_headers(response):
-    # En producción, reemplaza '*' con el dominio de tu aplicación Vercel (ej: 'https://tu-app.vercel.app')
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
-    response.headers['Access-Control-Allow-Methods'] = 'POST,OPTIONS'
-    return response
+# --- Configuration ---
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "academic-tracker-qeoxi")
+REGION = os.environ.get("GCP_REGION", "us-central1")
+# Instance connection name format: "project:region:instance"
+DB_INSTANCE_CONNECTION_NAME = os.environ.get("DB_INSTANCE_CONNECTION_NAME", "academic-tracker-qeoxi:us-central1:ingestion-academic-db")
+DB_USER = os.environ.get("DB_USER", "postgres")
+DB_NAME = os.environ.get("DB_NAME", "academic_db") # Adjust if different
 
-# --- Función auxiliar para obtener el modelo configurado ---
-def get_configured_model(api_key=None):
-    """
-    Obtiene el modelo de IA configurado.
-    Primero intenta usar la clave API proporcionada.
-    Si no está disponible, intenta obtenerla desde Secret Manager.
-    """
+# Initialize Clients
+storage_client = storage.Client()
+secret_client = secretmanager.SecretManagerServiceClient()
+connector = Connector()
+
+# Initialize Vertex AI
+vertexai.init(project=PROJECT_ID, location=REGION)
+
+### CORRECCIÓN #1: Unificar la fuente de la contraseña
+# El código original usaba Secret Manager, pero Cloud Run falló. 
+# Estamos forzando el uso de la variable de entorno DB_PASSWORD que pasamos en el gcloud run deploy.
+
+def get_db_password():
+    """Retrieve DB password from environment variable."""
+    # Retorna la variable de entorno DB_PASSWORD que pasamos en el comando gcloud run deploy
+    db_pass = os.environ.get("DB_PASSWORD")
+    if not db_pass:
+        # Esto lanzará un error FATAL si la contraseña no está en las variables de entorno, 
+        # forzando a que se configure en el comando de despliegue.
+        logger.error("DB_PASSWORD environment variable is not set.")
+        raise ValueError("DB_PASSWORD environment variable is required and missing.")
+    return db_pass
     
-    vertex_ai_api_key = api_key
+    # El código de Secret Manager original ha sido deshabilitado/removido para usar solo DB_PASSWORD
+    # El error FATAL anterior era causado por esta función: 
+    #   db_pass = get_db_password() # Intentaba usar Secret Manager
+    #   Luego, si la clave de Secret Manager era incorrecta, fallaba. 
+    # Al usar DB_PASSWORD directamente, eliminamos esa capa de fallo.
+
+def get_db_connection():
+    """Creates a connection to the Cloud SQL database."""
+    # Usamos la nueva función que obtiene la contraseña de la variable de entorno
+    db_pass = get_db_password()
     
-    # Si no se proporcionó clave API, intentar obtenerla desde Secret Manager
-    if not vertex_ai_api_key:
-        project_id = os.environ.get('GCP_PROJECT_ID', 'academic-tracker-qeoxi') 
-        secret_id = "vertex-ai-api-key" 
+    def getconn():
+        conn = connector.connect(
+            DB_INSTANCE_CONNECTION_NAME,
+            "pg8000",
+            user=DB_USER,
+            password=db_pass,
+            db=DB_NAME,
+            ip_type=IPTypes.PUBLIC  # Use PRIVATE if connected via VPC
+        )
+        return conn
+
+    pool = sqlalchemy.create_engine(
+        "postgresql+pg8000://",
+        creator=getconn,
+    )
+    return pool
+
+# Global DB Pool
+try:
+    db_pool = get_db_connection()
+except (ValueError, Exception) as e:
+    # Capturar el error si la contraseña no está seteada antes de init_db
+    logger.error(f"Error initializing DB connection pool: {e}")
+    # Nota: Si el pool falla aquí, init_db() y las rutas fallarán hasta que se corrija el despliegue.
+
+def init_db():
+    """Initializes the database schema if it doesn't exist."""
+    # Note: In a real production scenario, use migration tools like Alembic.
+    # This is for demonstration/prototype purposes.
+    # Solo intentamos la inicialización si el pool se creó exitosamente
+    if 'db_pool' not in globals():
+         logger.warning("DB Pool not initialized. Skipping schema creation.")
+         return
+
+    with db_pool.connect() as conn:
+        # Enable pgvector extension
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
         
-        try:
-            secret_client = secretmanager.SecretManagerServiceClient()
-            secret_name_path = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-            secret_response = secret_client.access_secret_version(request={"name": secret_name_path})
-            vertex_ai_api_key = secret_response.payload.data.decode("UTF-8")
-        except Exception as e:
-            logger.error(f"Error al acceder a Secret Manager para '{secret_id}': {e}")
-            logger.info("Se requiere una clave API en la solicitud o estar configurada en Secret Manager.")
-            raise Exception("Error de configuración: No se pudo obtener la clave API. Asegúrate de incluir 'api_key' en la solicitud o configura Google Secret Manager.")
+        # Create tables (schema definition remains the same)
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS students (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255),
+                email VARCHAR(255),
+                enrollment_date DATE,
+                status VARCHAR(50)
+            );
+        """))
+        
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS courses (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255),
+                code VARCHAR(50),
+                description TEXT
+            );
+        """))
 
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS documents (
+                id SERIAL PRIMARY KEY,
+                filename VARCHAR(255),
+                gcs_path VARCHAR(1024),
+                uploaded_by VARCHAR(255),
+                upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                student_id INT REFERENCES students(id),
+                course_id INT REFERENCES courses(id),
+                document_type VARCHAR(50),
+                summary TEXT,
+                status VARCHAR(50)
+            );
+        """))
+
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS document_embeddings (
+                document_id INT PRIMARY KEY REFERENCES documents(id),
+                embedding vector(768), -- 768 dimensions for text-embedding-004
+                embedding_model VARCHAR(255)
+            );
+        """))
+        conn.commit()
+        logger.info("Database schema initialized.")
+
+# Initialize DB on startup (be careful with concurrency in Cloud Run, usually done in a separate job)
+try:
+    init_db()
+except Exception as e:
+    logger.error(f"Failed to initialize DB: {e}")
+
+def extract_text_from_pdf(blob):
+    """Extracts text from a PDF blob."""
     try:
-        genai.configure(api_key=vertex_ai_api_key)
-        # Usar un modelo estable
-        return genai.GenerativeModel('gemini-1.5-pro') 
+        file_bytes = blob.download_as_bytes()
+        pdf_file = io.BytesIO(file_bytes)
+        reader = pypdf.PdfReader(pdf_file)
+        text_content = ""
+        for page in reader.pages:
+            text_content += page.extract_text() + "\n"
+        return text_content
     except Exception as e:
-        logger.error(f"Error al inicializar Vertex AI o cargar el modelo: {e}")
-        raise Exception("Error de inicialización de IA.")
+        logger.error(f"Error extracting PDF text: {e}")
+        return ""
 
-# Ruta de verificación de estado (health check)
-@app.route('/', methods=['GET'])
-def health_check():
-    return 'AI Report Service is running!', 200
+def generate_embeddings(text_content):
+    """Generates embeddings using Vertex AI."""
+    if not text_content:
+        return []
+    model = TextEmbeddingModel.from_pretrained("text-embedding-004")
+    # Vertex AI embedding models have a token limit. Truncate if necessary.
+    # For simplicity, we take the first chunk. In production, chunk the document.
+    embeddings = model.get_embeddings([text_content[:8000]]) 
+    return embeddings[0].values
 
-# Ruta principal para generar informes
-@app.route('/generate-report', methods=['POST'])
-def generate_report():
-    # --- Lógica de validación de entrada ---
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No se proporcionaron datos en la solicitud."}), 400
+def generate_summary(text_content):
+    """Generates a summary using Vertex AI."""
+    if not text_content:
+        return ""
     
-    student_name = data.get('student_name')
-    grades = data.get('grades') 
-    subject = data.get('subject')
-    api_key = data.get('api_key')
+    ### CORRECCIÓN #2: Modelo Gemini
+    # Se reemplaza el modelo preview por el estable.
+    model = GenerativeModel("gemini-1.5-pro") 
     
-    if not all([student_name, grades, subject]):
-        return jsonify({"error": "Datos de entrada incompletos. Se requieren 'student_name', 'grades' y 'subject'."}), 400
+    prompt = f"Summarize the following academic document in a concise paragraph:\n\n{text_content[:10000]}"
+    response = model.generate_content(prompt)
+    return response.text
 
+@app.route('/', methods=['POST'])
+def ingest_event():
+    """
+    Cloud Run service endpoint triggered by Cloud Storage events (via Eventarc).
+    """
     try:
-        model = get_configured_model(api_key)
+        # CloudEvents format
+        event = request.get_json()
+        if not event:
+            return "No event received", 400
+
+        logger.info(f"Received event: {event}")
+        
+        # ... [El resto de la lógica de evento permanece igual] ...
+        
+        # Handle different event formats (Direct GCS trigger vs Eventarc)
+        # Eventarc usually wraps the GCS event in the body
+        if 'bucket' in event: # Direct GCS notification
+            bucket_name = event['bucket']
+            file_name = event['name']
+        elif 'message' in event and 'data' in event['message']: # Pub/Sub
+             import base64
+             data = json.loads(base64.b64decode(event['message']['data']).decode('utf-8'))
+             bucket_name = data['bucket']
+             file_name = data['name']
+        else:
+            # Fallback/Assumption for Eventarc payload structure
+            bucket_name = event.get('bucket')
+            file_name = event.get('name')
+
+        if not bucket_name or not file_name:
+             return "Invalid event data", 400
+
+        logger.info(f"Processing file: {file_name} from {bucket_name}")
+
+        # 1. Read File
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_name)
+        
+        # Determine file type and extract text
+        text_content = ""
+        doc_type = "unknown"
+        
+        if file_name.lower().endswith('.pdf'):
+            text_content = extract_text_from_pdf(blob)
+            doc_type = "pdf"
+        elif file_name.lower().endswith('.txt'):
+            text_content = blob.download_as_text()
+            doc_type = "text"
+        else:
+            logger.warning(f"Unsupported file type for text extraction: {file_name}")
+            # Still record the file existence
+        
+        # 2. Process with Vertex AI
+        embedding_vector = []
+        summary_text = ""
+        
+        if text_content:
+            try:
+                embedding_vector = generate_embeddings(text_content)
+                summary_text = generate_summary(text_content)
+            except Exception as e:
+                logger.error(f"Vertex AI processing failed: {e}")
+
+        # 3. Store in Cloud SQL
+        # Se requiere la conexión a DB aquí. Si falla, el log lo indicará.
+        with db_pool.connect() as conn:
+            # Insert Document Metadata
+            
+            result = conn.execute(text("""
+                INSERT INTO documents (filename, gcs_path, document_type, summary, status)
+                VALUES (:filename, :gcs_path, :dtype, :summary, :status)
+                RETURNING id
+            """), {
+                "filename": file_name,
+                "gcs_path": f"gs://{bucket_name}/{file_name}",
+                "dtype": doc_type,
+                "summary": summary_text,
+                "status": "processed"
+            })
+            doc_id = result.scalar()
+            
+            # Insert Embeddings
+            if embedding_vector:
+                conn.execute(text("""
+                    INSERT INTO document_embeddings (document_id, embedding, embedding_model)
+                    VALUES (:doc_id, :embedding, :model)
+                """), {
+                    "doc_id": doc_id,
+                    "embedding": str(embedding_vector), # pgvector expects string representation or list
+                    "model": "text-embedding-004"
+                })
+            
+            conn.commit()
+
+        return jsonify({"status": "success", "message": f"Processed {file_name}"}), 200
+
     except Exception as e:
+        logger.error(f"Error processing event: {e}")
         return jsonify({"error": str(e)}), 500
 
-    # --- Construir el prompt para la IA ---
-    prompt = f"""
-    Eres un asistente de evaluación académica para profesores. Tu tarea es generar un informe detallado y constructivo sobre el rendimiento académico de un estudiante.
-
-    **Información del Estudiante:**
-    - Nombre: {student_name}
-    - Asignatura: {subject}
-    - Calificaciones/Evaluaciones: {grades}
-
-    **El informe debe incluir los siguientes apartados:**
-    1.  **Resumen General del Rendimiento:** Una visión concisa del desempeño global del estudiante en la asignatura.
-    2.  **Puntos Fuertes:** Destaca las áreas donde el estudiante ha demostrado un buen desempeño o habilidades notables.
-    3.  **Áreas de Mejora:** Identifica específicamente dónde el estudiante necesita trabajar más, con ejemplos si es posible.
-    4.  **Sugerencias para el Estudiante:** Recomendaciones prácticas y accionables que el estudiante puede seguir para mejorar.
-    5.  **Sugerencias para el Profesor:** Estrategias o enfoques que el profesor puede implementar para apoyar al estudiante.
-
-    **Formato del Informe:**
-    - Utiliza un lenguaje profesional y de apoyo.
-    - Estructura el informe con encabezados claros para cada sección.
-    - El informe debe ser conciso pero informativo.
-    """
-    
-    # --- Generar el informe con Vertex AI ---
-    try:
-        response_ia = model.generate_content(prompt)
-        report_content = response_ia.text
-        return jsonify({"report": report_content}), 200
-    except Exception as e:
-        logger.error(f"Error al generar contenido con Vertex AI: {e}")
-        return jsonify({"error": "Fallo en la generación del informe de IA. Intente de nuevo o revise los datos."}), 500
-
-@app.route('/generate-group-report', methods=['POST'])
-def generate_group_report():
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No se proporcionaron datos."}), 400
-
-    group_name = data.get('group_name')
-    partial = data.get('partial')
-    stats = data.get('stats') # Expecting a dict with stats
-    api_key = data.get('api_key')
-
-    if not all([group_name, partial, stats]):
-        return jsonify({"error": "Faltan datos requeridos (group_name, partial, stats)."}), 400
-
-    try:
-        model = get_configured_model(api_key)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-    # --- Prompt para Grupo ---
-    prompt = f"""
-      Eres un asistente pedagógico experto en análisis de datos académicos.
-      Tu tarea es redactar un análisis narrativo profesional y constructivo sobre el rendimiento de un grupo de estudiantes.
-      Utiliza un tono formal pero comprensible, enfocado en la mejora continua.
-
-      Aquí están los datos del grupo para el {partial}:
-      - Asignatura: {group_name}
-      - Total de Estudiantes: {stats.get('totalStudents')}
-      - Estudiantes Aprobados: {stats.get('approvedCount')}
-      - Estudiantes Reprobados: {stats.get('failedCount')}
-      - Calificación Promedio del Grupo: {stats.get('groupAverage')}
-      - Tasa de Asistencia General: {stats.get('attendanceRate')}%
-      - Estudiantes en Riesgo: {stats.get('atRiskStudentCount')}
-
-      Basado en estos datos, redacta un párrafo de análisis que aborde los siguientes puntos:
-      1.  **Análisis General**: Comienza con una visión general del rendimiento del grupo. Menciona el índice de aprobación y la calificación promedio.
-      2.  **Asistencia**: Comenta sobre la tasa de asistencia.
-      3.  **Áreas de Enfoque**: Identifica las áreas clave que requieren atención (reprobados, riesgo).
-      4.  **Recomendaciones**: Ofrece 1 o 2 recomendaciones generales y accionables.
-      5.  **Conclusión Positiva**: Termina con una nota alentadora.
-
-      Formato de salida: Un único párrafo de texto. No uses listas ni viñetas.
-    """
-
-    try:
-        response = model.generate_content(prompt)
-        return jsonify({"report": response.text}), 200
-    except Exception as e:
-        logger.error(f"Error Vertex AI Group: {e}")
-        return jsonify({"error": "Error generando reporte de grupo."}), 500
-
-
-# Iniciar el servidor Flask
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+if __name__ == "__main__":
+    # Usa un puerto variable de entorno si está disponible
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
