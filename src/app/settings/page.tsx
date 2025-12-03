@@ -34,7 +34,6 @@ import type { Group, Student, StudentObservation, PartialId, SpecialNote, Partia
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { NoteDialog } from '@/components/note-dialog';
-import { testApiKeyAction } from './actions';
 import { MODEL_OPTIONS, DEFAULT_MODEL, normalizeModel, describeModel } from '@/lib/ai-models';
 
 
@@ -63,7 +62,6 @@ export default function SettingsPage() {
     const [importFile, setImportFile] = useState<File | null>(null);
     const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
     const [isTestingKey, setIsTestingKey] = useState(false);
-    const [isApiKeyValid, setIsApiKeyValid] = useState<boolean | null>(null);
     const getModelLabel = useMemo(() => {
         return (value: string) => MODEL_OPTIONS.find(opt => opt.value === value)?.label || describeModel(value);
     }, []);
@@ -77,14 +75,7 @@ export default function SettingsPage() {
             setScheduleImagePreview(settings.scheduleImageUrl);
             setTeacherPhotoPreview(settings.teacherPhoto);
         }
-        // reset validation when settings load
-        setIsApiKeyValid(null);
     }, [settings, isLoading]);
-
-    useEffect(() => {
-        // reset validation flag when the API key value changes locally
-        setIsApiKeyValid(null);
-    }, [localSettings.apiKey]);
     
     const handleSave = async () => {
         setIsSaving(true);
@@ -245,19 +236,6 @@ export default function SettingsPage() {
         }
     };
     
-    const handleTestApiKey = async () => {
-        setIsTestingKey(true);
-        const result = await testApiKeyAction(localSettings.apiKey);
-        if (result.success) {
-            toast({ title: '¡Éxito!', description: 'Tu clave de API de Google AI es válida.' });
-            setIsApiKeyValid(true);
-        } else {
-            toast({ variant: 'destructive', title: 'Error de API', description: result.error });
-            setIsApiKeyValid(false);
-        }
-        setIsTestingKey(false);
-    };
-
     if (isLoading) {
         return (
             <div className="flex h-full w-full items-center justify-center">
@@ -278,40 +256,11 @@ export default function SettingsPage() {
             <CardHeader>
                 <CardTitle>Integración con Inteligencia Artificial</CardTitle>
                 <CardDescription>
-                    El sistema utiliza un servicio de IA gestionado. La configuración de clave personal es opcional.
+                    El sistema utiliza Google Cloud y Vertex AI para generar informes automáticos.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="apiKey">API Key de Google AI (Opcional)</Label>
-                        <div className="flex items-center gap-2">
-                            <KeyRound className="h-4 w-4 text-muted-foreground"/>
-                            <Input
-                                id="apiKey"
-                                type="password"
-                                value={localSettings.apiKey}
-                                onChange={handleInputChange}
-                                placeholder="Opcional: Tu clave API de Google AI"
-                            />
-                            <Button 
-                                variant="secondary" 
-                                onClick={handleTestApiKey}
-                                disabled={isTestingKey}
-                            >
-                                {isTestingKey ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : 'Probar Conexión'}
-                            </Button>
-                            {isApiKeyValid === true && (
-                                <Badge className="ml-2 bg-green-600 text-white">Clave válida</Badge>
-                            )}
-                            {isApiKeyValid === false && (
-                                <Badge variant="destructive" className="ml-2">Clave inválida</Badge>
-                            )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Tu clave se almacena localmente y solo se usa para generar informes.
-                        </p>
-                    </div>
                         <div className="space-y-2">
                             <Label htmlFor="aiModel">Modelo de IA preferido</Label>
                             <p className="text-xs text-muted-foreground">Selecciona el modelo que deseas usar para generar los informes. Si tu clave no tiene acceso al modelo seleccionado, el servidor intentará fallbacks automáticos.</p>

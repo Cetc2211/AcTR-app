@@ -82,11 +82,6 @@ export default function GroupReportPage() {
     setNarrativeAnalysis(groupAnalysis || '');
   }, [groupAnalysis]);
 
-  useEffect(() => {
-    // reset validation flag if the API key changes
-    setIsApiKeyValid(false);
-  }, [settings.apiKey]);
-
 
   useEffect(() => {
     setIsClient(true);
@@ -265,27 +260,11 @@ export default function GroupReportPage() {
         return;
     }
 
-    if (!settings.apiKey) {
-        toast({variant: 'destructive', title: 'Clave API requerida', description: 'Por favor configura tu clave API en Configuración.'})
-        return;
-    }
-
     setIsGeneratingAnalysis(true);
     toast({ title: 'Generando análisis con IA...', description: 'Esto puede tomar unos segundos.' });
 
     try {
-      // First, ensure the API key works (verify once per session or until it changes)
-      if (!isApiKeyValid) {
-        const testResult = await testApiKeyAction(settings.apiKey);
-        if (!testResult.success) {
-          toast({ variant: 'destructive', title: 'Clave inválida', description: testResult.error || 'La clave API no es válida.' });
-          setIsGeneratingAnalysis(false);
-          return;
-        }
-        setIsApiKeyValid(true);
-      }
-
-      // Call the server action which now uses the Cloud Run service
+      // Call the server action which uses Google Cloud Service Account authentication
       const analysisText = await generateGroupReportAnalysis({
         groupName: group.subject,
         partial: getPartialLabel(partialId),
@@ -295,7 +274,6 @@ export default function GroupReportPage() {
         groupAverage: summary.groupAverage,
         attendanceRate: summary.attendanceRate,
         atRiskStudentCount: atRiskStudentsForGroup.length,
-        apiKey: settings.apiKey,
         aiModel: settings.aiModel
       });
 
