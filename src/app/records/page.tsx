@@ -43,6 +43,20 @@ type StudentGradeInfo = {
   isRecovery: boolean;
 };
 
+const convertPercentageToScale = (percentage: number): number => {
+  // Redondear al número inferior si termina en 5 o menos
+  // Redondear al número superior si termina en 6 o más
+  const lastDigit = percentage % 10;
+  
+  if (lastDigit <= 5) {
+    // Redondear hacia abajo
+    return Math.floor(percentage / 10);
+  } else {
+    // Redondear hacia arriba
+    return Math.ceil(percentage / 10);
+  }
+};
+
 const RecordsPage = () => {
   const {
     groups,
@@ -329,6 +343,7 @@ const RecordsPage = () => {
                     <TableHead className="text-center">Asistencias</TableHead>
                     <TableHead className="text-center">Faltas</TableHead>
                     <TableHead className="text-center">Calificación Final (%)</TableHead>
+                    <TableHead className="text-center">Promedio</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -339,6 +354,7 @@ const RecordsPage = () => {
                       <TableCell className="text-center">{student.attendance}</TableCell>
                       <TableCell className="text-center">{student.absences}</TableCell>
                       <TableCell className="text-center font-bold">{student.finalGrade.toFixed(1)} {student.isRecovery && '(R)'}</TableCell>
+                      <TableCell className="text-center font-bold">{convertPercentageToScale(student.finalGrade)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
