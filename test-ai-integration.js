@@ -129,8 +129,7 @@ async function testGenerateStudentFeedback() {
       Mejores criterios: Participación, Trabajos prácticos.
       Criterios a mejorar: Pruebas escritas, Puntualidad.
       Observaciones: Buen desempeño en general; necesita mejorar en evaluaciones.
-    `,
-    api_key: null
+    `
   };
   
   console.log('  Payload:');
@@ -187,8 +186,7 @@ async function testGenerateGroupReport() {
       groupAverage: '78.5',
       attendanceRate: '88.3',
       atRiskStudentCount: 3
-    },
-    api_key: null
+    }
   };
   
   console.log('  Payload:');

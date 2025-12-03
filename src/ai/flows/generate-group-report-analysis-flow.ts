@@ -11,14 +11,13 @@ const GroupReportInputSchema = z.object({
     groupAverage: z.number().describe('The average grade of the group.'),
     attendanceRate: z.number().describe('The average attendance rate of the group as a percentage.'),
     atRiskStudentCount: z.number().describe('The number of students identified as being at risk.'),
-    apiKey: z.string().optional().describe('The user-provided Google AI API key.'),
-  aiModel: z.string().optional().describe('Optional preferred AI model (e.g., models/gemini-1.5-pro-latest)'),
+    aiModel: z.string().optional().describe('Optional preferred AI model (e.g., models/gemini-1.5-pro-latest)'),
 });
 
 export type GroupReportInput = z.infer<typeof GroupReportInputSchema>;
 
 export async function generateGroupReportAnalysis(input: GroupReportInput): Promise<string> {
-    const { apiKey, aiModel, ...flowInput} = input;
+    const { aiModel, ...flowInput} = input;
     try {
       const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
       const response = await fetch(`${endpoint}/generate-group-report`, {
@@ -36,8 +35,7 @@ export async function generateGroupReportAnalysis(input: GroupReportInput): Prom
             groupAverage: flowInput.groupAverage.toFixed(1),
             attendanceRate: flowInput.attendanceRate.toFixed(1),
             atRiskStudentCount: flowInput.atRiskStudentCount
-          },
-          api_key: apiKey || undefined  // Pass the API key to the backend
+          }
         })
       });
 

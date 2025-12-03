@@ -12,14 +12,13 @@ const StudentFeedbackInputSchema = z.object({
     earnedPercentage: z.number(),
   })).describe('Breakdown of the grade by evaluation criteria.'),
   observations: z.array(z.string()).describe('List of observations from the behavioral log.'),
-  apiKey: z.string().optional().describe('The user-provided Google AI API key.'),
   aiModel: z.string().optional().describe('Optional preferred AI model'),
 });
 
 export type StudentFeedbackInput = z.infer<typeof StudentFeedbackInputSchema>;
 
 export async function generateStudentFeedback(input: StudentFeedbackInput): Promise<string> {
-    const { apiKey, aiModel, ...flowInput } = input;
+    const { aiModel, ...flowInput } = input;
     const { studentName, partial, finalGrade, attendanceRate, criteria, observations } = flowInput;
 
     const topCriteria = criteria.sort((a, b) => b.earnedPercentage - a.earnedPercentage).slice(0, 2);
@@ -45,8 +44,7 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
         body: JSON.stringify({
           student_name: studentName,
           subject: `Evaluación del ${partial}`, // Usamos el parcial como contexto de la asignatura/periodo
-          grades: gradesDescription,
-          api_key: apiKey || undefined  // Pass the API key to the backend
+          grades: gradesDescription
         })
       });
 

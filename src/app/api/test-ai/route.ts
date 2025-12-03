@@ -44,8 +44,7 @@ export async function GET() {
         Mejores criterios: Participación, Trabajos prácticos.
         Criterios a mejorar: Pruebas escritas, Puntualidad.
         Observaciones: Buen desempeño en general; necesita mejorar en evaluaciones.
-      `,
-      api_key: null
+      `
     };
 
     const response = await fetch(`${backendUrl}/generate-report`, {
@@ -83,8 +82,7 @@ export async function GET() {
         groupAverage: '78.5',
         attendanceRate: '88.3',
         atRiskStudentCount: 3
-      },
-      api_key: null
+      }
     };
 
     const response = await fetch(`${backendUrl}/generate-group-report`, {
