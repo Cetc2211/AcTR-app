@@ -1,6 +1,6 @@
 'use server';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://backend-service-263108580734.us-central1.run.app';
+const BACKEND_URL = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
 
 // Server action to test the API key (Now tests Backend Connectivity)
 export async function testApiKeyAction(apiKey: string): Promise<{ success: boolean; error?: string }> {

@@ -1,6 +1,7 @@
 import os
 import logging
 import json
+from datetime import datetime
 from flask import Flask, request, jsonify
 from google.cloud import storage
 from google.cloud import secretmanager
@@ -186,6 +187,16 @@ def generate_summary(text_content):
     prompt = f"Summarize the following academic document in a concise paragraph:\n\n{text_content[:10000]}"
     response = model.generate_content(prompt)
     return response.text
+
+@app.route('/', methods=['GET'])
+def health():
+    """Health check endpoint for monitoring and connectivity tests."""
+    return jsonify({
+        "status": "healthy",
+        "service": "AcTR-IA-Backend",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0"
+    }), 200
 
 @app.route('/', methods=['POST'])
 def ingest_event():

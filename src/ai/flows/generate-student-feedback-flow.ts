@@ -36,7 +36,8 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
 
     try {
       // Llamada al microservicio de IA en Cloud Run
-      const response = await fetch('https://backend-service-263108580734.us-central1.run.app/generate-report', {
+      const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
+      const response = await fetch(`${endpoint}/generate-report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
