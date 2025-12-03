@@ -1,11 +1,8 @@
-'use client';
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, CheckCircle, AlertCircle, XCircle, Zap } from 'lucide-react';
-import { testCloudRunConnection } from '@/app/api/test-ai/route';
 
 export default function TestAIPage() {
   const [isRunning, setIsRunning] = useState(false);
@@ -16,7 +13,8 @@ export default function TestAIPage() {
     setResults(null);
     
     try {
-      const testResults = await testCloudRunConnection();
+      const response = await fetch('/api/test-ai', { method: 'GET' });
+      const testResults = await response.json();
       setResults(testResults);
     } catch (error: any) {
       setResults({

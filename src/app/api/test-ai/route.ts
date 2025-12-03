@@ -1,12 +1,10 @@
-'use server';
-
 /**
- * Server Action para testing de Cloud Run + IA Integration
- * Se puede llamar desde cualquier página de la app
+ * API Route para testing de Cloud Run + IA Integration
+ * Endpoint: GET /api/test-ai
  */
 
-export async function testCloudRunConnection() {
-  const results = {
+export async function GET() {
+  const results: any = {
     timestamp: new Date().toISOString(),
     tests: [] as any[]
   };
@@ -113,9 +111,9 @@ export async function testCloudRunConnection() {
   }
 
   // Summary
-  const passed = results.tests.filter(t => t.status === 'PASS').length;
-  const failed = results.tests.filter(t => t.status === 'FAIL').length;
-  const errors = results.tests.filter(t => t.status === 'ERROR').length;
+  const passed = results.tests.filter((t: any) => t.status === 'PASS').length;
+  const failed = results.tests.filter((t: any) => t.status === 'FAIL').length;
+  const errors = results.tests.filter((t: any) => t.status === 'ERROR').length;
 
   results.summary = {
     total: results.tests.length,
@@ -125,5 +123,13 @@ export async function testCloudRunConnection() {
     allPassed: failed === 0 && errors === 0
   };
 
-  return results;
+  return new Response(JSON.stringify(results), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' }
+  });
 }
+
+export const testCloudRunConnection = async () => {
+  const response = await fetch('/api/test-ai', { method: 'GET' });
+  return response.json();
+};
