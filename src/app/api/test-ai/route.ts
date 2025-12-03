@@ -128,8 +128,3 @@ export async function GET() {
     headers: { 'Content-Type': 'application/json' }
   });
 }
-
-export const testCloudRunConnection = async () => {
-  const response = await fetch('/api/test-ai', { method: 'GET' });
-  return response.json();
-};
