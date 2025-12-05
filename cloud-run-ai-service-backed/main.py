@@ -10,17 +10,18 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Initialize Vertex AI
+# Initialize Google Generative AI
 try:
-    import vertexai
-    from vertexai.generative_models import GenerativeModel
+    import google.generativeai as genai
     
-    PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "academic-tracker-qeoxi")
-    REGION = os.environ.get("GCP_REGION", "us-central1")
-    vertexai.init(project=PROJECT_ID, location=REGION)
-    logger.info("✅ Vertex AI initialized successfully")
+    api_key = os.environ.get("GOOGLE_AI_API_KEY")
+    if api_key:
+        genai.configure(api_key=api_key)
+        logger.info("✅ Google Generative AI initialized successfully")
+    else:
+        logger.error("⚠️  GOOGLE_AI_API_KEY not set during initialization")
 except Exception as e:
-    logger.error(f"⚠️  Warning: Failed to initialize Vertex AI: {e}")
+    logger.error(f"⚠️  Warning: Failed to initialize Google Generative AI: {e}")
 
 @app.route('/', methods=['GET'])
 def health():
@@ -74,7 +75,8 @@ Por favor proporciona:
 Sé conciso pero exhaustivo en tu análisis."""
         
         # Call Gemini API
-        model = GenerativeModel("gemini-1.5-pro")
+        import google.generativeai as genai
+        model = genai.GenerativeModel("gemini-1.5-pro")
         response = model.generate_content(prompt)
         
         return jsonify({
@@ -128,7 +130,8 @@ Por favor proporciona:
 Sé empático, constructivo y motivador. Adapta el lenguaje para ser comprensible y relevante."""
         
         # Call Gemini API
-        model = GenerativeModel("gemini-1.5-pro")
+        import google.generativeai as genai
+        model = genai.GenerativeModel("gemini-1.5-pro")
         response = model.generate_content(prompt)
         
         return jsonify({
