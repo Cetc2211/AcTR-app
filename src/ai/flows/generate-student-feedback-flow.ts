@@ -34,17 +34,19 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
     `;
 
     try {
-      // Llamada al microservicio de IA en Cloud Run
+      // Call Cloud Run backend service with google-generativeai
       const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
-      const response = await fetch(`${endpoint}/generate-report`, {
+      const response = await fetch(`${endpoint}/generate-student-feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           student_name: studentName,
-          subject: `Evaluación del ${partial}`, // Usamos el parcial como contexto de la asignatura/periodo
-          grades: gradesDescription
+          subject: `Evaluación del ${partial}`,
+          grades: criteria.map(c => c.earnedPercentage),
+          attendance: attendanceRate,
+          observations: observations.join('; ')
         })
       });
 

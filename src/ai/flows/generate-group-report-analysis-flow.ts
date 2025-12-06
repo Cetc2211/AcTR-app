@@ -19,6 +19,7 @@ export type GroupReportInput = z.infer<typeof GroupReportInputSchema>;
 export async function generateGroupReportAnalysis(input: GroupReportInput): Promise<string> {
     const { aiModel, ...flowInput} = input;
     try {
+      // Use Cloud Run backend service with google-generativeai
       const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
       const response = await fetch(`${endpoint}/generate-group-report`, {
         method: 'POST',
