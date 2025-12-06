@@ -15,17 +15,18 @@ import google.generativeai as genai
 
 api_key = os.environ.get("GOOGLE_AI_API_KEY")
 if api_key:
-    genai.configure(api_key=api_key)
-    logger.info("✅ Google Generative AI initialized successfully with API key")
+    # Configure with explicit region endpoint for Vertex AI compatibility
+    genai.configure(api_key=api_key, client_options={"api_endpoint": "us-central1-aiplatform.googleapis.com"})
+    logger.info("✅ Google Generative AI initialized successfully with API key (us-central1)")
 else:
     logger.error("⚠️  GOOGLE_AI_API_KEY environment variable is not set!")
 
-# Initialize model globally - Using gemini-pro (available with API key auth)
+# Initialize model globally - Using gemini-1.0-pro (stable, widely available)
 model = None
 try:
     if api_key:
-        model = genai.GenerativeModel("gemini-pro")
-        logger.info("✅ Gemini Pro model initialized")
+        model = genai.GenerativeModel("gemini-1.0-pro")
+        logger.info("✅ Gemini 1.0 Pro model initialized")
 except Exception as e:
     logger.error(f"⚠️  Error initializing model: {e}")
 
@@ -37,8 +38,9 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.1",
-        "model": "gemini-pro" if model else "not-loaded",
+        "version": "2.2",
+        "model": "gemini-1.0-pro" if model else "not-loaded",
+        "region": "us-central1",
         "api_key_configured": bool(api_key)
     }), 200
 
