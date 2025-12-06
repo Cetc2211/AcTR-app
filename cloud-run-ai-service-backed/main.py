@@ -20,12 +20,12 @@ if api_key:
 else:
     logger.error("⚠️  GOOGLE_AI_API_KEY environment variable is not set!")
 
-# Initialize model globally
+# Initialize model globally - Using gemini-pro (available with API key auth)
 model = None
 try:
     if api_key:
-        model = genai.GenerativeModel("gemini-1.5-pro")
-        logger.info("✅ Gemini 1.5 Pro model initialized")
+        model = genai.GenerativeModel("gemini-pro")
+        logger.info("✅ Gemini Pro model initialized")
 except Exception as e:
     logger.error(f"⚠️  Error initializing model: {e}")
 
@@ -37,8 +37,8 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.0",
-        "model": "gemini-1.5-pro" if model else "not-loaded",
+        "version": "2.1",
+        "model": "gemini-pro" if model else "not-loaded",
         "api_key_configured": bool(api_key)
     }), 200
 
