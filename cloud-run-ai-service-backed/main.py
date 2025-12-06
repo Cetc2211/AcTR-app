@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Force rebuild timestamp: 2025-12-06-08:30-v2.3-gemini-1.0-pro
 app = Flask(__name__)
 
 # Initialize Google Generative AI
@@ -38,10 +39,11 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.2",
+        "version": "2.3",
         "model": "gemini-1.0-pro" if model else "not-loaded",
         "region": "us-central1",
-        "api_key_configured": bool(api_key)
+        "api_key_configured": bool(api_key),
+        "deployment": "2025-12-06-forced-rebuild"
     }), 200
 
 @app.route('/generate-report', methods=['POST'])

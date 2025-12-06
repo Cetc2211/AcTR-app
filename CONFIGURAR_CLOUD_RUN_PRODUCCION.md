@@ -20,7 +20,7 @@ El error `"Error de configuración: No se pudo obtener la clave API"` significa 
 2. Selecciona tu proyecto: `actracker-master`
 3. Ve a **Cloud Run** > **backend-service**
 4. Click en **"EDIT & DEPLOY NEW REVISION"**
-5. En la sección **"Runtime settings"**, expande **"Runtime, build, connections and security"**
+5. En la sección **"sRuntime settings"**, expande **"Runtime, build, connections and security"**
 6. Bajo **"Runtime environment variables"**, agrega:
 
 | Variable | Valor |
