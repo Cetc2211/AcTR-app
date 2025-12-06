@@ -1,24 +1,15 @@
-export const DEFAULT_MODEL = 'gemini-1.5-pro';
+// Fixed model: gemini-1.0-pro (backend handles model selection)
+// All requests go through Cloud Run backend which uses gemini-1.0-pro
+export const DEFAULT_MODEL = 'gemini-1.0-pro';
 
+// Model aliases - simplified for backend API
 const ALIAS_PAIRS: Array<[string, string]> = [
-  // Pro canonical
-  ['gemini-1.5-pro', 'gemini-1.5-pro'],
-  ['models/gemini-1.5-pro-latest', 'gemini-1.5-pro'],
-  ['gemini-pro', 'gemini-1.5-pro'],
-  ['gemini-1.5-pro-exp', 'gemini-1.5-pro'],
-  ['gemini-2.5-pro', 'gemini-1.5-pro'], // legacy alias -> 1.5-pro
-  // Flash canonical
-  ['gemini-1.5-flash', 'gemini-1.5-flash'],
-  ['models/gemini-1.5-flash-latest', 'gemini-1.5-flash'],
-  ['gemini-2.5-flash', 'gemini-1.5-flash'],
-  ['gemini-2.0-flash', 'gemini-1.5-flash'],
-  // Flash 8B canonical
-  ['gemini-1.5-flash-8b', 'gemini-1.5-flash-8b'],
-  ['models/gemini-1.5-flash-8b-latest', 'gemini-1.5-flash-8b'],
-  ['gemini-2.0-flash-lite', 'gemini-1.5-flash-8b'],
-  // 1.0 pro canonical (fallback legacy)
+  // All models resolve to gemini-1.0-pro (backend decides actual model)
   ['gemini-1.0-pro', 'gemini-1.0-pro'],
-  ['models/gemini-1.0-pro-latest', 'gemini-1.0-pro'],
+  ['gemini-pro', 'gemini-1.0-pro'],
+  ['gemini-1.5-pro', 'gemini-1.0-pro'], // legacy -> 1.0-pro
+  ['gemini-1.5-flash', 'gemini-1.0-pro'],
+  ['gemini-2.0-flash', 'gemini-1.0-pro'],
 ];
 
 const aliasMap = ALIAS_PAIRS.reduce<Record<string, string>>((acc, [alias, canonical]) => {

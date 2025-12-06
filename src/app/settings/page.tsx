@@ -261,6 +261,13 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
+                        {/* 
+                        NOTE: AI Model selection is now handled by the backend service (Cloud Run).
+                        The backend uses gemini-1.0-pro exclusively and handles all AI operations.
+                        Users no longer need to select a model - it's centralized in the backend.
+                        
+                        Model selection UI temporarily hidden. If needed in the future, uncomment:
+                        
                         <div className="space-y-2">
                             <Label htmlFor="aiModel">Modelo de IA preferido</Label>
                             <p className="text-xs text-muted-foreground">Selecciona el modelo que deseas usar para generar los informes. Si tu clave no tiene acceso al modelo seleccionado, el servidor intentará fallbacks automáticos.</p>
@@ -274,7 +281,6 @@ export default function SettingsPage() {
                                         const updated = { ...localSettings, aiModel: newModel } as typeof localSettings;
                                         setLocalSettings(updated);
                                         try {
-                                            // Persist immediately so user doesn't have to click Guardar
                                             await setSettings(updated);
                                             toast({ title: 'Ajustes guardados', description: `Modelo IA: ${getModelLabel(newModel)}` });
                                         } catch (err) {
@@ -291,6 +297,12 @@ export default function SettingsPage() {
                                     Predeterminado
                                 </Button>
                             </div>
+                        </div>
+                        */}
+                        
+                        <div className="space-y-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <p className="text-sm font-medium text-blue-900">🤖 Inteligencia Artificial</p>
+                            <p className="text-xs text-blue-800">El sistema utiliza <strong>Gemini 1.0 Pro</strong> para generar análisis académicos automáticamente. No requiere configuración.</p>
                         </div>
                 </div>
             </CardContent>
