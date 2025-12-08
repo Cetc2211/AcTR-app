@@ -277,6 +277,22 @@ export default function GroupReportPage() {
         aiModel: settings.aiModel
       });
 
+      console.log('Analysis response received:', {
+        length: analysisText ? analysisText.length : 0,
+        empty: !analysisText,
+        preview: analysisText ? analysisText.substring(0, 100) : 'NULL'
+      });
+
+      if (!analysisText || analysisText.trim() === '') {
+        toast({
+          variant: 'destructive',
+          title: 'Análisis vacío',
+          description: 'La IA generó una respuesta vacía. Intenta nuevamente.',
+        });
+        setIsGeneratingAnalysis(false);
+        return;
+      }
+
       setNarrativeAnalysis(analysisText || '');
       // Note: The server action returns just the text string, so we don't get the model name back directly 
       // unless we change the return type. For now, we assume the requested model was used.
@@ -284,7 +300,7 @@ export default function GroupReportPage() {
       
       toast({ title: '¡Análisis generado!', description: `La IA ha completado el análisis del grupo.` });
     } catch(e: any) {
-      console.error(e);
+      console.error('Error generating analysis:', e);
       toast({
         variant: 'destructive',
         title: 'Error de IA',
@@ -374,50 +390,10 @@ export default function GroupReportPage() {
                     <span>{format(new Date(), 'PPP', {locale: es})}</span>
                 </div>
            </div>
-           {lastUsedModel && friendlyModelName && (
-             <div className="pt-2 text-sm text-muted-foreground">
-               <span className="font-semibold">Modelo IA usado: </span>
-               <span>{friendlyModelName}</span>
-               {friendlyModelName !== lastUsedModel && (
-                 <span className="ml-1 text-xs">({lastUsedModel})</span>
-               )}
-             </div>
-           )}
         </header>
 
         <section className="space-y-6">
-            <p className="prose dark:prose-invert max-w-none text-justify">
-              Durante este periodo se atendieron <strong>{summary.totalStudents}</strong> estudiantes, con los siguientes resultados e indicadores clave:
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
-              <Card className="text-center">
-                  <CardHeader><CardTitle className="text-base">Aprobación</CardTitle></CardHeader>
-                  <CardContent>
-                      <p className="text-3xl font-bold">{summary.approvedCount} <span className="text-base font-normal text-muted-foreground">de {summary.totalStudents}</span></p>
-                       <p className="text-sm text-green-600 flex items-center justify-center gap-1"><CheckCircle className="h-4 w-4"/> Aprobados</p>
-                       <p className="text-sm text-red-600 flex items-center justify-center gap-1"><XCircle className="h-4 w-4"/> Reprobados: {summary.failedCount}</p>
-                  </CardContent>
-              </Card>
-               <Card className="text-center">
-                  <CardHeader><CardTitle className="text-base">Promedio General</CardTitle></CardHeader>
-                  <CardContent>
-                       <p className="text-3xl font-bold">{summary.groupAverage.toFixed(1)} <span className="text-base font-normal text-muted-foreground">/ 100</span></p>
-                       <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><TrendingUp className="h-4 w-4"/> Calificación media del grupo</p>
-                  </CardContent>
-              </Card>
-               <Card className="text-center">
-                  <CardHeader><CardTitle className="text-base">Asistencia y Participación</CardTitle></CardHeader>
-                   <CardContent>
-                       <p className="text-3xl font-bold">{summary.attendanceRate.toFixed(1)}%</p>
-                       <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><BarChart className="h-4 w-4"/> Tasa de Asistencia General</p>
-                       <p className="text-xl font-bold mt-2">{summary.participationRate.toFixed(1)}%</p>
-                       <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><BarChart className="h-4 w-4"/> Tasa de Participación</p>
-                  </CardContent>
-              </Card>
-            </div>
-            
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Análisis y Observaciones</CardTitle>
                 </CardHeader>

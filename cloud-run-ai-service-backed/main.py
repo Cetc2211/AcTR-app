@@ -58,11 +58,17 @@ def call_generative_api(prompt: str) -> str:
         raise Exception("Model not initialized")
     
     try:
-        logger.info("🔄 Calling Gemini model")
+        logger.info("🔄 Calling Gemini model with prompt length: " + str(len(prompt)))
         response = model.generate_content(prompt)
+        
+        if not response or not response.text:
+            logger.error("⚠️ Empty response from Gemini model")
+            raise Exception("Gemini model returned empty response")
+        
+        logger.info(f"✅ Gemini response received, length: {len(response.text)}")
         return response.text
     except Exception as e:
-        logger.error(f"Error calling Gemini: {e}")
+        logger.error(f"❌ Error calling Gemini: {e}", exc_info=True)
         raise Exception(f"Model generation failed: {str(e)}")
 
 
@@ -89,84 +95,50 @@ def generate_group_report():
         stats = data.get('stats', {})
         
         # Build the prompt for Gemini
-        prompt = f"""Eres un docente experimentado escribiendo un informe académico formal para la institución. 
+        prompt = f"""Eres un docente experimentado escribiendo un informe académico formal. 
 
-DATOS DEL GRUPO:
-Grupo: {group_name}
-Período: {partial}
-Total de estudiantes: {stats.get('totalStudents', 0)}
+DATOS ESTADÍSTICOS DISPONIBLES:
+Grupo: {group_name} - Período: {partial}
+Total estudiantes: {stats.get('totalStudents', 0)}
 Aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
 Reprobados: {stats.get('failedCount', 0)}
-Promedio del grupo: {stats.get('groupAverage', 0)}
-Asistencia promedio: {stats.get('attendanceRate', 0)}%
-Estudiantes en riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
+Promedio: {stats.get('groupAverage', 0)}
+Asistencia: {stats.get('attendanceRate', 0)}%
+En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-INSTRUCCIONES:
-Redacta un informe formal dirigido a: Dirección, Subdirección Académica, Orientación y Tutoría. El reporte debe:
+INSTRUCCIONES CRÍTICAS:
+Redacta ÚNICAMENTE el análisis académico. NO incluyas:
+- Encabezados, introducción o datos de identificación
+- Información sobre qué modelo de IA se usó para generar esto
+- Explicaciones sobre el proceso de análisis
+- Símbolos como asteriscos (*), almohadillas (#), guiones (-) para listas
 
-1. LOGROS Y LIMITANTES DEL GRUPO (primer apartado)
-   - Describe los logros académicos alcanzados (comprensión de contenidos, participación, etc)
-   - Explica las limitantes observadas (inasistencias, estudiantes en riesgo, desempeño bajo, etc)
-   - Debe leerse como si el docente lo escribiera, con análisis profundo y reflexivo
-   - Evita frases genéricas tipo "El grupo muestra"
+El informe DEBE contener SOLO estos dos apartados:
 
-2. RECOMENDACIONES (segundo apartado)
-   - Dividir en subsecciones por actor: Para la Dirección, Para la Subdirección Académica, Para Orientación y Tutoría, Para el Docente
-   - Cada recomendación debe ser específica y accionable
-   - Basadas en los datos y contexto del grupo
-   - Enfoque preventivo y de mejora continua
+LOGROS Y LIMITANTES DEL GRUPO
+Describe con profundidad los logros observados (desempeño académico, comprensión, participación) y las limitantes (inasistencias, estudiantes en riesgo, bajo rendimiento). Redacta como el docente escribiendo: reflexivo, directo, sin frases genéricas.
 
-ESTILO:
-- Lenguaje formal y profesional
-- SIN asteriscos, NO usar símbolos #
-- Párrafos bien estructurados, narrativos
-- Evita listas numeradas excesivas
-- Que no parezca redactado por IA
-- Tono reflexivo y constructivo
+RECOMENDACIONES
+Incluye subsecciones breves dirigidas a: Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada recomendación debe ser específica, accionable y basada en los datos.
 
-Redacta el informe completo, profesional y coherente."""
+REQUISITOS DE FORMATO:
+- Lenguaje completamente formal y profesional
+- NINGÚN símbolo de formato (sin *, sin #, sin -, sin viñetas)
+- Párrafos narrativos y coherentes
+- Sin listas numeradas
+- Sin títulos con símbolos especiales
+- Redacción que parezca del docente, no de IA
+- Ir directo al análisis, sin introducción
+
+Redacta SOLO el contenido del análisis, nada más."""
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
-        logger.info(f"Report generated successfully")
+        logger.info(f"Report generated successfully, length: {len(report_text) if report_text else 0}")
         
-        return jsonify({
-            "success": True,
-            "report": report_text,
-            "group": group_name,
-            "partial": partial
-        }), 200
-        
-    except Exception as e:
-        logger.error(f"Error generating group report: {e}", exc_info=True)
-        return jsonify({"error": f"Error al generar informe: {str(e)}"}), 500
-        
-        # Build the prompt for Gemini
-        prompt = f"""Analiza el siguiente rendimiento académico del grupo y proporciona un análisis detallado:
-
-Grupo: {group_name}
-Período: {partial}
-
-Estadísticas:
-- Total de estudiantes: {stats.get('totalStudents', 0)}
-- Aprobados: {stats.get('approvedCount', 0)}
-- Reprobados: {stats.get('failedCount', 0)}
-- Promedio del grupo: {stats.get('groupAverage', 0)}
-- Asistencia promedio: {stats.get('attendanceRate', 0)}%
-- Estudiantes en riesgo: {stats.get('atRiskStudentCount', 0)}
-
-Por favor proporciona:
-1. Resumen del desempeño del grupo
-2. Fortalezas identificadas
-3. Áreas de mejora
-4. Recomendaciones específicas para docentes
-5. Estrategias para estudiantes en riesgo
-
-Sé conciso pero exhaustivo en tu análisis."""
-        
-        logger.info(f"Generating report for group: {group_name}, partial: {partial}")
-        report_text = call_generative_api(prompt)
-        logger.info(f"Report generated successfully")
+        if not report_text:
+            logger.warning("Report generated but is empty!")
+            report_text = "No se pudo generar el informe. Por favor intenta de nuevo."
         
         return jsonify({
             "success": True,
@@ -242,7 +214,12 @@ Redacta la retroalimentación completa y coherente."""
         
         logger.info(f"Generating feedback for student: {student_name}, subject: {subject}")
         feedback_text = call_generative_api(prompt)
-        logger.info(f"Feedback generated successfully")
+        
+        if not feedback_text:
+            logger.warning(f"Feedback generated but is empty for student {student_name}!")
+            feedback_text = "No se pudo generar la retroalimentación. Por favor intenta de nuevo."
+        
+        logger.info(f"Feedback generated successfully, length: {len(feedback_text)}")
         
         return jsonify({
             "success": True,
