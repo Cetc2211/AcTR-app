@@ -89,27 +89,42 @@ def generate_group_report():
         stats = data.get('stats', {})
         
         # Build the prompt for Gemini
-        prompt = f"""Analiza el siguiente rendimiento académico del grupo y proporciona un análisis detallado:
+        prompt = f"""Eres un docente experimentado escribiendo un informe académico formal para la institución. 
 
+DATOS DEL GRUPO:
 Grupo: {group_name}
 Período: {partial}
+Total de estudiantes: {stats.get('totalStudents', 0)}
+Aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
+Reprobados: {stats.get('failedCount', 0)}
+Promedio del grupo: {stats.get('groupAverage', 0)}
+Asistencia promedio: {stats.get('attendanceRate', 0)}%
+Estudiantes en riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-Estadísticas:
-- Total de estudiantes: {stats.get('totalStudents', 0)}
-- Aprobados: {stats.get('approvedCount', 0)}
-- Reprobados: {stats.get('failedCount', 0)}
-- Promedio del grupo: {stats.get('groupAverage', 0)}
-- Asistencia promedio: {stats.get('attendanceRate', 0)}%
-- Estudiantes en riesgo: {stats.get('atRiskStudentCount', 0)}
+INSTRUCCIONES:
+Redacta un informe formal dirigido a: Dirección, Subdirección Académica, Orientación y Tutoría. El reporte debe:
 
-Por favor proporciona:
-1. Resumen del desempeño del grupo
-2. Fortalezas identificadas
-3. Áreas de mejora
-4. Recomendaciones específicas para docentes
-5. Estrategias para estudiantes en riesgo
+1. LOGROS Y LIMITANTES DEL GRUPO (primer apartado)
+   - Describe los logros académicos alcanzados (comprensión de contenidos, participación, etc)
+   - Explica las limitantes observadas (inasistencias, estudiantes en riesgo, desempeño bajo, etc)
+   - Debe leerse como si el docente lo escribiera, con análisis profundo y reflexivo
+   - Evita frases genéricas tipo "El grupo muestra"
 
-Sé conciso pero exhaustivo en tu análisis."""
+2. RECOMENDACIONES (segundo apartado)
+   - Dividir en subsecciones por actor: Para la Dirección, Para la Subdirección Académica, Para Orientación y Tutoría, Para el Docente
+   - Cada recomendación debe ser específica y accionable
+   - Basadas en los datos y contexto del grupo
+   - Enfoque preventivo y de mejora continua
+
+ESTILO:
+- Lenguaje formal y profesional
+- SIN asteriscos, NO usar símbolos #
+- Párrafos bien estructurados, narrativos
+- Evita listas numeradas excesivas
+- Que no parezca redactado por IA
+- Tono reflexivo y constructivo
+
+Redacta el informe completo, profesional y coherente."""
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
@@ -185,22 +200,45 @@ def generate_student_feedback():
         
         grades_summary = ', '.join([str(g) for g in grades]) if grades else 'No disponible'
         
-        prompt = f"""Genera retroalimentación constructiva y motivadora para el siguiente estudiante:
+        prompt = f"""Eres un docente escribiendo retroalimentación formal y personalizada para un estudiante.
 
+DATOS DEL ESTUDIANTE:
 Nombre: {student_name}
 Asignatura: {subject}
 Calificaciones: {grades_summary}
 Asistencia: {attendance}%
-Observaciones: {observations}
+Observaciones del docente: {observations}
 
-Por favor proporciona:
-1. Reconocimiento de logros
-2. Áreas de mejora específicas
-3. Estrategias personalizadas para mejorar
-4. Motivación y apoyo emocional
-5. Pasos concretos a seguir
+INSTRUCCIONES:
+Redacta una retroalimentación formal que:
 
-Sé empático, constructivo y motivador. Adapta el lenguaje para ser comprensible y relevante."""
+1. RECONOCIMIENTO DE LOGROS
+   - Identifica específicamente qué está haciendo bien
+   - Reconoce el esfuerzo y progreso observado
+   
+2. ÁREAS DE MEJORA
+   - Señala con claridad qué necesita mejorar
+   - Explica por qué es importante para su aprendizaje
+   
+3. PLAN DE ACCIÓN
+   - Proporciona estrategias concretas y realizables
+   - Indica recursos disponibles en la institución
+   - Sugiere tiempo realista para ver resultados
+
+4. CIERRE MOTIVACIONAL
+   - Expresa confianza en sus capacidades
+   - Motiva sin ser genérico
+   - Invita a comunicación y apoyo
+
+ESTILO:
+- Lenguaje profesional pero accesible
+- SIN asteriscos, NO usar símbolos #
+- Dirigida directamente al estudiante
+- Empática y constructiva
+- Evita ser condescendiente o excesivamente crítica
+- Que suene como escrita por el docente, no por IA
+
+Redacta la retroalimentación completa y coherente."""
         
         logger.info(f"Generating feedback for student: {student_name}, subject: {subject}")
         feedback_text = call_generative_api(prompt)
