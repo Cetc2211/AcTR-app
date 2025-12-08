@@ -1,15 +1,15 @@
-// Fixed model: gemini-1.0-pro (backend handles model selection)
-// All requests go through Cloud Run backend which uses gemini-1.0-pro
-export const DEFAULT_MODEL = 'gemini-1.0-pro';
+// Fixed model: gemini-pro (backend handles model selection)
+// All requests go through Cloud Run backend which uses gemini-pro
+export const DEFAULT_MODEL = 'gemini-pro';
 
 // Model aliases - simplified for backend API
 const ALIAS_PAIRS: Array<[string, string]> = [
-  // All models resolve to gemini-1.0-pro (backend decides actual model)
-  ['gemini-1.0-pro', 'gemini-1.0-pro'],
-  ['gemini-pro', 'gemini-1.0-pro'],
-  ['gemini-1.5-pro', 'gemini-1.0-pro'], // legacy -> 1.0-pro
-  ['gemini-1.5-flash', 'gemini-1.0-pro'],
-  ['gemini-2.0-flash', 'gemini-1.0-pro'],
+  // All models resolve to gemini-pro (backend decides actual model)
+  ['gemini-1.0-pro', 'gemini-pro'],
+  ['gemini-pro', 'gemini-pro'],
+  ['gemini-1.5-pro', 'gemini-pro'], // legacy -> gemini-pro
+  ['gemini-1.5-flash', 'gemini-pro'],
+  ['gemini-2.0-flash', 'gemini-pro'],
 ];
 
 const aliasMap = ALIAS_PAIRS.reduce<Record<string, string>>((acc, [alias, canonical]) => {
@@ -32,23 +32,23 @@ export function describeModel(model: string): string {
       return 'Gemini 1.5 Flash';
     case 'gemini-1.5-flash-8b':
       return 'Gemini 1.5 Flash 8B';
-    case 'gemini-1.0-pro':
-      return 'Gemini 1.0 Pro';
+    case 'gemini-pro':
+      return 'Gemini Pro';
     default:
       return model;
   }
 }
 
 export const FALLBACK_MODELS: string[] = [
+  'gemini-pro',
   'gemini-1.5-pro',
   'gemini-1.5-flash',
   'gemini-1.5-flash-8b',
-  'gemini-1.0-pro',
 ];
 
 export const MODEL_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (recomendado)' },
+  { value: 'gemini-pro', label: 'Gemini Pro (recomendado)' },
+  { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
   { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
   { value: 'gemini-1.5-flash-8b', label: 'Gemini 1.5 Flash 8B' },
-  { value: 'gemini-1.0-pro', label: 'Gemini 1.0 Pro' },
 ];
