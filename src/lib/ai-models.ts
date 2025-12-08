@@ -1,6 +1,6 @@
-// Fixed model: gemini-1.5-flash (backend handles model selection)
-// All requests go through Cloud Run backend which uses gemini-1.5-flash
-export const DEFAULT_MODEL = 'gemini-1.5-flash';
+// Fixed model: gemini-2.5-pro (backend handles model selection)
+// All requests go through Cloud Run backend which uses gemini-2.5-pro
+export const DEFAULT_MODEL = 'gemini-2.5-pro';
 
 // Model aliases - simplified for backend API
 const ALIAS_PAIRS: Array<[string, string]> = [

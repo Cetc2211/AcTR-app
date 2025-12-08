@@ -9,7 +9,7 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-08-gemini-1.5-flash-fixed
+# Force rebuild timestamp: 2025-12-08-gemini-2.5-pro
 app = Flask(__name__)
 
 # Initialize critical variables
@@ -28,9 +28,9 @@ try:
     genai.configure(api_key=api_key)
     logger.info("✅ Google Generative AI configured successfully")
     
-    # Initialize model with gemini-1.5-flash (stable and fast)
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    logger.info("✅ Gemini 1.5 Flash model initialized with success")
+    # Initialize model with gemini-2.5-pro (latest and most powerful)
+    model = genai.GenerativeModel('gemini-2.5-pro')
+    logger.info("✅ Gemini 2.5 Pro model initialized with success")
     
 except Exception as e:
     logger.error(f"CRITICAL ERROR: Failed to initialize AI model: {e}", flush=True)
@@ -46,8 +46,8 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.3",
-        "model": "gemini-1.5-flash" if model else "not-loaded",
+        "version": "2.4",
+        "model": "gemini-2.5-pro" if model else "not-loaded",
         "api_key_configured": bool(api_key)
     }), 200 if model else 500
 
