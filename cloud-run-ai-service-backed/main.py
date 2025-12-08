@@ -95,7 +95,7 @@ def generate_group_report():
         stats = data.get('stats', {})
         
         # Build the prompt for Gemini
-                prompt = f"""Asume el rol de un docente experimentado y profesional encargado de redactar un informe académico formal de análisis de desempeño grupal.
+                prompt = f"""Asume el rol de un redactor profesional que genera el cuerpo de un análisis académico para un informe ya estructurado. Tu tarea es generar únicamente el texto de análisis narrativo que será insertado entre la introducción y la conclusión predefinidas del informe.
 
 DATOS ESTADÍSTICOS DISPONIBLES:
 Grupo: {group_name} - Período: {partial}
@@ -106,21 +106,18 @@ Promedio: {stats.get('groupAverage', 0)}
 Asistencia: {stats.get('attendanceRate', 0)}%
 En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-INSTRUCCIONES DE FORMATO CRÍTICAS:
-Redacta ÚNICAMENTE el análisis académico. El texto debe ser completamente **narrativo**, profesional y coherente, simulando ser escrito por el docente (evita el lenguaje de IA).
+INSTRUCCIONES CRÍTICAS DE FORMATO:
+1.  **INICIO:** El texto debe comenzar inmediatamente con la redacción del análisis. No uses ningún título, encabezado, saludo, lista de destinatarios o introducción inicial.
+2.  **REDACCIÓN:** El lenguaje debe ser completamente formal, profesional y narrativo (como un ensayo o cuerpo de texto continuo). Debe sonar a un docente reflexivo.
+3.  **PROHIBICIÓN ABSOLUTA DE SÍMBOLOS:** Prohíbo el uso de CUALQUIER símbolo que se pueda interpretar como formato de lista, incluyendo asteriscos (*), almohadillas (#), guiones (-), o viñetas. Evita el uso de negritas (**).
+4.  **ESTRUCTURA DE CONTENIDO:** El análisis debe constar de dos grandes bloques de párrafos separados por un único salto de línea, sin ningún título entre ellos:
+    * **BLOQUE 1 (Análisis):** Describe los logros observados, seguido de las limitantes y la polarización del rendimiento (usas los datos estadísticos).
+    * **BLOQUE 2 (Acciones Sugeridas):** Incluye recomendaciones y exhortos de manera implícita, narrando las acciones sugeridas para Dirección, Subdirección Académica, Orientación, Tutoría y para el Docente Titular. No uses listas.
 
-**PROHIBIDO** el uso de cualquier símbolo de formato (sin asteriscos *, sin almohadillas #, sin guiones - para listas, sin viñetas ni números).
+5.  **FINAL:** El texto debe terminar con el último párrafo de recomendaciones. No incluyas ningún cierre, frase de agradecimiento, firma o "Atentamente,".
 
-El informe DEBE contener SOLO estos dos apartados narrativos:
+Redacta únicamente el cuerpo de texto solicitado."""
 
-1. ANÁLISIS DEL DESEMPEÑO GRUPAL (LOGROS Y LIMITANTES)
-   Redacta un análisis reflexivo y directo. Describe los logros (desempeño, comprensión) y las limitantes detectadas (inasistencias, estudiantes en riesgo, bajo rendimiento).
-
-2. CONSIDERACIONES Y ACCIONES SUGERIDAS
-   Incluye acciones y recomendaciones **implícitas** dirigidas a Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada sugerencia debe ser específica y derivable de los datos estadísticos.
-
-Comienza directamente con el análisis, sin introducir el informe ni usar títulos con símbolos.
-"""
 
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
