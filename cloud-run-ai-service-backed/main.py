@@ -95,7 +95,7 @@ def generate_group_report():
         stats = data.get('stats', {})
         
         # Build the prompt for Gemini
-        prompt = f"""Eres un docente experimentado escribiendo un informe académico formal. 
+                prompt = f"""Asume el rol de un docente experimentado y profesional encargado de redactar un informe académico formal de análisis de desempeño grupal.
 
 DATOS ESTADÍSTICOS DISPONIBLES:
 Grupo: {group_name} - Período: {partial}
@@ -106,32 +106,22 @@ Promedio: {stats.get('groupAverage', 0)}
 Asistencia: {stats.get('attendanceRate', 0)}%
 En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-INSTRUCCIONES CRÍTICAS:
-Redacta ÚNICAMENTE el análisis académico. NO incluyas:
-- Encabezados, introducción o datos de identificación
-- Información sobre qué modelo de IA se usó para generar esto
-- Explicaciones sobre el proceso de análisis
-- Símbolos como asteriscos (*), almohadillas (#), guiones (-) para listas
-- Especialmente NO utilices asteriscos (*), almohadillas (#), guiones (-) en la redaccion.
+INSTRUCCIONES DE FORMATO CRÍTICAS:
+Redacta ÚNICAMENTE el análisis académico. El texto debe ser completamente **narrativo**, profesional y coherente, simulando ser escrito por el docente (evita el lenguaje de IA).
 
-El informe DEBE contener SOLO estos dos apartados:
+**PROHIBIDO** el uso de cualquier símbolo de formato (sin asteriscos *, sin almohadillas #, sin guiones - para listas, sin viñetas ni números).
 
-LOGROS Y LIMITANTES DEL GRUPO
-Describe con profundidad los logros observados (desempeño académico, comprensión, participación) y las limitantes (inasistencias, estudiantes en riesgo, bajo rendimiento). Redacta como el docente escribiendo: reflexivo, directo, sin frases genéricas.
+El informe DEBE contener SOLO estos dos apartados narrativos:
 
-RECOMENDACIONES
-Incluye recomendaciones y exortos demanera implicita dirigidas a: Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada recomendación debe ser específica, accionable y basada en los datos.
+1. ANÁLISIS DEL DESEMPEÑO GRUPAL (LOGROS Y LIMITANTES)
+   Redacta un análisis reflexivo y directo. Describe los logros (desempeño, comprensión) y las limitantes detectadas (inasistencias, estudiantes en riesgo, bajo rendimiento).
 
-REQUISITOS DE FORMATO:
-- Lenguaje completamente formal y profesional
-- NINGÚN símbolo de formato (sin *, sin #, sin -, sin viñetas)
-- Párrafos narrativos y coherentes
-- Sin listas numeradas
-- Sin títulos con símbolos especiales
-- Redacción que parezca del docente, no de IA
-- Ir directo al análisis, sin introducción
+2. CONSIDERACIONES Y ACCIONES SUGERIDAS
+   Incluye acciones y recomendaciones **implícitas** dirigidas a Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada sugerencia debe ser específica y derivable de los datos estadísticos.
 
-Redacta SOLO el contenido del análisis, nada más."""
+Comienza directamente con el análisis, sin introducir el informe ni usar títulos con símbolos.
+"""
+
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
