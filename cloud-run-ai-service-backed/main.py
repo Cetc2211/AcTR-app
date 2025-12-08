@@ -1,50 +1,142 @@
 import os
 import logging
 import json
+import sys
+import requests
 from datetime import datetime
 from flask import Flask, request, jsonify
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging with flush to ensure visibility in Cloud Run logs
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-06-08:30-v2.3-gemini-1.0-pro
+# Force rebuild timestamp: 2025-12-07-03:00-v2.3-fail-loud-init
 app = Flask(__name__)
 
-# Initialize Google Generative AI
-import google.generativeai as genai
+# Initialize critical variables
+api_key = None
+model_initialized = False
 
-api_key = os.environ.get("GOOGLE_AI_API_KEY")
-if api_key:
-    # Configure with explicit region endpoint for Vertex AI compatibility
-    genai.configure(api_key=api_key, client_options={"api_endpoint": "us-central1-aiplatform.googleapis.com"})
-    logger.info("✅ Google Generative AI initialized successfully with API key (us-central1)")
-else:
-    logger.error("⚠️  GOOGLE_AI_API_KEY environment variable is not set!")
+# REST API endpoint for Generative Language API
+GENERATIVE_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+MODEL_NAME = "gemini-1.0-pro"  # Using gemini-1.0-pro as per Google recommendations
 
-# Initialize model globally - Using gemini-1.0-pro (stable, widely available)
-model = None
+# ===== CRITICAL: Initialize API key and validate configuration =====
 try:
-    if api_key:
-        model = genai.GenerativeModel("gemini-1.0-pro")
-        logger.info("✅ Gemini 1.0 Pro model initialized")
+    api_key = os.environ.get("GOOGLE_AI_API_KEY")
+    
+    if not api_key:
+        error_msg = "CRITICAL ERROR: GOOGLE_AI_API_KEY environment variable is not set!"
+        print(error_msg, flush=True)
+        logger.error(error_msg)
+        # Fail loudly on startup if API key is missing
+        sys.exit(1)
+    
+    logger.info("✅ Google AI API key loaded from environment")
+    
+    # Validate API key format (should start with 'AIza')
+    if not api_key.startswith('AIza'):
+        error_msg = f"CRITICAL ERROR: Invalid API key format. Expected to start with 'AIza', got: {api_key[:10]}..."
+        print(error_msg, flush=True)
+        logger.error(error_msg)
+        sys.exit(1)
+    
+    logger.info(f"✅ API key validated. Key prefix: {api_key[:10]}...")
+    model_initialized = True
+    logger.info("✅ Model initialization check passed. Application ready.")
+    
 except Exception as e:
-    logger.error(f"⚠️  Error initializing model: {e}")
+    error_msg = f"CRITICAL ERROR: Failed to initialize API configuration: {str(e)}"
+    print(error_msg, flush=True)
+    logger.error(error_msg, exc_info=True)
+    # Force exit to make the error visible in Cloud Run logs
+    sys.exit(1)
 
 @app.route('/', methods=['GET'])
 def health():
     """Health check endpoint for monitoring and connectivity tests."""
-    status = "ready" if model else "initializing"
+    status = "healthy" if model_initialized else "unhealthy"
     return jsonify({
-        "status": status,
         "service": "AcTR-IA-Backend",
+        "status": status,
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.3",
-        "model": "gemini-1.0-pro" if model else "not-loaded",
-        "region": "us-central1",
+        "version": "2.2",
+        "model": MODEL_NAME,
+        "model_initialized": model_initialized,
         "api_key_configured": bool(api_key),
-        "deployment": "2025-12-06-forced-rebuild"
-    }), 200
+        "base_url": GENERATIVE_API_BASE
+    }), 200 if model_initialized else 500
+
+
+def call_generative_api(prompt: str, model_name: str = MODEL_NAME) -> str:
+    """Call the Generative Language REST API directly.
+    
+    Args:
+        prompt: The prompt text to send to the model
+        model_name: The model to use (default: gemini-1.5-flash-latest)
+    
+    Returns:
+        The generated text response
+    
+    Raises:
+        Exception: If the API call fails
+    """
+    if not api_key:
+        raise Exception("API key not configured")
+    
+    url = f"{GENERATIVE_API_BASE}/{model_name}:generateContent?key={api_key}"
+    
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ],
+        "generationConfig": {
+            "temperature": 0.7,
+            "topP": 0.9,
+            "topK": 40,
+            "maxOutputTokens": 2048
+        }
+    }
+    
+    try:
+        logger.info(f"🔄 Calling API: {url.split('?')[0]}")
+        response = requests.post(
+            url,
+            json=payload,
+            timeout=60,
+            headers={"Content-Type": "application/json"}
+        )
+        
+        if response.status_code != 200:
+            error_detail = response.text
+            logger.error(f"API Error {response.status_code}: {error_detail}")
+            raise Exception(f"API error {response.status_code}: {error_detail}")
+        
+        result = response.json()
+        
+        # Extract text from response
+        if "candidates" in result and len(result["candidates"]) > 0:
+            candidate = result["candidates"][0]
+            if "content" in candidate and "parts" in candidate["content"]:
+                parts = candidate["content"]["parts"]
+                if len(parts) > 0 and "text" in parts[0]:
+                    return parts[0]["text"]
+        
+        raise Exception("No text in API response")
+        
+    except requests.RequestException as e:
+        logger.error(f"Request error: {e}")
+        raise Exception(f"Request failed: {str(e)}")
+
 
 @app.route('/generate-report', methods=['POST'])
 def generate_report():
@@ -55,9 +147,16 @@ def generate_report():
 def generate_group_report():
     """Generate an AI analysis for a group's academic performance."""
     try:
-        if not model:
-            logger.error("Model not initialized")
-            return jsonify({"error": "Modelo no inicializado. Verifica la clave API."}), 500
+        # Fail fast if model not initialized
+        if not model_initialized:
+            error_msg = "AI model not initialized. Check server logs for startup errors."
+            logger.error(error_msg)
+            return jsonify({"error": error_msg}), 500
+            
+        if not api_key:
+            error_msg = "API key not configured"
+            logger.error(error_msg)
+            return jsonify({"error": error_msg}), 500
             
         data = request.get_json()
         if not data:
@@ -91,12 +190,12 @@ Por favor proporciona:
 Sé conciso pero exhaustivo en tu análisis."""
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
-        response = model.generate_content(prompt)
+        report_text = call_generative_api(prompt)
         logger.info(f"Report generated successfully")
         
         return jsonify({
             "success": True,
-            "report": response.text,
+            "report": report_text,
             "group": group_name,
             "partial": partial
         }), 200
@@ -109,9 +208,16 @@ Sé conciso pero exhaustivo en tu análisis."""
 def generate_student_feedback():
     """Generate personalized feedback for a student."""
     try:
-        if not model:
-            logger.error("Model not initialized")
-            return jsonify({"error": "Modelo no inicializado. Verifica la clave API."}), 500
+        # Fail fast if model not initialized
+        if not model_initialized:
+            error_msg = "AI model not initialized. Check server logs for startup errors."
+            logger.error(error_msg)
+            return jsonify({"error": error_msg}), 500
+            
+        if not api_key:
+            error_msg = "API key not configured"
+            logger.error(error_msg)
+            return jsonify({"error": error_msg}), 500
             
         data = request.get_json()
         if not data:
@@ -143,12 +249,12 @@ Por favor proporciona:
 Sé empático, constructivo y motivador. Adapta el lenguaje para ser comprensible y relevante."""
         
         logger.info(f"Generating feedback for student: {student_name}, subject: {subject}")
-        response = model.generate_content(prompt)
+        feedback_text = call_generative_api(prompt)
         logger.info(f"Feedback generated successfully")
         
         return jsonify({
             "success": True,
-            "feedback": response.text,
+            "feedback": feedback_text,
             "student": student_name,
             "subject": subject
         }), 200
