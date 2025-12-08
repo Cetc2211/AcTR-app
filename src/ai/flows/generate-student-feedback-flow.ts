@@ -36,7 +36,7 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
     try {
       // Call Cloud Run backend service with google-generativeai
       // Using gemini-pro model (December 2025)
-      const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
+      const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://ai-report-service-jjaeoswhya-uc.a.run.app';
       const response = await fetch(`${endpoint}/generate-student-feedback`, {
         method: 'POST',
         headers: {

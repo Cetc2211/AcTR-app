@@ -9,7 +9,7 @@ export async function GET() {
     tests: [] as any[]
   };
 
-  const backendUrl = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://backend-service-263108580734.us-central1.run.app';
+  const backendUrl = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://ai-report-service-jjaeoswhya-uc.a.run.app';
 
   // Test 1: Health Check
   try {
