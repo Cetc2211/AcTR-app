@@ -126,8 +126,6 @@ El cuerpo de texto debe cubrir:
 El texto debe **comenzar directamente con el análisis** y **terminar inmediatamente después de la última recomendación** para el docente. No añadas nada más.
 """
 
-
-
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
