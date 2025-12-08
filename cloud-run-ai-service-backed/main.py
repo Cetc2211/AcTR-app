@@ -163,7 +163,7 @@ def generate_student_feedback():
         
         grades_summary = ', '.join([str(g) for g in grades]) if grades else 'No disponible'
         
-        prompt = f"""Eres un docente escribiendo retroalimentación formal y personalizada para un estudiante.
+        prompt = f"""Asume el rol de un docente empático y profesional. Tu tarea es redactar una retroalimentación formal y completamente personalizada dirigida directamente a un estudiante.
 
 DATOS DEL ESTUDIANTE:
 Nombre: {student_name}
@@ -172,41 +172,27 @@ Calificaciones: {grades_summary}
 Asistencia: {attendance}%
 Observaciones del docente: {observations}
 
-INSTRUCCIONES:
-Redacta una retroalimentación formal que:
+INSTRUCCIONES DE FORMATO CRÍTICAS:
+El texto debe ser un conjunto de **párrafos narrativos coherentes**.
+**PROHIBIDO** el uso de cualquier símbolo de formato (sin asteriscos, sin almohadillas, sin guiones, sin listas numeradas o viñetas).
+La redacción debe sonar genuinamente escrita por el docente, no por un sistema de inteligencia artificial.
 
-1. RECONOCIMIENTO DE LOGROS
-   - Identifica específicamente qué está haciendo bien
-   - Reconoce el esfuerzo y progreso observado
-   
-2. ÁREAS DE MEJORA
-   - Señala con claridad qué necesita mejorar
-   - Explica por qué es importante para su aprendizaje
-   
-3. PLAN DE ACCIÓN
-   - Proporciona estrategias concretas y realizables
-   - Indica recursos disponibles en la institución
-   - Sugiere tiempo realista para ver resultados
+El informe debe cubrir obligatoriamente las siguientes secciones en una redacción fluida:
 
-4. CIERRE MOTIVACIONAL
-   - Expresa confianza en sus capacidades
-   - Motiva sin ser genérico
-   - Invita a comunicación y apoyo
-5. BITACORA
-   - Has recomendaciones respecto a las anotaciones en la bitacora
-   - Siempre se propositivo y motivador.
-   - si el estudiante ha sido canalizado a atencion psicologica motivale para seguir adelante sin ser invasivo
-   - Recuerdale que puede contar con el apoyo del profesor
+1. Reconocimiento de Logros y Esfuerzo
+   Identifica lo que el estudiante está haciendo bien. Destaca el esfuerzo y el progreso que has observado en su desempeño durante el período.
 
-ESTILO:
-- Lenguaje profesional pero accesible
-- SIN asteriscos (*), NO usar símbolos almohadillas (#)
-- Dirigida directamente al estudiante
-- Empática y constructiva
-- Evita ser condescendiente o excesivamente crítica
-- Que suene como escrita por el docente, no por IA
+2. Áreas de Mejora y su Importancia
+   Señala con claridad los aspectos específicos de su desempeño que necesita fortalecer. Explica de manera constructiva por qué mejorar en estas áreas es crucial para su éxito académico en la asignatura.
 
-Redacta la retroalimentación completa y coherente."""
+3. Plan de Acción Detallado
+   Proporciona estrategias concretas, realistas y accionables que el estudiante pueda implementar de inmediato. Menciona los recursos específicos disponibles en la institución y sugiere un tiempo realista para que pueda evaluar los primeros resultados.
+
+4. Bitácora, Apoyo y Cierre Motivacional
+   Incluye recomendaciones específicas sobre las anotaciones en la bitácora si es aplicable. Si el estudiante ha sido canalizado a atención psicológica, motívale para seguir adelante con el apoyo disponible, siempre de manera respetuosa y no invasiva. Recuérdale que el profesor está disponible para brindarle apoyo continuo y expresa plena confianza en sus capacidades para superar los desafíos.
+
+Redacta la retroalimentación completa, comenzando directamente con el análisis formal y dirigiéndote al estudiante en segunda persona (tú/usted)."""
+
         
         logger.info(f"Generating feedback for student: {student_name}, subject: {subject}")
         feedback_text = call_generative_api(prompt)
