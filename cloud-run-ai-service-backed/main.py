@@ -112,6 +112,7 @@ Redacta ÚNICAMENTE el análisis académico. NO incluyas:
 - Información sobre qué modelo de IA se usó para generar esto
 - Explicaciones sobre el proceso de análisis
 - Símbolos como asteriscos (*), almohadillas (#), guiones (-) para listas
+- Especialmente NO utilices asteriscos (*), almohadillas (#), guiones (-) en la redaccion.
 
 El informe DEBE contener SOLO estos dos apartados:
 
@@ -119,7 +120,7 @@ LOGROS Y LIMITANTES DEL GRUPO
 Describe con profundidad los logros observados (desempeño académico, comprensión, participación) y las limitantes (inasistencias, estudiantes en riesgo, bajo rendimiento). Redacta como el docente escribiendo: reflexivo, directo, sin frases genéricas.
 
 RECOMENDACIONES
-Incluye subsecciones breves dirigidas a: Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada recomendación debe ser específica, accionable y basada en los datos.
+Incluye recomendaciones y exortos demanera implicita dirigidas a: Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente. Cada recomendación debe ser específica, accionable y basada en los datos.
 
 REQUISITOS DE FORMATO:
 - Lenguaje completamente formal y profesional
@@ -201,10 +202,15 @@ Redacta una retroalimentación formal que:
    - Expresa confianza en sus capacidades
    - Motiva sin ser genérico
    - Invita a comunicación y apoyo
+5. BITACORA
+   - Has recomendaciones respecto a las anotaciones en la bitacora
+   - Siempre se propositivo y motivador.
+   - si el estudiante ha sido canalizado a atencion psicologica motivale para seguir adelante sin ser invasivo
+   - Recuerdale que puede contar con el apoyo del profesor
 
 ESTILO:
 - Lenguaje profesional pero accesible
-- SIN asteriscos, NO usar símbolos #
+- SIN asteriscos (*), NO usar símbolos almohadillas (#)
 - Dirigida directamente al estudiante
 - Empática y constructiva
 - Evita ser condescendiente o excesivamente crítica
