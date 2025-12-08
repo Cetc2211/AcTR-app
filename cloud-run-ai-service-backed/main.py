@@ -9,7 +9,7 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-08-gemini-2.5-pro
+# Force rebuild timestamp: 2025-12-08T04:10:00-gemini-2.5-pro
 app = Flask(__name__)
 
 # Initialize critical variables
