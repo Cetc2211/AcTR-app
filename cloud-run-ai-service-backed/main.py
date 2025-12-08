@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-07-03:00-v2.3-fail-loud-init
+# Force rebuild timestamp: 2025-12-08-gemini-pro-model
 app = Flask(__name__)
 
 # Initialize critical variables
@@ -22,7 +22,7 @@ model_initialized = False
 
 # REST API endpoint for Generative Language API
 GENERATIVE_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
-MODEL_NAME = "gemini-1.0-pro"  # Using gemini-1.0-pro as per Google recommendations
+MODEL_NAME = "gemini-pro"  # Using gemini-pro model
 
 # ===== CRITICAL: Initialize API key and validate configuration =====
 try:
