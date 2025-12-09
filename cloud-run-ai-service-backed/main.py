@@ -95,9 +95,9 @@ def generate_group_report():
         stats = data.get('stats', {})
         
         # Build the prompt for Gemini
-                prompt = f"""Asume el rol de un Generador de Contenido Académico, cuyo único propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para ser insertado en una plantilla de informe preexistente.
+                prompt = f"""Eres un docente experimentado y reflexivo, encargado de redactar un informe académico formal y detallado sobre el desempeño general de un grupo de estudiantes en un parcial específico. Tu objetivo es proporcionar un análisis profundo y constructivo, dirigido a la dirección, subdirección académica, orientación y tutoría, y a ti mismo como docente.
 
-DATOS ESTADÍSTICOS DISPONIBLES (SOLO PARA REFERENCIA INTERNA DEL ANÁLISIS, PROHIBIDO REPRODUCIRLOS):
+DATOS ESTADÍSTICOS DISPONIBLES PARA EL ANÁLISIS:
 Grupo: {group_name} - Período: {partial}
 Total estudiantes: {stats.get('totalStudents', 0)}
 Aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
@@ -106,25 +106,42 @@ Promedio: {stats.get('groupAverage', 0)}
 Asistencia: {stats.get('attendanceRate', 0)}%
 En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-INSTRUCCIONES CRÍTICAS Y PROHIBICIONES (ESTRICTO CUMPLIMIENTO):
+ESTRUCTURA Y ESTILO DE REDACCIÓN DESEADO:
+El informe debe ser una prosa fluida y continua, sin ningún tipo de encabezados, introducciones genéricas, datos de identificación del modelo de IA, explicaciones sobre el proceso de análisis, o cualquier símbolo de formato (NO asteriscos *, NO almohadillas #, NO guiones -, NO viñetas, NO listas numeradas).
 
-1.  **PROHIBICIÓN ABSOLUTA DE METADATOS:** No incluyas NINGÚN elemento de formato de informe como:
-    * Títulos de documento (ej: "INFORME DE RENDIMIENTO ACADÉMICO").
-    * Listas de destinatarios (ej: "PARA: Dirección...").
-    * Firma o despedida (ej: "Atentamente," o frases de agradecimiento).
-    * **PROHIBIDO REPRODUCIR LOS DATOS ESTADÍSTICOS DE REFERENCIA en el texto o en una lista.**
+Comienza el informe presentando los datos estadísticos de manera narrativa, tal como en el siguiente ejemplo:
+"Tal y como se ilustra en las tablas los datos generales sobre los que sustenta el presente informe y análisis de desempeño general del grupo {group_name} son los siguientes:
+   Total de estudiantes: {stats.get('totalStudents', 0)}
+   Estudiantes aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
+   Estudiantes reprobados: {stats.get('failedCount', 0)}
+   Promedio general del grupo: {stats.get('groupAverage', 0)}
+   Asistencia promedio: {stats.get('attendanceRate', 0)}%
+   Estudiantes identificados en riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)"
 
-2.  **ESTRUCTURA Y FORMATO NARRATIVO:** Genera un único cuerpo de texto que fluya entre dos secciones narrativas, sin títulos ni números de sección. El lenguaje debe ser formal y profesional.
+Continúa la redacción con párrafos narrativos y coherentes que aborden los siguientes puntos, sin usar ningún tipo de marcador de formato o subtítulos explícitos, manteniendo un flujo de texto continuo:
 
-3.  **PROHIBICIÓN DE SÍMBOLOS:** No utilices NINGÚN símbolo para separar o listar ideas: **sin asteriscos (*), sin almohadillas (#), sin guiones (-), sin viñetas, sin números de lista.**
+1.  **Análisis de Logros y Limitantes del Grupo:**
+    *   Describe con profundidad los logros observados (desempeño académico, comprensión, participación).
+    *   Identifica las limitantes (inasistencias, estudiantes en riesgo, bajo rendimiento).
+    *   Utiliza un lenguaje reflexivo y directo, como el de un docente que analiza la situación. Evita frases genéricas o de relleno.
+    *   Incorpora el tono y la profundidad del análisis que me proporcionaste en tu ejemplo, haciendo referencia a la "brecha que comienza a manifestarse", el "patrón de inasistencias intermitentes", y la "vulnerabilidad académica".
 
-El cuerpo de texto debe cubrir:
+2.  **Recomendaciones:**
+    *   Incluye recomendaciones y exhortos de manera implícita, dirigidas a Dirección, Subdirección Académica, Orientación y Tutoría, y Para el Docente.
+    *   Cada recomendación debe ser específica, accionable y basada en los datos presentados.
+    *   Mantén el tono profesional y constructivo, similar al ejemplo que me diste ("Valorar la posibilidad de otorgar un reconocimiento...", "Considero pertinente revisar la carga académica...").
 
-* **PARTE 1 (Análisis de Logros y Limitantes):** Un análisis narrativo del rendimiento, logros grupales y la identificación de las limitantes o polarización (usando los datos de riesgo y asistencia como evidencia).
-* **PARTE 2 (Acciones Sugeridas):** Párrafos narrativos que incluyan las recomendaciones implícitas dirigidas a Dirección, Subdirección, Orientación/Tutoría y Para el Docente.
+REQUISITOS DE FORMATO Y LENGUAJE CRÍTICOS:
+-   Lenguaje completamente formal y profesional.
+-   **NINGÚN SÍMBOLO DE FORMATO:** Esto incluye, pero no se limita a, asteriscos (*), almohadillas (#), guiones (-), viñetas, o cualquier otro carácter que pueda interpretarse como un marcador de lista o encabezado.
+-   **Párrafos narrativos y coherentes:** El texto debe fluir de un párrafo a otro sin interrupciones visuales de formato.
+-   **Sin listas numeradas:** Todas las ideas deben integrarse en la prosa.
+-   **Redacción que parezca del docente, no de IA:** Evita frases robóticas o excesivamente neutrales.
+-   **Ir directo al análisis, sin introducción:** El informe debe comenzar directamente con la presentación narrativa de los datos.
 
-El texto debe **comenzar directamente con el análisis** y **terminar inmediatamente después de la última recomendación** para el docente. No añadas nada más.
+Redacta SOLO el contenido del análisis, nada más. Asegúrate de que el texto final no contenga absolutamente ningún asterisco, almohadilla, guion, número para listas o cualquier otro símbolo de formato.
 """
+
 
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
