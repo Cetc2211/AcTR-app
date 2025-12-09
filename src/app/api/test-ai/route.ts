@@ -14,6 +14,11 @@ const FETCH_TIMEOUT = 10000;
 
 // Función helper para hacer fetch con timeout
 async function fetchWithTimeout(url: string, options: any = {}, timeout = FETCH_TIMEOUT) {
+  // Si estamos en tiempo de build, no hacer fetch real
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return new Response(JSON.stringify({ status: 'skipped_during_build' }), { status: 200 });
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
   
@@ -34,6 +39,18 @@ async function fetchWithTimeout(url: string, options: any = {}, timeout = FETCH_
 }
 
 export async function GET() {
+  // Protección adicional: Si estamos en build, retornar mock inmediatamente
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+     return new Response(JSON.stringify({ 
+       timestamp: new Date().toISOString(),
+       tests: [],
+       note: 'Skipped during build' 
+     }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
   const results: any = {
     timestamp: new Date().toISOString(),
     tests: [] as any[],
