@@ -1,22 +1,54 @@
 /**
  * API Route para testing de Cloud Run + IA Integration
  * Endpoint: GET /api/test-ai
+ * Nota: Esta ruta se ejecuta bajo demanda (serverless), no durante el build
  */
+
+// Configuración de runtime para Vercel
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+// Timeout interno para fetch (10 segundos por request)
+const FETCH_TIMEOUT = 10000;
+
+// Función helper para hacer fetch con timeout
+async function fetchWithTimeout(url: string, options: any = {}, timeout = FETCH_TIMEOUT) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    return response;
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeout}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 export async function GET() {
   const results: any = {
     timestamp: new Date().toISOString(),
-    tests: [] as any[]
+    tests: [] as any[],
+    note: 'API Route ejecutada bajo demanda (no durante build)'
   };
 
   const backendUrl = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://ai-report-service-jjaeoswhya-uc.a.run.app';
 
   // Test 1: Health Check
   try {
-    const response = await fetch(`${backendUrl}/`, {
+    const response = await fetchWithTimeout(`${backendUrl}/`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
-    });
+    }, 5000); // 5 segundos para health check
+    
     const data = await response.json();
     
     results.tests.push({
@@ -47,11 +79,11 @@ export async function GET() {
       `
     };
 
-    const response = await fetch(`${backendUrl}/generate-report`, {
+    const response = await fetchWithTimeout(`${backendUrl}/generate-report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    });
+    }, 15000); // 15 segundos para generación de reporte
     
     const data = await response.json();
     
@@ -85,11 +117,11 @@ export async function GET() {
       }
     };
 
-    const response = await fetch(`${backendUrl}/generate-group-report`, {
+    const response = await fetchWithTimeout(`${backendUrl}/generate-group-report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    });
+    }, 15000); // 15 segundos para generación de reporte
     
     const data = await response.json();
     
