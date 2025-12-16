@@ -75,6 +75,7 @@ export default function GroupDetailsPage() {
     activePartialId,
     setActivePartialId,
     calculateFinalGrade,
+    calculateDetailedFinalGrade,
     getStudentRiskLevel,
     addStudentsToGroup,
     removeStudentFromGroup,
@@ -180,11 +181,11 @@ export default function GroupDetailsPage() {
     if (!activeGroup) return {};
     const riskMap: {[studentId: string]: CalculatedRisk} = {};
     activeGroup.students.forEach(s => {
-      const finalGrade = calculateFinalGrade(s.id);
-      riskMap[s.id] = getStudentRiskLevel(finalGrade, attendance, s.id);
+      const { projectedGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
+      riskMap[s.id] = getStudentRiskLevel(projectedGrade, attendance, s.id);
     });
     return riskMap;
-  }, [activeGroup, calculateFinalGrade, getStudentRiskLevel, partialData, attendance]);
+  }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
 
   const handleRemoveStudents = (studentIds: string[]) => {
     if (!activeGroup) return;

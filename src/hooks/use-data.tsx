@@ -535,32 +535,63 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
     // --- CALCULATIONS & DERIVED DATA ---
-    const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
+    const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, projectedGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
         const recoveryInfo = pData.recoveryGrades?.[studentId];
         if (recoveryInfo?.applied) {
-            return { finalGrade: recoveryInfo.grade ?? 0, criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }], isRecovery: true };
+            return { finalGrade: recoveryInfo.grade ?? 0, projectedGrade: recoveryInfo.grade ?? 0, criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }], isRecovery: true };
         }
-        if (!pData || !criteria || criteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
+        if (!pData || !criteria || criteria.length === 0) return { finalGrade: 0, projectedGrade: 100, criteriaDetails: [], isRecovery: false };
 
         let finalGrade = 0;
+        let totalPossibleWeight = 0;
         const criteriaDetails: CriteriaDetail[] = [];
+        
         criteria.forEach(c => {
             let ratio = 0;
+            let isApplicable = false;
+
             if (c.name === 'Actividades' || c.name === 'Portafolio') {
                 const total = pData.activities?.length ?? 0;
-                if (total > 0) ratio = (Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length) / total;
+                if (total > 0) {
+                    isApplicable = true;
+                    ratio = (Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length) / total;
+                }
             } else if (c.name === 'Participación') {
                 const total = Object.keys(pData.participations || {}).length;
-                if (total > 0) ratio = Object.values(pData.participations).filter((day: any) => day[studentId]).length / total;
+                if (total > 0) {
+                    isApplicable = true;
+                    ratio = Object.values(pData.participations).filter((day: any) => day[studentId]).length / total;
+                }
             } else {
-                const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
-                if (c.expectedValue > 0) ratio = delivered / c.expectedValue;
+                // Check if ANY student has a grade for this criterion to determine if it's applicable
+                const anyGradeRecorded = pData.grades && Object.values(pData.grades).some(studentGrades => {
+                    const detail = studentGrades[c.id];
+                    return detail && detail.delivered !== null && detail.delivered !== undefined;
+                });
+
+                if (anyGradeRecorded) {
+                    isApplicable = true;
+                    const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
+                    if (c.expectedValue > 0) ratio = delivered / c.expectedValue;
+                }
             }
+            
             const earned = ratio * c.weight;
             finalGrade += earned;
+            
+            if (isApplicable) {
+                totalPossibleWeight += c.weight;
+            }
+            
             criteriaDetails.push({ name: c.name, earned, weight: c.weight });
         });
-        return { finalGrade: Math.max(0, Math.min(100, finalGrade)), criteriaDetails, isRecovery: false };
+
+        let projectedGrade = 100;
+        if (totalPossibleWeight > 0) {
+            projectedGrade = (finalGrade / totalPossibleWeight) * 100;
+        }
+
+        return { finalGrade: Math.max(0, Math.min(100, finalGrade)), projectedGrade: Math.max(0, Math.min(100, projectedGrade)), criteriaDetails, isRecovery: false };
     }, []);
 
     const calculateFinalGrade = useCallback((studentId: string) => {
@@ -597,7 +628,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return groups.reduce((acc, group) => {
             const data = allPartialsData[group.id]?.[activePartialId];
             if (!data || !group.criteria || group.criteria.length === 0) { acc[group.id] = 0; return acc; }
-            const grades = group.students.map(s => calculateDetailedFinalGrade(s.id, data, group.criteria).finalGrade);
+            const grades = group.students.map(s => calculateDetailedFinalGrade(s.id, data, group.criteria).projectedGrade);
             acc[group.id] = grades.length > 0 ? grades.reduce((sum, g) => sum + g, 0) / grades.length : 0;
             return acc;
         }, {} as { [gid: string]: number });
@@ -608,8 +639,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const data = allPartialsData[group.id]?.[activePartialId];
             if (!data || !group.criteria || group.criteria.length === 0) return [];
             return group.students.map(student => {
-                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
-                const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
+                const { projectedGrade } = calculateDetailedFinalGrade(student.id, data, group.criteria);
+                const risk = getStudentRiskLevel(projectedGrade, data.attendance, student.id);
                 return { ...student, calculatedRisk: risk };
             }).filter(s => s.calculatedRisk.level !== 'low');
         }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);

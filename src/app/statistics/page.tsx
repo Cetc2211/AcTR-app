@@ -71,6 +71,7 @@ export default function StatisticsPage() {
         groups,
         activeGroup,
         calculateFinalGrade,
+        calculateDetailedFinalGrade,
         getStudentRiskLevel,
         partialData,
         activePartialId,
@@ -90,11 +91,11 @@ export default function StatisticsPage() {
         ];
 
         for(const student of activeGroup.students) {
-            const finalGrade = calculateFinalGrade(student.id);
-            studentGrades.push({student, grade: finalGrade});
-            if(finalGrade >= 60) approved++; else failed++;
+            const { projectedGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
+            studentGrades.push({student, grade: projectedGrade});
+            if(projectedGrade >= 60) approved++; else failed++;
             
-            const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
+            const risk = getStudentRiskLevel(projectedGrade, attendance, student.id);
             riskDistribution[risk.level]++;
 
             const totalParticipationClasses = Object.keys(participations).length;
@@ -128,7 +129,7 @@ export default function StatisticsPage() {
             topStudents: studentGrades.slice(0,5).map(s => ({name: s.student.name, grade: parseFloat(s.grade.toFixed(1))})),
             participationDistribution,
         };
-    }, [activeGroup, calculateFinalGrade, getStudentRiskLevel, attendance, participations]);
+    }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, attendance, participations, partialData]);
 
     const approvalData = useMemo(() => {
         if (!activeGroupStats) return [];
