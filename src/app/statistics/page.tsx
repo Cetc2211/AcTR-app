@@ -15,7 +15,7 @@ import {
   ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Cell } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Pie, PieChart, Cell, ScatterChart, Scatter, ZAxis, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { useState, useMemo } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -76,6 +76,7 @@ export default function StatisticsPage() {
         partialData,
         activePartialId,
         setActivePartialId,
+        riskAnalysis,
     } = useData();
     const { attendance, participations } = partialData;
 
@@ -155,6 +156,25 @@ export default function StatisticsPage() {
             { name: 'Riesgo Alto', value: activeGroupStats.riskDistribution.high, fill: PIE_CHART_COLORS.high },
         ].filter(item => item.value > 0);
     }, [activeGroupStats]);
+
+    const riskScatterData = useMemo(() => {
+        return riskAnalysis.map(r => ({
+            name: r.studentName,
+            attendance: parseFloat(r.currentAttendance.toFixed(1)),
+            grade: parseFloat(r.projectedGrade.toFixed(1)),
+            risk: r.riskLevel,
+            fill: r.riskLevel === 'high' ? 'hsl(var(--destructive))' : r.riskLevel === 'medium' ? 'hsl(var(--chart-4))' : 'hsl(var(--chart-2))'
+        }));
+    }, [riskAnalysis]);
+
+    const riskPredictionData = useMemo(() => {
+        const failing = riskAnalysis.filter(r => r.failingRisk > 50).length;
+        const dropout = riskAnalysis.filter(r => r.dropoutRisk > 50).length;
+        return [
+            { name: 'Riesgo Reprobación', count: failing, fill: 'hsl(var(--destructive))' },
+            { name: 'Riesgo Abandono', count: dropout, fill: '#f97316' } // Orange-500
+        ];
+    }, [riskAnalysis]);
     
   
 
@@ -275,6 +295,56 @@ export default function StatisticsPage() {
                                         <YAxis dataKey="students" allowDecimals={false} />
                                         <ChartTooltip content={<ChartTooltipContent />} />
                                         <Bar dataKey="students" name="Estudiantes" fill="hsl(var(--primary))" radius={4} />
+                                    </BarChart>
+                                </ChartContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    <div className="grid gap-6 md:grid-cols-2 mt-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Análisis de Riesgo: Asistencia vs Calificación</CardTitle>
+                                <CardDescription>Correlación entre asistencia y desempeño académico proyectado.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-[300px] w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                                            <CartesianGrid />
+                                            <XAxis type="number" dataKey="attendance" name="Asistencia" unit="%" domain={[0, 100]} />
+                                            <YAxis type="number" dataKey="grade" name="Calificación" unit="%" domain={[0, 100]} />
+                                            <ZAxis type="category" dataKey="name" name="Estudiante" />
+                                            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                                            <Legend />
+                                            <Scatter name="Estudiantes" data={riskScatterData} fill="#8884d8">
+                                                {riskScatterData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                                ))}
+                                            </Scatter>
+                                        </ScatterChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Predicción de Riesgo</CardTitle>
+                                <CardDescription>Estudiantes proyectados en riesgo de reprobación vs abandono.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <ChartContainer config={{}} className="min-h-[300px] w-full">
+                                    <BarChart data={riskPredictionData} accessibilityLayer>
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                                        <YAxis dataKey="count" allowDecimals={false} />
+                                        <ChartTooltip content={<ChartTooltipContent />} />
+                                        <Bar dataKey="count" name="Estudiantes" radius={4}>
+                                            {riskPredictionData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                                            ))}
+                                        </Bar>
                                     </BarChart>
                                 </ChartContainer>
                             </CardContent>

@@ -20,7 +20,7 @@ import type { Student, Group, PartialId, CalculatedRisk, EvaluationCriteria } fr
 import { notFound, useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, MoreHorizontal, UserPlus, Trash2, CalendarCheck, FilePen, Edit, Loader2, PenSquare, X, ImagePlus, Lock, Unlock, UserCog, Camera, Upload, RotateCw } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal, UserPlus, Trash2, CalendarCheck, FilePen, Edit, Loader2, PenSquare, X, ImagePlus, Lock, Unlock, UserCog, Camera, Upload, RotateCw, AlertTriangle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,6 +81,7 @@ export default function GroupDetailsPage() {
     removeStudentFromGroup,
     updateGroup,
     updateStudent,
+    riskAnalysis,
   } = useData();
   
   const { attendance } = partialData;
@@ -900,6 +901,71 @@ export default function GroupDetailsPage() {
                             </div>
                         )}
                     </div>
+                </CardContent>
+            </Card>
+            
+            <Card className="lg:col-span-3 border-destructive/50">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-destructive" />
+                        Estudiantes en Riesgo (Análisis Predictivo)
+                    </CardTitle>
+                    <CardDescription>
+                        Predicción de reprobación y abandono escolar basada en regresión de tendencias de asistencia y entrega de actividades.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Estudiante</TableHead>
+                                <TableHead>Riesgo Reprobación</TableHead>
+                                <TableHead>Riesgo Abandono</TableHead>
+                                <TableHead>Factores Críticos</TableHead>
+                                <TableHead>Predicción / Acción</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {riskAnalysis.filter(r => r.riskLevel !== 'low').map(r => (
+                                <TableRow key={r.studentId}>
+                                    <TableCell className="font-medium">{r.studentName}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-16 bg-secondary rounded-full overflow-hidden">
+                                                <div className="h-full bg-destructive" style={{ width: `${r.failingRisk}%` }} />
+                                            </div>
+                                            <span className="text-xs">{r.failingRisk.toFixed(0)}%</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-2 w-16 bg-secondary rounded-full overflow-hidden">
+                                                <div className="h-full bg-orange-500" style={{ width: `${r.dropoutRisk}%` }} />
+                                            </div>
+                                            <span className="text-xs">{r.dropoutRisk.toFixed(0)}%</span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-wrap gap-1">
+                                            {r.riskFactors.map((f, i) => (
+                                                <Badge key={i} variant="outline" className="text-xs border-destructive text-destructive">{f}</Badge>
+                                            ))}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-sm text-muted-foreground">
+                                        {r.predictionMessage}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {riskAnalysis.filter(r => r.riskLevel !== 'low').length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
+                                        No se detectaron estudiantes en riesgo alto o medio.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                 </CardContent>
             </Card>
             </div>

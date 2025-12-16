@@ -9,6 +9,7 @@ import type { Student, Group, PartialId, StudentObservation, SpecialNote, Evalua
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
+import { analyzeStudentRisk, RiskAnalysisResult } from '@/lib/risk-analysis';
 
 
 // TYPE DEFINITIONS
@@ -79,6 +80,7 @@ interface DataContextType {
     groupAverages: { [groupId: string]: number };
     atRiskStudents: StudentWithRisk[];
     overallAverageAttendance: number;
+    riskAnalysis: RiskAnalysisResult[];
 
     // State Setters
     setGroups: (setter: React.SetStateAction<Group[]>) => Promise<void>;
@@ -646,6 +648,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
     }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade, getStudentRiskLevel]);
 
+    const riskAnalysis = useMemo(() => {
+        if (!activeGroup) return [];
+        const data = allPartialsData[activeGroup.id]?.[activePartialId];
+        if (!data) return [];
+        
+        const totalClasses = Object.keys(data.attendance || {}).length;
+        const totalActivities = data.activities?.length || 0;
+
+        return activeGroup.students.map(student => {
+            return analyzeStudentRisk(student, data, activeGroup.criteria || [], totalClasses, totalActivities);
+        });
+    }, [activeGroup, activePartialId, allPartialsData]);
+
     const overallAverageAttendance = useMemo(() => {
         if (!activeGroup) return 100;
         let totalPossible = 0;
@@ -677,7 +692,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <DataContext.Provider value={{
-            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, overallAverageAttendance,
+            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, overallAverageAttendance, riskAnalysis,
             setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
