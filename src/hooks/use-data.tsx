@@ -152,6 +152,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             try {
                 // Helper to get data from Cloud (Firestore) or Local (IndexedDB)
                 const getData = async <T,>(key: string): Promise<T | undefined> => {
+                    let localData: T | undefined;
+                    try {
+                        localData = await get<T>(key);
+                    } catch (e) {
+                        console.warn(`Error reading local data for ${key}`, e);
+                    }
+
                     if (user) {
                         try {
                             const docRef = doc(db, 'users', user.uid, 'userData', key);
@@ -159,13 +166,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                             if (docSnap.exists()) {
                                 console.log(`Loaded ${key} from Firestore`);
                                 return docSnap.data().value as T;
+                            } else if (localData !== undefined) {
+                                // Cloud is empty, but we have local data. Sync it up!
+                                console.log(`Syncing local ${key} to Firestore...`);
+                                await setDoc(docRef, { value: localData });
                             }
                         } catch (err) {
-                            console.error(`Error loading ${key} from Firestore:`, err);
+                            console.error(`Error loading/syncing ${key} from Firestore:`, err);
                         }
                     }
                     // Fallback to local if not found in cloud or not logged in
-                    return get<T>(key);
+                    return localData;
                 };
 
                 const [
