@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { get, set, del, clear } from 'idb-keyval';
+import { auth, db } from '@/lib/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
@@ -128,6 +131,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // --- STATE MANAGEMENT ---
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    const [user, authLoading] = useAuthState(auth);
 
     const [groups, setGroupsState] = useState<Group[]>([]);
     const [allStudents, setAllStudentsState] = useState<Student[]>([]);
@@ -141,9 +145,29 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // --- ASYNC DATA HYDRATION ---
     useEffect(() => {
+        if (authLoading) return;
+
         const hydrateData = async () => {
             setIsLoading(true);
             try {
+                // Helper to get data from Cloud (Firestore) or Local (IndexedDB)
+                const getData = async <T,>(key: string): Promise<T | undefined> => {
+                    if (user) {
+                        try {
+                            const docRef = doc(db, 'users', user.uid, 'userData', key);
+                            const docSnap = await getDoc(docRef);
+                            if (docSnap.exists()) {
+                                console.log(`Loaded ${key} from Firestore`);
+                                return docSnap.data().value as T;
+                            }
+                        } catch (err) {
+                            console.error(`Error loading ${key} from Firestore:`, err);
+                        }
+                    }
+                    // Fallback to local if not found in cloud or not logged in
+                    return get<T>(key);
+                };
+
                 const [
                     loadedGroups,
                     loadedStudents,
@@ -153,13 +177,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     loadedSettings,
                     loadedActiveGroupId
                 ] = await Promise.all([
-                    get<Group[]>('app_groups'),
-                    get<Student[]>('app_students'),
-                    get<{ [studentId: string]: StudentObservation[] }>('app_observations'),
-                    get<SpecialNote[]>('app_specialNotes'),
-                    get<AllPartialsData>('app_partialsData'),
-                    get<AppSettings>('app_settings'),
-                    get<string>('activeGroupId_v1')
+                    getData<Group[]>('app_groups'),
+                    getData<Student[]>('app_students'),
+                    getData<{ [studentId: string]: StudentObservation[] }>('app_observations'),
+                    getData<SpecialNote[]>('app_specialNotes'),
+                    getData<AllPartialsData>('app_partialsData'),
+                    getData<AppSettings>('app_settings'),
+                    get<string>('activeGroupId_v1') // Keep active group local preference
                 ]);
 
                 setGroupsState(loadedGroups || []);
@@ -170,7 +194,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const resolvedSettings = normalizeSettingsValue(loadedSettings || defaultSettings);
                 setSettingsState(resolvedSettings);
                 if (loadedSettings && resolvedSettings.aiModel !== loadedSettings.aiModel) {
-                    await set('app_settings', resolvedSettings);
+                    // We don't await this set to avoid blocking hydration
+                    set('app_settings', resolvedSettings);
                 }
                 
                 if (loadedActiveGroupId && (loadedGroups || []).some(g => g.id === loadedActiveGroupId)) {
@@ -189,7 +214,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         hydrateData();
-    }, []);
+    }, [user, authLoading]);
 
     const createSetterWithStorage = <T,>(
         setter: React.Dispatch<React.SetStateAction<T>>,
@@ -203,7 +228,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     ? (value as (prevState: T) => T)(oldValue)
                     : value;
             setter(newValue);
+            
+            // Save to local storage (IndexedDB) - Always keep a local backup
             await set(key, newValue);
+
+            // Save to Cloud (Firestore) if user is logged in
+            if (user) {
+                try {
+                    const docRef = doc(db, 'users', user.uid, 'userData', key);
+                    await setDoc(docRef, { value: newValue }, { merge: true });
+                    console.log(`Saved ${key} to Firestore`);
+                } catch (err) {
+                    console.error(`Error saving ${key} to Firestore:`, err);
+                }
+            }
         };
     };
 
