@@ -81,7 +81,6 @@ export default function GroupDetailsPage() {
     removeStudentFromGroup,
     updateGroup,
     updateStudent,
-    riskAnalysis,
   } = useData();
   
   const { attendance } = partialData;
@@ -187,6 +186,27 @@ export default function GroupDetailsPage() {
     });
     return riskMap;
   }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
+
+  const riskAnalysis = useMemo(() => {
+      if (!activeGroup) return [];
+      return activeGroup.students.map(student => {
+          const risk = studentRiskLevels[student.id] || { level: 'low', reason: '' };
+          let failingRisk = 0;
+          let dropoutRisk = 0;
+          if (risk.level === 'high') { failingRisk = 90; dropoutRisk = 80; }
+          if (risk.level === 'medium') { failingRisk = 50; dropoutRisk = 30; }
+          
+          return {
+              studentId: student.id,
+              studentName: student.name,
+              riskLevel: risk.level,
+              failingRisk,
+              dropoutRisk,
+              riskFactors: risk.reason ? [risk.reason] : [],
+              predictionMessage: risk.reason || 'Sin riesgos detectados.'
+          };
+      });
+  }, [activeGroup, studentRiskLevels]);
 
   const handleRemoveStudents = (studentIds: string[]) => {
     if (!activeGroup) return;
