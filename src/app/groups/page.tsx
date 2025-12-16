@@ -44,6 +44,7 @@ export default function GroupsPage() {
   const [newGroupSemester, setNewGroupSemester] = useState('');
   const [newGroupGroupName, setNewGroupGroupName] = useState('');
   const [newGroupFacilitator, setNewGroupFacilitator] = useState('');
+  const [newGroupWhatsapp, setNewGroupWhatsapp] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function GroupsPage() {
       semester: newGroupSemester.trim(),
       groupName: newGroupGroupName.trim(),
       facilitator: newGroupFacilitator.trim(),
+      whatsappLink: newGroupWhatsapp.trim(),
       students: [],
       criteria: [],
     };
@@ -87,6 +89,7 @@ export default function GroupsPage() {
         setNewGroupSubject('');
         setNewGroupSemester('');
         setNewGroupGroupName('');
+        setNewGroupWhatsapp('');
         setNewGroupFacilitator(settings.facilitatorName || '');
         setIsDialogOpen(false);
     } catch (e) {
@@ -170,6 +173,15 @@ export default function GroupsPage() {
                   value={newGroupFacilitator}
                   onChange={(e) => setNewGroupFacilitator(e.target.value)}
                   placeholder="Ej. Dr. Alberto Rodriguez"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">Enlace de WhatsApp (Opcional)</Label>
+                <Input
+                  id="whatsapp"
+                  value={newGroupWhatsapp}
+                  onChange={(e) => setNewGroupWhatsapp(e.target.value)}
+                  placeholder="https://chat.whatsapp.com/..."
                 />
               </div>
             </div>

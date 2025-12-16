@@ -358,6 +358,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                          teacherId: user.uid,
                          teacherEmail: user.email,
                          absentStudents: absentStudents,
+                         whatsappLink: group.whatsappLink || '',
                          timestamp: new Date().toISOString()
                      }, { merge: true }).catch(e => console.error("Error syncing absences:", e));
                  }

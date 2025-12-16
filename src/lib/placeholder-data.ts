@@ -28,6 +28,7 @@ export type Group = {
   semester?: string;
   groupName?: string;
   facilitator?: string;
+  whatsappLink?: string;
 };
 
 export type StudentObservation = {

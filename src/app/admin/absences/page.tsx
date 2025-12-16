@@ -23,6 +23,7 @@ type AbsenceRecord = {
   teacherId: string;
   teacherEmail: string;
   absentStudents: { id: string; name: string }[];
+  whatsappLink?: string;
   timestamp: string;
 };
 
@@ -179,7 +180,20 @@ export default function AbsencesPage() {
                         </div>
                         <span className="font-medium">{student.name}</span>
                       </div>
-                      <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        onClick={() => {
+                          if (record.whatsappLink) {
+                            const message = `Hola, le informamos que el alumno ${student.name} no asistió a la clase de ${record.groupName} el día de hoy.`;
+                            const url = `${record.whatsappLink}?text=${encodeURIComponent(message)}`;
+                            window.open(url, '_blank');
+                          } else {
+                            alert("Este grupo no tiene un enlace de WhatsApp configurado.");
+                          }
+                        }}
+                      >
                         <Phone className="h-4 w-4 mr-2" />
                         Contactar
                       </Button>
