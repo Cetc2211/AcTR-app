@@ -196,8 +196,8 @@ export default function AtRiskReportPage() {
                 const partialData = await fetchPartialData(group.id, partialId);
                 if (partialData && (group.criteria.length > 0 || Object.keys(partialData.recoveryGrades || {}).length > 0)) {
                     for (const student of group.students) {
-                        const { projectedGrade, criteriaDetails } = calculateDetailedFinalGrade(student.id, partialData, group.criteria);
-                        const riskLevel = getStudentRiskLevel(projectedGrade, partialData.attendance, student.id);
+                        const { finalGrade, criteriaDetails } = calculateDetailedFinalGrade(student.id, partialData, group.criteria);
+                        const riskLevel = getStudentRiskLevel(finalGrade, partialData.attendance, student.id);
                         
                         if (riskLevel.level === 'high' || riskLevel.level === 'medium') {
                             const existingEntry = atRiskStudentMap.get(student.id);
@@ -219,7 +219,7 @@ export default function AtRiskReportPage() {
                                   tutorPhone: student.tutorPhone,
                                   riskLevel: riskLevel.level,
                                   riskReason: riskLevel.reason,
-                                  finalGrade: projectedGrade,
+                                  finalGrade: finalGrade,
                                   attendance: attendanceStats,
                                   criteriaDetails,
                                   observations: (allObservations[student.id] || []).filter(obs => obs.partialId === partialId),

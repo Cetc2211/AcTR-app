@@ -353,7 +353,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                      // Fire and forget - don't await to keep UI snappy
                      setDoc(docRef, {
                          groupId: activeGroupId,
-                         groupName: group.name,
+                         groupName: group.subject,
                          date: date,
                          teacherId: user.uid,
                          teacherEmail: user.email,
@@ -466,7 +466,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
              
              setDoc(docRef, {
                  groupId: groupId,
-                 groupName: group.name,
+                 groupName: group.subject,
                  date: date,
                  teacherId: user.uid,
                  teacherEmail: user.email,
