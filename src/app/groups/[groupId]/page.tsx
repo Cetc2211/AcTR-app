@@ -127,6 +127,7 @@ export default function GroupDetailsPage() {
   // Efecto para solicitar permiso de cámara cuando se activa
   useEffect(() => {
     let stream: MediaStream | null = null;
+    const videoElement = videoRef.current;
     
     const getCameraPermission = async () => {
       if(isPhotoDialogOpen && isCameraMode) {
@@ -171,8 +172,8 @@ export default function GroupDetailsPage() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
-      if (videoRef.current) {
-          videoRef.current.srcObject = null;
+      if (videoElement) {
+          videoElement.srcObject = null;
       }
     };
   }, [isPhotoDialogOpen, isCameraMode, toast, currentDeviceId]);
@@ -181,8 +182,8 @@ export default function GroupDetailsPage() {
     if (!activeGroup) return {};
     const riskMap: {[studentId: string]: CalculatedRisk} = {};
     activeGroup.students.forEach(s => {
-      const { projectedGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
-      riskMap[s.id] = getStudentRiskLevel(projectedGrade, attendance, s.id);
+      const { finalGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
+      riskMap[s.id] = getStudentRiskLevel(finalGrade, attendance, s.id);
     });
     return riskMap;
   }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
