@@ -446,6 +446,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const takeAttendanceForDate = useCallback(async (groupId: string, date: string) => {
         const group = groups.find(g => g.id === groupId);
         if (!group) return;
+        
+        // 1. Update Local State
         setAllPartialsData(prev => {
             const groupData = prev[groupId] || {};
             const pData = groupData[activePartialId] || defaultPartialData;
@@ -455,7 +457,26 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             set('app_partialsData', finalState);
             return finalState;
         });
-    }, [groups, activePartialId, setAllPartialsData]);
+
+        // 2. Initial Sync to 'absences' collection (Empty list initially as everyone is present)
+        if (user) {
+             const safeDate = date.replace(/\//g, '-');
+             const docId = `${groupId}_${safeDate}`; 
+             const docRef = doc(db, 'absences', docId);
+             
+             setDoc(docRef, {
+                 groupId: groupId,
+                 groupName: group.name,
+                 date: date,
+                 teacherId: user.uid,
+                 teacherEmail: user.email,
+                 absentStudents: [], // Initially empty
+                 whatsappLink: group.whatsappLink || '',
+                 timestamp: new Date().toISOString()
+             }, { merge: true }).catch(e => console.error("Error syncing initial attendance:", e));
+        }
+
+    }, [groups, activePartialId, setAllPartialsData, user]);
 
     const deleteAttendanceDate = useCallback(async (date: string) => {
         if (!activeGroupId) return;
