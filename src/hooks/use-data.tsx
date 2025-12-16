@@ -310,7 +310,61 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [activeGroupId, activePartialId, setAllPartialsData]);
     
     const setGrades = createPartialDataSetter('grades');
-    const setAttendance = createPartialDataSetter('attendance');
+    
+    // Custom setAttendance to sync absences to shared cloud collection
+    const setAttendance = useCallback(async (setter: React.SetStateAction<AttendanceRecord>) => {
+        if (!activeGroupId) return;
+
+        let newAttendance: AttendanceRecord | undefined;
+
+        await setAllPartialsData(prev => {
+            const groupData = prev[activeGroupId] || {};
+            const pData = groupData[activePartialId] || defaultPartialData;
+            const oldValue = pData.attendance;
+            const newValue = typeof setter === 'function' ? (setter as any)(oldValue) : setter;
+            
+            newAttendance = newValue;
+
+            const updatedPData = { ...pData, attendance: newValue };
+            const updatedGroupData = { ...groupData, [activePartialId]: updatedPData };
+            const finalState = { ...prev, [activeGroupId]: updatedGroupData };
+            set('app_partialsData', finalState);
+            return finalState;
+        });
+
+        // Sync to 'absences' collection in Firestore
+        if (newAttendance && user) {
+             const group = groups.find(g => g.id === activeGroupId);
+             if (group) {
+                 for (const [date, records] of Object.entries(newAttendance)) {
+                     const absentStudentIds = Object.entries(records)
+                        .filter(([_, isPresent]) => !isPresent)
+                        .map(([studentId]) => studentId);
+                     
+                     // Create a safe ID for the document
+                     const safeDate = date.replace(/\//g, '-');
+                     const docId = `${activeGroupId}_${safeDate}`; 
+                     const docRef = doc(db, 'absences', docId);
+                     
+                     const absentStudents = group.students
+                        .filter(s => absentStudentIds.includes(s.id))
+                        .map(s => ({ id: s.id, name: `${s.firstName} ${s.lastName}` }));
+
+                     // Fire and forget - don't await to keep UI snappy
+                     setDoc(docRef, {
+                         groupId: activeGroupId,
+                         groupName: group.name,
+                         date: date,
+                         teacherId: user.uid,
+                         teacherEmail: user.email,
+                         absentStudents: absentStudents,
+                         timestamp: new Date().toISOString()
+                     }, { merge: true }).catch(e => console.error("Error syncing absences:", e));
+                 }
+             }
+        }
+    }, [activeGroupId, activePartialId, setAllPartialsData, groups, user]);
+
     const setParticipations = createPartialDataSetter('participations');
     const setActivities = createPartialDataSetter('activities');
     const setActivityRecords = createPartialDataSetter('activityRecords');
