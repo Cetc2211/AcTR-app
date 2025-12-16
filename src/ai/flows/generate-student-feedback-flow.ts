@@ -58,7 +58,7 @@ export async function generateStudentFeedback(input: StudentFeedbackInput): Prom
       }
 
       const data = await response.json();
-      return data.report;
+      return data.feedback || data.report; // Fallback to report if feedback is missing, just in case
 
     } catch (error) {
       console.error('Failed to generate feedback via Cloud Run:', error);
