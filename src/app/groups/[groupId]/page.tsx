@@ -181,8 +181,8 @@ export default function GroupDetailsPage() {
     if (!activeGroup) return {};
     const riskMap: {[studentId: string]: CalculatedRisk} = {};
     activeGroup.students.forEach(s => {
-      const { projectedGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
-      riskMap[s.id] = getStudentRiskLevel(projectedGrade, attendance, s.id);
+      const { finalGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
+      riskMap[s.id] = getStudentRiskLevel(finalGrade, attendance, s.id);
     });
     return riskMap;
   }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
