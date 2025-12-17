@@ -22,7 +22,7 @@ import { ArrowLeft, Save, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/hooks/use-data';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { getPartialLabel } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
@@ -53,11 +53,11 @@ export default function RecoveryPage() {
       return [...activeGroup.students].sort((a,b) => a.name.localeCompare(b.name));
   }, [activeGroup]);
   
-  const calculateOriginalGrade = (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => {
+  const calculateOriginalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => {
       // Temporarily create a version of partial data without recovery info to get original grade
       const originalPData = { ...pData, recoveryGrades: { ...pData.recoveryGrades, [studentId]: { grade: 0, applied: false } } };
       return calculateDetailedFinalGrade(studentId, originalPData, criteria).finalGrade;
-  };
+  }, [calculateDetailedFinalGrade]);
 
   const failedStudents = useMemo(() => {
     if (!criteria || criteria.length === 0) return [];

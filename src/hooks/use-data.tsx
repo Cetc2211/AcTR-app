@@ -465,7 +465,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
              
              setDoc(docRef, {
                  groupId: groupId,
-                 groupName: group.name,
+                 groupName: group.groupName || group.subject,
                  date: date,
                  teacherId: user.uid,
                  teacherEmail: user.email,
