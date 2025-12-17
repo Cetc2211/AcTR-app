@@ -92,11 +92,11 @@ export default function StatisticsPage() {
         ];
 
         for(const student of activeGroup.students) {
-            const { projectedGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
-            studentGrades.push({student, grade: projectedGrade});
-            if(projectedGrade >= 60) approved++; else failed++;
+            const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
+            studentGrades.push({student, grade: finalGrade});
+            if(finalGrade >= 60) approved++; else failed++;
             
-            const risk = getStudentRiskLevel(projectedGrade, attendance, student.id);
+            const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
             riskDistribution[risk.level]++;
 
             const totalParticipationClasses = Object.keys(participations).length;

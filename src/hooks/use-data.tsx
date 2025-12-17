@@ -28,6 +28,18 @@ export type UserProfile = {
     photoURL: string;
 }
 
+export type RiskAnalysisItem = {
+    studentId: string;
+    studentName: string;
+    riskLevel: 'low' | 'medium' | 'high';
+    failingRisk: number;
+    dropoutRisk: number;
+    riskFactors: string[];
+    predictionMessage: string;
+    currentAttendance: number;
+    projectedGrade: number;
+};
+
 export const defaultSettings: AppSettings = {
     institutionName: "Mi Institución",
     logo: "",
@@ -123,6 +135,7 @@ interface DataContextType {
     calculateDetailedFinalGrade: (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => { finalGrade: number; criteriaDetails: CriteriaDetail[]; isRecovery: boolean };
     getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
     fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
+    riskAnalysis: RiskAnalysisItem[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -353,7 +366,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                      // Fire and forget - don't await to keep UI snappy
                      setDoc(docRef, {
                          groupId: activeGroupId,
-                         groupName: group.name,
+                         groupName: group.subject,
                          date: date,
                          teacherId: user.uid,
                          teacherEmail: user.email,
@@ -466,7 +479,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
              
              setDoc(docRef, {
                  groupId: groupId,
-                 groupName: group.name,
+                 groupName: group.subject,
                  date: date,
                  teacherId: user.uid,
                  teacherEmail: user.email,
@@ -643,6 +656,34 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
     }, [allPartialsData, groups]);
     
+    const riskAnalysis = useMemo(() => {
+        if (!activeGroup) return [];
+        return activeGroup.students.map(student => {
+             const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
+             const risk = getStudentRiskLevel(finalGrade, partialData.attendance, student.id);
+
+             const days = Object.keys(partialData.attendance).filter(d => Object.prototype.hasOwnProperty.call(partialData.attendance[d], student.id));
+             const attended = days.reduce((count, d) => partialData.attendance[d][student.id] === true ? count + 1 : count, 0);
+             const attendanceRate = days.length > 0 ? (attended / days.length) * 100 : 100;
+
+             let failingRisk = 0;
+             let dropoutRisk = 0;
+             if (risk.level === 'high') { failingRisk = 90; dropoutRisk = 80; }
+             if (risk.level === 'medium') { failingRisk = 50; dropoutRisk = 30; }
+
+             return {
+                  studentId: student.id,
+                  studentName: student.name,
+                  riskLevel: risk.level,
+                  failingRisk,
+                  dropoutRisk,
+                  riskFactors: risk.reason ? [risk.reason] : [],
+                  predictionMessage: risk.reason || 'Sin riesgos detectados.',
+                  currentAttendance: attendanceRate,
+                  projectedGrade: finalGrade
+             };
+        });
+    }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData]);
 
     return (
         <DataContext.Provider value={{
@@ -652,6 +693,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData,
+            riskAnalysis,
         }}>
             {children}
         </DataContext.Provider>
