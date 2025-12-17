@@ -76,9 +76,41 @@ export default function StatisticsPage() {
         partialData,
         activePartialId,
         setActivePartialId,
-        riskAnalysis,
     } = useData();
     const { attendance, participations } = partialData;
+
+    const riskAnalysis = useMemo(() => {
+      if (!activeGroup) return [];
+      return activeGroup.students.map(student => {
+          const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
+          
+          // Calculate attendance percentage
+          let p = 0, total = 0;
+          Object.keys(attendance).forEach((date) => {
+              if (attendance[date]?.[student.id] !== undefined) {
+                  total++;
+                  if (attendance[date][student.id]) p++;
+              }
+          });
+          const currentAttendance = total > 0 ? (p / total) * 100 : 100;
+
+          const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
+          
+          let failingRisk = 0;
+          let dropoutRisk = 0;
+          if (risk.level === 'high') { failingRisk = 90; dropoutRisk = 80; }
+          if (risk.level === 'medium') { failingRisk = 50; dropoutRisk = 30; }
+          
+          return {
+              studentName: student.name,
+              currentAttendance,
+              projectedGrade: finalGrade, 
+              riskLevel: risk.level,
+              failingRisk,
+              dropoutRisk
+          };
+      });
+  }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
 
     const activeGroupStats = useMemo(() => {
         if (!activeGroup) return null;
@@ -92,11 +124,11 @@ export default function StatisticsPage() {
         ];
 
         for(const student of activeGroup.students) {
-            const { projectedGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
-            studentGrades.push({student, grade: projectedGrade});
-            if(projectedGrade >= 60) approved++; else failed++;
+            const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
+            studentGrades.push({student, grade: finalGrade});
+            if(finalGrade >= 60) approved++; else failed++;
             
-            const risk = getStudentRiskLevel(projectedGrade, attendance, student.id);
+            const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
             riskDistribution[risk.level]++;
 
             const totalParticipationClasses = Object.keys(participations).length;
