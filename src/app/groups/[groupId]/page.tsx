@@ -127,7 +127,15 @@ export default function GroupDetailsPage() {
   // Efecto para solicitar permiso de cámara cuando se activa
   useEffect(() => {
     let stream: MediaStream | null = null;
-    const videoElement = videoRef.current;
+    // Capture the current ref value at the start of the effect execution
+    // However, for cleanup to work correctly with the element that was used, we should rely on the closure?
+    // The warning suggests capturing it inside the effect.
+    // If we capture it here, it will be the value when the effect RUNS (mount/update).
+    // The cleanup runs before the next effect or on unmount.
+    // If the ref changes between effect run and cleanup, we might want the old one?
+    // Actually, videoRef is a ref object. videoRef.current mutates.
+    // React docs say: "The ref value 'videoRef.current' will likely have changed by the time this effect cleanup function runs."
+    // So we should capture it.
     
     const getCameraPermission = async () => {
       if(isPhotoDialogOpen && isCameraMode) {
@@ -167,6 +175,11 @@ export default function GroupDetailsPage() {
       }
     };
     getCameraPermission();
+
+    // Capture ref for cleanup
+    // Note: If videoRef.current is null now (e.g. before render), this might be null.
+    // But this effect runs after render. So if the video is in the DOM, ref is set.
+    const videoElement = videoRef.current;
 
     return () => {
       if (stream) {
