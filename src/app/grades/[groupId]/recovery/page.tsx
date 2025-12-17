@@ -67,7 +67,7 @@ export default function RecoveryPage() {
         originalGrade: calculateOriginalGrade(student.id, partialData, criteria)
       }))
       .filter(s => s.originalGrade < 60);
-  }, [studentsInGroup, partialData, criteria, calculateDetailedFinalGrade]);
+  }, [studentsInGroup, partialData, criteria, calculateOriginalGrade]);
 
 
   const handleGradeChange = (studentId: string, value: string) => {

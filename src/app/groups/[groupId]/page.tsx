@@ -171,8 +171,9 @@ export default function GroupDetailsPage() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
-      if (videoRef.current) {
-          videoRef.current.srcObject = null;
+      const videoElement = videoRef.current;
+      if (videoElement) {
+          videoElement.srcObject = null;
       }
     };
   }, [isPhotoDialogOpen, isCameraMode, toast, currentDeviceId]);
