@@ -10,7 +10,6 @@ import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
 
-
 // TYPE DEFINITIONS
 type ExportData = {
   version: string;
