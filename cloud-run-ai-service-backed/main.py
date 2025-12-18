@@ -28,9 +28,9 @@ try:
         genai.configure(api_key=api_key)
         logger.info("✅ Google Generative AI configured successfully")
         
-        # Initialize model with gemini-2.5-pro (latest and most powerful)
-        model = genai.GenerativeModel('gemini-2.5-pro')
-        logger.info("✅ Gemini 2.5 Pro model initialized with success")
+        # Initialize model with gemini-1.5-pro-latest
+        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        logger.info("✅ Gemini 1.5 Pro model initialized with success")
         is_ai_ready = True
     
 except Exception as e:
@@ -46,11 +46,29 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.4",
-        "model": "gemini-2.5-pro" if is_ai_ready else "not-loaded",
+        "version": "2.5",
+        "model": "gemini-1.5-pro-latest" if is_ai_ready else "not-loaded",
         "api_key_configured": bool(api_key)
     }), 200 if is_ai_ready else 500
 
+@app.route('/record-attendance', methods=['POST'])
+def record_attendance():
+    """Records student attendance data."""
+    try:
+        data = request.get_json()
+        if not data:
+            logger.error("No data provided for attendance recording.")
+            return jsonify({"error": "No data provided"}), 400
+
+        # For now, we just log the received data.
+        # In the future, this could be saved to a database.
+        logger.info(f"Received attendance data: {json.dumps(data, indent=2)}")
+
+        return jsonify({"success": True, "message": "Attendance recorded successfully."}), 200
+
+    except Exception as e:
+        logger.error(f"Error in /record-attendance: {e}", exc_info=True)
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 def call_generative_api(prompt: str) -> str:
     """Call the Gemini model to generate content."""
@@ -61,10 +79,6 @@ def call_generative_api(prompt: str) -> str:
         logger.info("🔄 Calling Gemini model with prompt length: " + str(len(prompt)))
         response = model.generate_content(prompt)
         
-        # --- DEBUG LOG: Loguear la respuesta cruda del modelo ---
-        # response_text_partial = response.text[:500] if response and response.text else "EMPTY_OR_NONE"
-        # logger.info(f"DEBUG: Respuesta cruda del modelo (feedback_text): {response_text_partial}...", flush=True)
-
         if not response or not response.text:
             logger.error("⚠️ Empty response from Gemini model")
             raise Exception("Gemini model returned empty response")
@@ -98,8 +112,7 @@ def generate_group_report():
         partial = data.get('partial', 'Unknown Partial')
         stats = data.get('stats', {})
         
-        # --- PROMPT FINAL Y ESTRICTAMENTE RESTRICTIVO PARA INFORME GRUPAL ---
-        prompt = f"""Asume el rol de un Generador de Contenido Académico, cuyo único propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para ser insertado en una plantilla de informe preexistente.
+        prompt = f'''Asume el rol de un Generador de Contenido Académico, cuyo único propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para ser insertado en una plantilla de informe preexistente.
 
 DATOS ESTADÍSTICOS DISPONIBLES (SOLO PARA REFERENCIA INTERNA DEL ANÁLISIS, PROHIBIDO REPRODUCIRLOS):
 Grupo: {group_name} - Período: {partial}
@@ -127,16 +140,10 @@ El cuerpo de texto debe cubrir:
 * **PARTE 1 (Análisis de Logros y Limitantes):** Un análisis narrativo del rendimiento, logros grupales y la identificación de las limitantes o polarización (usas los datos estadísticos).
 * **PARTE 2 (Acciones Sugeridas):** Párrafos narrativos que incluyan las recomendaciones implícitas dirigidas a Dirección, Subdirección, Orientación/Tutoría y Para el Docente.
 
-El texto debe **comenzar directamente con el análisis** y **terminar inmediatamente después de la última recomendación** para el docente. No añadas nada más."""
+El texto debe **comenzar directamente con el análisis** y **terminar inmediatamente después de la última recomendación** para el docente. No añadas nada más.'''
         
-        # --- DEBUG LOG 1: Loguear el prompt ---
-        logger.info(f"DEBUG: Prompt para informe grupal (Length: {len(prompt)}): {prompt[:500]}...", flush=True)
-
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
-
-        # --- DEBUG LOG 2: Loguear el JSON que se enviará ---
-        logger.info(f"DEBUG: JSON de respuesta enviado a Vercel (Longitud de Reporte: {len(report_text) if report_text else 0}).", flush=True)
 
         if not report_text:
             logger.warning("Report generated but is empty!")
@@ -174,8 +181,7 @@ def generate_student_feedback():
         
         grades_summary = ', '.join([str(g) for g in grades]) if grades else 'No disponible'
         
-        # --- PROMPT OPTIMIZADO PARA RETROALIMENTACIÓN INDIVIDUAL ---
-        prompt = f"""Asume el rol de un docente empático y profesional. Tu tarea es redactar una retroalimentación formal y completamente personalizada dirigida directamente a un estudiante.
+        prompt = f'''Asume el rol de un docente empático y profesional. Tu tarea es redactar una retroalimentación formal y completamente personalizada dirigida directamente a un estudiante.
 
 DATOS DEL ESTUDIANTE:
 Nombre: {student_name}
@@ -203,30 +209,22 @@ El informe debe cubrir obligatoriamente las siguientes secciones en una redacci�
 4. Bitácora, Apoyo y Cierre Motivacional
    Incluye recomendaciones específicas sobre las anotaciones en la bitácora si es aplicable. Si el estudiante ha sido canalizado a atención psicológica, motívale para seguir adelante con el apoyo disponible, siempre de manera respetuosa y no invasiva. Recuérdale que el profesor está disponible para brindarle apoyo continuo y expresa plena confianza en sus capacidades para superar los desafíos.
 
-Redacta la retroalimentación completa, comenzando directamente con el análisis formal y dirigiéndote al estudiante en segunda persona (tú/usted)."""
+Redacta la retroalimentación completa, comenzando directamente con el análisis formal y dirigiéndote al estudiante en segunda persona (tú/usted).'''
 
         
-        # --- DEBUG LOG 1: Loguear el prompt ---
-        logger.info(f"DEBUG: Prompt para retroalimentación de {student_name} (Length: {len(prompt)}): {prompt[:500]}...", flush=True)
-
         logger.info(f"Generating feedback for student: {student_name}, subject: {subject}")
         feedback_text = call_generative_api(prompt)
-
-        # --- DEBUG LOG 2: Loguear la respuesta cruda del modelo ---
-        logger.info(f"DEBUG: Respuesta cruda del modelo (feedback_text): {feedback_text[:500]}...", flush=True)
 
         if not feedback_text:
             logger.warning(f"Feedback generated but is empty for student {student_name}!")
             feedback_text = "No se pudo generar la retroalimentación. Por favor intenta de nuevo."
         
-        # --- DEBUG LOG 3: Loguear el JSON que se enviará ---
         response_json = {
             "success": True,
             "feedback": feedback_text,
             "student": student_name,
             "subject": subject
         }
-        logger.info(f"DEBUG: JSON de respuesta enviado a Vercel (Longitud de Feedback: {len(feedback_text)}).", flush=True)
         
         return jsonify(response_json), 200
         
@@ -235,7 +233,6 @@ Redacta la retroalimentación completa, comenzando directamente con el análisis
         return jsonify({"error": f"Error al generar retroalimentación: {str(e)}"}), 500
 
 if __name__ == "__main__":
-    # La variable is_ai_ready asegura que solo se ejecute si la inicialización no falló.
     port = int(os.environ.get('PORT', 8080))
     logger.info(f"🚀 Starting Flask app on port {port}")
     app.run(debug=False, host='0.0.0.0', port=port)

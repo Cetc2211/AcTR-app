@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -20,7 +19,7 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft, Calendar as CalendarIcon, Trash2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Trash2, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/hooks/use-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -39,12 +38,13 @@ import {
 
 
 export default function AttendancePage() {
-  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, deleteAttendanceDate, settings } = useData();
+  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, deleteAttendanceDate } = useData();
   const { attendance } = partialData;
   const { toast } = useToast();
   
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [dateToDelete, setDateToDelete] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   
   const studentsToDisplay = useMemo(() => {
     return activeGroup ? [...activeGroup.students].sort((a, b) => a.name.localeCompare(b.name)) : [];
@@ -67,11 +67,20 @@ export default function AttendancePage() {
     
     const formattedDate = format(date, 'yyyy-MM-dd');
     
+    // Prevent registering if the date already exists
+    if (attendance && attendance[formattedDate]) {
+        toast({
+            title: 'Fecha ya registrada',
+            description: `La asistencia para el ${formattedDate} ya existe. Puedes modificarla directamente.`,
+        });
+        return;
+    }
+
     await takeAttendanceForDate(activeGroup.id, formattedDate);
     
     toast({
         title: 'Asistencia registrada',
-        description: `Se ha registrado la asistencia para el día ${formattedDate}.`,
+        description: `Se ha creado el registro de asistencia para el día ${formattedDate}.`,
     });
   };
 
@@ -97,64 +106,48 @@ export default function AttendancePage() {
     }
   };
 
-  const handleReportAbsences = () => {
-    if (!activeGroup || !date) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Selecciona un grupo y una fecha.' });
-        return;
-    }
-    
-    if (!settings.whatsappContactNumber) {
-        toast({
-            variant: 'destructive',
-            title: 'Falta Configuración',
-            description: 'Por favor, ve a Ajustes y define el "Teléfono de Contacto para Inasistencias".',
-        });
+  const handleSaveRegistry = async () => {
+    if (!activeGroup || attendanceDates.length === 0) {
+        toast({ variant: 'destructive', title: 'Error', description: 'No hay datos de asistencia para guardar.' });
         return;
     }
 
-    const formattedDate = format(date, 'yyyy-MM-dd');
-    const dailyRecord = partialData.attendance[formattedDate];
-    
-    if (!dailyRecord) {
-        toast({ variant: 'destructive', title: 'Sin Registros', description: 'No hay registros de asistencia para la fecha seleccionada.' });
-        return;
-    }
-
-    const absentStudents = activeGroup.students.filter(student => dailyRecord[student.id] === false);
-
-    if (absentStudents.length === 0) {
-        toast({ title: '¡Todo en orden!', description: 'No hay inasistencias para reportar en esta fecha.' });
-        return;
-    }
-
-    const subjectLine = `Asignatura: ${activeGroup.subject}`;
-    const semesterLine = activeGroup.semester ? `Semestre: ${activeGroup.semester}` : null;
-    const groupLine = activeGroup.groupName ? `Grupo: ${activeGroup.groupName}` : null;
-    
-    const messageHeader = [
-        `*Reporte de Inasistencias*`,
-        subjectLine,
-        semesterLine,
-        groupLine,
-        `Fecha: ${format(date, 'PPP', { locale: es })}`
-    ].filter(Boolean).join('\n');
-
-    const message = `${messageHeader}\n\nEstimado(a) responsable, se reporta la inasistencia de los siguientes estudiantes:\n${absentStudents.map(s => `- ${s.name}`).join('\n')}\n\nSaludos cordiales,\n${settings.facilitatorName || 'Docente'}`;
-
-    navigator.clipboard.writeText(message).then(() => {
-        toast({
-            title: '¡Reporte Copiado!',
-            description: 'Pégalo en el chat de WhatsApp que se acaba de abrir.',
-        });
+    setIsSaving(true);
+    try {
+        // We will save the entire attendance registry for the active group
+        const payload = {
+            groupId: activeGroup.id,
+            attendanceData: partialData.attendance, // Send the complete attendance object
+        };
         
-        const cleanPhone = settings.whatsappContactNumber!.replace(/\D/g, '');
-        const prefillText = encodeURIComponent(`Hola, te envío el reporte de inasistencias del día de hoy.`);
-        const url = `https://wa.me/${cleanPhone}?text=${prefillText}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
-    }).catch(err => {
-        console.error('Error al copiar al portapapeles:', err);
-        toast({ variant: 'destructive', title: 'Error al Copiar', description: 'No se pudo copiar el reporte al portapapeles.' });
-    });
+        // In a real app, you would send this to your backend:
+        const response = await fetch('/api/record-attendance', { // Assuming a local API route
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error('El servidor respondió con un error.');
+        }
+
+        const result = await response.json();
+
+        toast({
+            title: '¡Registro Guardado!',
+            description: 'Los cambios en la asistencia han sido guardados correctamente.',
+        });
+
+    } catch (error) {
+        console.error('Error al guardar el registro:', error);
+        toast({ 
+            variant: 'destructive', 
+            title: 'Error al Guardar', 
+            description: 'No se pudieron guardar los cambios. Revisa tu conexión o inténtalo más tarde.' 
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
 
   return (
@@ -194,10 +187,10 @@ export default function AttendancePage() {
         </div>
         
         <div className="flex items-center gap-2">
-            {activeGroup && (
-                <Button variant="outline" onClick={handleReportAbsences}>
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Reportar Inasistencias
+            {activeGroup && attendanceDates.length > 0 && (
+                <Button variant="outline" onClick={handleSaveRegistry} disabled={isSaving}>
+                    <Save className="mr-2 h-4 w-4" />
+                    {isSaving ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
             )}
             {activeGroup && (
@@ -225,7 +218,7 @@ export default function AttendancePage() {
                 </Popover>
             )}
             {activeGroup && (
-                <Button onClick={handleRegisterDate}>Registrar Asistencia</Button>
+                <Button onClick={handleRegisterDate}>Registrar Fecha</Button>
             )}
         </div>
       </div>
@@ -285,7 +278,7 @@ export default function AttendancePage() {
                  {attendanceDates.length === 0 && studentsToDisplay.length > 0 && (
                     <TableRow>
                         <TableCell colSpan={1} className="text-center h-24">
-                           Selecciona una fecha para registrar la primera asistencia.
+                           Usa el botón "Registrar Fecha" para crear la primera lista de asistencia.
                         </TableCell>
                     </TableRow>
                 )}
