@@ -61,6 +61,7 @@ export async function GET() {
   };
 
   const backendUrl = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://ai-report-service-jjaeoswhya-uc.a.run.app';
+  console.log(`[TestAI] Using AI Service Endpoint: ${backendUrl}`);
 
   // Test 1: Health Check
   try {

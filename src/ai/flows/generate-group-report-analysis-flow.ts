@@ -22,6 +22,9 @@ export async function generateGroupReportAnalysis(input: GroupReportInput): Prom
       // Use Cloud Run backend service with google-generativeai
       // Using gemini-pro model (December 2025)
       const endpoint = process.env.NEXT_PUBLIC_CLOUD_RUN_ENDPOINT || 'https://ai-report-service-jjaeoswhya-uc.a.run.app';
+      
+      console.log(`[GroupReport] Using AI Service Endpoint: ${endpoint}`);
+
       const response = await fetch(`${endpoint}/generate-group-report`, {
         method: 'POST',
         headers: {
