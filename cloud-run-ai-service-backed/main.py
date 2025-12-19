@@ -9,7 +9,7 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-19T06:20:00-clean-deploy
+# Force rebuild timestamp: 2025-12-19T07:20:00-switch-to-2.5-flash
 app = Flask(__name__)
 
 # Initialize critical variables
@@ -27,9 +27,20 @@ try:
         genai.configure(api_key=api_key)
         logger.info("✅ Google Generative AI configured successfully")
         
-        # Initialize model with gemini-1.5-pro-latest
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
-        logger.info("✅ Gemini 1.5 Pro model initialized with success")
+        # --- DIAGNOSTIC: List available models ---
+        logger.info("🔍 Listing available models for this API Key (Diagnostic):")
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    logger.info(f"   - {m.name}")
+        except Exception as list_err:
+            logger.error(f"⚠️ Failed to list models: {list_err}")
+
+        # Switching to gemini-2.5-flash based on user logs showing availability
+        # This model should be faster than 2.5-pro (avoiding timeouts) and is available in the user's account
+        model_name = 'gemini-2.5-flash'
+        model = genai.GenerativeModel(model_name)
+        logger.info(f"✅ Model initialized: {model_name} (Optimized for speed & availability)")
         is_ai_ready = True
     
 except Exception as e:
@@ -44,8 +55,8 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.6",
-        "model": "gemini-1.5-pro-latest" if is_ai_ready else "not-loaded",
+        "version": "2.11-2.5-flash",
+        "model": "gemini-2.5-flash" if is_ai_ready else "not-loaded",
         "api_key_configured": bool(api_key),
         "endpoints": ["/generate-report", "/generate-group-report", "/generate-student-feedback"]
     }), 200 if is_ai_ready else 500
@@ -215,6 +226,10 @@ Redacta la retroalimentación completa, comenzando directamente con el análisis
         if not feedback_text:
             logger.warning(f"Feedback generated but is empty for student {student_name}!")
             feedback_text = "No se pudo generar la retroalimentación. Por favor intenta de nuevo."
+        
+        # Log preview of the feedback to confirm content
+        preview = feedback_text[:100].replace('\n', ' ') if feedback_text else "EMPTY"
+        logger.info(f"📝 Feedback generated (preview): {preview}...")
         
         response_json = {
             "success": True,

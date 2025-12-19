@@ -64,9 +64,12 @@ export default function StudentProfilePage() {
       return partialData.feedbacks?.[studentId] || '';
   }, [partialData.feedbacks, studentId]);
 
+  // Only update currentFeedback from savedFeedback if we are NOT editing or if the savedFeedback actually changes to a non-empty value initially
   useEffect(() => {
-    setCurrentFeedback(savedFeedback);
-  }, [savedFeedback]);
+    if (!isEditingFeedback && !isGeneratingFeedback) {
+        setCurrentFeedback(savedFeedback);
+    }
+  }, [savedFeedback, isEditingFeedback, isGeneratingFeedback]);
 
 
   useEffect(() => {
@@ -237,9 +240,6 @@ export default function StudentProfilePage() {
   const handleGenerateFeedback = async () => {
     if (!student) return;
 
-    // Removed client-side API key check as backend now handles authentication via Secret Manager
-    // if (!settings.apiKey) { ... }
-
     const activePartialStats = studentStatsByPartial.find(s => s.partialId === activePartialId);
     if (!activePartialStats) {
       toast({ variant: 'destructive', title: 'Faltan Datos', description: `No hay datos de calificación para el ${getPartialLabel(activePartialId)}.` });
@@ -259,7 +259,8 @@ export default function StudentProfilePage() {
             observations: activePartialStats.observations.map(o => o.details),
         });
         setCurrentFeedback(result);
-        toast({ title: '¡Retroalimentación generada!', description: 'La IA ha completado el análisis del estudiante.' });
+        setIsEditingFeedback(true); // Open editor with generated text automatically
+        toast({ title: '¡Retroalimentación generada!', description: 'Revisa y guarda el análisis.' });
     } catch (e: any) {
         console.error(e);
         toast({
