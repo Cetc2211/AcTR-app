@@ -19,7 +19,7 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft, Calendar as CalendarIcon, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Trash2, Save, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/hooks/use-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -35,6 +35,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { addDoc, collection } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
 
 
 export default function AttendancePage() {
@@ -45,6 +47,7 @@ export default function AttendancePage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [dateToDelete, setDateToDelete] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
   
   const studentsToDisplay = useMemo(() => {
     return activeGroup ? [...activeGroup.students].sort((a, b) => a.name.localeCompare(b.name)) : [];
@@ -114,24 +117,9 @@ export default function AttendancePage() {
 
     setIsSaving(true);
     try {
-        // We will save the entire attendance registry for the active group
-        const payload = {
-            groupId: activeGroup.id,
-            attendanceData: partialData.attendance, // Send the complete attendance object
-        };
-        
-        // In a real app, you would send this to your backend:
-        const response = await fetch('/api/record-attendance', { // Assuming a local API route
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            throw new Error('El servidor respondió con un error.');
-        }
-
-        const result = await response.json();
+        // Simular guardado (ya se guarda en local/contexto)
+        // En una app real, aquí se sincronizaría explícitamente si no fuera reactivo
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         toast({
             title: '¡Registro Guardado!',
@@ -148,6 +136,57 @@ export default function AttendancePage() {
     } finally {
         setIsSaving(false);
     }
+  };
+
+  const handleReportAbsences = async () => {
+      if (!activeGroup || !date) return;
+      
+      const formattedDate = format(date, 'yyyy-MM-dd');
+      const attendanceForDate = attendance[formattedDate];
+
+      if (!attendanceForDate) {
+          toast({ variant: 'destructive', title: 'Error', description: `No hay asistencia registrada para el ${format(date, 'dd/MM/yyyy')}.` });
+          return;
+      }
+
+      setIsReporting(true);
+      try {
+          const user = auth.currentUser;
+          if (!user) throw new Error("No hay usuario autenticado");
+
+          const absentStudents = activeGroup.students
+              .filter(s => attendanceForDate[s.id] === false) // Solo los explícitamente marcados como falta
+              .map(s => ({ id: s.id, name: s.name }));
+
+          if (absentStudents.length === 0) {
+              toast({ title: 'Sin inasistencias', description: 'Todos los alumnos asistieron en esta fecha.' });
+              return;
+          }
+
+          const reportData = {
+              groupId: activeGroup.id,
+              groupName: activeGroup.subject || activeGroup.groupName || 'Grupo sin nombre',
+              date: format(date, 'dd/MM/yyyy'),
+              teacherId: user.uid,
+              teacherEmail: user.email || 'Sin email',
+              absentStudents: absentStudents,
+              whatsappLink: activeGroup.whatsappLink || '',
+              timestamp: new Date().toISOString()
+          };
+
+          await addDoc(collection(db, 'absences'), reportData);
+
+          toast({
+              title: 'Reporte Enviado',
+              description: `Se notificaron ${absentStudents.length} inasistencias a la administración.`,
+          });
+
+      } catch (e) {
+          console.error("Error reporting absences:", e);
+          toast({ variant: 'destructive', title: 'Error', description: 'No se pudo enviar el reporte.' });
+      } finally {
+          setIsReporting(false);
+      }
   };
 
   return (
@@ -167,7 +206,7 @@ export default function AttendancePage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button asChild variant="outline" size="icon">
             <Link href={activeGroup ? `/groups/${activeGroup.id}` : '/groups'}>
@@ -186,20 +225,14 @@ export default function AttendancePage() {
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
-            {activeGroup && attendanceDates.length > 0 && (
-                <Button variant="outline" onClick={handleSaveRegistry} disabled={isSaving}>
-                    <Save className="mr-2 h-4 w-4" />
-                    {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-                </Button>
-            )}
+        <div className="flex flex-wrap items-center gap-2">
             {activeGroup && (
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
                             variant={'outline'}
                             className={cn(
-                                'w-[280px] justify-start text-left font-normal',
+                                'w-[240px] justify-start text-left font-normal',
                                 !date && 'text-muted-foreground',
                             )}
                         >
@@ -217,8 +250,29 @@ export default function AttendancePage() {
                     </PopoverContent>
                 </Popover>
             )}
+            
             {activeGroup && (
-                <Button onClick={handleRegisterDate}>Registrar Fecha</Button>
+                <Button onClick={handleRegisterDate} variant="secondary">
+                    Registrar Fecha
+                </Button>
+            )}
+
+            {activeGroup && attendanceDates.length > 0 && (
+                <>
+                    <Button variant="outline" onClick={handleSaveRegistry} disabled={isSaving}>
+                        <Save className="mr-2 h-4 w-4" />
+                        Guardar
+                    </Button>
+                    <Button 
+                        variant="default" 
+                        onClick={handleReportAbsences} 
+                        disabled={isReporting || !date || !attendance[format(date, 'yyyy-MM-dd')]}
+                        className="bg-orange-600 hover:bg-orange-700 text-white"
+                    >
+                        <Send className="mr-2 h-4 w-4" />
+                        {isReporting ? 'Enviando...' : 'Reportar Faltas'}
+                    </Button>
+                </>
             )}
         </div>
       </div>
