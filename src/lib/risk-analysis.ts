@@ -39,9 +39,9 @@ export const analyzeStudentRisk = (
         const y = attendanceDays.map(d => partialData.attendance[d][student.id] ? 1 : 0);
         
         const sumX = x.reduce((a, b) => a + b, 0);
-        const sumY = y.reduce((a, b) => a + b, 0);
-        const sumXY = x.reduce((a, b, i) => a + b * y[i], 0);
-        const sumXX = x.reduce((a, b) => a + b * b, 0);
+        const sumY = y.reduce((a: number, b: number) => a + b, 0);
+        const sumXY = x.reduce((a: number, b, i) => a + b * y[i], 0);
+        const sumXX = x.reduce((a: number, b) => a + b * b, 0);
         
         attendanceSlope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     }

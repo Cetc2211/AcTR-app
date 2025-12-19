@@ -278,7 +278,7 @@ export default function AttendancePage() {
                  {attendanceDates.length === 0 && studentsToDisplay.length > 0 && (
                     <TableRow>
                         <TableCell colSpan={1} className="text-center h-24">
-                           Usa el botón "Registrar Fecha" para crear la primera lista de asistencia.
+                           Usa el botón &quot;Registrar Fecha&quot; para crear la primera lista de asistencia.
                         </TableCell>
                     </TableRow>
                 )}

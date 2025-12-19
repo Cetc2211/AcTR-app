@@ -9,20 +9,19 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-08T04:10:00-gemini-2.5-pro
+# Force rebuild timestamp: 2025-12-19T06:20:00-clean-deploy
 app = Flask(__name__)
 
 # Initialize critical variables
 api_key = None
 model = None
-is_ai_ready = False # Nuevo control de estado
+is_ai_ready = False 
 
 try:
     api_key = os.environ.get("GOOGLE_AI_API_KEY")
     
     if not api_key:
         logger.error("⚠️ GOOGLE_AI_API_KEY environment variable is not set!")
-        # Se elimina exit(1) para evitar que el contenedor falle al inicio
     else:
         # --- CRITICAL: Configure without client_options ---
         genai.configure(api_key=api_key)
@@ -36,7 +35,6 @@ try:
 except Exception as e:
     logger.error(f"CRITICAL ERROR: Failed to initialize AI model: {e}", flush=True)
     print(f"CRITICAL ERROR: {e}", flush=True)
-    # Se elimina exit(1). El estado is_ai_ready queda en False.
 
 @app.route('/', methods=['GET'])
 def health():
@@ -46,9 +44,10 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.5",
+        "version": "2.6",
         "model": "gemini-1.5-pro-latest" if is_ai_ready else "not-loaded",
-        "api_key_configured": bool(api_key)
+        "api_key_configured": bool(api_key),
+        "endpoints": ["/generate-report", "/generate-group-report", "/generate-student-feedback"]
     }), 200 if is_ai_ready else 500
 
 @app.route('/record-attendance', methods=['POST'])
@@ -60,8 +59,6 @@ def record_attendance():
             logger.error("No data provided for attendance recording.")
             return jsonify({"error": "No data provided"}), 400
 
-        # For now, we just log the received data.
-        # In the future, this could be saved to a database.
         logger.info(f"Received attendance data: {json.dumps(data, indent=2)}")
 
         return jsonify({"success": True, "message": "Attendance recorded successfully."}), 200
