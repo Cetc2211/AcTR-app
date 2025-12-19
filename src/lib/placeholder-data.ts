@@ -2,6 +2,20 @@
 
 export type PartialId = 'p1' | 'p2' | 'p3';
 
+export type RiskFlag = 'RIESGO_ASISTENCIA' | 'RIESGO_ACADEMICO' | 'RIESGO_EJECUTIVO' | 'RIESGO_CONDUCTUAL';
+
+export interface StudentReferral {
+  student_id: string;        // ID de Firestore
+  timestamp: string;         // ISO 8601
+  academic_data: {
+    average: number;         // Riesgo si < 6.0
+    attendance_rate: number; // Alerta si < 85%
+    completion_rate: number; // Actividades < 60% indica falla ejecutiva
+  };
+  flags: RiskFlag[];
+  log_summary: string[];     // Últimas observaciones de bitácora
+}
+
 export type Student = {
   id: string;
   name: string;
@@ -10,6 +24,9 @@ export type Student = {
   tutorName?: string;
   tutorPhone?: string;
   photo: string;
+  // PIGEC-130 Integration Fields
+  clinicalStatus?: 'pendiente' | 'en_seguimiento' | 'concluido';
+  pedagogicalInstructions?: string;
 };
 
 export type EvaluationCriteria = {
