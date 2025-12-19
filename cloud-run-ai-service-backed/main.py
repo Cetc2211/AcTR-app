@@ -9,7 +9,7 @@ import google.generativeai as genai
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Force rebuild timestamp: 2025-12-19T07:20:00-switch-to-2.5-flash
+# Force rebuild timestamp: 2025-12-19T07:30:00-update-prompt
 app = Flask(__name__)
 
 # Initialize critical variables
@@ -55,7 +55,7 @@ def health():
         "status": status,
         "service": "AcTR-IA-Backend",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": "2.11-2.5-flash",
+        "version": "2.12-updated-prompt",
         "model": "gemini-2.5-flash" if is_ai_ready else "not-loaded",
         "api_key_configured": bool(api_key),
         "endpoints": ["/generate-report", "/generate-group-report", "/generate-student-feedback"]
@@ -120,9 +120,10 @@ def generate_group_report():
         partial = data.get('partial', 'Unknown Partial')
         stats = data.get('stats', {})
         
-        prompt = f'''Asume el rol de un Generador de Contenido Académico, cuyo único propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para ser insertado en una plantilla de informe preexistente.
+        # Adjusted prompt to include the specific greeting requested by the user
+        prompt = f'''Asume el rol de un Generador de Contenido Académico. Tu propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para un informe formal.
 
-DATOS ESTADÍSTICOS DISPONIBLES (SOLO PARA REFERENCIA INTERNA DEL ANÁLISIS, PROHIBIDO REPRODUCIRLOS):
+DATOS ESTADÍSTICOS (REFERENCIA INTERNA):
 Grupo: {group_name} - Período: {partial}
 Total estudiantes: {stats.get('totalStudents', 0)}
 Aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
@@ -131,24 +132,23 @@ Promedio: {stats.get('groupAverage', 0)}
 Asistencia: {stats.get('attendanceRate', 0)}%
 En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
 
-INSTRUCCIONES CRÍTICAS Y PROHIBICIONES (ESTRICTO CUMPLIMIENTO):
+INSTRUCCIONES DE REDACCIÓN:
 
-1.  **PROHIBICIÓN ABSOLUTA DE METADATOS:** No incluyas NINGÚN elemento de formato de informe como:
-    * Títulos de documento (ej: "INFORME DE RENDIMIENTO ACADÉMICO").
-    * Listas de destinatarios (ej: "PARA: Dirección...").
-    * Firma o despedida (ej: "Atentamente," o frases de agradecimiento).
-    * **PROHIBIDO REPRODUCIR LOS DATOS ESTADÍSTICOS DE REFERENCIA en el texto o en una lista.**
+1.  **INICIO OBLIGATORIO:** El texto DEBE comenzar EXACTAMENTE con el siguiente párrafo (adaptando el periodo y grupo):
+    "Por medio del presente le saludo esperando se encuentre gozando de salud y bienestar. De igual forma, me permito informar sobre los logros obtenidos durante el {partial} del periodo en curso en el grupo {group_name}."
 
-2.  **ESTRUCTURA Y FORMATO NARRATIVO:** Genera un único cuerpo de texto que fluya entre dos secciones narrativas, sin títulos ni números de sección. El lenguaje debe ser formal y profesional.
+2.  **DESARROLLO (Sin repetir el saludo):**
+    *   Continúa inmediatamente con un análisis narrativo de los logros y el rendimiento general. Menciona explícitamente los porcentajes de aprobación y promedio como indicadores de logro.
+    *   Identifica limitantes o áreas de oportunidad (reprobación, asistencia, riesgo) de forma constructiva.
+    *   Finaliza con párrafos de acciones sugeridas dirigidas a las autoridades educativas y docentes.
 
-3.  **PROHIBICIÓN DE SÍMBOLOS:** No utilices NINGÚN símbolo para separar o listar ideas: **sin asteriscos (*), sin almohadillas (#), sin guiones (-), sin viñetas, sin números de lista.**
+3.  **FORMATO:**
+    *   Texto continuo en párrafos.
+    *   **PROHIBIDO** usar títulos, subtítulos, viñetas, listas o símbolos como asteriscos (*).
+    *   Lenguaje formal y profesional.
+    *   No agregues despedidas ("Atentamente") ni firmas al final.
 
-El cuerpo de texto debe cubrir:
-
-* **PARTE 1 (Análisis de Logros y Limitantes):** Un análisis narrativo del rendimiento, logros grupales y la identificación de las limitantes o polarización (usas los datos estadísticos).
-* **PARTE 2 (Acciones Sugeridas):** Párrafos narrativos que incluyan las recomendaciones implícitas dirigidas a Dirección, Subdirección, Orientación/Tutoría y Para el Docente.
-
-El texto debe **comenzar directamente con el análisis** y **terminar inmediatamente después de la última recomendación** para el docente. No añadas nada más.'''
+Genera el informe completo.'''
         
         logger.info(f"Generating report for group: {group_name}, partial: {partial}")
         report_text = call_generative_api(prompt)
