@@ -58,6 +58,7 @@ import { useData } from '@/hooks/use-data';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { analyzeStudentRisk } from '@/lib/risk-analysis';
 
 
 export default function GroupDetailsPage() {
@@ -181,33 +182,54 @@ export default function GroupDetailsPage() {
   const studentRiskLevels = useMemo(() => {
     if (!activeGroup) return {};
     const riskMap: {[studentId: string]: CalculatedRisk} = {};
+    
+    // Usamos analyzeStudentRisk para obtener el nivel de riesgo real y progresivo
     activeGroup.students.forEach(s => {
-      const { finalGrade } = calculateDetailedFinalGrade(s.id, partialData, activeGroup.criteria || []);
-      riskMap[s.id] = getStudentRiskLevel(finalGrade, attendance, s.id);
+      // Calculamos el total de clases registradas para pasar como parámetro
+      const totalClassesRegistered = Object.keys(partialData.attendance || {}).length;
+      
+      const analysis = analyzeStudentRisk(
+          s, 
+          partialData, 
+          activeGroup.criteria || [], 
+          totalClassesRegistered,
+          allStudents.find(st => st.id === s.id)?.observations?.map(o => o.text) || []
+      );
+
+      riskMap[s.id] = {
+          level: analysis.riskLevel,
+          reason: analysis.riskFactors.join(', ')
+      };
     });
     return riskMap;
-  }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
+  }, [activeGroup, partialData, allStudents]);
 
   const riskAnalysis = useMemo(() => {
       if (!activeGroup) return [];
+      
+      const totalClassesRegistered = Object.keys(partialData.attendance || {}).length;
+
       return activeGroup.students.map(student => {
-          const risk = studentRiskLevels[student.id] || { level: 'low', reason: '' };
-          let failingRisk = 0;
-          let dropoutRisk = 0;
-          if (risk.level === 'high') { failingRisk = 90; dropoutRisk = 80; }
-          if (risk.level === 'medium') { failingRisk = 50; dropoutRisk = 30; }
+          // Usamos la función avanzada directamente para la tabla detallada
+          const analysis = analyzeStudentRisk(
+              student, 
+              partialData, 
+              activeGroup.criteria || [], 
+              totalClassesRegistered,
+              allStudents.find(st => st.id === student.id)?.observations?.map(o => o.text) || []
+          );
           
           return {
               studentId: student.id,
               studentName: student.name,
-              riskLevel: risk.level,
-              failingRisk,
-              dropoutRisk,
-              riskFactors: risk.reason ? [risk.reason] : [],
-              predictionMessage: risk.reason || 'Sin riesgos detectados.'
+              riskLevel: analysis.riskLevel,
+              failingRisk: analysis.failingRisk,
+              dropoutRisk: analysis.dropoutRisk,
+              riskFactors: analysis.riskFactors,
+              predictionMessage: analysis.predictionMessage
           };
       });
-  }, [activeGroup, studentRiskLevels]);
+  }, [activeGroup, partialData, allStudents]);
 
   const handleRemoveStudents = (studentIds: string[]) => {
     if (!activeGroup) return;
