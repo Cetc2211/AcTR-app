@@ -55,6 +55,6 @@
   },
   "main": "server.js",
   "engines": {
-    "node": "22"
+    "node": "20"
   }
 }
