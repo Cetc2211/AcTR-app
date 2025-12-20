@@ -13,13 +13,14 @@ import { Button } from '@/components/ui/button';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Download, User, Mail, Phone, Loader2, MessageSquare, BookText, Edit, Save, XCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, Download, User, Mail, Phone, Loader2, MessageSquare, BookText, Edit, Save, XCircle, Sparkles, AlertTriangle } from 'lucide-react';
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useData } from '@/hooks/use-data';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getPartialLabel } from '@/lib/utils';
 import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDetail } from '@/lib/placeholder-data';
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
@@ -42,6 +43,7 @@ export default function StudentProfilePage() {
     activePartialId,
     partialData,
     setStudentFeedback,
+    atRiskStudents,
   } = useData();
 
   const [studentStatsByPartial, setStudentStatsByPartial] = useState<StudentStats[]>([]);
@@ -60,6 +62,11 @@ export default function StudentProfilePage() {
   const student = useMemo(() => allStudents.find((s) => s.id === studentId), [allStudents, studentId]);
   const studentGroups = useMemo(() => groups.filter((g) => g.students.some((s) => s.id === studentId)), [groups, studentId]);
   
+  // Find risk info for the student
+  const riskInfo = useMemo(() => {
+    return atRiskStudents.find(s => s.id === studentId);
+  }, [atRiskStudents, studentId]);
+
   const savedFeedback = useMemo(() => {
       return partialData.feedbacks?.[studentId] || '';
   }, [partialData.feedbacks, studentId]);
@@ -318,7 +325,7 @@ export default function StudentProfilePage() {
         </div>
 
         <div ref={reportRef} className="p-2">
-          <Card>
+          <Card className="mb-6">
             <CardHeader className="flex flex-col md:flex-row gap-6 items-start">
               <Image
                 src={student.photo}
@@ -358,6 +365,18 @@ export default function StudentProfilePage() {
               </div>
             </CardHeader>
           </Card>
+
+          {riskInfo && (
+            <Alert variant={riskInfo.calculatedRisk.level === 'high' ? 'destructive' : 'default'} className={`mb-6 ${riskInfo.calculatedRisk.level === 'medium' ? 'border-amber-500 text-amber-900 bg-amber-50 dark:bg-amber-950 dark:text-amber-100' : ''}`}>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>
+                {riskInfo.calculatedRisk.level === 'high' ? 'Alerta de Alto Riesgo' : 'Alerta de Riesgo Medio'}
+              </AlertTitle>
+              <AlertDescription>
+                <strong>Justificación:</strong> {riskInfo.calculatedRisk.reason}
+              </AlertDescription>
+            </Alert>
+          )}
 
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-4">
