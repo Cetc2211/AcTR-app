@@ -194,7 +194,7 @@ export default function GroupDetailsPage() {
           partialData, 
           activeGroup.criteria || [], 
           totalClassesRegistered,
-          allObservations[s.id]?.map(o => o.text) || []
+          allObservations[s.id]?.map(o => o.details) || []
       );
 
       riskMap[s.id] = {
@@ -217,7 +217,7 @@ export default function GroupDetailsPage() {
               partialData, 
               activeGroup.criteria || [], 
               totalClassesRegistered,
-              allObservations[student.id]?.map(o => o.text) || []
+              allObservations[student.id]?.map(o => o.details) || []
           );
           
           return {
