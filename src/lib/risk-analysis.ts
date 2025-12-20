@@ -71,7 +71,8 @@ export const analyzeStudentRisk = (
     criteria: EvaluationCriteria[],
     totalClassesSoFar: number,
     // totalActivitiesSoFar ya no se pasa fijo, se calcula dinámicamente según fechas
-    recentObservations: string[] = [] 
+    recentObservations: string[] = [],
+    semesterGradeOverride?: number
 ): RiskAnalysisResult => {
     
     const now = new Date();
@@ -183,14 +184,18 @@ export const analyzeStudentRisk = (
         ? (totalWeightedEarned / totalWeightEvaluatedSoFar) * 100 
         : 100;
 
-    // VERIFICACIÓN DE RECUPERACIÓN
-    // Si el estudiante tiene una calificación de recuperación aplicada, usamos esa calificación
-    // para el cálculo de riesgo y visualización, en lugar del promedio reprobatorio.
-    let isRecovery = false;
-    const recoveryData = partialData.recoveryGrades?.[student.id];
-    if (recoveryData && recoveryData.applied && recoveryData.grade !== null) {
-        currentGrade = recoveryData.grade;
-        isRecovery = true;
+    // OVERRIDE: Si se proporciona un promedio semestral, lo usamos directamente
+    if (semesterGradeOverride !== undefined) {
+        currentGrade = semesterGradeOverride;
+    } else {
+        // VERIFICACIÓN DE RECUPERACIÓN (Solo si no hay override)
+        // Si el estudiante tiene una calificación de recuperación aplicada, usamos esa calificación
+        // para el cálculo de riesgo y visualización, en lugar del promedio reprobatorio.
+        const recoveryData = partialData.recoveryGrades?.[student.id];
+        if (recoveryData && recoveryData.applied && recoveryData.grade !== null) {
+            currentGrade = recoveryData.grade;
+            isRecovery = true;
+        }
     }
 
     const missedActivitiesCount = totalActivitiesDue - deliveredActivitiesCount;

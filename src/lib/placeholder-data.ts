@@ -46,6 +46,7 @@ export type Group = {
   groupName?: string;
   facilitator?: string;
   whatsappLink?: string;
+  isSemesterIntegrated?: boolean;
 };
 
 export type StudentObservation = {

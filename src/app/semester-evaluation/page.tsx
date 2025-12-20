@@ -23,6 +23,9 @@ import Link from 'next/link';
 import { Presentation, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 
 interface PartialGradeInfo {
@@ -39,10 +42,16 @@ interface SemesterGrade {
 }
 
 export default function SemesterEvaluationPage() {
-    const { activeGroup, calculateDetailedFinalGrade, isLoading: isDataLoading, fetchPartialData } = useData();
+    const { activeGroup, calculateDetailedFinalGrade, isLoading: isDataLoading, fetchPartialData, updateGroup } = useData();
     const [semesterGrades, setSemesterGrades] = useState<SemesterGrade[]>([]);
     const [isCalculating, setIsCalculating] = useState(true);
     const [availablePartials, setAvailablePartials] = useState<PartialId[]>([]);
+
+    const handleToggleIntegration = async (checked: boolean) => {
+        if (activeGroup) {
+            await updateGroup(activeGroup.id, { isSemesterIntegrated: checked });
+        }
+    };
 
     useEffect(() => {
         const calculateGrades = async () => {
@@ -59,8 +68,9 @@ export default function SemesterEvaluationPage() {
                 partials.map(pId => fetchPartialData(activeGroup.id, pId))
             );
 
+            // Determine which partials have ANY data globally (for table headers)
             allPartialsData.forEach((pData: (PartialData & { criteria: EvaluationCriteria[] }) | null, index: number) => {
-                if (pData && (Object.keys(pData.grades).length > 0 || Object.keys(pData.recoveryGrades || {}).length > 0)) {
+                if (pData && (Object.keys(pData.grades).length > 0 || Object.keys(pData.recoveryGrades || {}).length > 0 || Object.keys(pData.attendance || {}).length > 0)) {
                     gradedPartials.push(partials[index]);
                 }
             });
@@ -76,14 +86,34 @@ export default function SemesterEvaluationPage() {
                     const groupCriteria = activeGroup.criteria || [];
                      if (partialData && (groupCriteria.length > 0 || Object.keys(partialData.recoveryGrades || {}).length > 0)) {
                         const { finalGrade, isRecovery } = calculateDetailedFinalGrade(student.id, partialData, groupCriteria);
-                        grades[partialId] = { grade: finalGrade, isRecovery };
-                        gradeSum += finalGrade;
-                        partialsWithGrades++;
+                        
+                        // Check if student has specific data for this partial to count it in average
+                        // We consider "data" as having attendance, grades, or activity records.
+                        // If finalGrade is > 0, we definitely count it.
+                        // If finalGrade is 0, we check if there's evidence of participation (attendance/activities)
+                        // to distinguish between "0 because failed" and "0 because not started".
+                        
+                        let hasData = false;
+                        if (finalGrade > 0) hasData = true;
+                        else {
+                            const hasAttendance = partialData.attendance && Object.values(partialData.attendance).some(d => d[student.id] !== undefined);
+                            const hasActivities = partialData.activityRecords && partialData.activityRecords[student.id] && Object.keys(partialData.activityRecords[student.id]).length > 0;
+                            const hasGrades = partialData.grades && partialData.grades[student.id] && Object.keys(partialData.grades[student.id]).length > 0;
+                            const hasRecovery = partialData.recoveryGrades && partialData.recoveryGrades[student.id];
+                            
+                            if (hasAttendance || hasActivities || hasGrades || hasRecovery) hasData = true;
+                        }
+
+                        if (hasData) {
+                            grades[partialId] = { grade: finalGrade, isRecovery };
+                            gradeSum += finalGrade;
+                            partialsWithGrades++;
+                        }
                     }
                 });
                 
-                // Only calculate average if all three partials have grades.
-                const semesterAverage = partialsWithGrades === 3 ? gradeSum / 3 : undefined;
+                // Calculate progressive average
+                const semesterAverage = partialsWithGrades > 0 ? gradeSum / partialsWithGrades : undefined;
                 
                 return {
                     student,
@@ -153,11 +183,23 @@ export default function SemesterEvaluationPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div>
-                <h1 className="text-3xl font-bold">Evaluación Semestral</h1>
-                <p className="text-muted-foreground">
-                    Resumen de calificaciones de los parciales y promedio final para el grupo: {activeGroup.subject}
-                </p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold">Evaluación Semestral</h1>
+                    <p className="text-muted-foreground">
+                        Resumen de calificaciones de los parciales y promedio final para el grupo: {activeGroup.subject}
+                    </p>
+                </div>
+                <div className="flex items-center space-x-2 bg-card p-4 rounded-lg border shadow-sm">
+                    <Switch 
+                        id="integrate-semester" 
+                        checked={activeGroup.isSemesterIntegrated || false}
+                        onCheckedChange={handleToggleIntegration}
+                    />
+                    <Label htmlFor="integrate-semester" className="cursor-pointer">
+                        Integrar Promedio Semestral al Riesgo
+                    </Label>
+                </div>
             </div>
             <Card>
                 <CardContent className="p-0">

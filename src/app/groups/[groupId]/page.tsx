@@ -212,25 +212,25 @@ export default function GroupDetailsPage() {
       const totalClassesRegistered = Object.keys(partialData.attendance || {}).length;
 
       return activeGroup.students.map(student => {
-          // Usamos la función avanzada directamente para la tabla detallada
-          const analysis = analyzeStudentRisk(
-              student, 
-              partialData, 
-              activeGroup.criteria || [], 
-              totalClassesRegistered,
-              allObservations[student.id]?.map(o => o.details) || []
-          );
-
-          // Calcular historial de parciales
+          // Calcular historial de parciales PRIMERO para poder usarlo en el promedio semestral
           const history = (['p1', 'p2', 'p3'] as const).map(pid => {
               const pData = allPartialsDataForActiveGroup[pid];
               if (!pData) return null;
               
               // Calculamos métricas básicas para este parcial histórico
-              // Reusamos analyzeStudentRisk pero solo nos interesa currentGrade y currentAttendance
               const pTotalClasses = Object.keys(pData.attendance || {}).length;
-              // Si no hay datos en absoluto para este parcial, lo ignoramos
-              if (pTotalClasses === 0 && (!pData.grades || Object.keys(pData.grades).length === 0)) return null;
+              
+              // Verificamos si hay datos reales (similar a SemesterEvaluationPage)
+              let hasData = false;
+              // Si hay calificaciones, hay datos
+              if (pData.grades && Object.keys(pData.grades[student.id] || {}).length > 0) hasData = true;
+              // Si hay recuperación aplicada
+              if (pData.recoveryGrades && pData.recoveryGrades[student.id]) hasData = true;
+              // Si hay asistencia registrada (aunque sea falta)
+              if (pData.attendance && Object.values(pData.attendance).some(d => d[student.id] !== undefined)) hasData = true;
+              
+              // Si no hay datos y no hay clases registradas, ignoramos
+              if (!hasData && pTotalClasses === 0) return null;
 
               const pAnalysis = analyzeStudentRisk(
                   student,
@@ -240,6 +240,13 @@ export default function GroupDetailsPage() {
                   [] // No necesitamos observaciones para el historial numérico
               );
               
+              // Si el análisis devuelve 100 pero no hay datos reales (beneficio de la duda), 
+              // y estamos en modo histórico, tal vez deberíamos filtrarlo si realmente está vacío?
+              // Pero analyzeStudentRisk ya maneja "beneficio de la duda".
+              // Si hasData es false pero pTotalClasses > 0 (solo asistencia vacía?), pAnalysis dará 100.
+              // Vamos a confiar en hasData para filtrar parciales "no iniciados".
+              if (!hasData && pAnalysis.currentGrade === 100) return null;
+
               return {
                   id: pid,
                   label: pid === 'p1' ? 'P1' : pid === 'p2' ? 'P2' : 'P3',
@@ -249,6 +256,23 @@ export default function GroupDetailsPage() {
                   isRecovery: pAnalysis.isRecovery
               };
           }).filter(h => h !== null);
+
+          // Calcular promedio semestral si está integrado
+          let semesterGradeOverride: number | undefined = undefined;
+          if (activeGroup.isSemesterIntegrated && history.length > 0) {
+              const sum = history.reduce((acc, h) => acc + h.grade, 0);
+              semesterGradeOverride = sum / history.length;
+          }
+
+          // Usamos la función avanzada directamente para la tabla detallada
+          const analysis = analyzeStudentRisk(
+              student, 
+              partialData, 
+              activeGroup.criteria || [], 
+              totalClassesRegistered,
+              allObservations[student.id]?.map(o => o.details) || [],
+              semesterGradeOverride
+          );
           
           return {
               studentId: student.id,
