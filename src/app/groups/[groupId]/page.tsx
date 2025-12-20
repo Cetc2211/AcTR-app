@@ -68,6 +68,7 @@ export default function GroupDetailsPage() {
     isLoading: isDataLoading,
     groups, 
     allStudents, 
+    allObservations,
     setActiveGroupId,
     setAllStudents, 
     activeGroup, 
@@ -193,7 +194,7 @@ export default function GroupDetailsPage() {
           partialData, 
           activeGroup.criteria || [], 
           totalClassesRegistered,
-          allStudents.find(st => st.id === s.id)?.observations?.map(o => o.text) || []
+          allObservations[s.id]?.map(o => o.text) || []
       );
 
       riskMap[s.id] = {
@@ -202,7 +203,7 @@ export default function GroupDetailsPage() {
       };
     });
     return riskMap;
-  }, [activeGroup, partialData, allStudents]);
+  }, [activeGroup, partialData, allObservations]);
 
   const riskAnalysis = useMemo(() => {
       if (!activeGroup) return [];
@@ -216,7 +217,7 @@ export default function GroupDetailsPage() {
               partialData, 
               activeGroup.criteria || [], 
               totalClassesRegistered,
-              allStudents.find(st => st.id === student.id)?.observations?.map(o => o.text) || []
+              allObservations[student.id]?.map(o => o.text) || []
           );
           
           return {
