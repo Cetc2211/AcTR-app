@@ -205,7 +205,15 @@ export const analyzeStudentRisk = (
     const confidenceFactor = Math.min(1, totalWeightEvaluatedSoFar / 20); // Requiere al menos 20% evaluado para confianza total
 
     const zFailing = failingIntercept + (wGrade * currentGrade) + (wActivity * activityCompletionRate);
-    let failingRisk = sigmoid(zFailing * confidenceFactor) * 100;
+    
+    // CORRECCIÓN: Si no hay datos evaluados, el riesgo debe ser 0, no 50% (sigmoid(0))
+    let failingRisk = 0;
+    if (totalWeightEvaluatedSoFar > 0) {
+        failingRisk = sigmoid(zFailing * confidenceFactor) * 100;
+    } else {
+        // Si no hay nada evaluado, asumimos riesgo mínimo
+        failingRisk = 0;
+    }
     
     // Ajuste manual para casos críticos obvios
     if (currentGrade < 60 && totalWeightEvaluatedSoFar > 20) failingRisk = Math.max(failingRisk, 85);
@@ -227,8 +235,14 @@ export const analyzeStudentRisk = (
     
     let dropoutRisk = sigmoid(zDropout) * 100;
     
+    // CORRECCIÓN: Si no hay asistencias registradas, el riesgo de abandono es 0
+    if (attendanceDays.length === 0) {
+        dropoutRisk = 0;
+    }
+
     // Penalización extra por baja participación (indicador de desconexión)
-    if (lowParticipation) dropoutRisk += 15;
+    // Solo si ya hay participaciones registradas
+    if (lowParticipation && totalParticipations > 0) dropoutRisk += 15;
     if (dropoutRisk > 100) dropoutRisk = 99;
 
 
