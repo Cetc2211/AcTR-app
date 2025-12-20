@@ -15,6 +15,7 @@ export type RiskAnalysisResult = {
     riskFactors: string[];
     predictionMessage: string;
     pigecFlags: RiskFlag[];
+    isRecovery?: boolean;
 };
 
 // Palabras clave para riesgo conductual (PIGEC-130 Nivel 1)
@@ -178,9 +179,19 @@ export const analyzeStudentRisk = (
 
     // Cálculo del promedio actual NORMALIZADO a 100
     // Si no se ha evaluado nada (inicio de parcial), el promedio es 100 (beneficio de la duda) o N/A
-    const currentGrade = totalWeightEvaluatedSoFar > 0 
+    let currentGrade = totalWeightEvaluatedSoFar > 0 
         ? (totalWeightedEarned / totalWeightEvaluatedSoFar) * 100 
         : 100;
+
+    // VERIFICACIÓN DE RECUPERACIÓN
+    // Si el estudiante tiene una calificación de recuperación aplicada, usamos esa calificación
+    // para el cálculo de riesgo y visualización, en lugar del promedio reprobatorio.
+    let isRecovery = false;
+    const recoveryData = partialData.recoveryGrades?.[student.id];
+    if (recoveryData && recoveryData.applied && recoveryData.grade !== null) {
+        currentGrade = recoveryData.grade;
+        isRecovery = true;
+    }
 
     const missedActivitiesCount = totalActivitiesDue - deliveredActivitiesCount;
     const activityCompletionRate = totalActivitiesDue > 0 ? deliveredActivitiesCount / totalActivitiesDue : 1;
@@ -273,7 +284,7 @@ export const analyzeStudentRisk = (
     }
 
     // PIGEC-130 Flags integration
-    const pigecFlags = calculatePIGECFlags(currentGrade, dropoutRisk, activityCompletionRate, currentAttendance, recentObservations);
+    const pigecFlags = calculatePIGECFlags(failingRisk, dropoutRisk, activityCompletionRate, currentAttendance, recentObservations);
 
     return {
         studentId: student.id,
@@ -289,6 +300,7 @@ export const analyzeStudentRisk = (
         riskLevel,
         riskFactors,
         predictionMessage,
-        pigecFlags
+        pigecFlags,
+        isRecovery
     };
 };

@@ -245,7 +245,8 @@ export default function GroupDetailsPage() {
                   label: pid === 'p1' ? 'P1' : pid === 'p2' ? 'P2' : 'P3',
                   grade: pAnalysis.currentGrade,
                   attendance: pAnalysis.currentAttendance,
-                  isCurrent: pid === activePartialId
+                  isCurrent: pid === activePartialId,
+                  isRecovery: pAnalysis.isRecovery
               };
           }).filter(h => h !== null);
           
@@ -257,7 +258,8 @@ export default function GroupDetailsPage() {
               dropoutRisk: analysis.dropoutRisk,
               riskFactors: analysis.riskFactors,
               predictionMessage: analysis.predictionMessage,
-              history // Agregamos el historial al objeto
+              history, // Agregamos el historial al objeto
+              isRecovery: analysis.isRecovery
           };
       });
   }, [activeGroup, partialData, allStudents, allPartialsDataForActiveGroup, activePartialId, allObservations]);
@@ -1032,7 +1034,11 @@ export default function GroupDetailsPage() {
                                             {r.history && r.history.map((h: any) => (
                                                 <div key={h.id} className={cn("flex justify-between gap-2", h.isCurrent && "font-bold text-primary")}>
                                                     <span>{h.label}:</span>
-                                                    <span>{h.grade.toFixed(1)} / {h.attendance.toFixed(0)}%</span>
+                                                    <span className="flex items-center gap-1">
+                                                        {h.grade.toFixed(1)}
+                                                        {h.isRecovery && <span className="text-destructive font-bold">R</span>}
+                                                         / {h.attendance.toFixed(0)}%
+                                                    </span>
                                                 </div>
                                             ))}
                                             {(!r.history || r.history.length === 0) && <span className="text-muted-foreground">Sin datos</span>}
