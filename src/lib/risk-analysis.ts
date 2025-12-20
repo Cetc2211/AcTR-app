@@ -184,6 +184,8 @@ export const analyzeStudentRisk = (
         ? (totalWeightedEarned / totalWeightEvaluatedSoFar) * 100 
         : 100;
 
+    let isRecovery = false;
+
     // OVERRIDE: Si se proporciona un promedio semestral, lo usamos directamente
     if (semesterGradeOverride !== undefined) {
         currentGrade = semesterGradeOverride;
