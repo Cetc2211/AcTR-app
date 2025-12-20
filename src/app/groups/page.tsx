@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import {
@@ -78,7 +77,7 @@ export default function GroupsPage() {
     };
     
     try {
-        setGroups((prev: Group[]) => [...prev, newGroup]);
+        await setGroups((prev: Group[]) => [...prev, newGroup]);
 
         toast({
           title: 'Grupo Creado',
@@ -93,6 +92,7 @@ export default function GroupsPage() {
         setNewGroupFacilitator(settings.facilitatorName || '');
         setIsDialogOpen(false);
     } catch (e) {
+        console.error("Error creating group:", e);
         toast({
             variant: "destructive",
             title: "Error al crear grupo",
