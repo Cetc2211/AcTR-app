@@ -73,6 +73,7 @@ export default function GroupDetailsPage() {
     setAllStudents, 
     activeGroup, 
     partialData,
+    allPartialsDataForActiveGroup,
     deleteGroup,
     activePartialId,
     setActivePartialId,
@@ -219,6 +220,34 @@ export default function GroupDetailsPage() {
               totalClassesRegistered,
               allObservations[student.id]?.map(o => o.details) || []
           );
+
+          // Calcular historial de parciales
+          const history = (['p1', 'p2', 'p3'] as const).map(pid => {
+              const pData = allPartialsDataForActiveGroup[pid];
+              if (!pData) return null;
+              
+              // Calculamos métricas básicas para este parcial histórico
+              // Reusamos analyzeStudentRisk pero solo nos interesa currentGrade y currentAttendance
+              const pTotalClasses = Object.keys(pData.attendance || {}).length;
+              // Si no hay datos en absoluto para este parcial, lo ignoramos
+              if (pTotalClasses === 0 && (!pData.grades || Object.keys(pData.grades).length === 0)) return null;
+
+              const pAnalysis = analyzeStudentRisk(
+                  student,
+                  pData,
+                  activeGroup.criteria || [],
+                  pTotalClasses,
+                  [] // No necesitamos observaciones para el historial numérico
+              );
+              
+              return {
+                  id: pid,
+                  label: pid === 'p1' ? 'P1' : pid === 'p2' ? 'P2' : 'P3',
+                  grade: pAnalysis.currentGrade,
+                  attendance: pAnalysis.currentAttendance,
+                  isCurrent: pid === activePartialId
+              };
+          }).filter(h => h !== null);
           
           return {
               studentId: student.id,
@@ -227,10 +256,11 @@ export default function GroupDetailsPage() {
               failingRisk: analysis.failingRisk,
               dropoutRisk: analysis.dropoutRisk,
               riskFactors: analysis.riskFactors,
-              predictionMessage: analysis.predictionMessage
+              predictionMessage: analysis.predictionMessage,
+              history // Agregamos el historial al objeto
           };
       });
-  }, [activeGroup, partialData, allStudents]);
+  }, [activeGroup, partialData, allStudents, allPartialsDataForActiveGroup, activePartialId, allObservations]);
 
   const handleRemoveStudents = (studentIds: string[]) => {
     if (!activeGroup) return;
@@ -966,6 +996,7 @@ export default function GroupDetailsPage() {
                                 <TableHead>Riesgo Reprobación</TableHead>
                                 <TableHead>Riesgo Abandono</TableHead>
                                 <TableHead>Factores Críticos</TableHead>
+                                <TableHead>Historial / Origen</TableHead>
                                 <TableHead>Predicción / Acción</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -996,6 +1027,17 @@ export default function GroupDetailsPage() {
                                             ))}
                                         </div>
                                     </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1 text-xs">
+                                            {r.history && r.history.map((h: any) => (
+                                                <div key={h.id} className={cn("flex justify-between gap-2", h.isCurrent && "font-bold text-primary")}>
+                                                    <span>{h.label}:</span>
+                                                    <span>{h.grade.toFixed(1)} / {h.attendance.toFixed(0)}%</span>
+                                                </div>
+                                            ))}
+                                            {(!r.history || r.history.length === 0) && <span className="text-muted-foreground">Sin datos</span>}
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="text-sm text-muted-foreground">
                                         {r.predictionMessage}
                                     </TableCell>
@@ -1003,7 +1045,7 @@ export default function GroupDetailsPage() {
                             ))}
                             {riskAnalysis.filter(r => r.riskLevel !== 'low').length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center text-muted-foreground py-4">
+                                    <TableCell colSpan={6} className="text-center text-muted-foreground py-4">
                                         No se detectaron estudiantes en riesgo alto o medio.
                                     </TableCell>
                                 </TableRow>
