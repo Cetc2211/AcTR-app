@@ -81,8 +81,10 @@ export const analyzeStudentRisk = (
     const attendanceDays = Object.keys(partialData.attendance || {}).sort();
     const attendedDays = attendanceDays.filter(d => partialData.attendance[d][student.id]).length;
     
-    // Si totalClassesSoFar es 0 (inicio de semestre), asumimos 100%
-    const currentAttendance = totalClassesSoFar > 0 ? (attendedDays / totalClassesSoFar) * 100 : 100;
+    // Si no hay días registrados, asumimos 100% de asistencia (beneficio de la duda al inicio)
+    // En lugar de usar totalClassesSoFar (que es teórico), usamos attendanceDays.length (real registrado)
+    const totalRegisteredDays = attendanceDays.length;
+    const currentAttendance = totalRegisteredDays > 0 ? (attendedDays / totalRegisteredDays) * 100 : 100;
     
     // Regresión lineal simple para la pendiente de asistencia
     // x = tiempo, y = asistencia (1 o 0)
@@ -129,6 +131,9 @@ export const analyzeStudentRisk = (
             // Filtramos actividades que YA VECIERON o que el alumno YA ENTREGÓ
             // Esto evita que actividades futuras cuenten como "no entregadas"
             const relevantActivities = allActivities.filter(act => {
+                // Si no hay fecha, asumimos que no ha vencido a menos que ya esté entregada
+                if (!act.dueDate) return partialData.activityRecords?.[student.id]?.[act.id];
+                
                 const isPastDue = new Date(act.dueDate) <= now;
                 const isDelivered = partialData.activityRecords?.[student.id]?.[act.id];
                 return isPastDue || isDelivered;
@@ -138,7 +143,6 @@ export const analyzeStudentRisk = (
             totalActivitiesDue += totalActsInScope;
 
             if (totalActsInScope > 0) {
-                const studentActs = Object.values(partialData.activityRecords?.[student.id] || {});
                 // Contamos solo las relevantes
                 const delivered = relevantActivities.filter(act => partialData.activityRecords?.[student.id]?.[act.id]).length;
                 deliveredActivitiesCount += delivered;
@@ -164,7 +168,7 @@ export const analyzeStudentRisk = (
              
              // Solo contamos si hay una calificación registrada (diferente de null)
              // O si sabemos positivamente que ya pasó la fecha (aunque aquí no tenemos fecha por criterio, asumimos null = no evaluado aún)
-             if (gradeDetail && gradeDetail.delivered !== null) {
+             if (gradeDetail && gradeDetail.delivered !== null && gradeDetail.delivered !== undefined) {
                  const ratio = gradeDetail.delivered / c.expectedValue;
                  totalWeightedEarned += ratio * c.weight;
                  totalWeightEvaluatedSoFar += c.weight;
