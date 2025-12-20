@@ -4,12 +4,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-    "projectId": "actracker-master",
-    "appId": "1:660718374201:web:4889a6d15d8aee23ddace8",
-    "storageBucket": "actracker-master.firebasestorage.app",
-    "apiKey": "AIzaSyCDy-W8_3sB3WS8gVKZuzV_P6PdG1tBOUc",
-    "authDomain": "actracker-master.firebaseapp.com",
-    "messagingSenderId": "660718374201"
+  apiKey: "AIzaSyBliGErw1WiGhY6lZeCSh6WU0Kg2ZK7oa0",
+  authDomain: "academic-tracker-qeoxi.firebaseapp.com",
+  projectId: "academic-tracker-qeoxi",
+  storageBucket: "academic-tracker-qeoxi.firebasestorage.app",
+  messagingSenderId: "263108580734",
+  appId: "1:263108580734:web:316c14f8e71c20aa038f2f"
 };
 
 // Initialize Firebase
