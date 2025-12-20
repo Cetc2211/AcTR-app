@@ -240,13 +240,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setter(newValue);
             
             // Save to local storage (IndexedDB) - Always keep a local backup
-            await set(key, newValue);
+            try {
+                await set(key, newValue);
+            } catch (e) {
+                console.error(`Error saving ${key} to IDB:`, e);
+            }
 
             // Save to Cloud (Firestore) if user is logged in
             if (user) {
                 try {
                     const docRef = doc(db, 'users', user.uid, 'userData', key);
-                    await setDoc(docRef, { value: newValue }, { merge: true });
+                    // Timeout de 10 segundos para Firestore
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Firestore timeout')), 10000));
+                    
+                    await Promise.race([
+                        setDoc(docRef, { value: newValue }, { merge: true }),
+                        timeoutPromise
+                    ]);
                     console.log(`Saved ${key} to Firestore`);
                 } catch (err) {
                     console.error(`Error saving ${key} to Firestore:`, err);
@@ -394,8 +404,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [activeGroupId, activePartialId, setAllPartialsData]);
 
     const addStudentsToGroup = useCallback(async (groupId: string, students: Student[]) => {
-        await setAllStudents(prev => [...prev, ...students.filter(s => !prev.some(ps => ps.id === s.id))]);
-        await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g));
+        console.log(`Adding ${students.length} students to group ${groupId}`);
+        try {
+            await setAllStudents(prev => [...prev, ...students.filter(s => !prev.some(ps => ps.id === s.id))]);
+            await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g));
+            console.log('Students added successfully');
+        } catch (error) {
+            console.error('Error in addStudentsToGroup:', error);
+            throw error;
+        }
     }, [setAllStudents, setGroups]);
 
     const removeStudentFromGroup = useCallback(async (groupId: string, studentId: string) => {
