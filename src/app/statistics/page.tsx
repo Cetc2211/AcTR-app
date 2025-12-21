@@ -21,6 +21,7 @@ import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useData } from '@/hooks/use-data';
+import { analyzeStudentRisk } from '@/lib/risk-analysis';
 import type { Student, PartialId, CalculatedRisk, AttendanceRecord, ParticipationRecord, EvaluationCriteria, RecoveryGrade, RecoveryGrades } from '@/lib/placeholder-data';
 import { getPartialLabel } from '@/lib/utils';
 import {
@@ -51,6 +52,7 @@ type ActiveGroupStats = {
   riskDistribution: { low: number, medium: number, high: number };
   topStudents: { name: string, grade: number }[];
   participationDistribution: { name: string, students: number }[];
+  gradeDistribution: { name: string, students: number }[];
 }
 
 const PIE_CHART_COLORS = {
@@ -81,36 +83,28 @@ export default function StatisticsPage() {
 
     const riskAnalysis = useMemo(() => {
       if (!activeGroup) return [];
-      return activeGroup.students.map(student => {
-          const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
-          
-          // Calculate attendance percentage
-          let p = 0, total = 0;
-          Object.keys(attendance).forEach((date) => {
-              if (attendance[date]?.[student.id] !== undefined) {
-                  total++;
-                  if (attendance[date][student.id]) p++;
-              }
-          });
-          const currentAttendance = total > 0 ? (p / total) * 100 : 100;
+      const totalClasses = Object.keys(attendance).length;
 
-          const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
-          
-          let failingRisk = 0;
-          let dropoutRisk = 0;
-          if (risk.level === 'high') { failingRisk = 90; dropoutRisk = 80; }
-          if (risk.level === 'medium') { failingRisk = 50; dropoutRisk = 30; }
+      return activeGroup.students.map(student => {
+          // Usamos el análisis avanzado real para obtener valores precisos
+          const analysis = analyzeStudentRisk(
+              student,
+              partialData,
+              activeGroup.criteria || [],
+              totalClasses
+          );
           
           return {
               studentName: student.name,
-              currentAttendance,
-              projectedGrade: finalGrade, 
-              riskLevel: risk.level,
-              failingRisk,
-              dropoutRisk
+              currentAttendance: analysis.currentAttendance,
+              projectedGrade: analysis.currentGrade, 
+              riskLevel: analysis.riskLevel,
+              failingRisk: analysis.failingRisk,
+              dropoutRisk: analysis.dropoutRisk,
+              predictionMessage: analysis.predictionMessage
           };
       });
-  }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, partialData, attendance]);
+  }, [activeGroup, partialData, attendance]);
 
     const activeGroupStats = useMemo(() => {
         if (!activeGroup) return null;
@@ -122,15 +116,32 @@ export default function StatisticsPage() {
         const participationDistribution = [
             { name: '0-20%', students: 0 }, { name: '21-40%', students: 0 }, { name: '41-60%', students: 0 }, { name: '61-80%', students: 0 }, { name: '81-100%', students: 0 }
         ];
+        const gradeDistribution = [
+            { name: '0-59', students: 0 }, { name: '60-69', students: 0 }, { name: '70-79', students: 0 }, { name: '80-89', students: 0 }, { name: '90-100', students: 0 }
+        ];
 
         for(const student of activeGroup.students) {
             const { finalGrade } = calculateDetailedFinalGrade(student.id, partialData, activeGroup.criteria || []);
             studentGrades.push({student, grade: finalGrade});
+            
+            // Approval Stats
             if(finalGrade >= 60) approved++; else failed++;
             
-            const risk = getStudentRiskLevel(finalGrade, attendance, student.id);
-            riskDistribution[risk.level]++;
+            // Grade Distribution
+            if (finalGrade < 60) gradeDistribution[0].students++;
+            else if (finalGrade < 70) gradeDistribution[1].students++;
+            else if (finalGrade < 80) gradeDistribution[2].students++;
+            else if (finalGrade < 90) gradeDistribution[3].students++;
+            else gradeDistribution[4].students++;
 
+            // Risk Stats (Using the advanced analysis logic indirectly via riskAnalysis would be better, but for distribution we can use the basic one or recalculate)
+            // To be consistent with the charts, let's use the basic one for distribution or better yet, map from riskAnalysis if possible.
+            // However, riskAnalysis is a separate memo. Let's stick to the basic one for the pie chart or recalculate.
+            // Actually, let's use analyzeStudentRisk here too for consistency.
+            const analysis = analyzeStudentRisk(student, partialData, activeGroup.criteria || [], Object.keys(attendance).length);
+            riskDistribution[analysis.riskLevel]++;
+
+            // Participation Stats
             const totalParticipationClasses = Object.keys(participations).length;
             if(totalParticipationClasses > 0) {
                 const studentParticipations = (Object.values(participations) as { [studentId: string]: boolean; }[]).filter((day: { [studentId: string]: boolean; }) => day[student.id]).length;
@@ -141,7 +152,7 @@ export default function StatisticsPage() {
                 else if (participationRate <= 80) participationDistribution[3].students++;
                 else participationDistribution[4].students++;
             } else if(activeGroup.students.length > 0) {
-                 participationDistribution[4].students = activeGroup.students.length;
+                 participationDistribution[4].students = activeGroup.students.length; // Assume 100% if no records
             }
         }
         
@@ -161,6 +172,7 @@ export default function StatisticsPage() {
             riskDistribution,
             topStudents: studentGrades.slice(0,5).map(s => ({name: s.student.name, grade: parseFloat(s.grade.toFixed(1))})),
             participationDistribution,
+            gradeDistribution,
         };
     }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, attendance, participations, partialData]);
 
@@ -331,6 +343,24 @@ export default function StatisticsPage() {
                                 </ChartContainer>
                             </CardContent>
                         </Card>
+                        
+                        <Card className="md:col-span-2">
+                            <CardHeader>
+                                <CardTitle>Distribución de Calificaciones ({getPartialLabel(activePartialId)})</CardTitle>
+                                <CardDescription>Número de estudiantes por rango de calificación.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <ChartContainer config={{}} className="min-h-[300px] w-full">
+                                    <BarChart data={activeGroupStats.gradeDistribution} accessibilityLayer>
+                                        <CartesianGrid vertical={false} />
+                                        <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                                        <YAxis dataKey="students" allowDecimals={false} />
+                                        <ChartTooltip content={<ChartTooltipContent />} />
+                                        <Bar dataKey="students" name="Estudiantes" fill="hsl(var(--chart-1))" radius={4} />
+                                    </BarChart>
+                                </ChartContainer>
+                            </CardContent>
+                        </Card>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2 mt-6">
@@ -382,6 +412,53 @@ export default function StatisticsPage() {
                             </CardContent>
                         </Card>
                     </div>
+
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <CardTitle>Detalle de Estudiantes en Riesgo</CardTitle>
+                            <CardDescription>Estudiantes con riesgo medio o alto detectado.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="relative w-full overflow-auto">
+                                <table className="w-full caption-bottom text-sm">
+                                    <thead className="[&_tr]:border-b">
+                                        <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Estudiante</th>
+                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Riesgo</th>
+                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Prob. Reprobación</th>
+                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Prob. Abandono</th>
+                                            <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Diagnóstico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="[&_tr:last-child]:border-0">
+                                        {riskAnalysis.filter(r => r.riskLevel !== 'low').length === 0 ? (
+                                            <tr>
+                                                <td colSpan={5} className="p-4 text-center text-muted-foreground">No se detectaron estudiantes en riesgo.</td>
+                                            </tr>
+                                        ) : (
+                                            riskAnalysis.filter(r => r.riskLevel !== 'low')
+                                            .sort((a, b) => b.failingRisk - a.failingRisk)
+                                            .map((student, i) => (
+                                                <tr key={i} className="border-b transition-colors hover:bg-muted/50">
+                                                    <td className="p-4 align-middle font-medium">{student.studentName}</td>
+                                                    <td className="p-4 align-middle">
+                                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                                                            student.riskLevel === 'high' ? 'bg-destructive text-destructive-foreground' : 'bg-yellow-500 text-white'
+                                                        }`}>
+                                                            {student.riskLevel === 'high' ? 'Alto' : 'Medio'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-4 align-middle">{student.failingRisk.toFixed(1)}%</td>
+                                                    <td className="p-4 align-middle">{student.dropoutRisk.toFixed(1)}%</td>
+                                                    <td className="p-4 align-middle text-muted-foreground">{student.predictionMessage}</td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
              ) : (
                 <Card>
