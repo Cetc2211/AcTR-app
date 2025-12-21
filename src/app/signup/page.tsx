@@ -25,10 +25,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 const SignupFormSchema = z.object({
   email: z.string().email({ message: 'Por favor, ingresa un email válido.' }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  accessCode: z.string().min(1, { message: 'El código de institución es requerido.' })
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Las contraseñas no coinciden.",
   path: ["confirmPassword"],
+}).refine((data) => data.accessCode === "ACTRACKER_TEACHER_2025", {
+  message: "Código de institución inválido. Solicítalo a la administración.",
+  path: ["accessCode"],
 });
 
 
@@ -43,6 +47,7 @@ export default function SignupPage() {
       email: '',
       password: '',
       confirmPassword: '',
+      accessCode: '',
     },
   });
 
@@ -82,6 +87,19 @@ export default function SignupPage() {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSignUp)}>
                 <CardContent className="grid gap-4">
+                    <FormField
+                        control={form.control}
+                        name="accessCode"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Código de Institución</FormLabel>
+                            <FormControl>
+                                <Input type="password" placeholder="Código proporcionado por dirección" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="email"
