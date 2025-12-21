@@ -371,14 +371,13 @@ export default function GroupReportPage() {
                     <p className="text-lg text-muted-foreground">Informe de Rendimiento Académico Grupal</p>
                 </div>
                  {isClient && settings.logo ? (
-                    <Image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
                         src={settings.logo}
                         alt="Logo de la Institución"
-                        width={80}
-                        height={80}
-                        className="object-contain"
+                        style={{ width: '80px', height: '80px', objectFit: 'contain' }}
                     />
-                 ): <Skeleton className="w-[80px] h-[80px]" /> }
+                 ): <div className="w-[80px] h-[80px]" /> }
            </div>
            <div className="pt-4 flex justify-between text-sm text-muted-foreground">
                 <div>
