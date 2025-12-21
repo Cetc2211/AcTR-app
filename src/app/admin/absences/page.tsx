@@ -9,11 +9,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX } from 'lucide-react';
+import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type AbsenceRecord = {
   id: string;
@@ -22,7 +30,12 @@ type AbsenceRecord = {
   date: string;
   teacherId: string;
   teacherEmail: string;
-  absentStudents: { id: string; name: string }[];
+  absentStudents: { 
+      id: string; 
+      name: string;
+      tutorName?: string;
+      tutorPhone?: string;
+  }[];
   whatsappLink?: string;
   timestamp: string;
 };
@@ -180,23 +193,54 @@ export default function AbsencesPage() {
                         </div>
                         <span className="font-medium">{student.name}</span>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                        onClick={() => {
-                          if (record.whatsappLink) {
-                            const message = `Hola, le informamos que el alumno ${student.name} no asistió a la clase de ${record.groupName} el día de hoy.`;
-                            const url = `${record.whatsappLink}?text=${encodeURIComponent(message)}`;
-                            window.open(url, '_blank');
-                          } else {
-                            alert("Este grupo no tiene un enlace de WhatsApp configurado.");
-                          }
-                        }}
-                      >
-                        <Phone className="h-4 w-4 mr-2" />
-                        Contactar
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                            <Phone className="h-4 w-4 mr-2" />
+                            Contactar
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Opciones de Contacto</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (record.whatsappLink) {
+                                const message = `Hola, le informamos que el alumno ${student.name} no asistió a la clase de ${record.groupName} el día de hoy.`;
+                                const url = `${record.whatsappLink}?text=${encodeURIComponent(message)}`;
+                                window.open(url, '_blank');
+                              } else {
+                                alert("Este grupo no tiene un enlace de WhatsApp configurado.");
+                              }
+                            }}
+                          >
+                            <MessageCircle className="mr-2 h-4 w-4" />
+                            WhatsApp Grupo
+                          </DropdownMenuItem>
+                          
+                          {student.tutorPhone && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuLabel>Tutor: {student.tutorName || 'Sin nombre'}</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => window.open(`tel:${student.tutorPhone}`, '_self')}
+                              >
+                                <Phone className="mr-2 h-4 w-4" />
+                                Llamar ({student.tutorPhone})
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                    const message = `Estimado tutor de ${student.name}, le informamos que su hijo(a) no asistió a la clase de ${record.groupName} el día de hoy.`;
+                                    const url = `https://wa.me/${student.tutorPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+                                    window.open(url, '_blank');
+                                }}
+                              >
+                                <MessageCircle className="mr-2 h-4 w-4" />
+                                WhatsApp Tutor
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   ))}
                 </div>

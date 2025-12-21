@@ -178,7 +178,12 @@ export default function AttendancePage() {
 
           const absentStudents = activeGroup.students
               .filter(s => attendanceForDate[s.id] === false) // Solo los explícitamente marcados como falta
-              .map(s => ({ id: s.id, name: s.name }));
+              .map(s => ({ 
+                  id: s.id, 
+                  name: s.name,
+                  tutorName: s.tutorName || '',
+                  tutorPhone: s.tutorPhone || ''
+              }));
 
           if (absentStudents.length === 0) {
               toast({ title: 'Sin inasistencias', description: 'Todos los alumnos asistieron en esta fecha.' });
