@@ -220,8 +220,15 @@ export default function GroupReportPage() {
         textarea.parentNode?.insertBefore(analysisDiv, textarea);
       }
 
+      // Timeout promise to prevent app freeze
+      const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout generador PDF')), 15000)
+      );
 
-      html2canvas(input, { scale: 2, useCORS: true }).then((canvas) => {
+      Promise.race([
+          html2canvas(input, { scale: 1.5, useCORS: true, logging: false }),
+          timeoutPromise
+      ]).then((canvas: any) => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         
@@ -244,7 +251,12 @@ export default function GroupReportPage() {
         
         pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
         pdf.save(`informe_grupal_${group?.subject.replace(/\s+/g, '_') || 'reporte'}.pdf`);
-      }).finally(() => {
+      })
+      .catch((err) => {
+          console.error("Error generating PDF:", err);
+          toast({ variant: 'destructive', title: 'Error', description: 'Hubo un problema al generar el PDF. Intenta de nuevo.' });
+      })
+      .finally(() => {
         elementsToHide.forEach(el => (el as HTMLElement).style.display = '');
          if (textarea) {
             textarea.style.display = 'block';

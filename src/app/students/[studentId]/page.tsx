@@ -195,7 +195,17 @@ export default function StudentProfilePage() {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 100));
-      const canvas = await html2canvas(reportElement, { scale: 2, useCORS: true });
+
+      // Timeout to prevent freezing
+      const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout generador PDF')), 15000)
+      );
+
+      const canvas = await Promise.race([
+          html2canvas(reportElement, { scale: 1.5, useCORS: true }),
+          timeoutPromise
+      ]) as HTMLCanvasElement;
+
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();

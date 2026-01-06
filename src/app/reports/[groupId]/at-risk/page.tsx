@@ -57,7 +57,17 @@ const AtRiskStudentCard = ({ studentData }: { studentData: StudentReportData }) 
         const input = reportRef.current;
         if (input) {
             toast({ title: 'Generando PDF...', description: 'Esto puede tardar un momento.' });
-            html2canvas(input, { scale: 2, useCORS: true }).then((canvas) => {
+            
+            // Timeout to prevent freezing
+            const timeoutPromise = new Promise<never>((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout generador PDF')), 15000)
+            );
+
+            Promise.race([
+                html2canvas(input, { scale: 1.5, useCORS: true }),
+                timeoutPromise
+            ])
+            .then((canvas: any) => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -71,6 +81,10 @@ const AtRiskStudentCard = ({ studentData }: { studentData: StudentReportData }) 
                 }
                 pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
                 pdf.save(`informe_riesgo_${studentData.name.replace(/\s+/g, '_')}.pdf`);
+            })
+            .catch(err => {
+                console.error("PDF Error:", err);
+                toast({ variant: "destructive", title: "Error", description: "No se pudo generar el PDF." });
             });
         }
     };
