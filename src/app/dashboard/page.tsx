@@ -39,8 +39,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Input } from '@/components/ui/input';
-import { useData } from '@/hooks/use-data';
+import { useData, type GroupRiskStats } from '@/hooks/use-data';
 import type { StudentWithRisk } from '@/lib/placeholder-data';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import {
   Select,
   SelectContent,
@@ -50,12 +51,13 @@ import {
 } from '@/components/ui/select';
 
 export default function DashboardPage() {
-  const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings } = useData();
+  const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks } = useData();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [isRiskDialogOpen, setIsRiskDialogOpen] = useState(false);
   const [selectedRiskGroup, setSelectedRiskGroup] = useState('all');
+  const [selectedGroupRisk, setSelectedGroupRisk] = useState<GroupRiskStats | null>(null);
   
   const filteredAtRiskStudents = useMemo(() => {
     const students = selectedRiskGroup === 'all'
@@ -117,7 +119,7 @@ export default function DashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="row-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Estudiantes en Riesgo ({activePartialId.toUpperCase()})
@@ -125,12 +127,36 @@ export default function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">
+            <div className="text-2xl font-bold text-destructive mb-4">
               {atRiskStudents.length}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Requieren atención (parcial activo)
-            </p>
+             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                {Object.values(groupRisks).filter(g => g.totalRisk > 0).map(riskGroup => (
+                    <div 
+                        key={riskGroup.groupId} 
+                        className="p-2 border rounded-md cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        onClick={() => setSelectedGroupRisk(riskGroup)}
+                    >
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs font-semibold truncate max-w-[120px]" title={riskGroup.groupName}>{riskGroup.groupName}</span>
+                            <span className="text-xs font-bold text-destructive">{riskGroup.totalRisk}</span>
+                        </div>
+                        <div className="flex h-2 w-full rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+                             <div style={{ width: `${(riskGroup.high / riskGroup.totalRisk) * 100}%` }} className="bg-red-600" title={`Alto: ${riskGroup.high}`} />
+                             <div style={{ width: `${(riskGroup.medium / riskGroup.totalRisk) * 100}%` }} className="bg-yellow-500" title={`Medio: ${riskGroup.medium}`} />
+                        </div>
+                         <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                            <span>Alto: {riskGroup.high}</span>
+                            <span>Medio: {riskGroup.medium}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+             {Object.values(groupRisks).every(g => g.totalRisk === 0) && (
+                 <p className="text-xs text-muted-foreground mt-2">
+                    No hay estudiantes en riesgo calculado.
+                </p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -402,6 +428,90 @@ export default function DashboardPage() {
               </Card>
           </Collapsible>
       )}
+      
+      <Dialog open={!!selectedGroupRisk} onOpenChange={(open) => !open && setSelectedGroupRisk(null)}>
+        <DialogContent className="max-w-3xl">
+            <DialogHeader>
+                <DialogTitle>Detalle de Riesgo: {selectedGroupRisk?.groupName}</DialogTitle>
+                 <DialogDescription>
+                    Desglose de estudiantes en riesgo para el parcial {activePartialId.toUpperCase()}.
+                </DialogDescription>
+            </DialogHeader>
+            
+            {selectedGroupRisk && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                        <h4 className="font-semibold mb-2">Estudiantes</h4>
+                        <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+                            {selectedGroupRisk.studentsByRisk.high.length > 0 && (
+                                <div className="mb-4">
+                                    <h5 className="text-xs font-bold text-red-600 mb-1 flex items-center gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-red-600"></div> ALTO RIESGO
+                                    </h5>
+                                    {selectedGroupRisk.studentsByRisk.high.map(s => (
+                                         <Link href={`/students/${s.id}`} key={s.id} className="block text-sm p-2 border rounded mb-1 hover:bg-slate-50 flex items-center gap-2">
+                                            <Image src={s.photo} width={24} height={24} className="rounded-full object-cover aspect-square" alt={s.name} />
+                                            <div>
+                                                <p className="font-medium">{s.name}</p>
+                                                <p className="text-xs text-muted-foreground">{s.calculatedRisk.reason}</p>
+                                            </div>
+                                         </Link>
+                                    ))}
+                                </div>
+                            )}
+                             {selectedGroupRisk.studentsByRisk.medium.length > 0 && (
+                                <div>
+                                    <h5 className="text-xs font-bold text-yellow-600 mb-1 flex items-center gap-1">
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div> RIESGO MEDIO
+                                    </h5>
+                                    {selectedGroupRisk.studentsByRisk.medium.map(s => (
+                                         <Link href={`/students/${s.id}`} key={s.id} className="block text-sm p-2 border rounded mb-1 hover:bg-slate-50 flex items-center gap-2">
+                                            <Image src={s.photo} width={24} height={24} className="rounded-full object-cover aspect-square" alt={s.name} />
+                                            <div>
+                                                <p className="font-medium">{s.name}</p>
+                                                <p className="text-xs text-muted-foreground">{s.calculatedRisk.reason}</p>
+                                            </div>
+                                         </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                     </div>
+
+                     <div className="flex flex-col items-center justify-center border-l pl-4 h-[300px]">
+                        <h4 className="font-semibold mb-4">Distribución</h4>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={[
+                                        { name: 'Alto', value: selectedGroupRisk.high, fill: '#dc2626' },
+                                        { name: 'Medio', value: selectedGroupRisk.medium, fill: '#eab308' },
+                                        { name: 'Bajo/Sin Riesgo', value: Math.max(0, (groups.find(g => g.id === selectedGroupRisk.groupId)?.students.length || 0) - selectedGroupRisk.totalRisk), fill: '#22c55e' }
+                                    ]}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={80}
+                                    label
+                                >
+                                    {[
+                                        { name: 'Alto', value: selectedGroupRisk.high, fill: '#dc2626' },
+                                        { name: 'Medio', value: selectedGroupRisk.medium, fill: '#eab308' },
+                                        { name: 'Bajo/Sin Riesgo', value: Math.max(0, (groups.find(g => g.id === selectedGroupRisk.groupId)?.students.length || 0) - selectedGroupRisk.totalRisk), fill: '#22c55e' }
+                                    ].map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </Pie>
+                                <RechartsTooltip />
+                                <Legend />
+                            </PieChart>
+                        </ResponsiveContainer>
+                     </div>
+                </div>
+            )}
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

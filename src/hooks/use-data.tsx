@@ -59,6 +59,18 @@ const normalizeSettingsValue = (settings: AppSettings): AppSettings => {
     return { ...settings, aiModel };
 };
 
+export type GroupRiskStats = {
+    groupId: string;
+    groupName: string;
+    totalRisk: number;
+    high: number;
+    medium: number;
+    studentsByRisk: {
+        high: StudentWithRisk[];
+        medium: StudentWithRisk[];
+    };
+};
+
 // --- DATA CONTEXT & PROVIDER ---
 interface DataContextType {
     // State
@@ -77,6 +89,7 @@ interface DataContextType {
     allPartialsDataForActiveGroup: AllPartialsDataForGroup;
     groupAverages: { [groupId: string]: number };
     atRiskStudents: StudentWithRisk[];
+    groupRisks: { [groupId: string]: GroupRiskStats };
     overallAverageAttendance: number;
 
     // State Setters
@@ -631,6 +644,39 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
     }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade, getStudentRiskLevel]);
 
+    const groupRisks = useMemo(() => {
+        const risks: { [groupId: string]: GroupRiskStats } = {};
+        groups.forEach(group => {
+            const data = allPartialsData[group.id]?.[activePartialId];
+            if (!data || !group.criteria || group.criteria.length === 0) {
+                 risks[group.id] = { groupId: group.id, groupName: group.subject, totalRisk: 0, high: 0, medium: 0, studentsByRisk: { high: [], medium: [] } };
+                 return;
+            }
+
+            const high: StudentWithRisk[] = [];
+            const medium: StudentWithRisk[] = [];
+
+            group.students.forEach(student => {
+                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
+                const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
+                const sWithRisk = { ...student, calculatedRisk: risk };
+                
+                if (risk.level === 'high') high.push(sWithRisk);
+                else if (risk.level === 'medium') medium.push(sWithRisk);
+            });
+
+            risks[group.id] = {
+                groupId: group.id,
+                groupName: group.subject,
+                totalRisk: high.length + medium.length,
+                high: high.length,
+                medium: medium.length,
+                studentsByRisk: { high, medium }
+            };
+        });
+        return risks;
+    }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade, getStudentRiskLevel]);
+
     const overallAverageAttendance = useMemo(() => {
         if (!activeGroup) return 100;
         let totalPossible = 0;
@@ -662,7 +708,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <DataContext.Provider value={{
-            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, overallAverageAttendance,
+            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance,
             setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
