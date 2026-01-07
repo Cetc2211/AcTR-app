@@ -22,7 +22,7 @@ import {
   LogOut,
   AlertTriangle,
   ClipboardSignature,
-  ShieldBase,
+  Shield,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -260,7 +260,7 @@ export default function MainLayoutClient({
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={pathname.startsWith('/admin') && !pathname.startsWith('/admin/absences')}>
                     <Link href="/admin">
-                      <ShieldBase className="h-4 w-4" />
+                      <Shield className="h-4 w-4" />
                       <span>Admin</span>
                     </Link>
                   </SidebarMenuButton>
