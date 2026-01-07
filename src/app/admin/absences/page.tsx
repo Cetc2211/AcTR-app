@@ -401,7 +401,7 @@ export default function AbsencesPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
-                                    const message = `Hola ${student.name}, te contactamos para informarte sobre tu inasistencia el día de hoy.`;
+                                    const message = `Hola ${student.name}, te contactamos para informarte sobre tu inasistencia el día de hoy. Nos preocupa saber si te encuentras bien, así como informarnos sobre la causa de tu inasistencia.`;
                                     const url = `https://wa.me/${student.studentPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                     window.open(url, '_blank');
                                 }}
@@ -441,7 +441,7 @@ export default function AbsencesPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
-                                    const message = `Estimado tutor de ${student.name}, le informamos que su hijo(a) no asistió a la clase de ${record.groupName} el día de hoy.`;
+                                    const message = `Estimado tutor de ${student.name}, le informamos que su hijo(a) no asistió a la clase de ${record.groupName} el día de hoy. Nos gustaría saber si se encuentra bien, así como la razón de su inasistencia para, si se alinea a los criterios normativos para emisión de justificantes, poder informar al área correspondiente.`;
                                     const url = `https://wa.me/${student.tutorPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                     window.open(url, '_blank');
                                 }}
@@ -518,7 +518,7 @@ export default function AbsencesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
-                                const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia.`;
+                                const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia. Nos gustaría saber si se encuentra bien, así como la razón de su inasistencia para, si se alinea a los criterios normativos para emisión de justificantes, poder informar al área correspondiente.`;
                                 const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                 window.open(url, '_blank');
                             }}
@@ -531,7 +531,7 @@ export default function AbsencesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
-                                const message = `Hola ${editingStudent?.name}, le informamos sobre la inasistencia.`;
+                                const message = `Hola ${editingStudent?.name}, te contactamos para informarte sobre tu inasistencia. Nos preocupa saber si te encuentras bien, así como informarnos sobre la causa de tu inasistencia.`;
                                 const url = `https://wa.me/${newStudentPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                 window.open(url, '_blank');
                             }}
