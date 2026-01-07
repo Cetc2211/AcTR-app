@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { collection, query, where, getDocs, orderBy, Timestamp, doc, getDoc, deleteDoc } from 'firebase/firestore'; // Added deleteDoc
+import { collection, query, where, getDocs, orderBy, Timestamp, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore'; // Added updateDoc
 import { db, auth } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
@@ -11,12 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2 } from 'lucide-react'; // Added Trash2
+import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact } from 'lucide-react'; // Added Edit, Contact
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast'; // Added useToast
+import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"; // Added Dialog components
 
 const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 import {
@@ -55,6 +57,13 @@ export default function AbsencesPage() {
   const [records, setRecords] = useState<AbsenceRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Dialog State for Contact Info
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<{ recordId: string, studentId: string, name: string, currentTutorName: string, currentTutorPhone: string } | null>(null);
+  const [newTutorName, setNewTutorName] = useState('');
+  const [newTutorPhone, setNewTutorPhone] = useState('');
+  const [isUpdatingContact, setIsUpdatingContact] = useState(false);
 
   // Verify access
   useEffect(() => {
@@ -132,6 +141,66 @@ export default function AbsencesPage() {
           toast({ variant: 'destructive', title: 'Error', description: 'No se pudo eliminar el reporte.' });
       }
   };
+
+  const openContactDialog = (recordId: string, student: { id: string, name: string, tutorName?: string, tutorPhone?: string }) => {
+      setEditingStudent({
+          recordId,
+          studentId: student.id,
+          name: student.name,
+          currentTutorName: student.tutorName || '',
+          currentTutorPhone: student.tutorPhone || ''
+      });
+      setNewTutorName(student.tutorName || '');
+      setNewTutorPhone(student.tutorPhone || '');
+      setIsContactDialogOpen(true);
+  };
+
+  const handleUpdateContact = async () => {
+      if (!editingStudent) return;
+      setIsUpdatingContact(true);
+
+      try {
+          // Update local state first to be responsive
+          const updatedRecords = records.map(record => {
+              if (record.id === editingStudent.recordId) {
+                  return {
+                      ...record,
+                      absentStudents: record.absentStudents.map(s => {
+                          if (s.id === editingStudent.studentId) {
+                              return { ...s, tutorName: newTutorName, tutorPhone: newTutorPhone };
+                          }
+                          return s;
+                      })
+                  };
+              }
+              return record;
+          });
+          setRecords(updatedRecords);
+
+          // Update Firestore
+          const recordToUpdate = records.find(r => r.id === editingStudent.recordId);
+          if (recordToUpdate) {
+               const newAbsentStudents = recordToUpdate.absentStudents.map(s => {
+                  if (s.id === editingStudent.studentId) {
+                      return { ...s, tutorName: newTutorName, tutorPhone: newTutorPhone };
+                  }
+                  return s;
+               });
+               
+               const docRef = doc(db, 'absences', editingStudent.recordId);
+               await updateDoc(docRef, { absentStudents: newAbsentStudents });
+               toast({ title: 'Contacto actualizado', description: 'La información del tutor ha sido guardada.' });
+          }
+
+          setIsContactDialogOpen(false);
+      } catch (e) {
+          console.error("Error updating contact:", e);
+          toast({ variant: 'destructive', title: 'Error', description: 'No se pudo actualizar el contacto.' });
+      } finally {
+          setIsUpdatingContact(false);
+      }
+  };
+
 
   useEffect(() => {
     if (hasAccess) {
@@ -292,6 +361,13 @@ export default function AbsencesPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Opciones de Contacto</DropdownMenuLabel>
                           <DropdownMenuItem
+                            onClick={() => openContactDialog(record.id, student)}
+                          >
+                            <Contact className="mr-2 h-4 w-4" />
+                            {student.tutorPhone ? 'Editar Teléfono' : 'Agregar Teléfono'}
+                          </DropdownMenuItem>
+                          
+                          <DropdownMenuItem
                             onClick={() => {
                               if (record.whatsappLink) {
                                 const message = `Hola, le informamos que el alumno ${student.name} no asistió a la clase de ${record.groupName} el día de hoy.`;
@@ -338,6 +414,66 @@ export default function AbsencesPage() {
           ))}
         </div>
       )}
+
+       <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
+        <DialogContent>
+            <DialogHeader>
+            <DialogTitle>Gestionar Contacto</DialogTitle>
+            <DialogDescription>
+                Actualiza o agrega el número de teléfono del tutor para {editingStudent?.name}.
+            </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="tutorName" className="text-right">
+                Nombre Tutor
+                </Label>
+                <Input
+                id="tutorName"
+                value={newTutorName}
+                onChange={(e) => setNewTutorName(e.target.value)}
+                className="col-span-3"
+                placeholder="Ej. Juan Pérez"
+                />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="tutorPhone" className="text-right">
+                Teléfono
+                </Label>
+                <Input
+                id="tutorPhone"
+                value={newTutorPhone}
+                onChange={(e) => setNewTutorPhone(e.target.value)}
+                className="col-span-3"
+                placeholder="Ej. 521234567890"
+                type="tel"
+                />
+            </div>
+            </div>
+             <div className="flex justify-between items-center bg-muted/50 p-2 rounded text-xs text-muted-foreground mb-4">
+                <p>💡 Tip: Si ingresas un número, podrás enviar WhatsApp directamente.</p>
+                {newTutorPhone && (
+                     <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                             const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia.`;
+                             const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+                             window.open(url, '_blank');
+                        }}
+                     >
+                        <MessageCircle className="h-3 w-3 mr-1" /> Probar
+                     </Button>
+                )}
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>Cancelar</Button>
+                <Button onClick={handleUpdateContact} disabled={isUpdatingContact}>
+                    {isUpdatingContact ? 'Guardando...' : 'Guardar y Actualizar'}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
