@@ -42,6 +42,7 @@ type AbsenceRecord = {
       name: string;
       tutorName?: string;
       tutorPhone?: string;
+      studentPhone?: string; // New field
   }[];
   whatsappLink?: string;
   timestamp: string;
@@ -60,9 +61,17 @@ export default function AbsencesPage() {
 
   // Dialog State for Contact Info
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<{ recordId: string, studentId: string, name: string, currentTutorName: string, currentTutorPhone: string } | null>(null);
+  const [editingStudent, setEditingStudent] = useState<{ 
+      recordId: string, 
+      studentId: string, 
+      name: string, 
+      currentTutorName: string, 
+      currentTutorPhone: string,
+      currentStudentPhone: string 
+  } | null>(null);
   const [newTutorName, setNewTutorName] = useState('');
   const [newTutorPhone, setNewTutorPhone] = useState('');
+  const [newStudentPhone, setNewStudentPhone] = useState(''); // New state
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
 
   // Verify access
@@ -142,16 +151,18 @@ export default function AbsencesPage() {
       }
   };
 
-  const openContactDialog = (recordId: string, student: { id: string, name: string, tutorName?: string, tutorPhone?: string }) => {
+  const openContactDialog = (recordId: string, student: { id: string, name: string, tutorName?: string, tutorPhone?: string, studentPhone?: string }) => {
       setEditingStudent({
           recordId,
           studentId: student.id,
           name: student.name,
           currentTutorName: student.tutorName || '',
-          currentTutorPhone: student.tutorPhone || ''
+          currentTutorPhone: student.tutorPhone || '',
+          currentStudentPhone: student.studentPhone || ''
       });
       setNewTutorName(student.tutorName || '');
       setNewTutorPhone(student.tutorPhone || '');
+      setNewStudentPhone(student.studentPhone || '');
       setIsContactDialogOpen(true);
   };
 
@@ -167,7 +178,12 @@ export default function AbsencesPage() {
                       ...record,
                       absentStudents: record.absentStudents.map(s => {
                           if (s.id === editingStudent.studentId) {
-                              return { ...s, tutorName: newTutorName, tutorPhone: newTutorPhone };
+                              return { 
+                                  ...s, 
+                                  tutorName: newTutorName, 
+                                  tutorPhone: newTutorPhone,
+                                  studentPhone: newStudentPhone 
+                              };
                           }
                           return s;
                       })
@@ -182,14 +198,19 @@ export default function AbsencesPage() {
           if (recordToUpdate) {
                const newAbsentStudents = recordToUpdate.absentStudents.map(s => {
                   if (s.id === editingStudent.studentId) {
-                      return { ...s, tutorName: newTutorName, tutorPhone: newTutorPhone };
+                      return { 
+                          ...s, 
+                          tutorName: newTutorName, 
+                          tutorPhone: newTutorPhone,
+                          studentPhone: newStudentPhone 
+                      };
                   }
                   return s;
                });
                
                const docRef = doc(db, 'absences', editingStudent.recordId);
                await updateDoc(docRef, { absentStudents: newAbsentStudents });
-               toast({ title: 'Contacto actualizado', description: 'La información del tutor ha sido guardada.' });
+               toast({ title: 'Contacto actualizado', description: 'La información de contacto ha sido guardada.' });
           }
 
           setIsContactDialogOpen(false);
@@ -364,9 +385,35 @@ export default function AbsencesPage() {
                             onClick={() => openContactDialog(record.id, student)}
                           >
                             <Contact className="mr-2 h-4 w-4" />
-                            {student.tutorPhone ? 'Editar Teléfono' : 'Agregar Teléfono'}
+                            Editar Información
                           </DropdownMenuItem>
+
+                          {/* Opciones del Estudiante */}
+                          {student.studentPhone && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuLabel>Alumno: {student.name}</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => window.open(`tel:${student.studentPhone}`, '_self')}
+                              >
+                                <Phone className="mr-2 h-4 w-4" />
+                                Llamar ({student.studentPhone})
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                    const message = `Hola ${student.name}, te contactamos para informarte sobre tu inasistencia el día de hoy.`;
+                                    const url = `https://wa.me/${student.studentPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+                                    window.open(url, '_blank');
+                                }}
+                              >
+                                <MessageCircle className="mr-2 h-4 w-4" />
+                                WhatsApp Alumno
+                              </DropdownMenuItem>
+                            </>
+                          )}
                           
+                          <DropdownMenuSeparator />
+                          {/* Opciones del Grupo */}
                           <DropdownMenuItem
                             onClick={() => {
                               if (record.whatsappLink) {
@@ -438,7 +485,7 @@ export default function AbsencesPage() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="tutorPhone" className="text-right">
-                Teléfono
+                Tel. Tutor
                 </Label>
                 <Input
                 id="tutorPhone"
@@ -449,22 +496,50 @@ export default function AbsencesPage() {
                 type="tel"
                 />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="studentPhone" className="text-right">
+                Tel. Alumno
+                </Label>
+                <Input
+                id="studentPhone"
+                value={newStudentPhone}
+                onChange={(e) => setNewStudentPhone(e.target.value)}
+                className="col-span-3"
+                placeholder="Ej. 521234567890"
+                type="tel"
+                />
             </div>
-             <div className="flex justify-between items-center bg-muted/50 p-2 rounded text-xs text-muted-foreground mb-4">
+            </div>
+             <div className="flex flex-col gap-2 bg-muted/50 p-2 rounded text-xs text-muted-foreground mb-4">
                 <p>💡 Tip: Si ingresas un número, podrás enviar WhatsApp directamente.</p>
-                {newTutorPhone && (
-                     <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => {
-                             const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia.`;
-                             const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
-                             window.open(url, '_blank');
-                        }}
-                     >
-                        <MessageCircle className="h-3 w-3 mr-1" /> Probar
-                     </Button>
-                )}
+                <div className="flex gap-2">
+                    {newTutorPhone && (
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                                const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia.`;
+                                const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+                                window.open(url, '_blank');
+                            }}
+                        >
+                            <MessageCircle className="h-3 w-3 mr-1" /> Probar Tutor
+                        </Button>
+                    )}
+                    {newStudentPhone && (
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                                const message = `Hola ${editingStudent?.name}, le informamos sobre la inasistencia.`;
+                                const url = `https://wa.me/${newStudentPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
+                                window.open(url, '_blank');
+                            }}
+                        >
+                            <MessageCircle className="h-3 w-3 mr-1" /> Probar Alumno
+                        </Button>
+                    )}
+                </div>
             </div>
             <DialogFooter>
                 <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>Cancelar</Button>
