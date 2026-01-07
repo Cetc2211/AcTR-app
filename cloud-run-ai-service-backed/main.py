@@ -36,11 +36,10 @@ try:
         except Exception as list_err:
             logger.error(f"⚠️ Failed to list models: {list_err}")
 
-        # Switching to gemini-2.5-flash based on user logs showing availability
-        # This model should be faster than 2.5-pro (avoiding timeouts) and is available in the user's account
-        model_name = 'gemini-2.5-flash'
+        # Switching to gemini-2.5-flash-lite per user request for testing (cost/performance)
+        model_name = 'gemini-2.5-flash-lite'
         model = genai.GenerativeModel(model_name)
-        logger.info(f"✅ Model initialized: {model_name} (Optimized for speed & availability)")
+        logger.info(f"✅ Model initialized: {model_name} (Testing Flash-Lite variant)")
         is_ai_ready = True
     
 except Exception as e:

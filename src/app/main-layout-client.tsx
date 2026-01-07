@@ -22,6 +22,7 @@ import {
   LogOut,
   AlertTriangle,
   ClipboardSignature,
+  ShieldBase,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -55,9 +56,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useState } from 'react';
+
+const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -92,6 +97,49 @@ export default function MainLayoutClient({
   const router = useRouter();
   const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError } = useData();
   const [user, isAuthLoading] = useAuthState(auth);
+  const [isTrackingManager, setIsTrackingManager] = useState(false);
+
+  useEffect(() => {
+    const checkRole = async () => {
+        if (!user || !user.email) return;
+        
+        // Admin siempre tiene acceso
+        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+             setIsTrackingManager(true);
+             return;
+        }
+
+        try {
+            const docRef = doc(db, 'app_config', 'roles');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const managers = data.tracking_managers || [];
+                // Check if user email is in the list (case insensitive)
+                if (managers.some((email: string) => email.toLowerCase() === user.email?.toLowerCase())) {
+                    setIsTrackingManager(true);
+                } else {
+                    setIsTrackingManager(false);
+                }
+            } else {
+                setIsTrackingManager(false);
+            }
+        } catch (e) {
+            console.error("Error checking roles:", e);
+        }
+    }
+    
+    if (!isAuthLoading) {
+        checkRole();
+    }
+  }, [user, isAuthLoading]);
+
+  const filteredNavItems = navItems.filter(item => {
+    if (item.label === 'Seguimiento') {
+        return isTrackingManager;
+    }
+    return true;
+  });
 
 
   useEffect(() => {
@@ -177,7 +225,7 @@ export default function MainLayoutClient({
               ) : null
             }
             <SidebarMenu>
-              {navItems.map((item) => (
+              {filteredNavItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
@@ -208,6 +256,16 @@ export default function MainLayoutClient({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              {user && user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={pathname.startsWith('/admin') && !pathname.startsWith('/admin/absences')}>
+                    <Link href="/admin">
+                      <ShieldBase className="h-4 w-4" />
+                      <span>Admin</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>

@@ -35,7 +35,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 
 
@@ -201,11 +201,14 @@ export default function AttendancePage() {
               timestamp: new Date().toISOString()
           };
 
-          await addDoc(collection(db, 'absences'), reportData);
+          // Usamos un ID compuesto por grupo y fecha para, si se vuelve a enviar, actualizar el existente en lugar de duplicar.
+          // formattedDate tiene el formato yyyy-MM-dd que es seguro para IDs y ordenable.
+          const reportId = `${activeGroup.id}_${formattedDate}`;
+          await setDoc(doc(db, 'absences', reportId), reportData);
 
           toast({
               title: 'Reporte Enviado',
-              description: `Se notificaron ${absentStudents.length} inasistencias a la administración.`,
+              description: `Se notificaron ${absentStudents.length} inasistencias a la administración. (Registro actualizado)`,
           });
 
       } catch (e) {
