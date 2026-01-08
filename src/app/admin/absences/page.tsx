@@ -11,14 +11,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact } from 'lucide-react'; // Added Edit, Contact
+import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact, Settings } from 'lucide-react'; // Added Edit, Contact, Settings
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"; // Added Dialog components
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TrackingSettingsDialog, DEFAULT_TUTOR_MESSAGE, TrackingSettings } from '@/components/tracking-settings-dialog';
 
 const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 import {
@@ -74,6 +75,13 @@ export default function AbsencesPage() {
   const [newStudentPhone, setNewStudentPhone] = useState(''); // New state
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
 
+  // Settings State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [trackingSettings, setTrackingSettings] = useState<TrackingSettings>({
+    contactPhones: '',
+    tutorMessageTemplate: DEFAULT_TUTOR_MESSAGE
+  });
+
   // Verify access
   useEffect(() => {
     const verifyAccess = async () => {
@@ -103,6 +111,14 @@ export default function AbsencesPage() {
             } else {
                 setHasAccess(false);
             }
+
+            // Load settings if access is granted (or just load them anyway, access check handles visibility)
+            const settingsRef = doc(db, 'app_config', 'tracking_settings');
+            const settingsSnap = await getDoc(settingsRef);
+            if (settingsSnap.exists()) {
+                setTrackingSettings(settingsSnap.data() as TrackingSettings);
+            }
+
         } catch (e) {
             console.error("Error checking permissions:", e);
             setHasAccess(false);
@@ -149,6 +165,18 @@ export default function AbsencesPage() {
           console.error("Error deleting record:", error);
           toast({ variant: 'destructive', title: 'Error', description: 'No se pudo eliminar el reporte.' });
       }
+  };
+
+  const generateTutorMessage = (studentName: string) => {
+    let message = trackingSettings.tutorMessageTemplate || DEFAULT_TUTOR_MESSAGE;
+    const today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: es });
+    
+    // Replace placeholders
+    message = message.replace(/{studentName}/g, studentName);
+    message = message.replace(/{date}/g, today);
+    message = message.replace(/{contactPhones}/g, trackingSettings.contactPhones || '[Teléfonos no configurados]');
+    
+    return message;
   };
 
   const openContactDialog = (recordId: string, student: { id: string, name: string, tutorName?: string, tutorPhone?: string, studentPhone?: string }) => {
@@ -292,6 +320,10 @@ export default function AbsencesPage() {
           
           <Button variant="outline" onClick={() => fetchAbsences(date)}>
             Actualizar
+          </Button>
+
+          <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} title="Ajustes de Seguimiento">
+             <Settings className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -441,7 +473,7 @@ export default function AbsencesPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
-                                    const message = `Estimado tutor de ${student.name}, le informamos que su hijo(a) no asistió a la clase de ${record.groupName} el día de hoy. Nos gustaría saber si se encuentra bien, así como la razón de su inasistencia para, si se alinea a los criterios normativos para emisión de justificantes, poder informar al área correspondiente.`;
+                                    const message = generateTutorMessage(student.name);
                                     const url = `https://wa.me/${student.tutorPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                     window.open(url, '_blank');
                                 }}
@@ -518,7 +550,7 @@ export default function AbsencesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
-                                const message = `Estimado tutor de ${editingStudent?.name}, le informamos sobre la inasistencia. Nos gustaría saber si se encuentra bien, así como la razón de su inasistencia para, si se alinea a los criterios normativos para emisión de justificantes, poder informar al área correspondiente.`;
+                                const message = generateTutorMessage(editingStudent?.name || '');
                                 const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                 window.open(url, '_blank');
                             }}
@@ -549,6 +581,13 @@ export default function AbsencesPage() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {/* Settings Dialog */}
+      <TrackingSettingsDialog 
+        open={isSettingsOpen} 
+        onOpenChange={setIsSettingsOpen}
+        onSettingsUpdated={setTrackingSettings}
+      />
     </div>
   );
 }
