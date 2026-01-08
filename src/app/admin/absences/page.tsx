@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact, Settings } from 'lucide-react'; // Added Edit, Contact, Settings
+import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact, Settings, ClipboardList } from 'lucide-react'; // Added Edit, Contact, Settings, ClipboardList
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TrackingSettingsDialog, DEFAULT_TUTOR_MESSAGE, TrackingSettings } from '@/components/tracking-settings-dialog';
+import { StudentTrackingDialog } from '@/components/student-tracking-dialog';
 
 const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 import {
@@ -74,6 +75,16 @@ export default function AbsencesPage() {
   const [newTutorPhone, setNewTutorPhone] = useState('');
   const [newStudentPhone, setNewStudentPhone] = useState(''); // New state
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
+
+  // Tracking / Bitacora State
+  const [isTrackingDialogOpen, setIsTrackingDialogOpen] = useState(false);
+  const [selectedTrackingStudent, setSelectedTrackingStudent] = useState<{
+    id: string;
+    name: string;
+    tutorName?: string;
+    tutorPhone?: string;
+    studentPhone?: string;
+  } | null>(null);
 
   // Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -192,6 +203,11 @@ export default function AbsencesPage() {
       setNewTutorPhone(student.tutorPhone || '');
       setNewStudentPhone(student.studentPhone || '');
       setIsContactDialogOpen(true);
+  };
+
+  const openTrackingDialog = (student: { id: string, name: string, tutorName?: string, tutorPhone?: string, studentPhone?: string }) => {
+    setSelectedTrackingStudent(student);
+    setIsTrackingDialogOpen(true);
   };
 
   const handleUpdateContact = async () => {
@@ -399,14 +415,25 @@ export default function AbsencesPage() {
                   {record.absentStudents.map((student) => (
                     <div key={student.id} className="flex items-center justify-between border-b last:border-0 pb-2 last:pb-0">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xs">
-                          {student.name.charAt(0)}
-                        </div>
-                        <span className="font-medium">{student.name}</span>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                       div className="flex gap-2">
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                            onClick={() => openTrackingDialog(student)}
+                            title="Abrir Bitácora y Expediente"
+                        >
+                            <ClipboardList className="h-4 w-4 mr-2" />
+                            Expediente
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                                <Phone className="h-4 w-4 mr-2" />
+                                Contactar
+                            </Button>
+                            </DropdownMenuTrigger>
+                              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
                             <Phone className="h-4 w-4 mr-2" />
                             Contactar
                           </Button>
@@ -577,6 +604,19 @@ export default function AbsencesPage() {
                 <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>Cancelar</Button>
                 <Button onClick={handleUpdateContact} disabled={isUpdatingContact}>
                     {isUpdatingContact ? 'Guardando...' : 'Guardar y Actualizar'}
+
+      {/* Bitacora / Tracking Dialog */}
+      {selectedTrackingStudent && (
+        <StudentTrackingDialog
+            open={isTrackingDialogOpen}
+            onOpenChange={setIsTrackingDialogOpen}
+            studentId={selectedTrackingStudent.id}
+            studentName={selectedTrackingStudent.name}
+            tutorName={selectedTrackingStudent.tutorName}
+            tutorPhone={selectedTrackingStudent.tutorPhone}
+            studentPhone={selectedTrackingStudent.studentPhone}
+        />
+      )}
                 </Button>
             </DialogFooter>
         </DialogContent>
