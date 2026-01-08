@@ -21,8 +21,6 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TrackingSettingsDialog, DEFAULT_TUTOR_MESSAGE, TrackingSettings } from '@/components/tracking-settings-dialog';
 import { StudentTrackingDialog } from '@/components/student-tracking-dialog';
-
-const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +29,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 
 type AbsenceRecord = {
   id: string;
@@ -513,6 +513,7 @@ export default function AbsencesPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
+                   </div>
                   ))}
                 </div>
               </CardContent>
