@@ -415,7 +415,12 @@ export default function AbsencesPage() {
                   {record.absentStudents.map((student) => (
                     <div key={student.id} className="flex items-center justify-between border-b last:border-0 pb-2 last:pb-0">
                       <div className="flex items-center gap-3">
-                       div className="flex gap-2">
+                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xs">
+                          {student.name.charAt(0)}
+                        </div>
+                        <span className="font-medium">{student.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Button 
                             variant="outline" 
                             size="sm" 
@@ -428,17 +433,12 @@ export default function AbsencesPage() {
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
+                              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
                                 <Phone className="h-4 w-4 mr-2" />
                                 Contactar
-                            </Button>
+                              </Button>
                             </DropdownMenuTrigger>
-                              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800 hover:bg-blue-50">
-                            <Phone className="h-4 w-4 mr-2" />
-                            Contactar
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Opciones de Contacto</DropdownMenuLabel>
                           <DropdownMenuItem
                             onClick={() => openContactDialog(record.id, student)}
@@ -604,6 +604,17 @@ export default function AbsencesPage() {
                 <Button variant="outline" onClick={() => setIsContactDialogOpen(false)}>Cancelar</Button>
                 <Button onClick={handleUpdateContact} disabled={isUpdatingContact}>
                     {isUpdatingContact ? 'Guardando...' : 'Guardar y Actualizar'}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Settings Dialog */}
+      <TrackingSettingsDialog 
+        open={isSettingsOpen} 
+        onOpenChange={setIsSettingsOpen}
+        onSettingsUpdated={setTrackingSettings}
+      />
 
       {/* Bitacora / Tracking Dialog */}
       {selectedTrackingStudent && (
@@ -617,17 +628,6 @@ export default function AbsencesPage() {
             studentPhone={selectedTrackingStudent.studentPhone}
         />
       )}
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Settings Dialog */}
-      <TrackingSettingsDialog 
-        open={isSettingsOpen} 
-        onOpenChange={setIsSettingsOpen}
-        onSettingsUpdated={setTrackingSettings}
-      />
     </div>
   );
 }
