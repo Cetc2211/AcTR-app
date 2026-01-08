@@ -134,6 +134,7 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
               <Label htmlFor="messageTemplate">Plantilla de Mensaje (WhatsApp Tutor)</Label>
               <div className="flex gap-2 mb-2">
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{studentName}')} type="button" className="text-xs h-7">+ Nombre Alumno</Button>
+                <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{tutorName}')} type="button" className="text-xs h-7">+ Nombre Tutor</Button>
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{date}')} type="button" className="text-xs h-7">+ Fecha</Button>
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{contactPhones}')} type="button" className="text-xs h-7">+ Teléfonos</Button>
               </div>
@@ -145,7 +146,7 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
                 placeholder="Escriba el mensaje aquí..."
               />
               <p className="text-xs text-muted-foreground">
-                Usa los botones o escribe <code>{'{studentName}'}</code>, <code>{'{date}'}</code>, <code>{'{contactPhones}'}</code> para insertar datos dinámicos.
+                Usa los botones o escribe <code>{'{studentName}'}</code>, <code>{'{tutorName}'}</code>, <code>{'{date}'}</code>, <code>{'{contactPhones}'}</code> para insertar datos dinámicos.
               </p>
             </div>
           </div>

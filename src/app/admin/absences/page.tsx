@@ -178,12 +178,13 @@ export default function AbsencesPage() {
       }
   };
 
-  const generateTutorMessage = (studentName: string) => {
+  const generateTutorMessage = (studentName: string, tutorName?: string) => {
     let message = trackingSettings.tutorMessageTemplate || DEFAULT_TUTOR_MESSAGE;
     const today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: es });
     
     // Replace placeholders
     message = message.replace(/{studentName}/g, studentName);
+    message = message.replace(/{tutorName}/g, tutorName || 'Tutor');
     message = message.replace(/{date}/g, today);
     message = message.replace(/{contactPhones}/g, trackingSettings.contactPhones || '[Teléfonos no configurados]');
     
@@ -500,7 +501,7 @@ export default function AbsencesPage() {
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
-                                    const message = generateTutorMessage(student.name);
+                                    const message = generateTutorMessage(student.name, student.tutorName);
                                     const url = `https://wa.me/${student.tutorPhone?.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                     window.open(url, '_blank');
                                 }}
@@ -578,7 +579,7 @@ export default function AbsencesPage() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => {
-                                const message = generateTutorMessage(editingStudent?.name || '');
+                                const message = generateTutorMessage(editingStudent?.name || '', editingStudent?.currentTutorName);
                                 const url = `https://wa.me/${newTutorPhone.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
                                 window.open(url, '_blank');
                             }}
