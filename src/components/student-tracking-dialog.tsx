@@ -127,15 +127,31 @@ export function StudentTrackingDialog({
       const studentAbsences: AbsenceRecord[] = [];
       absencesSnap.forEach(doc => {
         const data = doc.data();
+        
+        // Safety check: ensure absentStudents is an array
+        if (!Array.isArray(data.absentStudents)) return;
+
         // Check if student is in the array
-        const isAbsent = data.absentStudents?.some((s: any) => s.id === studentId);
+        const isAbsent = data.absentStudents.some((s: any) => s && s.id === studentId);
+        
         if (isAbsent) {
+          // Robust timestamp handling
+          let ts = data.timestamp;
+          // Setup a safe fallback date string if timestamp is missing or weird
+          let safeDateStr = new Date().toISOString(); 
+          
+          if (typeof ts === 'string') {
+              safeDateStr = ts;
+          } else if (ts && typeof ts.toDate === 'function') {
+              safeDateStr = ts.toDate().toISOString();
+          }
+
           studentAbsences.push({
             id: doc.id,
-            date: data.date,
-            groupName: data.groupName,
-            teacherEmail: data.teacherEmail,
-            timestamp: data.timestamp
+            date: data.date || '',
+            groupName: data.groupName || 'Sin grupo',
+            teacherEmail: data.teacherEmail || '',
+            timestamp: safeDateStr
           });
         }
       });
@@ -164,13 +180,22 @@ export function StudentTrackingDialog({
 
       // 3. Fetch Logs
       const logsRef = collection(db, 'tracking_logs');
-      const qLogs = query(logsRef, where('studentId', '==', studentId), orderBy('date', 'desc'));
+      // REMOVED orderBy from Firestore query to avoid "Index Required" error. Sorting client-side.
+      const qLogs = query(logsRef, where('studentId', '==', studentId));
       const logsSnap = await getDocs(qLogs);
       
       const fetchedLogs: TrackingLog[] = [];
       logsSnap.forEach(doc => {
         fetchedLogs.push({ id: doc.id, ...doc.data() } as TrackingLog);
       });
+      
+      // Sort in memory by date descending
+      fetchedLogs.sort((a, b) => {
+          const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+          const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+          return dateB.getTime() - dateA.getTime();
+      });
+
       setLogs(fetchedLogs);
 
     } catch (error) {
