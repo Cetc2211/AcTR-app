@@ -121,7 +121,8 @@ export function StudentTrackingDialog({
       // Fallback: Fetch all documents (limited by date maybe?) 
       // Let's assume for this version we fetch all. In prod, update schema to include `studentIds` array.
       
-      const qAbsences = query(absencesRef, orderBy('timestamp', 'desc'));
+      // REMOVED orderBy from Firestore query to avoid "Index Required" error or type mismatch issues.
+      const qAbsences = query(absencesRef);
       const absencesSnap = await getDocs(qAbsences);
       
       const studentAbsences: AbsenceRecord[] = [];
@@ -156,6 +157,13 @@ export function StudentTrackingDialog({
         }
       });
       
+      // Sort client-side by timestamp descending
+      studentAbsences.sort((a, b) => {
+          const dateA = new Date(a.timestamp);
+          const dateB = new Date(b.timestamp);
+          return dateB.getTime() - dateA.getTime();
+      });
+
       setAbsences(studentAbsences);
 
       // 2. Calculate Stats
@@ -198,9 +206,13 @@ export function StudentTrackingDialog({
 
       setLogs(fetchedLogs);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading student data:", error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Error al cargar datos del estudiante.' });
+      toast({ 
+          variant: 'destructive', 
+          title: 'Error de carga', 
+          description: `No se pudieron cargar los datos: ${error.message || 'Error desconocido'}` 
+      });
     } finally {
       setLoading(false);
     }
