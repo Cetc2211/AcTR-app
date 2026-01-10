@@ -705,17 +705,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
     }, [allPartialsData, groups]);
     
-
-    const updateStudent = async (studentId: string, updates: Partial<Student>) => {
-        const studentIndex = allStudents.findIndex(s => s.id === studentId);
-        if (studentIndex === -1) return;
-        
-        const updatedStudents = [...allStudents];
-        updatedStudents[studentIndex] = { ...updatedStudents[studentIndex], ...updates };
-        
-        await setAllStudents(updatedStudents);
-    };
-
     return (
         <DataContext.Provider value={{
             isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance,
