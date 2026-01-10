@@ -27,6 +27,15 @@ export type Student = {
   // PIGEC-130 Integration Fields
   clinicalStatus?: 'pendiente' | 'en_seguimiento' | 'concluido';
   pedagogicalInstructions?: string;
+  // Clinical Data for Local Intelligence Engine
+  neuropsiTotal?: number;  // 0-100 (Atención y Memoria)
+  ansiedad_norm?: number;  // 0-1 (Deprecated, keep for compatibility if needed or migrate)
+  depresion_norm?: number; // 0-1 (Deprecated)
+  
+  // New Screening Fields (v2.3)
+  screeningDate?: string;
+  neuropsiScore?: number; // 0-100
+  gad7Score?: number;     // 0-21
 };
 
 export type EvaluationCriteria = {

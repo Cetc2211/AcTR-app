@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Download, User, Mail, Phone, Loader2, MessageSquare, BookText, Edit, Save, XCircle, Sparkles, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Download, User, Mail, Phone, Loader2, MessageSquare, BookText, Edit, Save, XCircle, Sparkles, AlertTriangle, Activity } from 'lucide-react';
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
@@ -22,9 +22,11 @@ import { useData } from '@/hooks/use-data';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getPartialLabel } from '@/lib/utils';
+import { analyzeIRC } from '@/lib/irc-calculation';
 import type { PartialId, StudentObservation, Student, StudentStats, CriteriaDetail } from '@/lib/placeholder-data';
 import { StudentObservationLogDialog } from '@/components/student-observation-log-dialog';
 import { WhatsAppDialog } from '@/components/whatsapp-dialog';
+import { ClinicalScreeningDialog } from '@/components/clinical-screening-dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { generateStudentFeedback } from '@/ai';
 
@@ -51,10 +53,21 @@ export default function StudentProfilePage() {
   
   const [isLogOpen, setIsLogOpen] = useState(false);
   const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
+  const [isClinicalDialogOpen, setIsClinicalDialogOpen] = useState(false);
   
   const [isEditingFeedback, setIsEditingFeedback] = useState(false);
   const [currentFeedback, setCurrentFeedback] = useState('');
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
+
+  const ircAnalysis = useMemo(() => {
+      if (!student || studentStatsByPartial.length === 0) return null;
+      
+      const activeStats = studentStatsByPartial.find(s => s.partialId === activePartialId) || studentStatsByPartial[studentStatsByPartial.length - 1];
+      const attRate = activeStats?.attendance?.rate ?? 100;
+      const grade = activeStats?.finalGrade ?? 0;
+      
+      return analyzeIRC(attRate, grade, student.gad7Score || 0, student.neuropsiTotal || 0);
+  }, [student, studentStatsByPartial, activePartialId]);
 
   const reportRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -312,6 +325,13 @@ export default function StudentProfilePage() {
     <>
       <StudentObservationLogDialog student={student} open={isLogOpen} onOpenChange={setIsLogOpen} />
       <WhatsAppDialog studentName={student.name} open={isWhatsAppOpen} onOpenChange={setIsWhatsAppOpen} />
+      <ClinicalScreeningDialog 
+        studentId={student.id} 
+        open={isClinicalDialogOpen} 
+        onOpenChange={setIsClinicalDialogOpen} 
+        currentNeuropsi={student.neuropsiTotal}
+        currentGad7={student.gad7Score}
+      />
 
       <div className="flex flex-col gap-6">
         <div id="interactive-buttons-header" className="flex items-center justify-between">
@@ -371,19 +391,32 @@ export default function StudentProfilePage() {
                   <Button variant="secondary" size="sm" onClick={() => setIsWhatsAppOpen(true)}>
                     Enviar informe vía WhatsApp
                   </Button>
+                  <Button variant="default" size="sm" onClick={() => setIsClinicalDialogOpen(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    <Activity className="mr-2 h-4 w-4" /> Capturar Tamizaje Clínico
+                  </Button>
                 </div>
               </div>
             </CardHeader>
           </Card>
 
-          {riskInfo && (
-            <Alert variant={riskInfo.calculatedRisk.level === 'high' ? 'destructive' : 'default'} className={`mb-6 ${riskInfo.calculatedRisk.level === 'medium' ? 'border-amber-500 text-amber-900 bg-amber-50 dark:bg-amber-950 dark:text-amber-100' : ''}`}>
+          {ircAnalysis && ircAnalysis.riskLevel !== 'bajo' && (
+            <Alert variant={ircAnalysis.riskLevel === 'alto' ? 'destructive' : 'default'} className={`mb-6 ${ircAnalysis.riskLevel === 'medio' ? 'border-amber-500 text-amber-900 bg-amber-50 dark:bg-amber-950 dark:text-amber-100' : 'border-blue-500 text-blue-900 bg-blue-50'}`}>
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>
-                {riskInfo.calculatedRisk.level === 'high' ? 'Alerta de Alto Riesgo' : 'Alerta de Riesgo Medio'}
+                ALERTA DE RIESGO PREVENTIVO (Nivel {ircAnalysis.riskLevel === 'alto' ? '3' : '2'}) - IRC: {ircAnalysis.score.toFixed(1)}%
               </AlertTitle>
               <AlertDescription>
-                <strong>Justificación:</strong> {riskInfo.calculatedRisk.reason}
+                 <div className="mt-2 text-sm">
+                    <p><strong>Causa:</strong> {ircAnalysis.justification}</p>
+                    <p className="mt-1"><strong>Recomendación:</strong> {ircAnalysis.recommendation}</p>
+                    {ircAnalysis.shouldRefer && (
+                        <div className="mt-2">
+                             <Button variant="outline" size="sm" className="bg-red-100 hover:bg-red-200 text-red-700 border-red-300">
+                                Derivar a Evaluación Profunda (WISC-V)
+                             </Button>
+                        </div>
+                    )}
+                 </div>
               </AlertDescription>
             </Alert>
           )}

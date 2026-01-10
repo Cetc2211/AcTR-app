@@ -19,6 +19,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { analyzeIRC, IRCAnalysis } from '@/lib/irc-calculation';
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 interface StudentTrackingDialogProps {
   open: boolean;
@@ -96,6 +99,28 @@ export function StudentTrackingDialog({
   const [newLogResult, setNewLogResult] = useState<string>('');
   const [newLogNotes, setNewLogNotes] = useState('');
   const [submittingLog, setSubmittingLog] = useState(false);
+
+  // Clinical Data State (Local Intelligence)
+  const [neuropsiTotal, setNeuropsiTotal] = useState<string>('');
+  const [gad7Score, setGad7Score] = useState<number>(0); 
+  const [currentGrade, setCurrentGrade] = useState<string>('85'); // Default/Estimated
+  
+  // Computed Risk
+  const [ircAnalysis, setIrcAnalysis] = useState<IRCAnalysis | null>(null);
+
+  // Recalculate IRC when inputs change
+  useEffect(() => {
+     // Estimate attendance based on absences (assuming ~50 sessions per partial/semester)
+     const estimatedAttendance = Math.max(0, 100 - (stats.total * 2));
+     
+     const analysis = analyzeIRC(
+        estimatedAttendance, 
+        parseFloat(currentGrade) || 0, 
+        gad7Score, // 0-21
+        parseFloat(neuropsiTotal) || 0
+     );
+     setIrcAnalysis(analysis);
+  }, [stats.total, currentGrade, gad7Score, neuropsiTotal]);
 
   useEffect(() => {
     if (open && studentId) {
@@ -314,35 +339,81 @@ export function StudentTrackingDialog({
 
              <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5" /> Análisis de Riesgo</CardTitle>
+                    <CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5" /> Motor de Inteligencia Local (IRC)</CardTitle>
+                    <CardDescription>Cálculo de riesgo basado en Regresión Logística (Local First)</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                            Basado en los reportes de inasistencias acumulados. Un número alto de reportes indica un riesgo crítico de abandono o reprobación por inasistencia.
-                        </p>
-                        <div className="flex gap-4">
-                            <div className="flex-1 p-4 rounded-lg bg-muted/40 border">
-                                <h4 className="font-semibold mb-2">Estado Actual</h4>
-                                <ul className="space-y-2 text-sm">
-                                    <li className="flex items-center gap-2">
-                                        {stats.riskLevel === 'high' ? <AlertTriangle className="h-4 w-4 text-red-500" /> : <CheckCircle2 className="h-4 w-4 text-green-500" />}
-                                        <span>Frecuencia de inasistencias: <strong>{stats.riskLevel === 'high' ? 'Crítica' : 'Normal'}</strong></span>
-                                    </li>
-                                    <li>Última falta: <strong>{absences.length > 0 ? absences[0].date : 'N/A'}</strong></li>
-                                </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-sm">Datos Clínicos y Académicos</h4>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Promedio Actual</Label>
+                                    <Input 
+                                        type="number" 
+                                        value={currentGrade} 
+                                        onChange={(e) => setCurrentGrade(e.target.value)} 
+                                        placeholder="0-100"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Neuropsi (0-100)</Label>
+                                    <Input 
+                                        type="number" 
+                                        value={neuropsiTotal} 
+                                        onChange={(e) => setNeuropsiTotal(e.target.value)} 
+                                        placeholder="Opcional"
+                                    />
+                                </div>
                             </div>
-                            <div className="flex-1 p-4 rounded-lg bg-muted/40 border">
-                                <h4 className="font-semibold mb-2">Recomendaciones</h4>
-                                <ul className="list-disc pl-4 text-sm space-y-1 text-muted-foreground">
-                                    {stats.riskLevel === 'high' 
-                                        ? <li>Contactar urgentemente al tutor.</li>
-                                        : <li>Continuar monitoreo regular.</li>
-                                    }
-                                    {stats.riskLevel === 'high' && <li>Programar visita domiciliaria si no hay respuesta.</li>}
-                                    <li>Verificar justificaciones pendientes en bitácora.</li>
-                                </ul>
+
+                            <div className="space-y-2">
+                                <Label className="flex justify-between">
+                                    <span>Nivel de Ansiedad (GAD-7)</span>
+                                    <span className="text-muted-foreground">{gad7Score} / 21</span>
+                                </Label>
+                                <Slider 
+                                    value={[gad7Score]} 
+                                    min={0} 
+                                    max={21} 
+                                    step={1}
+                                    onValueChange={(val) => setGad7Score(val[0])}
+                                />
                             </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-sm">Resultado del Modelo</h4>
+                            {ircAnalysis && (
+                                <div className={`p-4 rounded-lg border-2 ${
+                                    ircAnalysis.riskLevel === 'alto' ? 'border-red-500 bg-red-50' : 
+                                    ircAnalysis.riskLevel === 'medio' ? 'border-yellow-500 bg-yellow-50' : 
+                                    'border-green-500 bg-green-50'
+                                }`}>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p className="font-bold text-lg">IRC: {ircAnalysis.score.toFixed(1)}%</p>
+                                            <Badge variant={ircAnalysis.riskLevel === 'alto' ? 'destructive' : 'secondary'}>
+                                                RIESGO {ircAnalysis.riskLevel.toUpperCase()}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="space-y-2 text-sm">
+                                        <div>
+                                            <span className="font-semibold">Justificación Multivariada:</span>
+                                            <p className="text-muted-foreground">{ircAnalysis.justification}</p>
+                                        </div>
+                                        {ircAnalysis.riskLevel !== 'bajo' && (
+                                            <div className="mt-2 pt-2 border-t border-dashed border-gray-300">
+                                                <span className="font-semibold text-primary">Recomendación:</span>
+                                                <p>{ircAnalysis.recommendation}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </CardContent>

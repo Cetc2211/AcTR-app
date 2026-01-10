@@ -21,6 +21,7 @@ import { notFound, useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, MoreHorizontal, UserPlus, Trash2, CalendarCheck, FilePen, Edit, Loader2, PenSquare, X, ImagePlus, Lock, Unlock, UserCog, Camera, Upload, RotateCw, AlertTriangle } from 'lucide-react';
+import { analyzeIRC } from '@/lib/irc-calculation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -845,6 +846,7 @@ export default function GroupDetailsPage() {
                         </TableHead>
                         <TableHead>Nombre</TableHead>
                         <TableHead>Nivel de Riesgo</TableHead>
+                        <TableHead>IRC</TableHead>
                         <TableHead>
                         <span className="sr-only">Acciones</span>
                         </TableHead>
@@ -853,6 +855,17 @@ export default function GroupDetailsPage() {
                     <TableBody>
                     {activeGroup.students.map((student, index) => {
                         const risk = studentRiskLevels[student.id] || {level: 'low', reason: ''};
+                        
+                        // IRC Calculation (Local First)
+                        const attRecord = partialData.attendance?.[student.id] || {p:0, a:0, d:0};
+                        // @ts-ignore
+                        const totalAtt = (attRecord.p || 0) + (attRecord.a || 0) + (attRecord.d || 0);
+                        // @ts-ignore
+                        const attRate = totalAtt > 0 ? ((attRecord.p || 0) / totalAtt) * 100 : 100;
+                        const currentGrade = partialData.grades?.[student.id] || 85; 
+                        
+                        const ircResult = analyzeIRC(attRate, currentGrade, student.gad7Score || 0, student.neuropsiTotal || student.neuropsiScore || 0);
+
                         return (
                             <TableRow key={student.id} data-state={selectedStudents.includes(student.id) && "selected"}>
                             {isSelectionMode && (
@@ -893,6 +906,14 @@ export default function GroupDetailsPage() {
                                 {risk.level === 'low' && (
                                 <Badge variant="secondary">Bajo</Badge>
                                 )}
+                            </TableCell>
+                            <TableCell>
+                                <div className="flex flex-col items-center">
+                                    <Badge className={`${ircResult.riskLevel === 'alto' ? 'bg-red-600 hover:bg-red-700' : ircResult.riskLevel === 'medio' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'} border-0`}>
+                                        {ircResult.score.toFixed(0)}%
+                                    </Badge>
+                                    {ircResult.shouldRefer && <span className="text-[10px] text-red-500 font-bold mt-1">DERIVAR</span>}
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <DropdownMenu>
