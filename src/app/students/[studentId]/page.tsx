@@ -59,6 +59,9 @@ export default function StudentProfilePage() {
   const [currentFeedback, setCurrentFeedback] = useState('');
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
 
+  const student = useMemo(() => allStudents.find((s) => s.id === studentId), [allStudents, studentId]);
+  const studentGroups = useMemo(() => groups.filter((g) => g.students.some((s) => s.id === studentId)), [groups, studentId]);
+
   const ircAnalysis = useMemo(() => {
       if (!student || studentStatsByPartial.length === 0) return null;
       
@@ -71,9 +74,6 @@ export default function StudentProfilePage() {
 
   const reportRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  
-  const student = useMemo(() => allStudents.find((s) => s.id === studentId), [allStudents, studentId]);
-  const studentGroups = useMemo(() => groups.filter((g) => g.students.some((s) => s.id === studentId)), [groups, studentId]);
   
   // Find risk info for the student
   const riskInfo = useMemo(() => {
