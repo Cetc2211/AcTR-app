@@ -32,7 +32,6 @@ interface ClinicalScreeningDialogProps {
   onOpenChange?: (open: boolean) => void; // Added control prop
   currentNeuropsi?: number; // Added alias to match usage
   currentGad7?: number; // Added alias to match usage
-}
   trigger?: React.ReactNode;
   onSaved?: () => void;
 }
