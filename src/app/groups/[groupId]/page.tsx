@@ -857,12 +857,11 @@ export default function GroupDetailsPage() {
                         const risk = studentRiskLevels[student.id] || {level: 'low', reason: ''};
                         
                         // IRC Calculation (Local First)
-                        const attRecord = partialData.attendance?.[student.id] || {p:0, a:0, d:0};
-                        // @ts-ignore
-                        const totalAtt = (attRecord.p || 0) + (attRecord.a || 0) + (attRecord.d || 0);
-                        // @ts-ignore
-                        const attRate = totalAtt > 0 ? ((attRecord.p || 0) / totalAtt) * 100 : 100;
-                        const currentGrade = partialData.grades?.[student.id] || 85; 
+                        const days = Object.keys(partialData.attendance || {}).filter(d => partialData.attendance[d] && Object.prototype.hasOwnProperty.call(partialData.attendance[d], student.id));
+                        const attended = days.reduce((count, d) => partialData.attendance[d][student.id] ? count + 1 : count, 0);
+                        const attRate = days.length > 0 ? (attended / days.length) * 100 : 100;
+                        
+                        const currentGrade = calculateFinalGrade(student.id);
                         
                         const ircResult = analyzeIRC(attRate, currentGrade, student.gad7Score || 0, student.neuropsiTotal || student.neuropsiScore || 0);
 
