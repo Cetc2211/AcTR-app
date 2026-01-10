@@ -24,27 +24,50 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ClinicalScreeningDialogProps {
   studentId: string;
-  studentName: string;
+  studentName?: string; // Made optional
   initialNeuropsi?: number;
   initialGad7?: number;
   initialDate?: string;
+  open?: boolean; // Added control prop
+  onOpenChange?: (open: boolean) => void; // Added control prop
+  currentNeuropsi?: number; // Added alias to match usage
+  currentGad7?: number; // Added alias to match usage
+}
   trigger?: React.ReactNode;
   onSaved?: () => void;
 }
 
 export function ClinicalScreeningDialog({
   studentId,
-  studentName,
+  studentName = "",
   initialNeuropsi,
   initialGad7,
   initialDate,
   trigger,
-  onSaved
+  onSaved,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  currentNeuropsi, // Alias support
+  currentGad7 // Alias support
 }: ClinicalScreeningDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [neuropsi, setNeuropsi] = useState<string>(initialNeuropsi?.toString() || '');
-  const [gad7, setGad7] = useState<string>(initialGad7?.toString() || '');
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  // Use controlled state if provided, otherwise internal
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? setControlledOpen : setInternalOpen;
+  
+  // Initialize with either initial or current props
+  const [neuropsi, setNeuropsi] = useState<string>((initialNeuropsi ?? currentNeuropsi)?.toString() || '');
+  const [gad7, setGad7] = useState<string>((initialGad7 ?? currentGad7)?.toString() || '');
   const [date, setDate] = useState<Date | undefined>(initialDate ? new Date(initialDate) : new Date());
+  
+  // Update state when props change (sync for controlled usage)
+  if (isControlled && open && (neuropsi === '' && (initialNeuropsi || currentNeuropsi))) {
+      setNeuropsi((initialNeuropsi ?? currentNeuropsi)?.toString() || '');
+      setGad7((initialGad7 ?? currentGad7)?.toString() || '');
+  }
+  
   const [loading, setLoading] = useState(false);
   const { updateStudent } = useData();
   const { toast } = useToast();
@@ -53,7 +76,8 @@ export function ClinicalScreeningDialog({
     setLoading(true);
     try {
         await updateStudent(studentId, {
-            neuropsiScore: neuropsi ? parseFloat(neuropsi) : undefined,
+            neuropsiTotal: neuropsi ? parseFloat(neuropsi) : undefined, // Used neuropsiTotal standard
+            neuropsiScore: neuropsi ? parseFloat(neuropsi) : undefined, // Keep legacy just in case
             gad7Score: gad7 ? parseFloat(gad7) : undefined,
             screeningDate: date ? date.toISOString() : undefined
         });
@@ -62,7 +86,9 @@ export function ClinicalScreeningDialog({
             title: "Tamizaje Actualizado",
             description: "Los resultados clínicos se han guardado correctamente.",
         });
-        setOpen(false);
+        
+        if (setOpen) setOpen(false);
+        if (onSaved) onSaved();
         if (onSaved) onSaved();
     } catch (error) {
         console.error("Error saving screening:", error);
