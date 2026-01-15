@@ -22,6 +22,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TrackingSettingsDialog, DEFAULT_TUTOR_MESSAGE, TrackingSettings } from '@/components/tracking-settings-dialog';
 import { StudentTrackingDialog } from '@/components/student-tracking-dialog';
+import { ExecutiveReportDialog } from '@/components/executive-report-dialog';
 import jsPDF from 'jspdf';
 import {
   DropdownMenu,
@@ -725,71 +726,16 @@ export default function AbsencesPage() {
         </div>
       )}
 
-      {/* Dialogo de Reporte Ejecutivo */}
-      <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-        <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-                <DialogTitle>Generar Reporte de Gestión</DialogTitle>
-                <DialogDescription>
-                    Selecciona el periodo para generar el informe ejecutivo de actividades y resultados de prefectura.
-                </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label>Fecha Inicio</Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn("w-full justify-start text-left font-normal", !reportStartDate && "text-muted-foreground")}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {reportStartDate ? format(reportStartDate, "P", { locale: es }) : <span>Seleccionar</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar mode="single" selected={reportStartDate} onSelect={setReportStartDate} initialFocus />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Fecha Fin</Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn("w-full justify-start text-left font-normal", !reportEndDate && "text-muted-foreground")}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {reportEndDate ? format(reportEndDate, "P", { locale: es }) : <span>Seleccionar</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar mode="single" selected={reportEndDate} onSelect={setReportEndDate} initialFocus />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-md text-xs text-muted-foreground">
-                    <p className="font-semibold mb-1">Este informe incluirá:</p>
-                    <ul className="list-disc pl-4 space-y-1">
-                        <li>Total de inasistencias reportadas en el periodo.</li>
-                        <li>Estadísticas de intervenciones (llamadas, visitas).</li>
-                        <li>Efectividad de localización y acuerdos.</li>
-                        <li>Firma digital del responsable actual.</li>
-                    </ul>
-                </div>
-            </div>
-            <DialogFooter>
-                <Button variant="outline" onClick={() => setIsReportOpen(false)}>Cancelar</Button>
-                <Button onClick={generateExecutiveReport} disabled={generatingReport}>
-                    {generatingReport ? <div className="animate-spin h-4 w-4 mr-2 border-2 border-current border-t-transparent rounded-full" /> : <Download className="mr-2 h-4 w-4" />}
-                    Generar PDF
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ExecutiveReportDialog 
+        open={isReportOpen}
+        onOpenChange={setIsReportOpen}
+        startDate={reportStartDate}
+        setStartDate={setReportStartDate}
+        endDate={reportEndDate}
+        setEndDate={setReportEndDate}
+        onGenerate={generateExecutiveReport}
+        isGenerating={generatingReport}
+      />
 
        <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
         <DialogContent>
