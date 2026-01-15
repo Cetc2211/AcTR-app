@@ -164,32 +164,73 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const hydrateData = async () => {
             setIsLoading(true);
             try {
-                // Helper to get data from Cloud (Firestore) or Local (IndexedDB)
+                // Modified Helper: Logic to sync Local vs Cloud based on timestamps
                 const getData = async <T,>(key: string): Promise<T | undefined> => {
+                    let localPayload: { value: T; lastUpdated?: number } | T | undefined;
                     let localData: T | undefined;
+                    let localTimestamp = 0;
+
+                    // 1. Read Local IDB
                     try {
-                        localData = await get<T>(key);
+                        localPayload = await get(key); // Assuming generic type might be complex
+                        
+                        // Handle legacy IDB data (which wasn't wrapped)
+                        if (localPayload && typeof localPayload === 'object' && 'value' in localPayload && 'lastUpdated' in localPayload) {
+                             // Correct new format
+                             localData = (localPayload as any).value;
+                             localTimestamp = (localPayload as any).lastUpdated;
+                        } else {
+                             // Legacy format
+                             localData = localPayload as T;
+                             localTimestamp = 0; // Treat as old
+                        }
                     } catch (e) {
                         console.warn(`Error reading local data for ${key}`, e);
                     }
 
+                    // 2. Read Cloud Firestore if User Logged In
                     if (user) {
                         try {
                             const docRef = doc(db, 'users', user.uid, 'userData', key);
+                            // Enable offline persistence allows this to return from cache instantly if needed
                             const docSnap = await getDoc(docRef);
+                            
                             if (docSnap.exists()) {
-                                console.log(`Loaded ${key} from Firestore`);
-                                return docSnap.data().value as T;
+                                const cloudPayload = docSnap.data();
+                                const cloudData = cloudPayload.value as T;
+                                const cloudTimestamp = cloudPayload.lastUpdated || 0; // 0 if legacy cloud data
+
+                                console.log(`Hydration Conflict Check for ${key}: LocalTS=${localTimestamp}, CloudTS=${cloudTimestamp}`);
+
+                                if (cloudTimestamp > localTimestamp) {
+                                    // Cloud is newer -> Update Local
+                                    console.log(`Cloud wins for ${key}. Updating local.`);
+                                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
+                                    return cloudData;
+                                } else if (localTimestamp > cloudTimestamp) {
+                                    // Local is newer -> Push to Cloud
+                                    console.log(`Local wins for ${key}. Pushing to cloud.`);
+                                    // Fire and forget update
+                                    setDoc(docRef, { value: localData, lastUpdated: localTimestamp }, { merge: true });
+                                    return localData;
+                                } else {
+                                    // Timestamps equal or both zero (legacy). Prefer Cloud if Local is 0 (assuming fresh install or wiped IDB)
+                                    // If both have data, usually prefer Cloud as source of truth for legacy sync.
+                                    // If Local has data (TS=0) and Cloud has data (TS=0), we return Cloud to be safe against stale local cache?
+                                    // OR, if local exists and cloud exists, cloud usually wins in normal hydration.
+                                    return cloudData;
+                                }
                             } else if (localData !== undefined) {
                                 // Cloud is empty, but we have local data. Sync it up!
-                                console.log(`Syncing local ${key} to Firestore...`);
-                                await setDoc(docRef, { value: localData });
+                                console.log(`Cloud empty for ${key}. Syncing local to cloud.`);
+                                await setDoc(docRef, { value: localData, lastUpdated: Date.now() });
                             }
                         } catch (err) {
                             console.error(`Error loading/syncing ${key} from Firestore:`, err);
+                            // If cloud fails (offline without cache?), fallback to local
                         }
                     }
-                    // Fallback to local if not found in cloud or not logged in
+                    // Fallback to local if not found in cloud or not logged in, or cloud error
                     return localData;
                 };
 
@@ -252,35 +293,30 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 typeof value === 'function'
                     ? (value as (prevState: T) => T)(oldValue)
                     : value;
+            
+            // 1. Update React State immediately for UI responsiveness
             setter(newValue);
             
-            // Save to local storage (IndexedDB) - Always keep a local backup
+            // 2. Prepare payload with timestamp
+            const now = Date.now();
+            const payload = { value: newValue, lastUpdated: now };
+            
+            // 3. Save to Local IDB immediately
             try {
-                await set(key, newValue);
+                await set(key, payload); // Save entire payload to match new structure
             } catch (e) {
                 console.error(`Error saving ${key} to IDB:`, e);
             }
 
-            // Save to Cloud (Firestore) if user is logged in
+            // 4. Background Sync to Cloud
             if (user) {
-                try {
-                    const docRef = doc(db, 'users', user.uid, 'userData', key);
-                    // Timeout de 10 segundos para Firestore
-                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Firestore timeout')), 10000));
-                    
-                    await Promise.race([
-                        setDoc(docRef, { value: newValue }, { merge: true }),
-                        timeoutPromise
-                    ]);
-                    console.log(`Saved ${key} to Firestore`);
-                } catch (err) {
-                    console.error(`Error saving ${key} to Firestore:`, err);
-                    toast({
-                        variant: "destructive",
-                        title: "Error de Guardado",
-                        description: `No se pudo sincronizar ${key} con la nube. Verifica tu conexión.`
-                    });
-                }
+                const docRef = doc(db, 'users', user.uid, 'userData', key);
+                // Fire and forget - let the offline persistence SDK handle the queue
+                setDoc(docRef, payload, { merge: true }).catch(err => {
+                    console.error(`Sync error for ${key}:`, err);
+                    // Silent retry logic handled by SDK, but we log it.
+                    // If critical, we could toast here.
+                });
             }
         };
     };
@@ -291,22 +327,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const setSpecialNotes = createSetterWithStorage(setSpecialNotesState, 'app_specialNotes', specialNotes);
     const setAllPartialsData = createSetterWithStorage(setAllPartialsDataState, 'app_partialsData', allPartialsData);
     
-    // FIXED: Now uses Firestore sync explicitly, same as other setters
+    // Explicit Settings Setter with Timestamp Logic
     const setSettings = async (newSettings: AppSettings) => {
         const normalizedSettings = normalizeSettingsValue(newSettings);
         setSettingsState(normalizedSettings);
         
-        // Save Local
+        const now = Date.now();
+        const payload = { value: normalizedSettings, lastUpdated: now };
+
         try {
-             await set('app_settings', normalizedSettings);
+             await set('app_settings', payload);
         } catch(e) { console.error("Error saving local settings:", e); }
 
-        // Save Cloud
         if (user) {
             try {
                 const docRef = doc(db, 'users', user.uid, 'userData', 'app_settings');
-                await setDoc(docRef, { value: normalizedSettings }, { merge: true });
-                console.log("Settings synced to Firestore");
+                await setDoc(docRef, payload, { merge: true });
             } catch (err) {
                 console.error("Error saving settings to Firestore:", err);
             }
