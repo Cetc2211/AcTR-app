@@ -53,6 +53,16 @@ export default function SemesterEvaluationPage() {
         }
     };
 
+    const handleTogglePartialLoad = async (pId: PartialId, checked: boolean) => {
+        if (!activeGroup) return;
+        const currentLoaded = activeGroup.loadedPartials || [];
+        const newLoaded = checked 
+            ? [...Array.from(new Set([...currentLoaded, pId]))] // Add and ensure unique
+            : currentLoaded.filter(id => id !== pId); // Remove
+        
+        await updateGroup(activeGroup.id, { loadedPartials: newLoaded });
+    };
+
     useEffect(() => {
         const calculateGrades = async () => {
             if (!activeGroup) {
@@ -76,6 +86,8 @@ export default function SemesterEvaluationPage() {
             });
             setAvailablePartials(gradedPartials);
 
+            const loadedPartialsList = activeGroup.loadedPartials || [];
+
             const studentPromises = activeGroup.students.map(async (student) => {
                 const grades: {[key in PartialId]?: PartialGradeInfo} = {};
                 let gradeSum = 0;
@@ -88,11 +100,6 @@ export default function SemesterEvaluationPage() {
                         const { finalGrade, isRecovery } = calculateDetailedFinalGrade(student.id, partialData, groupCriteria);
                         
                         // Check if student has specific data for this partial to count it in average
-                        // We consider "data" as having attendance, grades, or activity records.
-                        // If finalGrade is > 0, we definitely count it.
-                        // If finalGrade is 0, we check if there's evidence of participation (attendance/activities)
-                        // to distinguish between "0 because failed" and "0 because not started".
-                        
                         let hasData = false;
                         if (finalGrade > 0) hasData = true;
                         else {
@@ -106,8 +113,12 @@ export default function SemesterEvaluationPage() {
 
                         if (hasData) {
                             grades[partialId] = { grade: finalGrade, isRecovery };
-                            gradeSum += finalGrade;
-                            partialsWithGrades++;
+                            
+                            // ONLY include in semester average if the partial is explicitly loaded
+                            if (loadedPartialsList.includes(partialId)) {
+                                gradeSum += finalGrade;
+                                partialsWithGrades++;
+                            }
                         }
                     }
                 });
@@ -201,6 +212,43 @@ export default function SemesterEvaluationPage() {
                     </Label>
                 </div>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Configuración de Cálculo Semestral</CardTitle>
+                    <CardDescription>
+                        Selecciona qué parciales deben incluirse en el cálculo del promedio semestral.
+                        Las "Alertas Tempranas" se basarán únicamente en los parciales seleccionados aquí.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-wrap gap-6">
+                     <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch 
+                            id="load-p1" 
+                            checked={activeGroup.loadedPartials?.includes('p1') || false}
+                            onCheckedChange={(checked) => handleTogglePartialLoad('p1', checked)}
+                        />
+                        <Label htmlFor="load-p1" className="cursor-pointer font-medium">Cargar 1er Parcial</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch 
+                            id="load-p2" 
+                            checked={activeGroup.loadedPartials?.includes('p2') || false}
+                            onCheckedChange={(checked) => handleTogglePartialLoad('p2', checked)}
+                        />
+                        <Label htmlFor="load-p2" className="cursor-pointer font-medium">Cargar 2do Parcial</Label>
+                    </div>
+                    <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch 
+                            id="load-p3" 
+                            checked={activeGroup.loadedPartials?.includes('p3') || false}
+                            onCheckedChange={(checked) => handleTogglePartialLoad('p3', checked)}
+                        />
+                        <Label htmlFor="load-p3" className="cursor-pointer font-medium">Cargar 3er Parcial</Label>
+                    </div>
+                </CardContent>
+            </Card>
+
             <Card>
                 <CardContent className="p-0">
                     <Table>
