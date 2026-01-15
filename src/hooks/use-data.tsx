@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { get, set, del, clear } from 'idb-keyval';
 import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
@@ -516,10 +516,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (activeGroupId === groupId) setActiveGroupId(null);
     }, [activeGroupId, setGroups, setActiveGroupId]);
 
-import { collection, query, where, getDocs, updateDoc, doc as firestoreDoc } from 'firebase/firestore';
-
-// ... existing imports ...
-
 // Helper to check for pending pedagogical strategies (Technical Spec 2.0)
 const checkAndInjectStrategies = async (studentId: string, addObs: Function) => {
     try {
@@ -542,7 +538,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             });
 
             // 2. Mark as injected to avoid duplication via field update
-            const docRef = firestoreDoc(db, 'pedagogical_strategies', docSnap.id);
+            const docRef = doc(db, 'pedagogical_strategies', docSnap.id);
             await updateDoc(docRef, { is_injected: true });
         });
     } catch (e) {
