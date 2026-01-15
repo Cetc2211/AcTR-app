@@ -18,7 +18,10 @@ const auth = getAuth(app);
 
 // Initialize Firestore with Offline Persistence enabled
 // This provides automatic offline caching and sync-when-online
-let db;
+// Explicitly type 'db' to avoid 'implicitly has type any' errors
+import { Firestore } from 'firebase/firestore';
+let db: Firestore;
+
 try {
     db = initializeFirestore(app, {
         localCache: persistentLocalCache({
