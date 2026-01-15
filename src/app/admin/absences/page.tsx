@@ -725,9 +725,6 @@ export default function AbsencesPage() {
         </div>
       )}
 
-        </div>
-      )}
-
       {/* Dialogo de Reporte Ejecutivo */}
       <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
         <DialogContent className="sm:max-w-md">
