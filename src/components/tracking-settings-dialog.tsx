@@ -9,8 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save, Settings } from 'lucide-react';
+import { Loader2, Save, Settings, Upload, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface TrackingSettingsDialogProps {
   open: boolean;
@@ -29,17 +31,30 @@ Para cualquier aclaración puede comunicarse a los teléfonos: {contactPhones}`;
 
 export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }: TrackingSettingsDialogProps) {
   const { toast } = useToast();
+  const { settings, setSettings } = useData();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
+  // Global Settings
   const [contactPhones, setContactPhones] = useState('');
   const [tutorMessageTemplate, setTutorMessageTemplate] = useState(DEFAULT_TUTOR_MESSAGE);
+
+  // Identity Settings (User Profile)
+  const [prefectName, setPrefectName] = useState('');
+  const [prefectTitle, setPrefectTitle] = useState('');
+  const [prefectSignature, setPrefectSignature] = useState('');
 
   useEffect(() => {
     if (open) {
       loadSettings();
+      // Load user identity settings from context
+      if (settings) {
+        setPrefectName(settings.prefectName || '');
+        setPrefectTitle(settings.prefectTitle || '');
+        setPrefectSignature(settings.prefectSignature || '');
+      }
     }
-  }, [open]);
+  }, [open, settings]);
 
   const loadSettings = async () => {
     setLoading(true);
@@ -70,20 +85,31 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
   const handleSave = async () => {
     setSaving(true);
     try {
-      const settings: TrackingSettings = {
+      // 1. Save Global Settings
+      const globalSettings: TrackingSettings = {
         contactPhones,
         tutorMessageTemplate
       };
 
       const docRef = doc(db, 'app_config', 'tracking_settings');
-      await setDoc(docRef, settings, { merge: true });
+      await setDoc(docRef, globalSettings, { merge: true });
+
+      // 2. Save User Identity Settings
+      if (settings) {
+         await setSettings({
+            ...settings,
+            prefectName,
+            prefectTitle,
+            prefectSignature
+         });
+      }
 
       toast({
         title: 'Ajustes guardados',
-        description: 'La configuración de seguimiento se ha actualizado correctamente.',
+        description: 'La configuración de seguimiento e identidad se ha actualizado correctamente.',
       });
       
-      onSettingsUpdated(settings);
+      onSettingsUpdated(globalSettings);
       onOpenChange(false);
     } catch (error) {
       console.error("Error saving settings:", error);
@@ -97,17 +123,36 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
     }
   };
 
+  const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 500 * 1024) { // 500KB limit
+         toast({
+            variant: 'destructive',
+            title: 'Archivo muy grande',
+            description: 'La imagen de la firma no debe superar los 500KB.',
+         });
+         return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPrefectSignature(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const insertPlaceholder = (placeholder: string) => {
     setTutorMessageTemplate(prev => prev + placeholder);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Ajustes de Seguimiento</DialogTitle>
           <DialogDescription>
-            Configura los datos de contacto y mensajes predeterminados para el área de seguimiento.
+            Configura los datos de contacto, mensajes y tu identidad para los informes oficiales.
           </DialogDescription>
         </DialogHeader>
 
@@ -117,8 +162,76 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
           </div>
         ) : (
           <div className="grid gap-6 py-4">
+            
+            {/* Sección: Identidad para Informes Oficiales */}
+            <div className="border rounded-md p-4 bg-muted/20">
+                <h3 className="text-md font-semibold mb-3 flex items-center gap-2">
+                    <Settings className="w-4 h-4" /> Identidad para Informes Oficiales
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="prefectName">Nombre Completo (Responsable)</Label>
+                        <Input 
+                            id="prefectName" 
+                            value={prefectName} 
+                            onChange={(e) => setPrefectName(e.target.value)} 
+                            placeholder="Ej. Lic. María González"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="prefectTitle">Cargo / Puesto</Label>
+                        <Input 
+                            id="prefectTitle" 
+                            value={prefectTitle} 
+                            onChange={(e) => setPrefectTitle(e.target.value)} 
+                            placeholder="Ej. Prefecta Turno Matutino"
+                        />
+                    </div>
+                    <div className="col-span-1 md:col-span-2 space-y-2">
+                        <Label>Firma Digital (Imagen)</Label>
+                        <div className="flex items-center gap-4">
+                            {prefectSignature ? (
+                                <div className="relative w-40 h-20 border bg-white rounded flex items-center justify-center overflow-hidden group">
+                                    <Image 
+                                        src={prefectSignature} 
+                                        alt="Firma" 
+                                        width={160} 
+                                        height={80} 
+                                        className="object-contain w-full h-full" 
+                                    />
+                                    <Button 
+                                        variant="destructive" 
+                                        size="icon" 
+                                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => setPrefectSignature('')}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="w-40 h-20 border border-dashed rounded flex items-center justify-center text-xs text-muted-foreground bg-muted/10">
+                                    Sin firma
+                                </div>
+                            )}
+                            <div className="flex-1">
+                                <Input 
+                                    id="signature-upload" 
+                                    type="file" 
+                                    accept="image/*" 
+                                    onChange={handleSignatureUpload}
+                                    className="text-xs"
+                                />
+                                <p className="text-[10px] text-muted-foreground mt-1">
+                                    Sube (PNG/JPG) con fondo transparente preferentemente. Max 500KB.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="contactPhones">Teléfonos de contacto</Label>
+              <Label htmlFor="contactPhones">Teléfonos de contacto (Global)</Label>
               <Input
                 id="contactPhones"
                 value={contactPhones}
@@ -132,7 +245,7 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
 
             <div className="space-y-2">
               <Label htmlFor="messageTemplate">Plantilla de Mensaje (WhatsApp Tutor)</Label>
-              <div className="flex gap-2 mb-2">
+              <div className="flex gap-2 mb-2 flex-wrap">
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{studentName}')} type="button" className="text-xs h-7">+ Nombre Alumno</Button>
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{tutorName}')} type="button" className="text-xs h-7">+ Nombre Tutor</Button>
                 <Button variant="outline" size="sm" onClick={() => insertPlaceholder('{date}')} type="button" className="text-xs h-7">+ Fecha</Button>
@@ -142,7 +255,7 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
                 id="messageTemplate"
                 value={tutorMessageTemplate}
                 onChange={(e) => setTutorMessageTemplate(e.target.value)}
-                rows={8}
+                rows={5}
                 placeholder="Escriba el mensaje aquí..."
               />
               <p className="text-xs text-muted-foreground">

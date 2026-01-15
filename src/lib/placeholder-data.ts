@@ -188,6 +188,10 @@ export type AppSettings = {
     scheduleImageUrl: string;
     teacherPhoto: string;
     whatsappContactNumber?: string;
+    // Prefect specific settings for reports
+    prefectName?: string;
+    prefectTitle?: string;
+    prefectSignature?: string; // Base64
 };
 
 // Pedagogical Injection Schema (Technical Spec 1.0)

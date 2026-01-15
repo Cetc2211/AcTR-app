@@ -15,10 +15,10 @@ import { collection, query, where, getDocs, addDoc, orderBy, Timestamp } from 'f
 import { db } from '@/lib/firebase'; // Ensure this matches your firebase export
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, Mail, MessageCircle, User, Calendar, ClipboardList, AlertTriangle, TrendingUp, History, CheckCircle2, MapPin, FileText } from 'lucide-react';
+import { Loader2, Phone, Mail, MessageCircle, User, Calendar, ClipboardList, AlertTriangle, TrendingUp, History, CheckCircle2, MapPin, FileText, FileDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import jsPDF from 'jspdf';
 import { Separator } from "@/components/ui/separator";
 import { analyzeIRC, IRCAnalysis } from '@/lib/irc-calculation';
 import { Label } from "@/components/ui/label";
@@ -81,7 +81,7 @@ export function StudentTrackingDialog({
   studentPhone 
 }: StudentTrackingDialogProps) {
   const { toast } = useToast();
-  const { triggerPedagogicalCheck } = useData();
+  const { triggerPedagogicalCheck, settings, allObservations } = useData();
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   
@@ -254,6 +254,177 @@ export function StudentTrackingDialog({
     }
   };
 
+  const generateFollowUpPDF = () => {
+    // 1. Setup
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let y = 20;
+
+    // Helper for centering text
+    const centerText = (text: string, yPos: number, size = 12, isBold = false) => {
+        doc.setFontSize(size);
+        doc.setFont("helvetica", isBold ? "bold" : "normal");
+        const textWidth = doc.getTextWidth(text);
+        doc.text(text, (pageWidth - textWidth) / 2, yPos);
+    };
+
+    // 2. Header
+    if (settings?.logo) {
+         try {
+             doc.addImage(settings.logo, 'PNG', 15, 10, 20, 20);
+         } catch(e) {/* ignore */}
+    }
+    
+    centerText(settings?.institutionName || "CBTa 130", y, 16, true);
+    y += 10;
+    centerText("INFORME DE SEGUIMIENTO ADMINISTRATIVO", y, 14, true);
+    y += 15;
+
+    // 3. Student Info
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Estudiante: ${studentName}`, 20, y);
+    doc.text(`Fecha de Informe: ${format(new Date(), 'dd/MM/yyyy')}`, pageWidth - 70, y);
+    y += 7;
+    if (studentId) doc.text(`Matrícula: ${studentId}`, 20, y);
+    y += 10;
+
+    // 4. Attendance Chart (Simulated)
+    const chartY = y;
+    doc.setDrawColor(200, 200, 200);
+    doc.rect(20, y, pageWidth - 40, 45); // Container
+    doc.setFontSize(11);
+    doc.text("Resumen de Inasistencias", 25, y + 8);
+    
+    // Draw bars
+    const maxVal = Math.max(stats.total, 10); 
+    const barHeight = 25;
+    const barWidth = 30;
+    const startX = 40;
+    const barsY = y + 38; 
+    
+    doc.setFontSize(9);
+    // Total
+    const hTotal = (stats.total / maxVal) * barHeight;
+    doc.setFillColor(60, 130, 246); // Blue
+    doc.rect(startX, barsY - hTotal, barWidth, hTotal, 'F');
+    doc.text(`Total: ${stats.total}`, startX + 5, barsY + 4);
+
+    // Month
+    const hMonth = (stats.month / maxVal) * barHeight;
+    doc.setFillColor(248, 113, 113); // Red
+    doc.rect(startX + 50, barsY - hMonth, barWidth, hMonth, 'F');
+    doc.text(`Mes: ${stats.month}`, startX + 55, barsY + 4);
+
+    // Week
+    const hWeek = (stats.week / maxVal) * barHeight;
+    doc.setFillColor(74, 222, 128); // Green
+    doc.rect(startX + 100, barsY - hWeek, barWidth, hWeek, 'F');
+    doc.text(`Semana: ${stats.week}`, startX + 105, barsY + 4);
+
+    y += 55;
+
+    // 5. Automatic Summary & Status
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Resumen Ejecutivo:", 20, y);
+    y += 5;
+    
+    doc.setFont("helvetica", "normal");
+    const summary = `Se han registrado un total de ${logs.length} intervenciones de seguimiento y ${stats.total} faltas acumuladas hasta la fecha. ` + 
+                    `El nivel de riesgo de deserción calculado por el sistema es: ${stats.riskLevel === 'high' ? 'ALTO' : stats.riskLevel === 'medium' ? 'MODERADO' : 'BAJO'}.`;
+    
+    const splitSummary = doc.splitTextToSize(summary, pageWidth - 40);
+    doc.text(splitSummary, 20, y);
+    y += splitSummary.length * 5 + 10;
+
+    // Ethical/Status Label
+    doc.setFont("helvetica", "bold");
+    doc.text("Estatus de Protocolo:", 20, y);
+    doc.setFont("helvetica", "normal");
+    if (stats.riskLevel === 'high') {
+         doc.text("Estudiante bajo protocolo de apoyo institucional.", 60, y);
+    } else {
+         doc.text("Seguimiento ordinario administrativo.", 60, y);
+    }
+    y += 15;
+    
+    // 6. Logs Table
+    doc.setFont("helvetica", "bold");
+    doc.text("Historial de Intervenciones:", 20, y);
+    y += 8;
+
+    logs.forEach((log) => {
+        if (y > 250) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        let dateStr = 'Fecha desconocida';
+        if (log.date) {
+            if (log.date.seconds) {
+                 dateStr = format(new Date(log.date.seconds * 1000), 'dd/MM/yyyy');
+            } else if (log.date instanceof Date) {
+                 dateStr = format(log.date, 'dd/MM/yyyy');
+            } else if (log.date.toDate) {
+                 dateStr = format(log.date.toDate(), 'dd/MM/yyyy');
+            }
+        }
+
+        const action = ACTION_LABELS[log.actionType as keyof typeof ACTION_LABELS] || log.actionType;
+        const result = RESULT_LABELS[log.result as keyof typeof RESULT_LABELS] || log.result;
+        
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.text(`[${dateStr}] ${action}`, 20, y);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Respuesta: ${result}`, 90, y);
+        y += 5;
+        
+        if (log.notes) {
+            doc.setFontSize(8);
+            doc.setTextColor(80);
+            const notes = doc.splitTextToSize(log.notes, pageWidth - 50);
+            doc.text(notes, 25, y);
+            y += notes.length * 4 + 3;
+            doc.setTextColor(0);
+        } else {
+            y += 2;
+        }
+    });
+
+    // 7. Signature (Dynamic)
+    if (y > 220) {
+        doc.addPage();
+        y = 40;
+    } else {
+        y = Math.max(y + 20, 230); // Move to bottom area
+    }
+
+    if (settings?.prefectSignature) {
+        try {
+            // Center signature image
+            const imgWidth = 50;
+            const imgHeight = 25;
+            doc.addImage(settings.prefectSignature, 'PNG', (pageWidth/2) - (imgWidth/2), y - imgHeight + 5, imgWidth, imgHeight); 
+        } catch (e) { console.error("Sig error", e); }
+    }
+    
+    doc.setDrawColor(0);
+    doc.line((pageWidth/2) - 40, y + 5, (pageWidth/2) + 40, y + 5);
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    centerText(settings?.prefectName || "Responsable de Seguimiento", y + 10);
+    
+    doc.setFont("helvetica", "normal");
+    if (settings?.prefectTitle) centerText(settings.prefectTitle, y + 15);
+
+    // Save
+    const safeName = (studentName || 'reporte').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    doc.save(`informe_seguimiento_${safeName}.pdf`);
+  };
+
   const handleAddLog = async () => {
     if (!newLogType || !newLogResult) {
       toast({ variant: 'destructive', title: 'Campos requeridos', description: 'Selecciona una acción y un resultado.' });
@@ -310,6 +481,11 @@ export function StudentTrackingDialog({
                       {tutorPhone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> Tutor: {tutorPhone}</span>}
                   </DialogDescription>
               </div>
+              
+              <Button size="sm" variant="outline" onClick={generateFollowUpPDF} className="gap-2 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100">
+                   <FileDown className="h-4 w-4" /> Informe PDF
+              </Button>
+
               <div className={`px-4 py-2 rounded-lg border flex flex-col items-center ${getRiskColor(stats.riskLevel)}`}>
                   <span className="text-xs font-bold uppercase">Riesgo</span>
                   <span className="font-bold">{stats.riskLevel === 'high' ? 'ALTO' : stats.riskLevel === 'medium' ? 'MEDIO' : 'BAJO'}</span>
