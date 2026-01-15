@@ -462,7 +462,7 @@ export default function GroupReportPage() {
                     )}
                 </div>
                 <div className="border-t border-foreground w-64 mx-auto mt-2"></div>
-                <p className="font-semibold mt-2">{group.facilitator || 'Docente'}</p>
+                <p className="font-semibold mt-2">{settings.facilitatorName || group.facilitator || 'Docente'}</p>
             </div>
         </footer>
       </Card>

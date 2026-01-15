@@ -1,0 +1,26 @@
+{
+  "system_version": "2.1.0-Antigravity-Local",
+  "coefficients": {
+    "B0_intercept": -3.0,
+    "B1_attendance": 1.5,
+    "B2_performance": 1.0,
+    "B3_external_vulnerability": 0.8
+  },
+  "ui_restrictions": {
+    "hide_fields": ["ansiedad_norm", "gad7_score", "neuropsi_raw"],
+    "role_based_access": {
+      "teacher": ["pedagogical_strategies", "attendance", "grades"],
+      "prefect": ["location_status", "home_visits", "attendance_risk"]
+    }
+  },
+  "pedagogical_bridge": {
+    "sync_source": "PIGEC-130",
+    "injection_target": "StudentObservation",
+    "default_type": "Pedagógico"
+  },
+  "cancellation_test_mapping": {
+    "sheet_2_targets": 64,
+    "sheet_3_targets": 61,
+    "tolerance_radius": 0.045
+  }
+}

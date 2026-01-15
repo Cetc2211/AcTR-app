@@ -49,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
   const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks } = useData();
@@ -59,6 +60,21 @@ export default function DashboardPage() {
   const [selectedRiskGroup, setSelectedRiskGroup] = useState('all');
   const [selectedGroupRisk, setSelectedGroupRisk] = useState<GroupRiskStats | null>(null);
   
+  // Welcome Dialog State
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem('hasSeenV2Welcome');
+    if (!hasSeenWelcome) {
+      setShowWelcome(true);
+    }
+  }, []);
+
+  const handleCloseWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem('hasSeenV2Welcome', 'true');
+  };
+
   const filteredAtRiskStudents = useMemo(() => {
     const students = selectedRiskGroup === 'all'
       ? atRiskStudents
@@ -510,6 +526,64 @@ export default function DashboardPage() {
                      </div>
                 </div>
             )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Welcome Dialog Update v2.1.0 */}
+      <Dialog open={showWelcome} onOpenChange={handleCloseWelcome}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+           <div className='flex items-center gap-3 mb-2'>
+              <div className='p-3 bg-primary/10 rounded-full'><Megaphone className='h-6 w-6 text-primary'/></div>
+              <DialogTitle className='text-2xl'>¡Bienvenidos a la versión optimizada de su Centro de Mando Pedagógico!</DialogTitle>
+           </div>
+            <DialogDescription className="text-base text-foreground">
+               Hemos escuchado sus necesidades y actualizado la plataforma para que sea más intuitiva, segura y enfocada en lo que realmente importa: el éxito académico y el bienestar de sus estudiantes.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+             <div className="space-y-4">
+                <div className='flex gap-3'>
+                    <div className='mt-1'><BookCopy className='h-5 w-5 text-indigo-600'/></div>
+                     <div>
+                        <h4 className='font-bold text-sm'>Bitácora Inteligente</h4>
+                        <p className='text-sm text-muted-foreground text-pretty'>Ahora, las recomendaciones de apoyo pedagógico llegarán directamente a su bitácora, ofreciendo estrategias concretas según el perfil de cada alumno.</p>
+                     </div>
+                </div>
+                 <div className='flex gap-3'>
+                    <div className='mt-1'><Users className='h-5 w-5 text-green-600'/></div>
+                     <div>
+                        <h4 className='font-bold text-sm'>Gestión de Prefectura Mejorada</h4>
+                        <p className='text-sm text-muted-foreground text-pretty'>Registro centralizado de visitas domiciliarias y acuerdos con tutores, enfocando esfuerzos en el rescate estudiantil.</p>
+                     </div>
+                </div>
+             </div>
+
+              <div className="space-y-4">
+                 <div className='flex gap-3'>
+                    <div className='mt-1'><AlertTriangle className='h-5 w-5 text-amber-600'/></div>
+                     <div>
+                        <h4 className='font-bold text-sm'>Alertas de Riesgo con Propósito</h4>
+                        <p className='text-sm text-muted-foreground text-pretty'>Refinado para identificar riesgo de manera humana, sugiriendo intervenciones de apoyo en lugar de solo reportar inasistencias.</p>
+                     </div>
+                </div>
+                 <div className='flex gap-3'>
+                    <div className='mt-1'><div className="h-5 w-5 rounded-full border-2 border-slate-600 flex items-center justify-center font-serif font-bold text-xs ">P</div></div>
+                     <div>
+                        <h4 className='font-bold text-sm'>Privacidad y Personalización</h4>
+                        <p className='text-sm text-muted-foreground text-pretty'>Seguridad de datos reforzada (info clínica encapsulada) y reportes oficiales firmados automáticamente.</p>
+                     </div>
+                </div>
+             </div>
+          </div>
+
+          <div className="bg-muted/50 p-4 rounded-lg flex items-center justify-between">
+              <span className="text-xs font-mono text-muted-foreground">Versión: 2.1.0-Antigravity</span>
+              <Button onClick={handleCloseWelcome} className='w-full md:w-auto'>
+                Entendido, ir al Dashboard
+              </Button>
+          </div>
         </DialogContent>
       </Dialog>
 

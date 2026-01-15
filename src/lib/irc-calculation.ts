@@ -73,10 +73,21 @@ export const analyzeIRC = (attendance: number, grade: number, gad7Score: number,
         recommendation = "Derivación inmediata a evaluación profunda (WISC-V).";
     }
 
+    // SANITIZATION LAYER (Requirement 1.3)
+    // Hide clinical details from non-clinical staff
+    let sanitizedJustification = justification.length > 0 ? `Causa: ${justification.join(" + ")}` : "Sin factores de riesgo detectados";
+    
+    // Check if clinical factors are involved in the justification
+    const hasClinicalFactors = justification.some(j => j.includes('Ansiedad') || j.includes('Neuropsi'));
+    
+    if (hasClinicalFactors) {
+        sanitizedJustification = "Factores de vulnerabilidad externa detectados. Revisar estrategias de apoyo en Bitácora.";
+    }
+
     return {
         score: irc, // 0-100
         riskLevel,
-        justification: `Causa: ${justification.join(" + ")}` || "Sin factores de riesgo detectados",
+        justification: sanitizedJustification,
         recommendation,
         shouldRefer: irc >= 25
     };

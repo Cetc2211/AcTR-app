@@ -182,10 +182,19 @@ export type AppSettings = {
     logo: string;
     theme: string;
     apiKey: string;
-  aiModel?: string;
+    aiModel?: string;
     signature: string;
     facilitatorName: string;
     scheduleImageUrl: string;
     teacherPhoto: string;
     whatsappContactNumber?: string;
+};
+
+// Pedagogical Injection Schema (Technical Spec 1.0)
+export type PedagogicalStrategy = {
+    id: string; // UUID
+    student_id: string; // Relation to Student
+    category: 'Atención' | 'Memoria' | 'Emocional' | 'Conducta' | 'Otro';
+    strategy_text: string; // The phrase to inject
+    is_injected: boolean; 
 };

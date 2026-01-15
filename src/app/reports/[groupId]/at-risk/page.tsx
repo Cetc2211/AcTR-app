@@ -243,7 +243,14 @@ export default function AtRiskReportPage() {
                     }
                 }
             }
-            setReportData(Array.from(atRiskStudentMap.values()));
+            
+            // Sort by Risk Level (High > Medium) -> Requirement 3
+            const sortedData = Array.from(atRiskStudentMap.values()).sort((a, b) => {
+                const riskScore = (r: 'high' | 'medium') => r === 'high' ? 2 : 1;
+                return riskScore(b.riskLevel) - riskScore(a.riskLevel);
+            });
+            
+            setReportData(sortedData);
         }
         setIsLoading(false);
     };

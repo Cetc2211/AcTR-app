@@ -9,19 +9,21 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { format, subDays, isAfter, startOfWeek, startOfMonth, parseISO } from 'date-fns';
+import { format, subDays, isAfter, startOfWeek, startOfMonth, parseISO, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { collection, query, where, getDocs, addDoc, orderBy, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase'; // Ensure this matches your firebase export
+import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, Mail, MessageCircle, User, Calendar, ClipboardList, AlertTriangle, TrendingUp, History, CheckCircle2 } from 'lucide-react';
+import { Loader2, Phone, Mail, MessageCircle, User, Calendar, ClipboardList, AlertTriangle, TrendingUp, History, CheckCircle2, MapPin, FileText } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { analyzeIRC, IRCAnalysis } from '@/lib/irc-calculation';
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+// Removed Slider import as per Requirement 1.1 and 1.2
+
 
 interface StudentTrackingDialogProps {
   open: boolean;
@@ -79,6 +81,7 @@ export function StudentTrackingDialog({
   studentPhone 
 }: StudentTrackingDialogProps) {
   const { toast } = useToast();
+  const { triggerPedagogicalCheck } = useData();
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   
@@ -116,11 +119,19 @@ export function StudentTrackingDialog({
      const analysis = analyzeIRC(
         estimatedAttendance, 
         parseFloat(currentGrade) || 0, 
-        gad7Score, // 0-21
-        parseFloat(neuropsiTotal) || 0
+        gad7Score, // 0-21 (Internal)
+        parseFloat(neuropsiTotal) || 0 // 0-100 (Internal)
      );
      setIrcAnalysis(analysis);
   }, [stats.total, currentGrade, gad7Score, neuropsiTotal]);
+
+  useEffect(() => {
+    // Pedagogical Observer (Technical Spec 2.0)
+    // Automatically checks for pending recommendations when student profile loads
+    if (open && studentId) {
+        triggerPedagogicalCheck(studentId);
+    }
+  }, [open, studentId, triggerPedagogicalCheck]);
 
   useEffect(() => {
     if (open && studentId) {
@@ -358,31 +369,32 @@ export function StudentTrackingDialog({
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Neuropsi (0-100)</Label>
-                                    <Input 
-                                        type="number" 
-                                        value={neuropsiTotal} 
-                                        onChange={(e) => setNeuropsiTotal(e.target.value)} 
-                                        placeholder="Opcional"
-                                    />
+                                   {/* Replaces Anxiety/Clinical Inputs with Administrative Fields (Requirement 3) */}
+                                    <Label>Estado de Localización</Label>
+                                    <Select>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Seleccionar..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="located">Ubicado por teléfono</SelectItem>
+                                            <SelectItem value="pending">Visita pendiente</SelectItem>
+                                            <SelectItem value="notified">Padres notificados</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
-
-                            <div className="space-y-2">
-                                <Label className="flex justify-between">
-                                    <span>Nivel de Ansiedad (GAD-7)</span>
-                                    <span className="text-muted-foreground">{gad7Score} / 21</span>
-                                </Label>
-                                <Slider 
-                                    value={[gad7Score]} 
-                                    min={0} 
-                                    max={21} 
-                                    step={1}
-                                    onValueChange={(val) => setGad7Score(val[0])}
-                                />
+                            
+                            <div className="pt-2">
+                                <Label className="text-xs text-muted-foreground uppercase tracking-wider mb-2 block">Gestión del Rescate</Label>
+                                <Button variant="outline" className="w-full justify-start" onClick={() => setActiveTab('bitacora')}>
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    Abrir Bitácora de Acuerdos
+                                </Button>
                             </div>
                         </div>
 
+                        {/* Pedagogical Injection Trigger (Requirement 2) - Handled via useEffect */}
+                        
                         <div className="space-y-4">
                             <h4 className="font-semibold text-sm">Resultado del Modelo</h4>
                             {ircAnalysis && (

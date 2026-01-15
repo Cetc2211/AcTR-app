@@ -136,6 +136,7 @@ interface DataContextType {
     calculateDetailedFinalGrade: (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => { finalGrade: number; criteriaDetails: CriteriaDetail[]; isRecovery: boolean };
     getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
     fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
+    triggerPedagogicalCheck: (studentId: string) => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -515,10 +516,50 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (activeGroupId === groupId) setActiveGroupId(null);
     }, [activeGroupId, setGroups, setActiveGroupId]);
 
+import { collection, query, where, getDocs, updateDoc, doc as firestoreDoc } from 'firebase/firestore';
+
+// ... existing imports ...
+
+// Helper to check for pending pedagogical strategies (Technical Spec 2.0)
+const checkAndInjectStrategies = async (studentId: string, addObs: Function) => {
+    try {
+        const strategiesRef = collection(db, 'pedagogical_strategies');
+        const q = query(strategiesRef, where('student_id', '==', studentId), where('is_injected', '==', false));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach(async (docSnap) => {
+            const strategy = docSnap.data();
+            console.log(`Injecting Strategy for ${studentId}: ${strategy.category}`);
+            
+            // 1. Inject into Teacher Log
+            await addObs({
+                studentId,
+                type: 'Pedagógico', // Special type for filtered support
+                details: `${strategy.category}: ${strategy.strategy_text}`,
+                partialId: 'p1', // Default
+                requiresCanalization: false,
+                requiresFollowUp: false
+            });
+
+            // 2. Mark as injected to avoid duplication via field update
+            const docRef = firestoreDoc(db, 'pedagogical_strategies', docSnap.id);
+            await updateDoc(docRef, { is_injected: true });
+        });
+    } catch (e) {
+        // Silent fail or log - don't block UI
+        console.warn("Error checking pedagogical strategies:", e);
+    }
+};
+
     const addStudentObservation = useCallback(async (obs: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => {
         const newObs = { ...obs, id: `OBS-${Date.now()}`, date: new Date().toISOString(), followUpUpdates: [], isClosed: false };
         await setAllObservations(prev => ({ ...prev, [obs.studentId]: [...(prev[obs.studentId] || []), newObs] }));
     }, [setAllObservations]);
+
+    // Expose injection Trigger
+    const triggerPedagogicalCheck = useCallback((studentId: string) => {
+        checkAndInjectStrategies(studentId, addStudentObservation);
+    }, [addStudentObservation]);
 
     const updateStudentObservation = useCallback(async (studentId: string, obsId: string, updateText: string, isClosing: boolean) => {
         await setAllObservations(prev => ({
@@ -771,7 +812,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
-            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData,
+            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>
             {children}
         </DataContext.Provider>

@@ -218,7 +218,7 @@ export default function SemesterEvaluationPage() {
                     <CardTitle className="text-lg">Configuración de Cálculo Semestral</CardTitle>
                     <CardDescription>
                         Selecciona qué parciales deben incluirse en el cálculo del promedio semestral.
-                        Las 'Alertas Tempranas' se basarán únicamente en los parciales seleccionados aquí.
+                        Las &apos;Alertas Tempranas&apos; se basarán únicamente en los parciales seleccionados aquí.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-wrap gap-6">
