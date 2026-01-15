@@ -5,13 +5,14 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { collection, query, where, getDocs, orderBy, Timestamp, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore'; // Added updateDoc
 import { db, auth } from '@/lib/firebase';
+import { useData } from '@/hooks/use-data';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact, Settings, ClipboardList } from 'lucide-react'; // Added Edit, Contact, Settings, ClipboardList
+import { CalendarIcon, Search, Phone, CheckCircle, XCircle, UserX, MoreHorizontal, MessageCircle, AlertTriangle, Trash2, Edit, Contact, Settings, ClipboardList, FileBarChart, Download, PieChart } from 'lucide-react'; // Added icons
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TrackingSettingsDialog, DEFAULT_TUTOR_MESSAGE, TrackingSettings } from '@/components/tracking-settings-dialog';
 import { StudentTrackingDialog } from '@/components/student-tracking-dialog';
+import jsPDF from 'jspdf';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +54,7 @@ type AbsenceRecord = {
 
 export default function AbsencesPage() {
   const [user, loadingAuth] = useAuthState(auth);
+  const { settings } = useData(); // Get Global Settings and User Identity
   const router = useRouter();
   const { toast } = useToast();
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
@@ -60,6 +63,12 @@ export default function AbsencesPage() {
   const [records, setRecords] = useState<AbsenceRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Report Generation State
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportStartDate, setReportStartDate] = useState<Date | undefined>(new Date());
+  const [reportEndDate, setReportEndDate] = useState<Date | undefined>(new Date());
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   // Dialog State for Contact Info
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
@@ -267,6 +276,195 @@ export default function AbsencesPage() {
       }
   };
 
+  const generateExecutiveReport = async () => {
+    if (!reportStartDate || !reportEndDate) {
+        toast({ variant: 'destructive', title: 'Fechas requeridas', description: 'Selecciona un rango de fechas.' });
+        return;
+    }
+
+    setGeneratingReport(true);
+    try {
+        const start = new Date(reportStartDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(reportEndDate);
+        end.setHours(23, 59, 59, 999);
+
+        // 1. Fetch Tracking Logs (Interventions)
+        const logsRef = collection(db, 'tracking_logs');
+        const qLogs = query(logsRef, where('date', '>=', Timestamp.fromDate(start)), where('date', '<=', Timestamp.fromDate(end)));
+        const logsSnap = await getDocs(qLogs);
+        
+        let calls = 0;
+        let visits = 0;
+        let agreements = 0;
+        let located = 0;
+        let pending = 0;
+        let totalInterventions = logsSnap.size;
+
+        logsSnap.forEach(doc => {
+            const data = doc.data();
+            const action = data.actionType || '';
+            const result = data.result || '';
+            const notes = (data.notes || '').toLowerCase();
+
+            if (action.includes('call') || action.includes('whatsapp')) calls++;
+            if (action.includes('home_visit')) visits++;
+            
+            if (result === 'agreement' || notes.includes('acuerdo') || notes.includes('compromiso')) agreements++;
+            if (result === 'student_found' || result === 'justified') located++;
+            if (result === 'no_answer' || result === 'continuing_monitor') pending++;
+        });
+
+        // 2. Fetch Absences (Incidences)
+        // Note: Absences store 'date' string dd/MM/yyyy. Timestamp field is better.
+        // We will fallback to approximate query if needed or just use timestamp
+        const absencesRef = collection(db, 'absences');
+        // Warning: This query might require index. If fails, we might need to filter client side for small datasets
+        const qAbsences = query(absencesRef, where('timestamp', '>=', start.toISOString()), where('timestamp', '<=', end.toISOString()));
+        const absencesSnap = await getDocs(qAbsences); 
+        
+        let totalIncidences = 0;
+        absencesSnap.forEach(doc => {
+            const data = doc.data();
+            if (Array.isArray(data.absentStudents)) {
+                totalIncidences += data.absentStudents.length;
+            }
+        });
+
+        // 3. Generate Information
+        const effectiveness = totalInterventions > 0 ? ((located + agreements) / totalInterventions) * 100 : 0;
+
+        // 4. Generate PDF
+        const docPDF = new jsPDF();
+        const pageWidth = docPDF.internal.pageSize.getWidth();
+        let y = 20;
+
+        const centerText = (text: string, yPos: number, size = 12, isBold = false) => {
+            docPDF.setFontSize(size);
+            docPDF.setFont("helvetica", isBold ? "bold" : "normal");
+            const textWidth = docPDF.getTextWidth(text);
+            docPDF.text(text, (pageWidth - textWidth) / 2, yPos);
+        };
+
+        // Header
+        if (settings?.logo) {
+            try { docPDF.addImage(settings.logo, 'PNG', 15, 10, 20, 20); } catch(e) {}
+        }
+        centerText(settings?.institutionName || "CBTa 130", y, 16, true);
+        y += 10;
+        centerText("REPORTE EJECUTIVO DE GESTIÓN Y SEGUIMIENTO", y, 14, true);
+        y += 8;
+        centerText(`Periodo: ${format(start, 'dd/MM/yyyy')} al ${format(end, 'dd/MM/yyyy')}`, y, 11);
+        y += 15;
+
+        // Executive Summary
+        docPDF.setFontSize(10);
+        docPDF.setFont("helvetica", "bold");
+        docPDF.text("1. Resumen Ejecutivo:", 20, y);
+        y += 6;
+        docPDF.setFont("helvetica", "normal");
+        const summaryText = `Durante el periodo seleccionado, el departamento de servicios escolares detectó un total de ${totalIncidences} inasistencias reportadas en plataforma. ` +
+                            `En respuesta, se ejecutaron ${totalInterventions} acciones de intervención directa, logrando contactar o localizar exitosamente al ${effectiveness.toFixed(0)}% de los casos gestionados. ` +
+                            `Se formalizaron ${agreements} acuerdos de compromiso entre la institución y los tutores legales.`;
+        const splitSummary = docPDF.splitTextToSize(summaryText, pageWidth - 40);
+        docPDF.text(splitSummary, 20, y);
+        y += splitSummary.length * 5 + 10;
+
+        // Indicators Table
+        docPDF.setFont("helvetica", "bold");
+        docPDF.text("2. Indicadores Estadalisticos:", 20, y);
+        y += 10;
+        
+        const col1 = 30; const col2 = 80; const col3 = 130;
+        
+        // Row 1 Heading
+        docPDF.setFontSize(9);
+        docPDF.text("INCIDENCIAS", col1, y);
+        docPDF.text("INTERVENCIONES", col2, y);
+        docPDF.text("RESULTADOS", col3, y);
+        y += 5;
+        // Data
+        docPDF.setFontSize(14);
+        docPDF.text(`${totalIncidences}`, col1, y);
+        docPDF.text(`${totalInterventions}`, col2, y);
+        docPDF.text(`${agreements}`, col3, y);
+        y += 5;
+        docPDF.setFontSize(8);
+        docPDF.text("Alumnos reportados", col1, y);
+        docPDF.text("Llamadas / Visitas", col2, y);
+        docPDF.text("Acuerdos firmados", col3, y);
+        
+        y += 15;
+
+        // Charts Area
+        docPDF.setFontSize(10);
+        docPDF.setFont("helvetica", "bold");
+        docPDF.text("3. Análisis de Efectividad:", 20, y);
+        y += 10;
+        
+        // Bar Chart (Casos vs Atendidos)
+        docPDF.setFontSize(8);
+        docPDF.text("Cobertura de Atención", 40, y - 2);
+        
+        const chartHeight = 40;
+        const maxBar = Math.max(totalIncidences, totalInterventions, 10);
+        
+        // Bar 1: Incidences
+        const h1 = (totalIncidences / maxBar) * chartHeight;
+        docPDF.setFillColor(200, 200, 200); // Gray
+        docPDF.rect(40, y + chartHeight - h1, 20, h1, 'F');
+        docPDF.text(`${totalIncidences}`, 45, y + chartHeight + 4);
+        docPDF.text("Detectados", 35, y + chartHeight + 8);
+
+        // Bar 2: Interventions
+        const h2 = (totalInterventions / maxBar) * chartHeight;
+        docPDF.setFillColor(79, 70, 229); // Indigo
+        docPDF.rect(70, y + chartHeight - h2, 20, h2, 'F');
+        docPDF.text(`${totalInterventions}`, 75, y + chartHeight + 4);
+        docPDF.text("Atendidos", 70, y + chartHeight + 8);
+
+        // Bar 3: Agreements
+        const h3 = (agreements / maxBar) * chartHeight;
+        docPDF.setFillColor(34, 197, 94); // Green
+        docPDF.rect(100, y + chartHeight - h3, 20, h3, 'F');
+        docPDF.text(`${agreements}`, 105, y + chartHeight + 4);
+        docPDF.text("Acuerdos", 100, y + chartHeight + 8);
+        
+        y += chartHeight + 25;
+
+        // Signature
+        if (y > 230) { docPDF.addPage(); y = 40; }
+        else { y = Math.max(y, 230); }
+
+        if (settings?.prefectSignature) {
+            try {
+                const imgWidth = 50; const imgHeight = 25;
+                docPDF.addImage(settings.prefectSignature, 'PNG', (pageWidth/2) - (imgWidth/2), y - imgHeight + 5, imgWidth, imgHeight); 
+            } catch (e) { console.error(e); }
+        }
+        
+        docPDF.setDrawColor(0);
+        docPDF.line((pageWidth/2) - 40, y + 5, (pageWidth/2) + 40, y + 5);
+        
+        docPDF.setFontSize(10);
+        docPDF.setFont("helvetica", "bold");
+        centerText(settings?.prefectName || "Responsable de Prefectura", y + 10);
+        
+        docPDF.setFont("helvetica", "normal");
+        if (settings?.prefectTitle) centerText(settings.prefectTitle, y + 15);
+
+        docPDF.save(`reporte_gestion_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
+        setIsReportOpen(false);
+        toast({ title: 'Reporte generado', description: 'El reporte ejecutivo se ha descargado correctamente.' });
+
+    } catch (e: any) {
+        console.error("Error generating report:", e);
+        toast({ variant: 'destructive', title: 'Error', description: 'No se pudo generar el reporte. Verifica tu conexión.' });
+    } finally {
+        setGeneratingReport(false);
+    }
+  };
+
 
   useEffect(() => {
     if (hasAccess) {
@@ -337,6 +535,10 @@ export default function AbsencesPage() {
           
           <Button variant="outline" onClick={() => fetchAbsences(date)}>
             Actualizar
+          </Button>
+
+          <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700" onClick={() => setIsReportOpen(true)}>
+             <FileBarChart className="mr-2 h-4 w-4" /> Reporte de Gestión
           </Button>
 
           <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} title="Ajustes de Seguimiento">
@@ -522,6 +724,75 @@ export default function AbsencesPage() {
           ))}
         </div>
       )}
+
+        </div>
+      )}
+
+      {/* Dialogo de Reporte Ejecutivo */}
+      <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
+        <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+                <DialogTitle>Generar Reporte de Gestión</DialogTitle>
+                <DialogDescription>
+                    Selecciona el periodo para generar el informe ejecutivo de actividades y resultados de prefectura.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Fecha Inicio</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn("w-full justify-start text-left font-normal", !reportStartDate && "text-muted-foreground")}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {reportStartDate ? format(reportStartDate, "P", { locale: es }) : <span>Seleccionar</span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar mode="single" selected={reportStartDate} onSelect={setReportStartDate} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Fecha Fin</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant={"outline"}
+                                    className={cn("w-full justify-start text-left font-normal", !reportEndDate && "text-muted-foreground")}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {reportEndDate ? format(reportEndDate, "P", { locale: es }) : <span>Seleccionar</span>}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar mode="single" selected={reportEndDate} onSelect={setReportEndDate} initialFocus />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+                <div className="bg-muted/50 p-3 rounded-md text-xs text-muted-foreground">
+                    <p className="font-semibold mb-1">Este informe incluirá:</p>
+                    <ul className="list-disc pl-4 space-y-1">
+                        <li>Total de inasistencias reportadas en el periodo.</li>
+                        <li>Estadísticas de intervenciones (llamadas, visitas).</li>
+                        <li>Efectividad de localización y acuerdos.</li>
+                        <li>Firma digital del responsable actual.</li>
+                    </ul>
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsReportOpen(false)}>Cancelar</Button>
+                <Button onClick={generateExecutiveReport} disabled={generatingReport}>
+                    {generatingReport ? <div className="animate-spin h-4 w-4 mr-2 border-2 border-current border-t-transparent rounded-full" /> : <Download className="mr-2 h-4 w-4" />}
+                    Generar PDF
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
        <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
         <DialogContent>
