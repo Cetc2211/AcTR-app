@@ -9,6 +9,7 @@ import type { Student, Group, PartialId, StudentObservation, SpecialNote, Evalua
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 // TYPE DEFINITIONS
 type ExportData = {
@@ -141,6 +142,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // --- STATE MANAGEMENT ---
+    const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [user, authLoading] = useAuthState(auth);
@@ -273,6 +275,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     console.log(`Saved ${key} to Firestore`);
                 } catch (err) {
                     console.error(`Error saving ${key} to Firestore:`, err);
+                    toast({
+                        variant: "destructive",
+                        title: "Error de Guardado",
+                        description: `No se pudo sincronizar ${key} con la nube. Verifica tu conexión.`
+                    });
                 }
             }
         };
@@ -284,11 +291,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const setSpecialNotes = createSetterWithStorage(setSpecialNotesState, 'app_specialNotes', specialNotes);
     const setAllPartialsData = createSetterWithStorage(setAllPartialsDataState, 'app_partialsData', allPartialsData);
     
-    const setSettings = useCallback(async (newSettings: AppSettings) => {
+    // FIXED: Now uses Firestore sync explicitly, same as other setters
+    const setSettings = async (newSettings: AppSettings) => {
         const normalizedSettings = normalizeSettingsValue(newSettings);
         setSettingsState(normalizedSettings);
-        await set('app_settings', normalizedSettings);
-    }, []);
+        
+        // Save Local
+        try {
+             await set('app_settings', normalizedSettings);
+        } catch(e) { console.error("Error saving local settings:", e); }
+
+        // Save Cloud
+        if (user) {
+            try {
+                const docRef = doc(db, 'users', user.uid, 'userData', 'app_settings');
+                await setDoc(docRef, { value: normalizedSettings }, { merge: true });
+                console.log("Settings synced to Firestore");
+            } catch (err) {
+                console.error("Error saving settings to Firestore:", err);
+            }
+        }
+    };
 
     const setActiveGroupId = useCallback(async (groupId: string | null) => {
         setActiveGroupIdState(groupId);
