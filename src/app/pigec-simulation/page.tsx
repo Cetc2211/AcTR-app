@@ -125,15 +125,16 @@ export default function PigecSimulationPage() {
                             const obsStrings = studentObs.map(o => o.details || "");
 
                             // Run Risk Analysis
-                            const risk = analyzeStudentRisk(student, MOCK_PARTIAL_DATA, obsStrings);
+                            // Passed empty criteria and 0 classes to satisfy signature, as we focus on PIGEC override
+                            const risk = analyzeStudentRisk(student, MOCK_PARTIAL_DATA, [], 0, obsStrings);
 
                             return (
-                                <Card key={student.id} className={`border-t-4 ${risk.level === 'high' ? 'border-red-500' : 'border-gray-300'}`}>
+                                <Card key={student.id} className={`border-t-4 ${risk.riskLevel === 'high' ? 'border-red-500' : 'border-gray-300'}`}>
                                     <CardHeader>
                                         <CardTitle className="flex justify-between items-center">
                                             {student.name}
-                                            <span className={`px-2 py-1 rounded text-xs text-white ${risk.level === 'high' ? 'bg-red-500' : 'bg-gray-400'}`}>
-                                                {risk.level.toUpperCase()}
+                                            <span className={`px-2 py-1 rounded text-xs text-white ${risk.riskLevel === 'high' ? 'bg-red-500' : 'bg-gray-400'}`}>
+                                                {risk.riskLevel.toUpperCase()}
                                             </span>
                                         </CardTitle>
                                     </CardHeader>
@@ -147,7 +148,7 @@ export default function PigecSimulationPage() {
                                         
                                         <div>
                                             <p className="text-xs font-bold text-gray-500 mb-1">Mensaje del Algoritmo:</p>
-                                            <p className={`text-sm font-semibold ${risk.level === 'high' ? 'text-red-600' : 'text-gray-600'}`}>
+                                            <p className={`text-sm font-semibold ${risk.riskLevel === 'high' ? 'text-red-600' : 'text-gray-600'}`}>
                                                 {risk.predictionMessage}
                                             </p>
                                         </div>
