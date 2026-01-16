@@ -100,7 +100,7 @@ export default function PigecSimulationPage() {
                     </CardHeader>
                     <CardContent>
                         {logs.length === 0 ? (
-                            <span className="opacity-50">// Esperando comando...</span>
+                            <span className="opacity-50">{"// Esperando comando..."}</span>
                         ) : (
                             logs.map((log, i) => (
                                 <div key={i} className="mb-1 border-l-2 border-green-700 pl-2">
@@ -141,7 +141,7 @@ export default function PigecSimulationPage() {
                                         <div className="bg-white p-3 rounded border">
                                             <p className="text-xs font-bold text-gray-500 mb-1">Última Observación (Inyectada):</p>
                                             <p className="text-sm italic text-gray-700">
-                                                "{studentObs[studentObs.length-1]?.details || 'Ninguna'}"
+                                                &quot;{studentObs[studentObs.length-1]?.details || 'Ninguna'}&quot;
                                             </p>
                                         </div>
                                         

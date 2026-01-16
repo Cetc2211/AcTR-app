@@ -45,6 +45,32 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
   const [prefectSignature, setPrefectSignature] = useState('');
 
   useEffect(() => {
+    const loadSettings = async () => {
+      setLoading(true);
+      try {
+        const docRef = doc(db, 'app_config', 'tracking_settings');
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data() as TrackingSettings;
+          setContactPhones(data.contactPhones || '');
+          setTutorMessageTemplate(data.tutorMessageTemplate || DEFAULT_TUTOR_MESSAGE);
+        } else {
+          // Defaults if not set
+          setTutorMessageTemplate(DEFAULT_TUTOR_MESSAGE);
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'No se pudieron cargar los ajustes.',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (open) {
       loadSettings();
       // Load user identity settings from context
@@ -54,33 +80,9 @@ export function TrackingSettingsDialog({ open, onOpenChange, onSettingsUpdated }
         setPrefectSignature(settings.prefectSignature || '');
       }
     }
-  }, [open, settings]);
+  }, [open, settings, toast]);
 
-  const loadSettings = async () => {
-    setLoading(true);
-    try {
-      const docRef = doc(db, 'app_config', 'tracking_settings');
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        const data = docSnap.data() as TrackingSettings;
-        setContactPhones(data.contactPhones || '');
-        setTutorMessageTemplate(data.tutorMessageTemplate || DEFAULT_TUTOR_MESSAGE);
-      } else {
-        // Defaults if not set
-        setTutorMessageTemplate(DEFAULT_TUTOR_MESSAGE);
-      }
-    } catch (error) {
-      console.error("Error loading settings:", error);
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'No se pudieron cargar los ajustes.',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  /* REMOVED loadSettings definition from here */
 
   const handleSave = async () => {
     setSaving(true);

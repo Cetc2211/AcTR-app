@@ -134,125 +134,125 @@ export function StudentTrackingDialog({
   }, [open, studentId, triggerPedagogicalCheck]);
 
   useEffect(() => {
+    const loadStudentData = async () => {
+      setLoading(true);
+      try {
+        // 1. Fetch Absences (Need to filter manually on client or complex query)
+        // Since 'absentStudents' is an array of objects in 'absences' collection, we can't easily query
+        // unless we save 'studentIds' array in the record. 
+        // Assumption: The system might not have 'studentIds' array. I'll read all absences (cached?) or try to query specific dates?
+        // BETTER: Query ALL absences (might be heavy eventually) -> Filter client side. 
+        // OPTIMIZATION: Created a composite index or just fetch last 30 days? 
+        // FOR NOW: Fetch all absences collection and filter. (Warning: scalability)
+        
+        const absencesRef = collection(db, 'absences');
+        // Ideally we should have: where('studentIds', 'array-contains', studentId)
+        // But based on previous file read, it's an array of objects: absentStudents: {id, name...}[]
+        // We CANNOT query array of objects easily. 
+        // Fallback: Fetch all documents (limited by date maybe?) 
+        // Let's assume for this version we fetch all. In prod, update schema to include `studentIds` array.
+        
+        // REMOVED orderBy from Firestore query to avoid "Index Required" error or type mismatch issues.
+        const qAbsences = query(absencesRef);
+        const absencesSnap = await getDocs(qAbsences);
+        
+        const studentAbsences: AbsenceRecord[] = [];
+        absencesSnap.forEach(doc => {
+          const data = doc.data();
+          
+          // Safety check: ensure absentStudents is an array
+          if (!Array.isArray(data.absentStudents)) return;
+
+          // Check if student is in the array
+          const isAbsent = data.absentStudents.some((s: any) => s && s.id === studentId);
+          
+          if (isAbsent) {
+            // Robust timestamp handling
+            let ts = data.timestamp;
+            // Setup a safe fallback date string if timestamp is missing or weird
+            let safeDateStr = new Date().toISOString(); 
+            
+            if (typeof ts === 'string') {
+                safeDateStr = ts;
+            } else if (ts && typeof ts.toDate === 'function') {
+                safeDateStr = ts.toDate().toISOString();
+            }
+
+            studentAbsences.push({
+              id: doc.id,
+              date: data.date || '',
+              groupName: data.groupName || 'Sin grupo',
+              teacherEmail: data.teacherEmail || '',
+              timestamp: safeDateStr
+            });
+          }
+        });
+        
+        // Sort client-side by timestamp descending
+        studentAbsences.sort((a, b) => {
+            const dateA = new Date(a.timestamp);
+            const dateB = new Date(b.timestamp);
+            return dateB.getTime() - dateA.getTime();
+        });
+
+        setAbsences(studentAbsences);
+
+        // 2. Calculate Stats
+        const now = new Date();
+        const oneWeekAgo = subDays(now, 7);
+        const oneMonthAgo = startOfMonth(now);
+        
+        const weekCount = studentAbsences.filter(a => isAfter(parseISO(a.timestamp), oneWeekAgo)).length;
+        const monthCount = studentAbsences.filter(a => isAfter(parseISO(a.timestamp), oneMonthAgo)).length;
+        const totalCount = studentAbsences.length;
+        
+        let risk = 'low';
+        if (totalCount >= 10 || weekCount >= 3) risk = 'high';
+        else if (totalCount >= 5 || weekCount >= 2) risk = 'medium';
+        
+        setStats({
+          total: totalCount,
+          week: weekCount,
+          month: monthCount,
+          riskLevel: risk as any
+        });
+
+        // 3. Fetch Logs
+        const logsRef = collection(db, 'tracking_logs');
+        // REMOVED orderBy from Firestore query to avoid "Index Required" error. Sorting client-side.
+        const qLogs = query(logsRef, where('studentId', '==', studentId));
+        const logsSnap = await getDocs(qLogs);
+        
+        const fetchedLogs: TrackingLog[] = [];
+        logsSnap.forEach(doc => {
+          fetchedLogs.push({ id: doc.id, ...doc.data() } as TrackingLog);
+        });
+        
+        // Sort in memory by date descending
+        fetchedLogs.sort((a, b) => {
+            const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+            const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+            return dateB.getTime() - dateA.getTime();
+        });
+
+        setLogs(fetchedLogs);
+
+      } catch (error: any) {
+        console.error("Error loading student data:", error);
+        toast({ 
+            variant: 'destructive', 
+            title: 'Error de carga', 
+            description: `No se pudieron cargar los datos: ${error.message || 'Error desconocido'}` 
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (open && studentId) {
       loadStudentData();
     }
-  }, [open, studentId]);
-
-  const loadStudentData = async () => {
-    setLoading(true);
-    try {
-      // 1. Fetch Absences (Need to filter manually on client or complex query)
-      // Since 'absentStudents' is an array of objects in 'absences' collection, we can't easily query
-      // unless we save 'studentIds' array in the record. 
-      // Assumption: The system might not have 'studentIds' array. I'll read all absences (cached?) or try to query specific dates?
-      // BETTER: Query ALL absences (might be heavy eventually) -> Filter client side. 
-      // OPTIMIZATION: Created a composite index or just fetch last 30 days? 
-      // FOR NOW: Fetch all absences collection and filter. (Warning: scalability)
-      
-      const absencesRef = collection(db, 'absences');
-      // Ideally we should have: where('studentIds', 'array-contains', studentId)
-      // But based on previous file read, it's an array of objects: absentStudents: {id, name...}[]
-      // We CANNOT query array of objects easily. 
-      // Fallback: Fetch all documents (limited by date maybe?) 
-      // Let's assume for this version we fetch all. In prod, update schema to include `studentIds` array.
-      
-      // REMOVED orderBy from Firestore query to avoid "Index Required" error or type mismatch issues.
-      const qAbsences = query(absencesRef);
-      const absencesSnap = await getDocs(qAbsences);
-      
-      const studentAbsences: AbsenceRecord[] = [];
-      absencesSnap.forEach(doc => {
-        const data = doc.data();
-        
-        // Safety check: ensure absentStudents is an array
-        if (!Array.isArray(data.absentStudents)) return;
-
-        // Check if student is in the array
-        const isAbsent = data.absentStudents.some((s: any) => s && s.id === studentId);
-        
-        if (isAbsent) {
-          // Robust timestamp handling
-          let ts = data.timestamp;
-          // Setup a safe fallback date string if timestamp is missing or weird
-          let safeDateStr = new Date().toISOString(); 
-          
-          if (typeof ts === 'string') {
-              safeDateStr = ts;
-          } else if (ts && typeof ts.toDate === 'function') {
-              safeDateStr = ts.toDate().toISOString();
-          }
-
-          studentAbsences.push({
-            id: doc.id,
-            date: data.date || '',
-            groupName: data.groupName || 'Sin grupo',
-            teacherEmail: data.teacherEmail || '',
-            timestamp: safeDateStr
-          });
-        }
-      });
-      
-      // Sort client-side by timestamp descending
-      studentAbsences.sort((a, b) => {
-          const dateA = new Date(a.timestamp);
-          const dateB = new Date(b.timestamp);
-          return dateB.getTime() - dateA.getTime();
-      });
-
-      setAbsences(studentAbsences);
-
-      // 2. Calculate Stats
-      const now = new Date();
-      const oneWeekAgo = subDays(now, 7);
-      const oneMonthAgo = startOfMonth(now);
-      
-      const weekCount = studentAbsences.filter(a => isAfter(parseISO(a.timestamp), oneWeekAgo)).length;
-      const monthCount = studentAbsences.filter(a => isAfter(parseISO(a.timestamp), oneMonthAgo)).length;
-      const totalCount = studentAbsences.length;
-      
-      let risk = 'low';
-      if (totalCount >= 10 || weekCount >= 3) risk = 'high';
-      else if (totalCount >= 5 || weekCount >= 2) risk = 'medium';
-      
-      setStats({
-        total: totalCount,
-        week: weekCount,
-        month: monthCount,
-        riskLevel: risk as any
-      });
-
-      // 3. Fetch Logs
-      const logsRef = collection(db, 'tracking_logs');
-      // REMOVED orderBy from Firestore query to avoid "Index Required" error. Sorting client-side.
-      const qLogs = query(logsRef, where('studentId', '==', studentId));
-      const logsSnap = await getDocs(qLogs);
-      
-      const fetchedLogs: TrackingLog[] = [];
-      logsSnap.forEach(doc => {
-        fetchedLogs.push({ id: doc.id, ...doc.data() } as TrackingLog);
-      });
-      
-      // Sort in memory by date descending
-      fetchedLogs.sort((a, b) => {
-          const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-          const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-          return dateB.getTime() - dateA.getTime();
-      });
-
-      setLogs(fetchedLogs);
-
-    } catch (error: any) {
-      console.error("Error loading student data:", error);
-      toast({ 
-          variant: 'destructive', 
-          title: 'Error de carga', 
-          description: `No se pudieron cargar los datos: ${error.message || 'Error desconocido'}` 
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [open, studentId, toast]);
 
   const generateFollowUpPDF = () => {
     // 1. Setup
