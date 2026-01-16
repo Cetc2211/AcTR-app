@@ -107,6 +107,17 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      
+      {/* DEV: Simulation Access */}
+      <div className="w-full bg-yellow-100 border border-yellow-300 p-2 rounded flex justify-between items-center px-4">
+        <span className="text-yellow-800 text-xs font-bold font-mono">MODO DESARROLLO: PRUEBAS DE INTEGRACIÓN ACTIVAS</span>
+        <Link href="/pigec-simulation">
+            <Button variant="outline" size="sm" className="bg-white hover:bg-yellow-50 text-yellow-800 border-yellow-300 h-8 text-xs gap-2">
+                <AlertTriangle className="h-3 w-3" />
+                Simular Inyección PIGEC-130
+            </Button>
+        </Link>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <Card>

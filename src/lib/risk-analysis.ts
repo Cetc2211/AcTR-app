@@ -62,6 +62,13 @@ export const calculatePIGECFlags = (
         flags.push('RIESGO_CONDUCTUAL');
     }
 
+    // CHECK FOR PIGEC FINDINGS (Pedagogical Observations)
+    const hasPigecFinding = observations.some(obs => obs.includes("Sugerencia:"));
+    if (hasPigecFinding) {
+       // We can reuse Conductual or add a new hidden flag logic in the main analysis
+       // For now, we rely on the main risk analysis function to catch this text
+    }
+
     return flags;
 };
 
@@ -77,6 +84,9 @@ export const analyzeStudentRisk = (
     
     const now = new Date();
 
+    // --- PIGEC-130 EXTERNAL VULNERABILITY CHECK ---
+    const pigecVulnerability = recentObservations.find(obs => obs.includes("Sugerencia:"));
+    
     // -------------------------------------------------------------------------
     // 1. Análisis de Asistencia (Tendencia Lineal)
     // -------------------------------------------------------------------------
@@ -272,7 +282,13 @@ export const analyzeStudentRisk = (
     if (dropoutRisk > 60 || failingRisk > 70) riskLevel = 'high';
     else if (dropoutRisk > 30 || failingRisk > 40) riskLevel = 'medium';
 
+    // PIGEC-130 OVERRIDE
+    if (pigecVulnerability) {
+        riskLevel = 'high';
+    }
+
     const riskFactors = [];
+    if (pigecVulnerability) riskFactors.push("Riesgo detectado por vulnerabilidad externa (PIGEC-130)");
     if (currentAttendance < 85) riskFactors.push(`Inasistencias críticas (${(100-currentAttendance).toFixed(0)}%)`);
     if (activityCompletionRate < 0.6) riskFactors.push(`Baja entrega de actividades (${(activityCompletionRate*100).toFixed(0)}%)`);
     if (attendanceSlope < -0.05) riskFactors.push('Tendencia de asistencia negativa');
@@ -280,7 +296,11 @@ export const analyzeStudentRisk = (
     if (lowParticipation) riskFactors.push('Desconexión en clase (Baja participación)');
 
     let predictionMessage = "Rendimiento dentro de parámetros esperados.";
-    if (riskLevel === 'high') {
+    
+    // PIGEC-130 MESSAGE OVERRIDE
+    if (pigecVulnerability) {
+        predictionMessage = "Riesgo detectado por vulnerabilidad externa. Consultar Bitácora para estrategias de apoyo.";
+    } else if (riskLevel === 'high') {
         if (dropoutRisk > failingRisk) {
             predictionMessage = `ALERTA DE DESERCIÓN (${dropoutRisk.toFixed(0)}%): El patrón de inasistencias sugiere riesgo inminente de abandono.`;
         } else {
