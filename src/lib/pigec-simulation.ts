@@ -1,6 +1,10 @@
 
 import { Student, StudentObservation, PartialId } from '@/lib/placeholder-data';
-import { v4 as uuidv4 } from 'uuid';
+
+// Simple ID generator to avoid 'uuid' dependency issues during build
+function generateId(): string {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
 
 /**
  * PIGEC-130 Integration Simulation
@@ -63,7 +67,7 @@ export const simulatePigecInjection = (
 
         // 2. Create Observation
         const observation: StudentObservation = {
-            id: uuidv4(),
+            id: generateId(),
             studentId: student.id,
             partialId: 'p1', // Assuming active partial
             date: new Date().toISOString(),
