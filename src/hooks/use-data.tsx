@@ -110,6 +110,7 @@ interface DataContextType {
     setActivities: (setter: React.SetStateAction<Activity[]>) => Promise<void>;
     setActivityRecords: (setter: React.SetStateAction<ActivityRecord>) => Promise<void>;
     setRecoveryGrades: (setter: React.SetStateAction<RecoveryGrades>) => Promise<void>;
+    setMeritGrades: (setter: React.SetStateAction<MeritGrades>) => Promise<void>; // New Setter
     setStudentFeedback: (studentId: string, feedback: string) => Promise<void>;
     setGroupAnalysis: (analysis: string) => Promise<void>;
 
@@ -452,6 +453,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const setActivities = createPartialDataSetter('activities');
     const setActivityRecords = createPartialDataSetter('activityRecords');
     const setRecoveryGrades = createPartialDataSetter('recoveryGrades');
+    const setMeritGrades = createPartialDataSetter('meritGrades');
 
     const setStudentFeedback = useCallback(async (studentId: string, feedback: string) => {
         if (!activeGroupId) return;
@@ -661,6 +663,11 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
     // --- CALCULATIONS & DERIVED DATA ---
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
+        const meritInfo = pData.meritGrades?.[studentId];
+        if (meritInfo?.applied) {
+            return { finalGrade: meritInfo.grade ?? 0, criteriaDetails: [{ name: 'Asignación Directa', earned: meritInfo.grade ?? 0, weight: 100 }], isRecovery: false };
+        }
+        
         const recoveryInfo = pData.recoveryGrades?.[studentId];
         if (recoveryInfo?.applied) {
             return { finalGrade: recoveryInfo.grade ?? 0, criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }], isRecovery: true };
@@ -806,7 +813,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance,
             setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
             setSettings, setActiveGroupId, setActivePartialId,
-            setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setStudentFeedback, setGroupAnalysis,
+            setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>

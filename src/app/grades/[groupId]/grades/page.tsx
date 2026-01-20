@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Save, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Save, ShieldCheck, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
@@ -173,6 +173,12 @@ export default function GroupGradesPage() {
             </div>
          </div>
          <div className="flex items-center gap-2">
+            <Button asChild variant="outline" className="border-yellow-400 text-yellow-700 hover:bg-yellow-50">
+                <Link href={`/grades/${groupId}/direct-assignment`}>
+                    <Star className="mr-2 h-4 w-4" />
+                    Asignación Directa
+                </Link>
+            </Button>
             <Button asChild variant="secondary">
                 <Link href={`/grades/${groupId}/recovery`}>
                     <ShieldCheck className="mr-2 h-4 w-4" />

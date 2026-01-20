@@ -100,6 +100,17 @@ export type RecoveryGrades = {
     [studentId: string]: RecoveryGrade;
 };
 
+// New Type for Direct Assignment (Merit)
+export type MeritGrade = {
+    grade: number | null;
+    applied: boolean;
+    reason?: string; // Optional reason for the merit
+};
+
+export type MeritGrades = {
+    [studentId: string]: MeritGrade;
+};
+
 export type AttendanceRecord = {
   [date: string]: {
     [studentId: string]: boolean;
@@ -132,6 +143,7 @@ export type PartialData = {
     activities: Activity[];
     activityRecords: ActivityRecord;
     recoveryGrades: RecoveryGrades;
+    meritGrades?: MeritGrades; // New field for merit grades
     feedbacks: { [studentId: string]: string };
     groupAnalysis: string;
 };

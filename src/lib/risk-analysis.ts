@@ -200,13 +200,20 @@ export const analyzeStudentRisk = (
     if (semesterGradeOverride !== undefined) {
         currentGrade = semesterGradeOverride;
     } else {
-        // VERIFICACIÓN DE RECUPERACIÓN (Solo si no hay override)
-        // Si el estudiante tiene una calificación de recuperación aplicada, usamos esa calificación
-        // para el cálculo de riesgo y visualización, en lugar del promedio reprobatorio.
-        const recoveryData = partialData.recoveryGrades?.[student.id];
-        if (recoveryData && recoveryData.applied && recoveryData.grade !== null) {
-            currentGrade = recoveryData.grade;
-            isRecovery = true;
+        // VERIFICACIÓN DE ASIGNACIÓN DIRECTA (Merit)
+        const meritData = partialData.meritGrades?.[student.id];
+        if (meritData && meritData.applied && meritData.grade !== null) {
+            currentGrade = meritData.grade;
+            // Not marking as recovery, treating as normal passing grade (or failing if they assigned low grade)
+        } else {
+            // VERIFICACIÓN DE RECUPERACIÓN (Solo si no hay asignación directa)
+            // Si el estudiante tiene una calificación de recuperación aplicada, usamos esa calificación
+            // para el cálculo de riesgo y visualización, en lugar del promedio reprobatorio.
+            const recoveryData = partialData.recoveryGrades?.[student.id];
+            if (recoveryData && recoveryData.applied && recoveryData.grade !== null) {
+                currentGrade = recoveryData.grade;
+                isRecovery = true;
+            }
         }
     }
 
