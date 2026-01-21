@@ -1,6 +1,13 @@
 'use client';
 
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Card,
   CardContent,
   CardDescription,
@@ -26,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 
 interface PartialGradeInfo {
@@ -42,7 +50,7 @@ interface SemesterGrade {
 }
 
 export default function SemesterEvaluationPage() {
-    const { activeGroup, calculateDetailedFinalGrade, isLoading: isDataLoading, fetchPartialData, updateGroup } = useData();
+    const { activeGroup, calculateDetailedFinalGrade, isLoading: isDataLoading, fetchPartialData, updateGroup, activePartialId, setActivePartialId } = useData();
     const [semesterGrades, setSemesterGrades] = useState<SemesterGrade[]>([]);
     const [isCalculating, setIsCalculating] = useState(true);
     const [availablePartials, setAvailablePartials] = useState<PartialId[]>([]);
@@ -212,6 +220,34 @@ export default function SemesterEvaluationPage() {
                     </Label>
                 </div>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Herramientas de Evaluación</CardTitle>
+                    <CardDescription>
+                        Selecciona un parcial para realizar ajustes directos (puntos por mérito/ayuda).
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center gap-4">
+                     <Select value={activePartialId} onValueChange={(val) => setActivePartialId(val as PartialId)}>
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Seleccionar Parcial" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="p1">Primer Parcial</SelectItem>
+                            <SelectItem value="p2">Segundo Parcial</SelectItem>
+                            <SelectItem value="p3">Tercer Parcial</SelectItem>
+                        </SelectContent>
+                     </Select>
+                     
+                     <Button asChild variant="default">
+                        <Link href={`/grades/${activeGroup.id}/direct-assignment`}>
+                            Ir a Asignación Directa
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                     </Button>
+                </CardContent>
+            </Card>
 
             <Card>
                 <CardHeader>
