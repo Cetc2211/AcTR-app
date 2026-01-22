@@ -206,7 +206,7 @@ export default function GroupDetailsPage() {
       };
     });
     return riskMap;
-  }, [activeGroup, partialData, allObservations, analyzeStudentRisk]); // Added analyzeStudentRisk
+  }, [activeGroup, partialData, allObservations]); 
 
 
   const riskAnalysis = useMemo(() => {
@@ -289,7 +289,7 @@ export default function GroupDetailsPage() {
               isRecovery: analysis.isRecovery
           };
       });
-  }, [activeGroup, partialData, allStudents, allPartialsDataForActiveGroup, activePartialId, allObservations]);
+  }, [activeGroup, partialData, allPartialsDataForActiveGroup, activePartialId, allObservations]);
 
   const handleRemoveStudents = (studentIds: string[]) => {
     if (!activeGroup) return;

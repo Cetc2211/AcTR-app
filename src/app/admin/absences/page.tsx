@@ -666,7 +666,7 @@ export default function AbsencesPage() {
                               <p className="text-red-700 text-sm mt-1">
                                   El estudiante <span className="font-semibold">{alert.studentName}</span> tiene 
                                   <span className="font-bold"> {alert.count} </span> justificaciones por motivo 
-                                  <span className="font-bold"> "{alert.category}" </span> en los últimos 30 días.
+                                  <span className="font-bold"> &quot;{alert.category}&quot; </span> en los últimos 30 días.
                               </p>
                               <p className="text-red-600 text-xs mt-2 font-semibold">
                                   ⚠ Sugerencia: Evaluar visita domiciliaria.
