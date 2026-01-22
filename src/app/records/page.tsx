@@ -41,6 +41,9 @@ type StudentGradeInfo = {
   absences: number;
   finalGrade: number;
   isRecovery: boolean;
+  p1?: number;
+  p2?: number;
+  p3?: number;
 };
 
 const convertPercentageToScale = (percentage: number): number => {
@@ -113,20 +116,26 @@ const RecordsPage = () => {
                 let totalAttendance = 0;
                 let totalAbsences = 0;
                 let hadRecovery = false;
+                const partialGrades: {[key: string]: number} = {};
 
-                allPartialsData.forEach((pData: (PartialData & { criteria: EvaluationCriteria[] }) | null) => {
+                allPartialsData.forEach((pData: (PartialData & { criteria: EvaluationCriteria[] }) | null, index) => {
+                    const pId = partials[index];
                     if (pData) {
                         const { finalGrade, isRecovery } = calculateDetailedFinalGrade(student.id, pData, activeGroup.criteria);
                         totalGrade += finalGrade;
                         partialsWithGrades++;
                         if(isRecovery) hadRecovery = true;
                         
+                        partialGrades[pId] = finalGrade;
+
                         Object.values(pData.attendance).forEach((dailyRecord: { [studentId: string]: boolean; }) => {
                             if (Object.prototype.hasOwnProperty.call(dailyRecord, student.id)) {
                                 if (dailyRecord[student.id]) totalAttendance++;
                                 else totalAbsences++;
                             }
                         });
+                    } else {
+                        partialGrades[pId] = 0;
                     }
                 });
 
@@ -139,6 +148,9 @@ const RecordsPage = () => {
                     absences: totalAbsences,
                     finalGrade: semesterAverage,
                     isRecovery: hadRecovery,
+                    p1: partialGrades['p1'],
+                    p2: partialGrades['p2'],
+                    p3: partialGrades['p3'],
                 };
             });
              setRecordData(studentsData.sort((a,b) => a.name.localeCompare(b.name)));
@@ -349,10 +361,13 @@ const RecordsPage = () => {
                   <TableRow>
                     <TableHead className="w-[50px]">No.</TableHead>
                     <TableHead>Nombre del Estudiante</TableHead>
-                    <TableHead className="text-center">Asistencias</TableHead>
-                    <TableHead className="text-center">Faltas</TableHead>
-                    <TableHead className="text-center">Calificación Final (%)</TableHead>
-                    <TableHead className="text-center">Promedio</TableHead>
+                    {selectedPeriod !== 'semester' && <TableHead className="text-center">Asistencias</TableHead>}
+                    {selectedPeriod !== 'semester' && <TableHead className="text-center">Faltas</TableHead>}
+                    {selectedPeriod === 'semester' && <TableHead className="text-center">P1</TableHead>}
+                    {selectedPeriod === 'semester' && <TableHead className="text-center">P2</TableHead>}
+                    {selectedPeriod === 'semester' && <TableHead className="text-center">P3</TableHead>}
+                    {selectedPeriod !== 'semester' && <TableHead className="text-center">Calificación Final (%)</TableHead>}
+                    <TableHead className="text-center">{selectedPeriod === 'semester' ? 'Promedio Final' : 'Promedio'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -360,9 +375,14 @@ const RecordsPage = () => {
                     <TableRow key={student.id}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="font-medium">{student.name}</TableCell>
-                      <TableCell className="text-center">{student.attendance}</TableCell>
-                      <TableCell className="text-center">{student.absences}</TableCell>
-                      <TableCell className="text-center font-bold">{student.finalGrade.toFixed(1)} {student.isRecovery && '(R)'}</TableCell>
+                      {selectedPeriod !== 'semester' && <TableCell className="text-center">{student.attendance}</TableCell>}
+                      {selectedPeriod !== 'semester' && <TableCell className="text-center">{student.absences}</TableCell>}
+                      
+                      {selectedPeriod === 'semester' && <TableCell className="text-center font-semibold">{convertPercentageToScale(student.p1 || 0)}</TableCell>}
+                      {selectedPeriod === 'semester' && <TableCell className="text-center font-semibold">{convertPercentageToScale(student.p2 || 0)}</TableCell>}
+                      {selectedPeriod === 'semester' && <TableCell className="text-center font-semibold">{convertPercentageToScale(student.p3 || 0)}</TableCell>}
+
+                      {selectedPeriod !== 'semester' && <TableCell className="text-center font-bold">{student.finalGrade.toFixed(1)} {student.isRecovery && '(R)'}</TableCell>}
                       <TableCell className="text-center font-bold">{convertPercentageToScale(student.finalGrade)}</TableCell>
                     </TableRow>
                   ))}
