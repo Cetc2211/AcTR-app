@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { collection, query, where, getDocs, orderBy, Timestamp, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore'; // Added updateDoc
@@ -55,7 +55,7 @@ type AbsenceRecord = {
 
 export default function AbsencesPage() {
   const [user, loadingAuth] = useAuthState(auth);
-  const { settings } = useData(); // Get Global Settings and User Identity
+  const { settings, justifications, allStudents } = useData(); // Get Global Settings and User Identity
   const router = useRouter();
   const { toast } = useToast();
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
@@ -85,6 +85,40 @@ export default function AbsencesPage() {
   const [newTutorPhone, setNewTutorPhone] = useState('');
   const [newStudentPhone, setNewStudentPhone] = useState(''); // New state
   const [isUpdatingContact, setIsUpdatingContact] = useState(false);
+
+  // --- ANALYTICS & ALERTS ---
+  const riskAlerts = React.useMemo(() => {
+    const studentRisks: {[studentId: string]: { [category: string]: number }} = {};
+    const studentsWithRisk: any[] = []; 
+    
+    // Group only recent justifications (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    justifications.filter(j => new Date(j.date) >= thirtyDaysAgo).forEach(j => {
+       const cat = j.category || 'Otro';
+       if (!studentRisks[j.studentId]) studentRisks[j.studentId] = {};
+       if (!studentRisks[j.studentId][cat]) studentRisks[j.studentId][cat] = 0;
+       
+       studentRisks[j.studentId][cat]++;
+    });
+    
+    Object.keys(studentRisks).forEach(studentId => {
+        Object.keys(studentRisks[studentId]).forEach(cat => {
+            if (studentRisks[studentId][cat] > 3) {
+                 const student = allStudents.find(s => s.id === studentId);
+                 studentsWithRisk.push({ 
+                   studentId, 
+                   studentName: student ? student.name : 'Estudiante Desconocido',
+                   category: cat, 
+                   count: studentRisks[studentId][cat] 
+                });
+            }
+        });
+    });
+    
+    return studentsWithRisk;
+  }, [justifications, allStudents]);
 
   // Tracking / Bitacora State
   const [isTrackingDialogOpen, setIsTrackingDialogOpen] = useState(false);
@@ -146,9 +180,10 @@ export default function AbsencesPage() {
         }
     };
     verifyAccess();
-  }, [user, loadingAuth, router]);
+  }, [user, loadingAuth, router]); // Keep existing dep array for now, verifyAccess is internal to effect
 
-  const fetchAbsences = async (selectedDate: Date) => {
+  // Fetch data when date changes
+  const fetchAbsences = useCallback(async (selectedDate: Date) => {
     if (!hasAccess) return; // Don't fetch if no access
 
     setIsLoading(true);
@@ -173,7 +208,13 @@ export default function AbsencesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [hasAccess]);
+
+  useEffect(() => {
+    if (hasAccess) {
+        fetchAbsences(date);
+    }
+  }, [date, hasAccess, fetchAbsences]);
 
   const deleteRecord = async (recordId: string) => {
       if (!confirm('¿Estás seguro de querer eliminar este reporte de inasistencias?')) return;
@@ -332,6 +373,24 @@ export default function AbsencesPage() {
             }
         });
 
+        // 2b. Process Justifications
+        const periodJustifications = justifications.filter(j => {
+            const jDate = new Date(j.date + 'T12:00:00'); 
+            return jDate >= start && jDate <= end;
+        });
+
+        const totalJustified = periodJustifications.length;
+        const justificationPercentage = totalIncidences > 0 ? (totalJustified / totalIncidences) * 100 : 0;
+        
+        const reasonsCount: {[cat: string]: number} = {};
+        periodJustifications.forEach(j => {
+             const cat = j.category || 'Otro';
+             reasonsCount[cat] = (reasonsCount[cat] || 0) + 1;
+        });
+        const topReason = Object.entries(reasonsCount).sort((a,b) => b[1] - a[1])[0];
+        const topReasonName = topReason ? topReason[0] : 'Sin datos';
+
+
         // 3. Generate Information
         const effectiveness = totalInterventions > 0 ? ((located + agreements) / totalInterventions) * 100 : 0;
 
@@ -365,6 +424,8 @@ export default function AbsencesPage() {
         y += 6;
         docPDF.setFont("helvetica", "normal");
         const summaryText = `Durante el periodo seleccionado, el departamento de servicios escolares detectó un total de ${totalIncidences} inasistencias reportadas en plataforma. ` +
+                            `Se registraron ${totalJustified} justificaciones, representando el ${justificationPercentage.toFixed(1)}% del total. ` +
+                            `La causa principal fue "${topReasonName}". ` +
                             `En respuesta, se ejecutaron ${totalInterventions} acciones de intervención directa, logrando contactar o localizar exitosamente al ${effectiveness.toFixed(0)}% de los casos gestionados. ` +
                             `Se formalizaron ${agreements} acuerdos de compromiso entre la institución y los tutores legales.`;
         const splitSummary = docPDF.splitTextToSize(summaryText, pageWidth - 40);
@@ -433,6 +494,51 @@ export default function AbsencesPage() {
         
         y += chartHeight + 25;
 
+        // 4. Detalle de Justificaciones (Table)
+        if (y > 200) { docPDF.addPage(); y = 40; }
+        
+        docPDF.setFontSize(10);
+        docPDF.setFont("helvetica", "bold");
+        docPDF.setFillColor(0, 0, 0);
+        docPDF.setTextColor(0, 0, 0);
+        docPDF.text("4. Detalle de Justificaciones Recientes:", 20, y);
+        y += 8;
+
+        // Table Header
+        docPDF.setFontSize(8);
+        docPDF.setFillColor(240, 240, 240);
+        docPDF.rect(20, y, pageWidth - 40, 8, 'F');
+        docPDF.text("Fecha", 25, y + 5);
+        docPDF.text("Categoría", 60, y + 5);
+        docPDF.text("Motivo Detallado", 90, y + 5);
+        docPDF.text("Autorizó", 160, y + 5);
+        y += 10;
+        
+        // Table Body
+        docPDF.setFont("helvetica", "normal");
+        periodJustifications.slice(0, 20).forEach((j) => {
+            if (y > 270) { docPDF.addPage(); y = 40; }
+            docPDF.text(format(new Date(j.date + 'T12:00:00'), 'dd/MM/yyyy'), 25, y);
+            docPDF.text(j.category || 'Otro', 60, y);
+            const reasonLines = docPDF.splitTextToSize(j.reason, 65);
+            docPDF.text(reasonLines, 90, y);
+            const admin = j.adminEmail.split('@')[0];
+            docPDF.text(admin, 160, y);
+            y += (Math.max(reasonLines.length, 1) * 4) + 4;
+        });
+        
+        if (periodJustifications.length === 0) {
+            docPDF.setFont("helvetica", "italic");
+            docPDF.text("No se registraron justificaciones en este periodo.", 25, y);
+            y += 10;
+        } else if (periodJustifications.length > 20) {
+             docPDF.setFont("helvetica", "italic");
+             docPDF.text(`... y ${periodJustifications.length - 20} más.`, 25, y);
+             y += 8;
+        }
+        
+        y += 15;
+
         // Signature
         if (y > 230) { docPDF.addPage(); y = 40; }
         else { y = Math.max(y, 230); }
@@ -471,7 +577,7 @@ export default function AbsencesPage() {
     if (hasAccess) {
         fetchAbsences(date);
     }
-  }, [date, hasAccess]);
+  }, [date, hasAccess, fetchAbsences]); // Added fetchAbsences dependence
 
   if (loadingAuth || hasAccess === null) {
       return <div className="flex h-full w-full items-center justify-center p-12"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>;
@@ -547,6 +653,30 @@ export default function AbsencesPage() {
           </Button>
         </div>
       </div>
+
+      {/* Risk Alerts based on patterns */}
+      {riskAlerts.length > 0 && (
+          <div className="space-y-4 mb-2">
+              {riskAlerts.map((alert, idx) => (
+                  <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm">
+                      <div className="flex items-start">
+                          <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3" />
+                          <div>
+                              <p className="text-red-800 font-bold">ALERTA: Patrón repetitivo detectado</p>
+                              <p className="text-red-700 text-sm mt-1">
+                                  El estudiante <span className="font-semibold">{alert.studentName}</span> tiene 
+                                  <span className="font-bold"> {alert.count} </span> justificaciones por motivo 
+                                  <span className="font-bold"> "{alert.category}" </span> en los últimos 30 días.
+                              </p>
+                              <p className="text-red-600 text-xs mt-2 font-semibold">
+                                  ⚠ Sugerencia: Evaluar visita domiciliaria.
+                              </p>
+                          </div>
+                      </div>
+                  </div>
+              ))}
+          </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

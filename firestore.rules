@@ -21,5 +21,23 @@ service cloud.firestore {
     match /tracking_logs/{document=**} {
       allow read, write: if request.auth != null;
     }
+
+    // Allow access to official groups and centralized students
+    match /official_groups/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    match /students/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Allow access to announcements
+    match /announcements/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Allow access to justifications
+    match /justifications/{document=**} {
+      allow read, write: if request.auth != null;
+    }
   }
 }

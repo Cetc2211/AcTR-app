@@ -23,6 +23,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useData } from '@/hooks/use-data';
 import { Group } from '@/lib/placeholder-data';
 import { useToast } from '@/hooks/use-toast';
@@ -36,7 +43,7 @@ const cardColors = [
 
 
 export default function GroupsPage() {
-  const { groups, setActiveGroupId, isLoading, setGroups, settings } = useData();
+  const { groups, setActiveGroupId, isLoading, setGroups, settings, officialGroups, getOfficialGroupStudents } = useData();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newGroupSubject, setNewGroupSubject] = useState('');
@@ -44,6 +51,7 @@ export default function GroupsPage() {
   const [newGroupGroupName, setNewGroupGroupName] = useState('');
   const [newGroupFacilitator, setNewGroupFacilitator] = useState('');
   const [newGroupWhatsapp, setNewGroupWhatsapp] = useState('');
+  const [newGroupOfficialId, setNewGroupOfficialId] = useState<string>('manual');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -51,6 +59,27 @@ export default function GroupsPage() {
         setNewGroupFacilitator(settings.facilitatorName);
     }
   }, [settings.facilitatorName, isDialogOpen]);
+
+  // NEW: Sync Official Group Data
+  useEffect(() => {
+    if (newGroupOfficialId !== 'manual') {
+        const selectedGroup = officialGroups.find(g => g.id === newGroupOfficialId);
+        if (selectedGroup) {
+             // Regex to extract Semester (digits) and Group (letters) from "1A-TSPA" or "3B" or "1-A"
+             const match = selectedGroup.name.match(/^(\d+)[^A-Za-z0-9]*([A-Za-z]+)/);
+             if (match) {
+                 setNewGroupSemester(match[1]);
+                 setNewGroupGroupName(match[2]);
+             }
+        }
+    } else {
+        // If switching back to manual, we can optionally clear or leave as is. 
+        // Leaving as is but editable is usually better UX, but the prompt said "vacíos como hasta ahora".
+        // I will clear them to avoid confusion that these are "official" values.
+        setNewGroupSemester('');
+        setNewGroupGroupName('');
+    }
+  }, [newGroupOfficialId, officialGroups]);
 
   const handleCreateGroup = async () => {
     if (!newGroupSubject.trim()) {
@@ -64,6 +93,25 @@ export default function GroupsPage() {
 
     setIsSubmitting(true);
     
+    // Fetch students if official group selected
+    let initialStudents: any[] = [];
+    if (newGroupOfficialId && newGroupOfficialId !== 'manual') {
+        try {
+            initialStudents = await getOfficialGroupStudents(newGroupOfficialId);
+            toast({
+                title: "Vinculando Grupo",
+                description: `Se han cargado ${initialStudents.length} estudiantes del grupo oficial.`
+            });
+        } catch (e) {
+            console.error("Error loading official students:", e);
+            toast({
+                variant: 'destructive',
+                title: 'Error de Vinculación',
+                description: 'No se pudieron cargar los estudiantes del grupo oficial.'
+            });
+        }
+    }
+
     const id = `G${Date.now()}`;
     const newGroup: Group = {
       id,
@@ -72,8 +120,9 @@ export default function GroupsPage() {
       groupName: newGroupGroupName.trim(),
       facilitator: newGroupFacilitator.trim(),
       whatsappLink: newGroupWhatsapp.trim(),
-      students: [],
+      students: initialStudents,
       criteria: [],
+      officialGroupId: newGroupOfficialId !== 'manual' ? newGroupOfficialId : undefined
     };
     
     try {
@@ -89,6 +138,7 @@ export default function GroupsPage() {
         setNewGroupSemester('');
         setNewGroupGroupName('');
         setNewGroupWhatsapp('');
+        setNewGroupOfficialId('manual');
         setNewGroupFacilitator(settings.facilitatorName || '');
         setIsDialogOpen(false);
     } catch (e) {
@@ -140,6 +190,27 @@ export default function GroupsPage() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
+                <Label>Vincular a Grupo Oficial (Opcional)</Label>
+                <Select value={newGroupOfficialId} onValueChange={setNewGroupOfficialId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar grupo oficial..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manual">-- Carga Manual --</SelectItem>
+                    {officialGroups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {newGroupOfficialId && newGroupOfficialId !== 'manual' && (
+                    <p className="text-xs text-muted-foreground">
+                        Se cargarán automáticamente los estudiantes de este grupo.
+                    </p>
+                )}
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="subject">Nombre de la Asignatura*</Label>
                 <Input
                   id="subject"
@@ -155,6 +226,8 @@ export default function GroupsPage() {
                   value={newGroupSemester}
                   onChange={(e) => setNewGroupSemester(e.target.value)}
                   placeholder="Ej. Tercero"
+                  disabled={newGroupOfficialId !== 'manual'}
+                  className={newGroupOfficialId !== 'manual' ? "bg-muted" : ""}
                 />
               </div>
               <div className="space-y-2">
@@ -164,6 +237,8 @@ export default function GroupsPage() {
                   value={newGroupGroupName}
                   onChange={(e) => setNewGroupGroupName(e.target.value)}
                   placeholder="Ej. A, B, TSPA..."
+                  disabled={newGroupOfficialId !== 'manual'}
+                  className={newGroupOfficialId !== 'manual' ? "bg-muted" : ""}
                 />
               </div>
               <div className="space-y-2">

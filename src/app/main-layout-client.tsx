@@ -23,6 +23,7 @@ import {
   AlertTriangle,
   ClipboardSignature,
   Shield,
+  Megaphone,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -66,6 +67,7 @@ const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/announcements', icon: Megaphone, label: 'Sala de Anuncios' },
   { href: '/groups', icon: BookCopy, label: 'Grupos' },
   { href: '/bitacora', icon: BookText, label: 'Bitácora' },
   { href: '/grades', icon: FilePen, label: 'Calificaciones' },
@@ -95,7 +97,7 @@ export default function MainLayoutClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError } = useData();
+  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount } = useData();
   const [user, isAuthLoading] = useAuthState(auth);
   const [isTrackingManager, setIsTrackingManager] = useState(false);
 
@@ -231,9 +233,14 @@ export default function MainLayoutClient({
                     asChild
                     isActive={pathname.startsWith(item.href)}
                   >
-                    <Link href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
+                    <Link href={item.href} className="relative flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.href === '/announcements' && unreadAnnouncementsCount > 0 && (
+                        <span className="flex h-2 w-2 rounded-full bg-red-600 animate-pulse lg:mr-2" />
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

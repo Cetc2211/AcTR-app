@@ -174,7 +174,7 @@ export default function StatisticsPage() {
             participationDistribution,
             gradeDistribution,
         };
-    }, [activeGroup, calculateDetailedFinalGrade, getStudentRiskLevel, attendance, participations, partialData]);
+    }, [activeGroup, calculateDetailedFinalGrade, attendance, participations, partialData]);
 
     const approvalData = useMemo(() => {
         if (!activeGroupStats) return [];

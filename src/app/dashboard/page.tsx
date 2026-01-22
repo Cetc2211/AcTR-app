@@ -52,7 +52,7 @@ import {
 import { useEffect } from 'react';
 
 export default function DashboardPage() {
-  const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks } = useData();
+  const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks, announcements, unreadAnnouncementsCount } = useData();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
@@ -118,6 +118,43 @@ export default function DashboardPage() {
             </Button>
         </Link>
       </div>
+
+      {/* Announcements Button */}
+      {announcements && announcements.length > 0 && (
+         <div className="w-full">
+            <Link href="/announcements">
+              <Button 
+                variant={unreadAnnouncementsCount > 0 ? "destructive" : "outline"}
+                className={`w-full justify-between h-auto py-4 px-6 relative group border border-l-4 ${unreadAnnouncementsCount > 0 ? 'border-l-red-600 bg-red-50 text-red-900 hover:bg-red-100 hover:text-red-950 dark:bg-red-950/20 dark:text-red-300' : 'border-l-blue-500 hover:bg-slate-50'}`}
+              >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${unreadAnnouncementsCount > 0 ? 'bg-red-200 text-red-700 animate-pulse' : 'bg-slate-100 text-slate-600'}`}>
+                        <Megaphone className="h-5 w-5" />
+                    </div>
+                    <div className="text-left">
+                        <span className="block font-bold text-lg">
+                           {unreadAnnouncementsCount > 0 ? '¡Nuevos Anuncios Disponibles!' : 'Sala de Anuncios'}
+                        </span>
+                        <span className="text-xs opacity-80 font-normal">
+                           {unreadAnnouncementsCount > 0 
+                             ? `${unreadAnnouncementsCount} mensaje${unreadAnnouncementsCount > 1 ? 's' : ''} nuevo${unreadAnnouncementsCount > 1 ? 's' : ''} sin leer. Haz clic para verlos.` 
+                             : 'Consulta el historial de mensajes institucionales.'}
+                        </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                      {unreadAnnouncementsCount > 0 && (
+                          <span className="flex h-3 w-3 mr-4">
+                            <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                          </span>
+                      )}
+                      <ArrowUpRight className="h-5 w-5 opacity-50 group-hover:translate-x-1 transition-transform" />
+                  </div>
+              </Button>
+            </Link>
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <Card>

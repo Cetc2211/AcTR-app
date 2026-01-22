@@ -19,10 +19,11 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft, Calendar as CalendarIcon, Trash2, Save, Send } from 'lucide-react';
+import { ArrowLeft, Calendar as CalendarIcon, Trash2, Save, Send, FileCheck, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/hooks/use-data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import {
@@ -40,7 +41,7 @@ import { db, auth } from '@/lib/firebase';
 
 
 export default function AttendancePage() {
-  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, deleteAttendanceDate } = useData();
+  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, deleteAttendanceDate, justifications } = useData();
   const { attendance } = partialData;
   const { toast } = useToast();
   
@@ -339,14 +340,33 @@ export default function AttendancePage() {
                       />
                       {student.name}
                     </TableCell>
-                    {attendanceDates.map(date => (
-                      <TableCell key={`${student.id}-${date}`} className="text-center">
-                        <Checkbox 
-                           checked={attendance[date]?.[student.id] || false}
-                           onCheckedChange={(checked) => handleAttendanceChange(student.id, date, !!checked)}
-                        />
-                      </TableCell>
-                    ))}
+                    {attendanceDates.map(date => {
+                        const justification = justifications?.find(j => j.studentId === student.id && j.date === date);
+                        return (
+                          <TableCell key={`${student.id}-${date}`} className={cn("text-center", justification && "bg-blue-50 dark:bg-blue-900/30")}>
+                            {justification ? (
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="flex justify-center items-center cursor-help">
+                                                <FileCheck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <p className="font-bold text-sm">Justificado</p>
+                                            <p className="text-xs max-w-[200px]">{justification.reason}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            ) : (
+                                <Checkbox 
+                                checked={attendance[date]?.[student.id] || false}
+                                onCheckedChange={(checked) => handleAttendanceChange(student.id, date, !!checked)}
+                                />
+                            )}
+                          </TableCell>
+                        );
+                    })}
                   </TableRow>
                 ))}
                  {studentsToDisplay.length === 0 && (

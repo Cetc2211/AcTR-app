@@ -131,6 +131,7 @@ export default function GroupDetailsPage() {
   // Efecto para solicitar permiso de cámara cuando se activa
   useEffect(() => {
     let stream: MediaStream | null = null;
+    const currentVideoElement = videoRef.current;
     
     const getCameraPermission = async () => {
       if(isPhotoDialogOpen && isCameraMode) {
@@ -175,9 +176,9 @@ export default function GroupDetailsPage() {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
-      const videoElement = videoRef.current;
-      if (videoElement) {
-          videoElement.srcObject = null;
+      
+      if (currentVideoElement) {
+          currentVideoElement.srcObject = null;
       }
     };
   }, [isPhotoDialogOpen, isCameraMode, toast, currentDeviceId]);
@@ -205,7 +206,8 @@ export default function GroupDetailsPage() {
       };
     });
     return riskMap;
-  }, [activeGroup, partialData, allObservations]);
+  }, [activeGroup, partialData, allObservations, analyzeStudentRisk]); // Added analyzeStudentRisk
+
 
   const riskAnalysis = useMemo(() => {
       if (!activeGroup) return [];

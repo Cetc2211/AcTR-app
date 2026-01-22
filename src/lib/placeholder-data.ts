@@ -16,6 +16,28 @@ export interface StudentReferral {
   log_summary: string[];     // Últimas observaciones de bitácora
 }
 
+export type Announcement = {
+    id: string;
+    type: 'info' | 'justification' | 'urgent'; // Justification type implies it's a general justification notice or info about justifications
+    title: string;
+    message: string;
+    targetGroup?: string; // If null, global. If set, only for teachers of this Official Group
+    createdAt: string;
+    isActive: boolean;
+};
+
+export type JustificationCategory = 'Salud' | 'Familiar' | 'Personal' | 'Institucional' | 'Otro';
+
+export type StudentJustification = {
+    id: string;
+    studentId: string;
+    date: string; // YYYY-MM-DD
+    category?: JustificationCategory;
+    reason: string;
+    adminEmail: string;
+    timestamp: string;
+};
+
 export type Student = {
   id: string;
   name: string;
@@ -46,8 +68,15 @@ export type EvaluationCriteria = {
   isAutomated?: boolean;
 };
 
+export type OfficialGroup = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
+
 export type Group = {
   id: string;
+  officialGroupId?: string; // Link to OfficialGroup
   subject: string;
   students: Student[];
   criteria: EvaluationCriteria[];

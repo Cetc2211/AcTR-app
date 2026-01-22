@@ -14,17 +14,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { Loader2, Shield, PlusCircle, Trash2, Eye } from 'lucide-react';
+import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, ArrowRight } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/lib/firebase'; // Added db
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { doc, getDoc, setDoc } from 'firebase/firestore'; // Added Firestore imports
+import { useData } from '@/hooks/use-data';
 
 const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 
 export default function AdminPage() {
     const [user, isLoading] = useAuthState(auth);
     const { toast } = useToast();
+    const router = useRouter();
+    const { officialGroups } = useData();
 
     const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([]);
     const [trackingManagers, setTrackingManagers] = useState<string[]>([]); // New State
@@ -266,6 +269,34 @@ export default function AdminPage() {
                         Los cambios se guardan automáticamente al agregar o eliminar correos.
                     </p>
                 </CardFooter>
+            </Card>
+
+            {/* Gestión de Grupos Oficiales (Fase 1) */}
+            <Card className="border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-800">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        Gestión de Grupos Oficiales
+                    </CardTitle>
+                    <CardDescription>
+                        Administración centralizada de listas de estudiantes y asignación de grupos.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="space-y-1">
+                         <p className="text-sm font-medium">Grupos activos en el sistema</p>
+                         <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                            {officialGroups ? officialGroups.length : 0}
+                         </p>
+                    </div>
+                    <Button 
+                        onClick={() => router.push('/admin/official-groups')}
+                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Aperturar / Gestionar Grupos
+                    </Button>
+                </CardContent>
             </Card>
         </div>
     );

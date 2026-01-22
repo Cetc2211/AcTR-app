@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { get, set, del, clear } from 'idb-keyval';
 import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
-import type { Student, Group, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup } from '@/lib/placeholder-data';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import type { Student, Group, OfficialGroup, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup, Announcement, StudentJustification, JustificationCategory } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
@@ -92,6 +92,7 @@ interface DataContextType {
     atRiskStudents: StudentWithRisk[];
     groupRisks: { [groupId: string]: GroupRiskStats };
     overallAverageAttendance: number;
+    officialGroups: OfficialGroup[];
 
     // State Setters
     setGroups: (setter: React.SetStateAction<Group[]>) => Promise<void>;
@@ -130,6 +131,21 @@ interface DataContextType {
     addSpecialNote: (note: Omit<SpecialNote, 'id'>) => Promise<void>;
     updateSpecialNote: (noteId: string, note: Partial<Omit<SpecialNote, 'id'>>) => Promise<void>;
     deleteSpecialNote: (noteId: string) => Promise<void>;
+    
+    // Official Groups
+    createOfficialGroup: (name: string) => Promise<string>;
+    addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
+    getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
+
+    // Justifications & Announcements
+    announcements: Announcement[];
+    justifications: StudentJustification[];
+    unreadAnnouncementsCount: number;
+    markAnnouncementsAsRead: () => void;
+    createAnnouncement: (title: string, message: string, targetGroup?: string) => Promise<void>;
+    createJustification: (studentId: string, date: string, reason: string, category: JustificationCategory) => Promise<void>;
+    deleteAnnouncement: (id: string) => Promise<void>;
+    deleteJustification: (id: string) => Promise<void>;
 
 
     // Calculation & Fetching
@@ -155,6 +171,23 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [specialNotes, setSpecialNotesState] = useState<SpecialNote[]>([]);
     const [allPartialsData, setAllPartialsDataState] = useState<AllPartialsData>({});
     const [settings, setSettingsState] = useState(defaultSettings);
+    const [officialGroups, setOfficialGroups] = useState<OfficialGroup[]>([]);
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [justifications, setJustifications] = useState<StudentJustification[]>([]);
+    const [unreadAnnouncementsCount, setUnreadAnnouncementsCount] = useState(0); 
+
+    useEffect(() => {
+        const lastRead = localStorage.getItem('lastReadAnnouncementTime');
+        const lastReadTime = lastRead ? new Date(lastRead).getTime() : 0;
+        
+        const unread = announcements.filter(a => new Date(a.createdAt).getTime() > lastReadTime).length;
+        setUnreadAnnouncementsCount(unread);
+    }, [announcements]);
+
+    const markAnnouncementsAsRead = useCallback(() => {
+        localStorage.setItem('lastReadAnnouncementTime', new Date().toISOString());
+        setUnreadAnnouncementsCount(0);
+    }, []);
     const [activeGroupId, setActiveGroupIdState] = useState<string | null>(null);
     const [activePartialId, setActivePartialIdState] = useState<PartialId>('p1');
 
@@ -283,6 +316,38 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         hydrateData();
     }, [user, authLoading]);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, 'official_groups'), (snapshot) => {
+            const fetchedGroups: OfficialGroup[] = [];
+            snapshot.forEach((doc) => {
+                fetchedGroups.push({ id: doc.id, ...doc.data() } as OfficialGroup);
+            });
+            setOfficialGroups(fetchedGroups);
+        }, (error) => {
+            console.error("Error fetching official groups:", error);
+        });
+
+        const unsubscribeAnn = onSnapshot(query(collection(db, 'announcements'), where('isActive', '==', true)), (snapshot) => {
+            const fetched: Announcement[] = [];
+            snapshot.forEach((doc) => fetched.push({ id: doc.id, ...doc.data() } as Announcement));
+            // Sort in memory to avoid index requirement
+            fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            setAnnouncements(fetched);
+        }, (e) => console.error("Error announcements", e));
+
+        const unsubscribeJust = onSnapshot(query(collection(db, 'justifications'), orderBy('date', 'desc')), (snapshot) => {
+            const fetched: StudentJustification[] = [];
+            snapshot.forEach((doc) => fetched.push({ id: doc.id, ...doc.data() } as StudentJustification));
+            setJustifications(fetched);
+        }, (e) => console.error("Error justifications", e));
+
+        return () => {
+            unsubscribe();
+            unsubscribeAnn();
+            unsubscribeJust();
+        };
+    }, []);
 
     const createSetterWithStorage = <T,>(
         setter: React.Dispatch<React.SetStateAction<T>>,
@@ -660,6 +725,74 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         await setSpecialNotes(prev => prev.filter(n => n.id !== noteId));
     }, [setSpecialNotes]);
 
+    // Official Groups Actions
+    const createOfficialGroup = useCallback(async (name: string) => {
+        const docRef = await addDoc(collection(db, 'official_groups'), {
+            name,
+            createdAt: new Date().toISOString(),
+        });
+        return docRef.id;
+    }, []);
+
+    const addStudentsToOfficialGroup = useCallback(async (officialGroupId: string, students: Student[]) => {
+        const batchPromises = students.map(async (student) => {
+             // Add to central 'students' collection, linked to official_group_id
+             await addDoc(collection(db, 'students'), {
+                 ...student,
+                 official_group_id: officialGroupId
+             });
+        });
+        await Promise.all(batchPromises);
+    }, []);
+
+    const getOfficialGroupStudents = useCallback(async (officialGroupId: string) => {
+        const q = query(collection(db, 'students'), where('official_group_id', '==', officialGroupId));
+        const snapshot = await getDocs(q);
+        const students: Student[] = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            students.push({ ...data, id: doc.id } as Student);
+        });
+        return students;
+    }, []);
+
+    const createAnnouncement = useCallback(async (title: string, message: string, targetGroup?: string) => {
+        const newAnn: any = {
+            title,
+            message,
+            type: 'info',
+            isActive: true,
+            createdAt: new Date().toISOString()
+        };
+        
+        if (targetGroup) {
+            newAnn.targetGroup = targetGroup;
+        }
+
+        await addDoc(collection(db, 'announcements'), newAnn);
+    }, []);
+
+    const deleteAnnouncement = useCallback(async (id: string) => {
+         await updateDoc(doc(db, 'announcements', id), { isActive: false });
+    }, []);
+
+    const createJustification = useCallback(async (studentId: string, date: string, reason: string, category: JustificationCategory = 'Otro') => {
+        if (!user) return;
+        const newJust: Omit<StudentJustification, 'id'> = {
+            studentId,
+            date,
+            reason,
+            category,
+            adminEmail: user.email || 'unknown',
+            timestamp: new Date().toISOString()
+        };
+        await addDoc(collection(db, 'justifications'), newJust);
+    }, [user]);
+
+    const deleteJustification = useCallback(async (id: string) => {
+        // Implementation for deletion if needed
+    }, []);
+
 
     // --- CALCULATIONS & DERIVED DATA ---
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
@@ -808,13 +941,95 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
     }, [allPartialsData, groups]);
     
+    // --- REAL-TIME SYNC ENGINE ---
+    useEffect(() => {
+        if (!activeGroupId || !activeGroup?.officialGroupId) return;
+
+        // 1. Subscribe to Student List Changes (New Students added by Admin)
+        const q = query(
+            collection(db, 'students'), 
+            where('official_group_id', '==', activeGroup.officialGroupId)
+        );
+
+        const unsubscribeStudents = onSnapshot(q, (snapshot) => {
+            const freshStudents: Student[] = [];
+            snapshot.forEach((doc) => {
+                freshStudents.push({ ...doc.data(), id: doc.id } as Student);
+            });
+            
+            // Compare to avoid infinite loops if data is identical
+            // We use a simple length + ID check for efficiency
+            const currentIds = new Set(activeGroup.students.map(s => s.id));
+            const hasChanges = freshStudents.length !== activeGroup.students.length || 
+                               freshStudents.some(s => !currentIds.has(s.id)) ||
+                               freshStudents.some(s => { // Deep check for name updates
+                                   const curr = activeGroup.students.find(c => c.id === s.id);
+                                   return curr && (curr.name !== s.name || curr.phone !== s.phone);
+                               });
+
+            if (hasChanges) {
+                console.log("Real-time Sync: Updating students from official source...");
+                toast({ title: "Lista Actualizada", description: "Se han detectado cambios en el grupo oficial." });
+                
+                setGroups(prev => prev.map(g => {
+                    if (g.id === activeGroupId) {
+                        return { ...g, students: freshStudents };
+                    }
+                    return g;
+                }));
+            }
+        }, (error) => {
+            console.error("Error watching official students:", error);
+        });
+
+        // 2. Subscribe to Official Group Metadata Changes (Name/Semester changes)
+        const docRef = doc(db, 'official_groups', activeGroup.officialGroupId);
+        const unsubscribeMeta = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const officialName = data.name;
+                
+                // Parse Metadata
+                const match = officialName.match(/^(\d+)[^A-Za-z0-9]*([A-Za-z]+)/);
+                let newSemester = '';
+                let newGroupName = '';
+                if (match) {
+                    newSemester = match[1];
+                    newGroupName = match[2];
+                }
+
+                // Check if update needed
+                if (newSemester && (activeGroup.semester !== newSemester || activeGroup.groupName !== newGroupName)) {
+                     console.log("Real-time Sync: Updating Group Metadata...");
+                     setGroups(prev => prev.map(g => {
+                        if (g.id === activeGroupId) {
+                            return { 
+                                ...g, 
+                                semester: newSemester, 
+                                groupName: newGroupName 
+                            };
+                        }
+                        return g;
+                    }));
+                }
+            }
+        });
+
+        return () => {
+            unsubscribeStudents();
+            unsubscribeMeta();
+        };
+    }, [activeGroupId, activeGroup?.officialGroupId]); // Re-subscribe if group changes
+
     return (
         <DataContext.Provider value={{
-            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance,
+            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance, officialGroups,
+            announcements, justifications, unreadAnnouncementsCount, markAnnouncementsAsRead,
             setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
+            createOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>
             {children}
