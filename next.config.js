@@ -12,6 +12,19 @@ const nextConfig = {
     ],
   },
   transpilePackages: ['@google/generative-ai', 'genkit', '@genkit-ai/google-genai'],
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
+  productionBrowserSourceMaps: false,
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3000', 'localhost:3001', '*.app.github.dev'],

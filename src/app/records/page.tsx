@@ -44,6 +44,15 @@ type StudentGradeInfo = {
 };
 
 const convertPercentageToScale = (percentage: number): number => {
+    // Si el porcentaje es menor a 60 (reprobatoria) pero mayor a 0, se asigna 5
+    if (percentage > 0 && percentage < 60) {
+        return 5;
+    }
+    // Si es 0, se mantiene en 0
+    if (percentage === 0) {
+        return 0;
+    }
+
   // Redondear al número inferior si termina en 5 o menos
   // Redondear al número superior si termina en 6 o más
   const lastDigit = percentage % 10;
