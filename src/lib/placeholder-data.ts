@@ -23,6 +23,7 @@ export type Announcement = {
     message: string;
     targetGroup?: string; // If null, global. If set, only for teachers of this Official Group
     createdAt: string;
+    expiresAt?: string;
     isActive: boolean;
 };
 

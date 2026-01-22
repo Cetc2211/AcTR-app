@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { get, set, del, clear } from 'idb-keyval';
 import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy } from 'firebase/firestore';
 import type { Student, Group, OfficialGroup, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup, Announcement, StudentJustification, JustificationCategory } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
@@ -134,6 +134,7 @@ interface DataContextType {
     
     // Official Groups
     createOfficialGroup: (name: string) => Promise<string>;
+    deleteOfficialGroup: (id: string) => Promise<void>;
     addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
     getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
 
@@ -142,7 +143,7 @@ interface DataContextType {
     justifications: StudentJustification[];
     unreadAnnouncementsCount: number;
     markAnnouncementsAsRead: () => void;
-    createAnnouncement: (title: string, message: string, targetGroup?: string) => Promise<void>;
+    createAnnouncement: (title: string, message: string, targetGroup?: string, expiresAt?: string) => Promise<void>;
     createJustification: (studentId: string, date: string, reason: string, category: JustificationCategory) => Promise<void>;
     deleteAnnouncement: (id: string) => Promise<void>;
     deleteJustification: (id: string) => Promise<void>;
@@ -330,7 +331,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const unsubscribeAnn = onSnapshot(query(collection(db, 'announcements'), where('isActive', '==', true)), (snapshot) => {
             const fetched: Announcement[] = [];
-            snapshot.forEach((doc) => fetched.push({ id: doc.id, ...doc.data() } as Announcement));
+            const now = Date.now();
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.expiresAt && new Date(data.expiresAt).getTime() < now) {
+                    return;
+                }
+                fetched.push({ id: doc.id, ...(data as any) } as Announcement);
+            });
             // Sort in memory to avoid index requirement
             fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
             setAnnouncements(fetched);
@@ -734,6 +742,10 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         return docRef.id;
     }, []);
 
+    const deleteOfficialGroup = useCallback(async (id: string) => {
+        await deleteDoc(doc(db, 'official_groups', id));
+    }, []);
+
     const addStudentsToOfficialGroup = useCallback(async (officialGroupId: string, students: Student[]) => {
         const batchPromises = students.map(async (student) => {
              // Add to central 'students' collection, linked to official_group_id
@@ -756,7 +768,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         return students;
     }, []);
 
-    const createAnnouncement = useCallback(async (title: string, message: string, targetGroup?: string) => {
+    const createAnnouncement = useCallback(async (title: string, message: string, targetGroup?: string, expiresAt?: string) => {
         const newAnn: any = {
             title,
             message,
@@ -767,6 +779,10 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         
         if (targetGroup) {
             newAnn.targetGroup = targetGroup;
+        }
+
+        if (expiresAt) {
+            newAnn.expiresAt = expiresAt;
         }
 
         await addDoc(collection(db, 'announcements'), newAnn);
@@ -1029,7 +1045,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
-            createOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
+            createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>
             {children}
