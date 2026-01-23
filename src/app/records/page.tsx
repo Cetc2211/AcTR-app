@@ -47,26 +47,28 @@ type StudentGradeInfo = {
 };
 
 const convertPercentageToScale = (percentage: number): number => {
-    // Si el porcentaje es menor a 60 (reprobatoria) pero mayor a 0, se asigna 5
-    if (percentage > 0 && percentage < 60) {
+    // FASE 1: Redondeo del porcentaje a entero (Umbral .6)
+    const decimalPorcentaje = percentage % 1;
+    const porcentajeEntero = decimalPorcentaje >= 0.6 
+        ? Math.ceil(percentage) 
+        : Math.floor(percentage);
+
+    // FASE 2: Conversión a escala 1-10 (Número real)
+    const promedioReal = porcentajeEntero / 10;
+
+    // FASE 3: Redondeo final para el Acta (Número natural, Umbral .6)
+    const decimalPromedio = promedioReal % 1;
+    let promedioFinal = decimalPromedio >= 0.6 
+        ? Math.ceil(promedioReal) 
+        : Math.floor(promedioReal);
+
+    // EXCEPCIÓN: Regla del 5 (No hay 6 de "regalo")
+    // Si el proceso de redondeo da menos de 6, pero es mayor a 0, se queda en 5.
+    if (promedioFinal < 6 && promedioFinal > 0) {
         return 5;
     }
-    // Si es 0, se mantiene en 0
-    if (percentage === 0) {
-        return 0;
-    }
 
-  // Redondear al número inferior si termina en 5 o menos
-  // Redondear al número superior si termina en 6 o más
-  const lastDigit = percentage % 10;
-  
-  if (lastDigit <= 5) {
-    // Redondear hacia abajo
-    return Math.floor(percentage / 10);
-  } else {
-    // Redondear hacia arriba
-    return Math.ceil(percentage / 10);
-  }
+    return promedioFinal;
 };
 
 const RecordsPage = () => {
