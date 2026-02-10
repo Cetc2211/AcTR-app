@@ -48,7 +48,7 @@ export default function OfficialGroupsPage() {
     // Announcement State
     const [annTitle, setAnnTitle] = useState('');
     const [annContent, setAnnContent] = useState('');
-    const [annDuration, setAnnDuration] = useState('24');
+    const [annDuration, setAnnDuration] = useState('48');
     const [isSubmittingAnn, setIsSubmittingAnn] = useState(false);
 
     // Justification State
@@ -178,17 +178,14 @@ export default function OfficialGroupsPage() {
         if (!annTitle.trim() || !annContent.trim()) return;
         setIsSubmittingAnn(true);
         try {
-            let expiresAt = undefined;
-            if (annDuration !== 'permanent') {
-                const now = new Date();
-                const hours = parseInt(annDuration);
-                expiresAt = addHours(now, hours).toISOString();
-            }
+            const now = new Date();
+            const hours = parseInt(annDuration);
+            const expiresAt = addHours(now, hours).toISOString();
             
             await createAnnouncement(annTitle, annContent, undefined, expiresAt);
             setAnnTitle('');
             setAnnContent('');
-            setAnnDuration('24');
+            setAnnDuration('48');
             toast({ title: 'Anuncio Publicado', description: 'Visible para todos los usuarios.' });
         } catch (e) { 
             toast({ variant: 'destructive', title: 'Error', description: 'No se pudo crear el anuncio.' });
@@ -391,7 +388,6 @@ export default function OfficialGroupsPage() {
                                             <SelectItem value="48">48 Horas</SelectItem>
                                             <SelectItem value="72">72 Horas (3 días)</SelectItem>
                                             <SelectItem value="168">1 Semana</SelectItem>
-                                            <SelectItem value="permanent">Indefinido (No borrar automáticamente)</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

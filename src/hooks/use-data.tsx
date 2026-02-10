@@ -334,10 +334,28 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const now = Date.now();
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                if (data.expiresAt && new Date(data.expiresAt).getTime() < now) {
-                    return;
+                
+                // Expiration Logic:
+                // 1. If explicit 'expiresAt' exists, check it.
+                // 2. If NO 'expiresAt', assume 48 hours default lifetime from 'createdAt'.
+                let shouldShow = true;
+
+                if (data.expiresAt) {
+                    if (new Date(data.expiresAt).getTime() < now) {
+                        shouldShow = false;
+                    }
+                } else if (data.createdAt) {
+                    // Fallback for legacy/permanent announcements: Enforce 48h limit
+                    const createdTime = new Date(data.createdAt).getTime();
+                    const fortyEightHours = 48 * 60 * 60 * 1000;
+                    if (now - createdTime > fortyEightHours) {
+                        shouldShow = false;
+                    }
                 }
-                fetched.push({ id: doc.id, ...(data as any) } as Announcement);
+
+                if (shouldShow) {
+                    fetched.push({ id: doc.id, ...(data as any) } as Announcement);
+                }
             });
             // Sort in memory to avoid index requirement
             fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
