@@ -33,6 +33,7 @@ export default function OfficialGroupsPage() {
 
     // Group Management State
     const [newGroupName, setNewGroupName] = useState('');
+    const [newGroupTutor, setNewGroupTutor] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const [activeGroup, setActiveGroup] = useState<OfficialGroup | null>(null);
     const [isAddStudentDialogOpen, setIsAddStudentDialogOpen] = useState(false);
@@ -90,13 +91,15 @@ export default function OfficialGroupsPage() {
         if (!newGroupName.trim()) return;
         setIsCreating(true);
         try {
-            const newId = await createOfficialGroup(newGroupName);
+            const newId = await createOfficialGroup(newGroupName, newGroupTutor);
             setNewGroupName('');
+            setNewGroupTutor('');
             toast({ title: 'Grupo oficial creado', description: 'Ahora puedes agregar estudiantes.' });
             
             const newGroupObj: OfficialGroup = { 
                 id: newId, 
-                name: newGroupName, 
+                name: newGroupName,
+                tutorEmail: newGroupTutor, 
                 createdAt: new Date().toISOString() 
             };
             handleOpenAddStudents(newGroupObj);
@@ -240,6 +243,15 @@ export default function OfficialGroupsPage() {
                                         placeholder="Ingresa el nombre..."
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="groupTutor">Correo del Tutor (Docente)</Label>
+                                    <Input 
+                                        id="groupTutor" 
+                                        value={newGroupTutor} 
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewGroupTutor(e.target.value)} 
+                                        placeholder="correo@docente.com"
+                                    />
+                                </div>
                                 <Button onClick={handleCreateGroup} disabled={!newGroupName.trim() || isCreating} className="w-full">
                                     {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                     Crear Grupo
@@ -254,7 +266,12 @@ export default function OfficialGroupsPage() {
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-xs text-muted-foreground my-2">ID: {group.id}</div> 
+                                    <div className="text-xs text-muted-foreground my-2">ID: {group.id}</div>
+                                    {group.tutorEmail && (
+                                        <div className="text-sm font-medium text-blue-600 mb-2">
+                                            Tutor: {group.tutorEmail}
+                                        </div>
+                                    )}
                                     <div className="flex gap-2 mt-4">
                                         <Button variant="outline" className="flex-1" onClick={() => handleOpenAddStudents(group)}>
                                             Agregar Estudiantes

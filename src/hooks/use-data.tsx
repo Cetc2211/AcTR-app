@@ -133,7 +133,7 @@ interface DataContextType {
     deleteSpecialNote: (noteId: string) => Promise<void>;
     
     // Official Groups
-    createOfficialGroup: (name: string) => Promise<string>;
+    createOfficialGroup: (name: string, tutorEmail?: string) => Promise<string>;
     deleteOfficialGroup: (id: string) => Promise<void>;
     addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
     getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
@@ -754,9 +754,10 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     }, [setSpecialNotes]);
 
     // Official Groups Actions
-    const createOfficialGroup = useCallback(async (name: string) => {
+    const createOfficialGroup = useCallback(async (name: string, tutorEmail?: string) => {
         const docRef = await addDoc(collection(db, 'official_groups'), {
             name,
+            tutorEmail: tutorEmail || '',
             createdAt: new Date().toISOString(),
         });
         return docRef.id;
