@@ -314,8 +314,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 // Ensure loading is off if error occurs early
                 setIsLoading(false); 
             }
-
-            }
         };
         hydrateData();
     }, [user, authLoading]);
