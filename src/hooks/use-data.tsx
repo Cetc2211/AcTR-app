@@ -200,125 +200,129 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const hydrateData = async () => {
             setIsLoading(true);
             try {
-                // Modified Helper: Logic to sync Local vs Cloud based on timestamps
-                const getData = async <T,>(key: string): Promise<T | undefined> => {
-                    let localPayload: { value: T; lastUpdated?: number } | T | undefined;
-                    let localData: T | undefined;
-                    let localTimestamp = 0;
-
-                    // 1. Read Local IDB
-                    try {
-                        localPayload = await get(key); // Assuming generic type might be complex
-                        
-                        // Handle legacy IDB data (which wasn't wrapped)
-                        if (localPayload && typeof localPayload === 'object' && 'value' in localPayload && 'lastUpdated' in localPayload) {
-                             // Correct new format
-                             localData = (localPayload as any).value;
-                             localTimestamp = (localPayload as any).lastUpdated;
-                        } else {
-                             // Legacy format
-                             localData = localPayload as T;
-                             localTimestamp = 0; // Treat as old
-                        }
-                    } catch (e) {
-                        console.warn(`Error reading local data for ${key}`, e);
-                    }
-
-                    // 2. Read Cloud Firestore if User Logged In
-                    if (user) {
-                        try {
-                            const docRef = doc(db, 'users', user.uid, 'userData', key);
-                            // Enable offline persistence allows this to return from cache instantly if needed
-                            const docSnap = await getDoc(docRef);
-                            
-                            if (docSnap.exists()) {
-                                const cloudPayload = docSnap.data();
-                                const cloudData = cloudPayload.value as T;
-                                const cloudTimestamp = cloudPayload.lastUpdated || 0; // 0 if legacy cloud data
-
-                                console.log(`Hydration Conflict Check for ${key}: LocalTS=${localTimestamp}, CloudTS=${cloudTimestamp}`);
-
-                                if (cloudTimestamp > localTimestamp) {
-                                    // Cloud is newer -> Update Local
-                                    console.log(`Cloud wins for ${key}. Updating local.`);
-                                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
-                                    return cloudData;
-                                } else if (localTimestamp > cloudTimestamp) {
-                                    // Local is newer -> Push to Cloud
-                                    console.log(`Local wins for ${key}. Pushing to cloud.`);
-                                    // Fire and forget update
-                                    setDoc(docRef, { value: localData, lastUpdated: localTimestamp }, { merge: true });
-                                    return localData;
-                                } else {
-                                    // Timestamps equal or both zero (legacy). Prefer Cloud if Local is 0 (assuming fresh install or wiped IDB)
-                                    // If both have data, usually prefer Cloud as source of truth for legacy sync.
-                                    // If Local has data (TS=0) and Cloud has data (TS=0), we return Cloud to be safe against stale local cache?
-                                    // OR, if local exists and cloud exists, cloud usually wins in normal hydration.
-                                    return cloudData;
-                                }
-                            } else if (localData !== undefined) {
-                                // Cloud is empty, but we have local data. Sync it up!
-                                console.log(`Cloud empty for ${key}. Syncing local to cloud.`);
-                                await setDoc(docRef, { value: localData, lastUpdated: Date.now() });
+                // Step 1: helper to load local
+                const readLocal = async <T,>(key: string): Promise<{ value: T, lastUpdated: number } | undefined> => {
+                     try {
+                            const localPayload = await get(key);
+                            if (localPayload && typeof localPayload === 'object' && 'value' in localPayload && 'lastUpdated' in localPayload) {
+                                 return localPayload as { value: T, lastUpdated: number };
+                            } else if (localPayload) {
+                                 // Legacy format support
+                                 return { value: localPayload as T, lastUpdated: 0 };
                             }
-                        } catch (err) {
-                            console.error(`Error loading/syncing ${key} from Firestore:`, err);
-                            // If cloud fails (offline without cache?), fallback to local
-                        }
-                    }
-                    // Fallback to local if not found in cloud or not logged in, or cloud error
-                    return localData;
+                     } catch (e) {
+                         console.warn(`Error reading local data for ${key}`, e);
+                     }
+                     return undefined;
                 };
 
+                // Step 2: Load Local Data in Parallel (FAST PHASE)
                 const [
-                    loadedGroups,
-                    loadedStudents,
-                    loadedObservations,
-                    loadedSpecialNotes,
-                    loadedPartialsData,
-                    loadedSettings,
-                    loadedActiveGroupId
+                    localGroups,
+                    localStudents,
+                    localObservations,
+                    localSpecialNotes,
+                    localPartials,
+                    localSettingsRaw,
+                    localActiveGroupId
                 ] = await Promise.all([
-                    getData<Group[]>('app_groups'),
-                    getData<Student[]>('app_students'),
-                    getData<{ [studentId: string]: StudentObservation[] }>('app_observations'),
-                    getData<SpecialNote[]>('app_specialNotes'),
-                    getData<AllPartialsData>('app_partialsData'),
-                    getData<AppSettings>('app_settings'),
-                    get<string>('activeGroupId_v1') // Keep active group local preference
+                    readLocal<Group[]>('app_groups'),
+                    readLocal<Student[]>('app_students'),
+                    readLocal<{ [studentId: string]: StudentObservation[] }>('app_observations'),
+                    readLocal<SpecialNote[]>('app_specialNotes'),
+                    readLocal<AllPartialsData>('app_partialsData'),
+                    readLocal<AppSettings>('app_settings'),
+                    get<string>('activeGroupId_v1')
                 ]);
 
-                setGroupsState(loadedGroups || []);
-                setAllStudentsState(loadedStudents || []);
-                setAllObservationsState(loadedObservations || {});
-                setSpecialNotesState(loadedSpecialNotes || []);
-                setAllPartialsDataState(loadedPartialsData || {});
-                const resolvedSettings = normalizeSettingsValue(loadedSettings || defaultSettings);
-                setSettingsState(resolvedSettings);
-                if (loadedSettings && resolvedSettings.aiModel !== loadedSettings.aiModel) {
-                    // We don't await this set to avoid blocking hydration
-                    set('app_settings', resolvedSettings);
-                }
+                // Apply Local Data Optimistically
+                if (localGroups) setGroupsState(localGroups.value);
+                if (localStudents) setAllStudentsState(localStudents.value);
+                if (localObservations) setAllObservationsState(localObservations.value);
+                if (localSpecialNotes) setSpecialNotesState(localSpecialNotes.value);
+                if (localPartials) setAllPartialsDataState(localPartials.value);
                 
-                if (loadedActiveGroupId && (loadedGroups || []).some(g => g.id === loadedActiveGroupId)) {
-                    setActiveGroupIdState(loadedActiveGroupId);
-                } else if ((loadedGroups || []).length > 0) {
-                    setActiveGroupIdState(loadedGroups![0].id);
+                const resolvedSettings = normalizeSettingsValue(localSettingsRaw?.value || defaultSettings);
+                setSettingsState(resolvedSettings);
+
+                const currentGroups = localGroups?.value || [];
+                if (localActiveGroupId && currentGroups.some(g => g.id === localActiveGroupId)) {
+                    setActiveGroupIdState(localActiveGroupId);
+                } else if (currentGroups.length > 0) {
+                    setActiveGroupIdState(currentGroups[0].id);
                 } else {
                     setActiveGroupIdState(null);
                 }
-                
+
+                // CRITICAL OPTIMIZATION: Release UI before Cloud Sync
+                setIsLoading(false);
+
+                // Step 3: Background Cloud Sync (SLOW PHASE)
+                if (user) {
+                     const syncKey = async <T,>(key: string, localWrapper: { value: T, lastUpdated: number } | undefined, setter: (val: T) => void) => {
+                         try {
+                            const docRef = doc(db, 'users', user.uid, 'userData', key);
+                            const docSnap = await getDoc(docRef);
+                            
+                            const localData = localWrapper?.value;
+                            const localTimestamp = localWrapper?.lastUpdated || 0;
+
+                            if (docSnap.exists()) {
+                                const cloudPayload = docSnap.data();
+                                const cloudData = cloudPayload.value as T;
+                                const cloudTimestamp = cloudPayload.lastUpdated || 0;
+
+                                if (cloudTimestamp > localTimestamp) {
+                                    // Cloud is newer -> Update Local & State
+                                    console.log(`Cloud update for ${key}`);
+                                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
+                                    setter(cloudData);
+                                } else if (localTimestamp > cloudTimestamp) {
+                                    // Local is newer -> Push to Cloud
+                                    console.log(`Pushing local ${key} to cloud`);
+                                    await setDoc(docRef, { value: localData, lastUpdated: localTimestamp }, { merge: true });
+                                }
+                            } else if (localData) {
+                                // Cloud empty -> Push local
+                                await setDoc(docRef, { value: localData, lastUpdated: Date.now() });
+                            }
+                         } catch(err) {
+                             console.error(`Background sync error for ${key}:`, err);
+                         }
+                    };
+
+                    // Run cloud syncs in parallel background
+                    await Promise.all([
+                        syncKey('app_groups', localGroups, setGroupsState),
+                        syncKey('app_students', localStudents, setAllStudentsState),
+                        syncKey('app_observations', localObservations, setAllObservationsState),
+                        syncKey('app_specialNotes', localSpecialNotes, setSpecialNotesState),
+                        syncKey('app_partialsData', localPartials, setAllPartialsDataState),
+                        syncKey('app_settings', localSettingsRaw, async (val) => {
+                             const norm = normalizeSettingsValue(val);
+                             setSettingsState(norm);
+                             if (norm.aiModel !== val.aiModel) {
+                                 await set('app_settings', norm);
+                             }
+                        })
+                    ]);
+                }
+
             } catch (e) {
                 console.error("Data hydration error:", e);
                 setError(e instanceof Error ? e : new Error('An unknown error occurred during data hydration'));
-            } finally {
-                setIsLoading(false);
+                // Ensure loading is off if error occurs early
+                setIsLoading(false); 
+            }
+
             }
         };
         hydrateData();
     }, [user, authLoading]);
 
     useEffect(() => {
+        if (!user) return;
+
         const unsubscribe = onSnapshot(collection(db, 'official_groups'), (snapshot) => {
             const fetchedGroups: OfficialGroup[] = [];
             snapshot.forEach((doc) => {
@@ -373,7 +377,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             unsubscribeAnn();
             unsubscribeJust();
         };
-    }, []);
+    }, [user]);
 
     const createSetterWithStorage = <T,>(
         setter: React.Dispatch<React.SetStateAction<T>>,
