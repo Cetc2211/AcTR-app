@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Loader2, Users, Bell, FileCheck, Calendar as CalendarIcon, Search, Trash2 } from 'lucide-react';
+import { Loader2, Users, Bell, FileCheck, Calendar as CalendarIcon, Search, Trash2, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,6 +21,7 @@ export default function OfficialGroupsPage() {
         officialGroups, 
         createOfficialGroup, 
         deleteOfficialGroup,
+        updateOfficialGroup,
         addStudentsToOfficialGroup, 
         getOfficialGroupStudents,
         createAnnouncement,
@@ -35,6 +36,12 @@ export default function OfficialGroupsPage() {
     const [newGroupName, setNewGroupName] = useState('');
     const [newGroupTutor, setNewGroupTutor] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    
+    // Edit Group State
+    const [isEditingGroup, setIsEditingGroup] = useState(false);
+    const [editingGroup, setEditingGroup] = useState<OfficialGroup | null>(null);
+    const [editTutorEmail, setEditTutorEmail] = useState('');
+
     const [activeGroup, setActiveGroup] = useState<OfficialGroup | null>(null);
     const [isAddStudentDialogOpen, setIsAddStudentDialogOpen] = useState(false);
     
@@ -167,6 +174,24 @@ export default function OfficialGroupsPage() {
         }
     };
 
+    const handleEditGroup = (group: OfficialGroup) => {
+        setEditingGroup(group);
+        setEditTutorEmail(group.tutorEmail || '');
+        setIsEditingGroup(true);
+    };
+
+    const handleSaveGroupEdit = async () => {
+        if (!editingGroup) return;
+        try {
+            await updateOfficialGroup(editingGroup.id, { tutorEmail: editTutorEmail });
+            toast({ title: 'Grupo actualizado', description: 'Se ha asignado el nuevo tutor.' });
+            setIsEditingGroup(false);
+            setEditingGroup(null);
+        } catch (e) {
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo actualizar el grupo.' });
+        }
+    };
+
     const handleDeleteAnnouncement = async (id: string) => {
         if (!confirm('¿Eliminar este anuncio?')) return;
         try {
@@ -275,6 +300,9 @@ export default function OfficialGroupsPage() {
                                     <div className="flex gap-2 mt-4">
                                         <Button variant="outline" className="flex-1" onClick={() => handleOpenAddStudents(group)}>
                                             Agregar Estudiantes
+                                        </Button>
+                                        <Button variant="ghost" size="icon" onClick={() => handleEditGroup(group)}>
+                                            <Edit className="h-4 w-4" />
                                         </Button>
                                         <Button variant="destructive" size="icon" onClick={() => handleDeleteGroup(group.id, group.name)}>
                                             <Trash2 className="h-4 w-4" />
@@ -479,6 +507,29 @@ export default function OfficialGroupsPage() {
                              {isSubmittingStudents && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                              Guardar
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isEditingGroup} onOpenChange={setIsEditingGroup}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Editar Grupo {editingGroup?.name}</DialogTitle>
+                        <DialogDescription>Actualiza el tutor asignado a este grupo.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label>Correo del Tutor</Label>
+                            <Input 
+                                value={editTutorEmail} 
+                                onChange={(e) => setEditTutorEmail(e.target.value)} 
+                                placeholder="correo@docente.com"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsEditingGroup(false)}>Cancelar</Button>
+                        <Button onClick={handleSaveGroupEdit}>Guardar Cambios</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

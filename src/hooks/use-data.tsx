@@ -135,6 +135,7 @@ interface DataContextType {
     // Official Groups
     createOfficialGroup: (name: string, tutorEmail?: string) => Promise<string>;
     deleteOfficialGroup: (id: string) => Promise<void>;
+    updateOfficialGroup: (id: string, data: Partial<OfficialGroup>) => Promise<void>;
     addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
     getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
 
@@ -767,6 +768,10 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         await deleteDoc(doc(db, 'official_groups', id));
     }, []);
 
+    const updateOfficialGroup = useCallback(async (id: string, data: Partial<OfficialGroup>) => {
+        await updateDoc(doc(db, 'official_groups', id), data);
+    }, []);
+
     const addStudentsToOfficialGroup = useCallback(async (officialGroupId: string, students: Student[]) => {
         const batchPromises = students.map(async (student) => {
              // Add to central 'students' collection, linked to official_group_id
@@ -1066,7 +1071,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
-            createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
+            createOfficialGroup, deleteOfficialGroup, updateOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>
             {children}
