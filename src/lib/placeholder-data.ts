@@ -73,6 +73,7 @@ export type OfficialGroup = {
   id: string;
   name: string;
   createdAt: string;
+  tutorEmail?: string; // Correo del docente asignado como Tutor
 };
 
 export type Group = {

@@ -24,6 +24,7 @@ import {
   ClipboardSignature,
   Shield,
   Megaphone,
+  GraduationCap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -68,6 +69,7 @@ const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/announcements', icon: Megaphone, label: 'Sala de Anuncios' },
+  { href: '/tutor', icon: GraduationCap, label: 'Tutoría' },
   { href: '/groups', icon: BookCopy, label: 'Grupos' },
   { href: '/bitacora', icon: BookText, label: 'Bitácora' },
   { href: '/grades', icon: FilePen, label: 'Calificaciones' },
@@ -97,9 +99,10 @@ export default function MainLayoutClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount } = useData();
+  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount, officialGroups } = useData();
   const [user, isAuthLoading] = useAuthState(auth);
   const [isTrackingManager, setIsTrackingManager] = useState(false);
+  const [isTutor, setIsTutor] = useState(false);
 
   useEffect(() => {
     const checkRole = async () => {
@@ -108,7 +111,16 @@ export default function MainLayoutClient({
         // Admin siempre tiene acceso
         if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
              setIsTrackingManager(true);
+             setIsTutor(true); // Admin también ve tutoría
              return;
+        }
+
+        // Verificar si es Tutor
+        if (officialGroups && officialGroups.length > 0) {
+            const isAssignedTutor = officialGroups.some(og => og.tutorEmail?.toLowerCase() === user.email?.toLowerCase());
+            setIsTutor(isAssignedTutor);
+        } else {
+             setIsTutor(false);
         }
 
         try {
@@ -139,6 +151,9 @@ export default function MainLayoutClient({
   const filteredNavItems = navItems.filter(item => {
     if (item.label === 'Seguimiento') {
         return isTrackingManager;
+    }
+    if (item.label === 'Tutoría') {
+        return isTutor;
     }
     return true;
   });
