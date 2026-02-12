@@ -146,7 +146,7 @@ export default function MainLayoutClient({
     if (!isAuthLoading) {
         checkRole();
     }
-  }, [user, isAuthLoading]);
+  }, [user, isAuthLoading, officialGroups]);
 
   const filteredNavItems = navItems.filter(item => {
     if (item.label === 'Seguimiento') {
