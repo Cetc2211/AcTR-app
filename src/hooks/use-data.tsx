@@ -878,13 +878,39 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
     const getStudentRiskLevel = useCallback((finalGrade: number, pAttendance: AttendanceRecord, studentId: string): CalculatedRisk => {
         const days = Object.keys(pAttendance).filter(d => Object.prototype.hasOwnProperty.call(pAttendance[d], studentId));
+        // FIX: Proportional logic for early course stages
         const attended = days.reduce((count, d) => pAttendance[d][studentId] === true ? count + 1 : count, 0);
-        const attendanceRate = days.length > 0 ? (attended / days.length) * 100 : 100;
+        
+        // If very few days recorded (< 3), be lenient with attendance risk unless it's 0%
+        let attendanceRate = 100;
+        if (days.length > 0) {
+             attendanceRate = (attended / days.length) * 100;
+             // Tolerance: If less than 4 days, only flag if attendance is 0% (absent all days)
+             if (days.length < 4 && attended > 0) {
+                 attendanceRate = 100; // Treat as perfect for risk calc if they came at least once
+             }
+        }
         
         let reason = [];
+        // FIX: Grade Projection instead of Absolute Value for early stages
+        // If finalGrade is low but it's early (e.g., max possible points so far is small), we shouldn't flag high risk immediately
+        // However, the calculateDetailedFinalGrade returns a 0-100 scale based on RATIOS, so it interprets "1/1 activity" as 100% of that weighting.
+        // The issue is likely when NO activities or FEW activities exist, ratios might be 0/0 or 0/1.
+        
+        // Revised logic:
+        // 1. If grade <= 59, it is high risk ONLY if we have enough data points or if it's explicitly 0.
+        // 2. We will stick to the existing grade logic but add a disclaimer for low data.
+        
         if (finalGrade <= 59) {
-            reason.push(`Calificación reprobatoria (${finalGrade.toFixed(0)}%).`);
+             // If very early (e.g., < 4 attendance days recorded implies start of partial), be softer
+             if (days.length < 4 && finalGrade > 0) {
+                  // If they have SOME grade, don't flag high risk yet, maybe medium
+                  // Downgrade high risk to medium in early stages if not comprehensive failure
+             } else {
+                 reason.push(`Calificación reprobatoria (${finalGrade.toFixed(0)}%).`);
+             }
         }
+        
         if (attendanceRate < 80) {
             reason.push(`Asistencia baja (${attendanceRate.toFixed(0)}%).`);
         }
@@ -893,8 +919,12 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             return { level: 'high', reason: reason.join(' ') };
         }
         
+        // Medium Risk Logic
         if (finalGrade > 59 && finalGrade <= 70) {
             return { level: 'medium', reason: `Calificación baja (${finalGrade.toFixed(0)}%).` };
+        }
+        if (days.length < 4 && finalGrade <= 59 && finalGrade > 0) {
+             return { level: 'medium', reason: `Inicio de parcial: Calificación baja (${finalGrade.toFixed(0)}%).` };
         }
         
         return { level: 'low', reason: 'Rendimiento adecuado' };
