@@ -149,8 +149,9 @@ export default function MainLayoutClient({
   }, [user, isAuthLoading, officialGroups]);
 
   const filteredNavItems = navItems.filter(item => {
+    // Seguimiento visible para todos (docentes ven sus reportes, encargados ven todo)
     if (item.label === 'Seguimiento') {
-        return isTrackingManager;
+        return true; 
     }
     if (item.label === 'Tutoría') {
         return isTutor;

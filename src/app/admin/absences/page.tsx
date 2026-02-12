@@ -59,6 +59,7 @@ export default function AbsencesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [isManager, setIsManager] = useState(false);
 
   const [date, setDate] = useState<Date>(new Date());
   const [records, setRecords] = useState<AbsenceRecord[]>([]);
@@ -149,22 +150,26 @@ export default function AbsencesPage() {
 
         if (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
             setHasAccess(true);
+            setIsManager(true);
             return;
         }
 
         try {
+            // Default access for all authenticated users (will be filtered later)
+            setHasAccess(true);
+
             const docRef = doc(db, 'app_config', 'roles');
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const managers = data.tracking_managers || [];
                 if (managers.some((email: string) => email.toLowerCase() === user.email?.toLowerCase())) {
-                    setHasAccess(true);
+                    setIsManager(true);
                 } else {
-                    setHasAccess(false);
+                    setIsManager(false);
                 }
             } else {
-                setHasAccess(false);
+                setIsManager(false);
             }
 
             // Load settings if access is granted (or just load them anyway, access check handles visibility)
@@ -184,17 +189,26 @@ export default function AbsencesPage() {
 
   // Fetch data when date changes
   const fetchAbsences = useCallback(async (selectedDate: Date) => {
-    if (!hasAccess) return; // Don't fetch if no access
+    if (!hasAccess || !user) return; // Don't fetch if no access
 
     setIsLoading(true);
     try {
       const formattedDate = format(selectedDate, 'dd/MM/yyyy');
       console.log("Fetching absences for:", formattedDate);
       
-      const q = query(
-        collection(db, 'absences'),
-        where('date', '==', formattedDate)
-      );
+      let q;
+      if (isManager) {
+        q = query(
+            collection(db, 'absences'),
+            where('date', '==', formattedDate)
+        );
+      } else {
+        q = query(
+            collection(db, 'absences'),
+            where('date', '==', formattedDate),
+            where('teacherId', '==', user.uid)
+        );
+      }
 
       const querySnapshot = await getDocs(q);
       const fetchedRecords: AbsenceRecord[] = [];
@@ -208,7 +222,7 @@ export default function AbsencesPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [hasAccess]);
+  }, [hasAccess, isManager, user]);
 
   useEffect(() => {
     if (hasAccess) {
@@ -644,18 +658,22 @@ export default function AbsencesPage() {
             Actualizar
           </Button>
 
-          <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700" onClick={() => setIsReportOpen(true)}>
-             <FileBarChart className="mr-2 h-4 w-4" /> Reporte de Gestión
-          </Button>
+          {isManager && (
+            <>
+              <Button variant="default" className="bg-indigo-600 hover:bg-indigo-700" onClick={() => setIsReportOpen(true)}>
+                 <FileBarChart className="mr-2 h-4 w-4" /> Reporte de Gestión
+              </Button>
 
-          <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} title="Ajustes de Seguimiento">
-             <Settings className="h-4 w-4" />
-          </Button>
+              <Button variant="outline" size="icon" onClick={() => setIsSettingsOpen(true)} title="Ajustes de Seguimiento">
+                 <Settings className="h-4 w-4" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
       {/* Risk Alerts based on patterns */}
-      {riskAlerts.length > 0 && (
+      {isManager && riskAlerts.length > 0 && (
           <div className="space-y-4 mb-2">
               {riskAlerts.map((alert, idx) => (
                   <div key={idx} className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm">
