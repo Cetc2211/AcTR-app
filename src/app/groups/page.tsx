@@ -330,6 +330,7 @@ export default function GroupsPage() {
       </CardFooter>
     </Card>
   );
+  };
 
   if (isLoading) {
     return (
