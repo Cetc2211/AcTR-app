@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'academic-tracker-cache-v1';
+const CACHE_NAME = 'academic-tracker-cache-v2';
 const urlsToCache = [
   '/',
   '/dashboard',
