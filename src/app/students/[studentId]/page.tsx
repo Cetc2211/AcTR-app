@@ -38,6 +38,7 @@ export default function StudentProfilePage() {
     settings,
     allStudents,
     groups,
+    activeStudentsInGroups,
     calculateDetailedFinalGrade,
     allObservations,
     isLoading: isDataLoading,
@@ -59,7 +60,9 @@ export default function StudentProfilePage() {
   const [currentFeedback, setCurrentFeedback] = useState('');
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
 
-  const student = useMemo(() => allStudents.find((s) => s.id === studentId), [allStudents, studentId]);
+  const student = useMemo(() => {
+    return allStudents.find((s) => s.id === studentId) || activeStudentsInGroups.find((s) => s.id === studentId);
+  }, [allStudents, activeStudentsInGroups, studentId]);
   const studentGroups = useMemo(() => groups.filter((g) => g.students.some((s) => s.id === studentId)), [groups, studentId]);
 
   const ircAnalysis = useMemo(() => {
