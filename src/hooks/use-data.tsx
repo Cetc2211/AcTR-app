@@ -155,6 +155,7 @@ interface DataContextType {
     getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
     fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
     triggerPedagogicalCheck: (studentId: string) => void;
+    syncPublicData: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -481,7 +482,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 set('app_partialsData', finalState); // Persist change
                 
                 // SYNC ACADEMIC STATUS PUBLICLY (Background)
-                if ((field === 'grades' || field === 'activityRecords') && user && activeGroupId) {
+                if ((field === 'grades' || field === 'activityRecords' || field === 'activities') && user && activeGroupId) {
                     const group = groups.find(g => g.id === activeGroupId);
                     if (group) {
                          // Batch approach or individual writes. We use individual for simplicity in reducer
@@ -887,6 +888,56 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     }, []);
 
 
+    const syncPublicData = useCallback(async () => {
+        if (!user) return;
+        
+        // 1. Sync Observations
+        for (const [studentId, obsList] of Object.entries(allObservations)) {
+            for (const obs of obsList) {
+                const docRef = doc(db, 'observations', obs.id);
+                await setDoc(docRef, { 
+                    ...obs,
+                    teacherId: user.uid, 
+                    teacherEmail: user.email,
+                    timestamp: new Date().toISOString()
+                }, { merge: true });
+            }
+        }
+        
+        // 2. Sync Academic Compliance
+        for (const group of groups) {
+             const groupPartials = allPartialsData[group.id] || {};
+             // Use active partial or iterate all? Academic risk usually based on 'current' active one or accumulation.
+             // We will sync for the Current Active Partial ID globally set or iterate if we had that context.
+             // For simplicity, we use activePartialId from state.
+             
+             const pData = groupPartials[activePartialId];
+             if (!pData) continue;
+             
+             const activities = pData.activities || [];
+             const totalActivities = activities.length;
+             
+             group.students.forEach(student => {
+                 const records = pData.activityRecords?.[student.id] || {};
+                 const submitted = Object.values(records).filter(Boolean).length;
+                 const completionRate = totalActivities > 0 ? (submitted / totalActivities) * 100 : 100;
+                 // TODO: Calculate grades from pData.grades as well if needed.
+                 
+                 const statsRef = doc(db, 'academic_compliance', `${student.id}_${group.id}`);
+                 setDoc(statsRef, {
+                     studentId: student.id,
+                     groupId: group.id,
+                     groupName: group.groupName || group.subject,
+                     subject: group.subject,
+                     completionRate: completionRate,
+                     failingRisk: completionRate < 60,
+                     lastUpdated: new Date().toISOString(),
+                     teacherEmail: user.email
+                 }, { merge: true }).catch(e => console.error(e));
+             });
+        }
+    }, [user, allObservations, groups, allPartialsData, activePartialId]);
+    
     // --- CALCULATIONS & DERIVED DATA ---
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
         const meritInfo = pData.meritGrades?.[studentId];
@@ -1123,7 +1174,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
-            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
+            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck, syncPublicData,
         }}>
             {children}
         </DataContext.Provider>

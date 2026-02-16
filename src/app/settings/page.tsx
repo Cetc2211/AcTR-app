@@ -48,7 +48,7 @@ type ExportData = {
 };
 
 export default function SettingsPage() {
-    const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote } = useData();
+    const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote, syncPublicData } = useData();
     const [localSettings, setLocalSettings] = useState(settings);
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
@@ -62,6 +62,8 @@ export default function SettingsPage() {
     const [importFile, setImportFile] = useState<File | null>(null);
     const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
     const [isTestingKey, setIsTestingKey] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    
     const getModelLabel = useMemo(() => {
         return (value: string) => MODEL_OPTIONS.find(opt => opt.value === value)?.label || describeModel(value);
     }, []);
@@ -236,6 +238,26 @@ export default function SettingsPage() {
         }
     };
     
+    const handleSyncData = async () => {
+        setIsSyncing(true);
+        try {
+            await syncPublicData();
+            toast({
+                title: 'Datos Sincronizados',
+                description: 'La información del tutor se ha actualizado en la nube.',
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: 'Error de Sincronización',
+                description: 'No se pudieron actualizar los datos públicos.',
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex h-full w-full items-center justify-center">
@@ -548,6 +570,21 @@ export default function SettingsPage() {
                     Asegúrate de que el archivo de importación haya sido generado por esta aplicación.
                 </p>
             </CardFooter>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Sincronización de Datos Públicos</CardTitle>
+                <CardDescription>
+                    Sincroniza manualmente la información visible para los tutores (calificaciones y reportes). Úsalo si los datos no aparecen en la vista de tutores.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button onClick={handleSyncData} disabled={isSyncing}>
+                    {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                    Sincronizar Todo
+                </Button>
+            </CardContent>
         </Card>
 
         <Card>
