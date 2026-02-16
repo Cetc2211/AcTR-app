@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { get, set, del, clear } from 'idb-keyval';
 import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy, arrayUnion } from 'firebase/firestore';
 import type { Student, Group, OfficialGroup, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup, Announcement, StudentJustification, JustificationCategory } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
@@ -133,9 +133,8 @@ interface DataContextType {
     deleteSpecialNote: (noteId: string) => Promise<void>;
     
     // Official Groups
-    createOfficialGroup: (name: string, tutorEmail?: string) => Promise<string>;
+    createOfficialGroup: (name: string) => Promise<string>;
     deleteOfficialGroup: (id: string) => Promise<void>;
-    updateOfficialGroup: (id: string, data: Partial<OfficialGroup>) => Promise<void>;
     addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
     getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
 
@@ -315,13 +314,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 // Ensure loading is off if error occurs early
                 setIsLoading(false); 
             }
+
+            }
         };
         hydrateData();
     }, [user, authLoading]);
 
     useEffect(() => {
-        if (!user) return;
-
         const unsubscribe = onSnapshot(collection(db, 'official_groups'), (snapshot) => {
             const fetchedGroups: OfficialGroup[] = [];
             snapshot.forEach((doc) => {
@@ -376,7 +375,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             unsubscribeAnn();
             unsubscribeJust();
         };
-    }, [user]);
+    }, []);
 
     const createSetterWithStorage = <T,>(
         setter: React.Dispatch<React.SetStateAction<T>>,
@@ -475,16 +474,47 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setAllPartialsData(prev => {
                 const groupData = prev[activeGroupId] || {};
                 const pData = groupData[activePartialId] || defaultPartialData;
-                const newValue = typeof setter === 'function' ? setter(pData[field]) : setter;
+                const oldValue = pData[field];
+                const newValue = typeof setter === 'function' ? (setter as any)(oldValue) : setter;
                 const updatedPData = { ...pData, [field]: newValue };
                 const updatedGroupData = { ...groupData, [activePartialId]: updatedPData };
                 
                 const finalState = { ...prev, [activeGroupId]: updatedGroupData };
                 set('app_partialsData', finalState); // Persist change
+                
+                // SYNC ACADEMIC STATUS PUBLICLY (Background)
+                if ((field === 'grades' || field === 'activityRecords') && user && activeGroupId) {
+                    const group = groups.find(g => g.id === activeGroupId);
+                    if (group) {
+                         // Batch approach or individual writes. We use individual for simplicity in reducer
+                         // We calculate simplified stats to avoid heavy logic inside reducer
+                         const activities = updatedPData.activities || [];
+                         const totalActivities = activities.length;
+                         
+                         group.students.forEach(student => {
+                             const records = updatedPData.activityRecords?.[student.id] || {};
+                             const submitted = Object.values(records).filter(Boolean).length;
+                             const completionRate = totalActivities > 0 ? (submitted / totalActivities) * 100 : 100;
+                             
+                             const statsRef = doc(db, 'academic_compliance', `${student.id}_${activeGroupId}`);
+                             setDoc(statsRef, {
+                                 studentId: student.id,
+                                 groupId: activeGroupId,
+                                 groupName: group.groupName || group.subject,
+                                 subject: group.subject,
+                                 completionRate: completionRate,
+                                 failingRisk: completionRate < 60,
+                                 lastUpdated: new Date().toISOString(),
+                                 teacherEmail: user.email
+                             }, { merge: true }).catch(e => console.error("Error syncing academic stats:", e));
+                         });
+                    }
+                }
+                
                 return finalState;
             });
         };
-    }, [activeGroupId, activePartialId, setAllPartialsData]);
+    }, [activeGroupId, activePartialId, setAllPartialsData, groups, user]);
     
     const setGrades = createPartialDataSetter('grades');
     
@@ -646,7 +676,19 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     const addStudentObservation = useCallback(async (obs: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => {
         const newObs = { ...obs, id: `OBS-${Date.now()}`, date: new Date().toISOString(), followUpUpdates: [], isClosed: false };
         await setAllObservations(prev => ({ ...prev, [obs.studentId]: [...(prev[obs.studentId] || []), newObs] }));
-    }, [setAllObservations]);
+
+        // SYNC TO PUBLIC COLLECTION FOR TUTORS
+        // This allows tutors to see observations created by any teacher
+        if (user) {
+             const docRef = doc(db, 'observations', newObs.id);
+             setDoc(docRef, { 
+                 ...newObs, 
+                 teacherId: user.uid, 
+                 teacherEmail: user.email,
+                 timestamp: new Date().toISOString()
+             }, { merge: true }).catch(e => console.error("Error syncing observation public:", e));
+        }
+    }, [setAllObservations, user]);
 
     // Expose injection Trigger
     const triggerPedagogicalCheck = useCallback((studentId: string) => {
@@ -654,15 +696,31 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     }, [addStudentObservation]);
 
     const updateStudentObservation = useCallback(async (studentId: string, obsId: string, updateText: string, isClosing: boolean) => {
+        const updateData = { date: new Date().toISOString(), update: updateText };
+        
         await setAllObservations(prev => ({
             ...prev,
             [studentId]: (prev[studentId] || []).map(obs => obs.id === obsId ? {
                 ...obs,
-                followUpUpdates: [...obs.followUpUpdates, { date: new Date().toISOString(), update: updateText }],
+                followUpUpdates: [...obs.followUpUpdates, updateData],
                 isClosed: isClosing
             } : obs)
         }));
-    }, [setAllObservations]);
+
+        // SYNC UPDATE TO PUBLIC COLLECTION
+        if (user) {
+             const docRef = doc(db, 'observations', obsId);
+             // We use arrayUnion for updates to avoid reading first, but structure is nested objects in local state
+             // Firestore arrayUnion works on pure arrays. 
+             // Better to just update the specific field if possible, or overwrite the array.
+             // Here we just merge the changes.
+             updateDoc(docRef, {
+                 followUpUpdates: arrayUnion(updateData),
+                 isClosed: isClosing,
+                 lastUpdated: new Date().toISOString()
+             }).catch(e => console.error("Error syncing observation update public:", e));
+        }
+    }, [setAllObservations, user]);
 
     const takeAttendanceForDate = useCallback(async (groupId: string, date: string) => {
         const group = groups.find(g => g.id === groupId);
@@ -755,10 +813,9 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     }, [setSpecialNotes]);
 
     // Official Groups Actions
-    const createOfficialGroup = useCallback(async (name: string, tutorEmail?: string) => {
+    const createOfficialGroup = useCallback(async (name: string) => {
         const docRef = await addDoc(collection(db, 'official_groups'), {
             name,
-            tutorEmail: tutorEmail || '',
             createdAt: new Date().toISOString(),
         });
         return docRef.id;
@@ -766,10 +823,6 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
     const deleteOfficialGroup = useCallback(async (id: string) => {
         await deleteDoc(doc(db, 'official_groups', id));
-    }, []);
-
-    const updateOfficialGroup = useCallback(async (id: string, data: Partial<OfficialGroup>) => {
-        await updateDoc(doc(db, 'official_groups', id), data);
     }, []);
 
     const addStudentsToOfficialGroup = useCallback(async (officialGroupId: string, students: Student[]) => {
@@ -878,39 +931,13 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
     const getStudentRiskLevel = useCallback((finalGrade: number, pAttendance: AttendanceRecord, studentId: string): CalculatedRisk => {
         const days = Object.keys(pAttendance).filter(d => Object.prototype.hasOwnProperty.call(pAttendance[d], studentId));
-        // FIX: Proportional logic for early course stages
         const attended = days.reduce((count, d) => pAttendance[d][studentId] === true ? count + 1 : count, 0);
-        
-        // If very few days recorded (< 3), be lenient with attendance risk unless it's 0%
-        let attendanceRate = 100;
-        if (days.length > 0) {
-             attendanceRate = (attended / days.length) * 100;
-             // Tolerance: If less than 4 days, only flag if attendance is 0% (absent all days)
-             if (days.length < 4 && attended > 0) {
-                 attendanceRate = 100; // Treat as perfect for risk calc if they came at least once
-             }
-        }
+        const attendanceRate = days.length > 0 ? (attended / days.length) * 100 : 100;
         
         let reason = [];
-        // FIX: Grade Projection instead of Absolute Value for early stages
-        // If finalGrade is low but it's early (e.g., max possible points so far is small), we shouldn't flag high risk immediately
-        // However, the calculateDetailedFinalGrade returns a 0-100 scale based on RATIOS, so it interprets "1/1 activity" as 100% of that weighting.
-        // The issue is likely when NO activities or FEW activities exist, ratios might be 0/0 or 0/1.
-        
-        // Revised logic:
-        // 1. If grade <= 59, it is high risk ONLY if we have enough data points or if it's explicitly 0.
-        // 2. We will stick to the existing grade logic but add a disclaimer for low data.
-        
         if (finalGrade <= 59) {
-             // If very early (e.g., < 4 attendance days recorded implies start of partial), be softer
-             if (days.length < 4 && finalGrade > 0) {
-                  // If they have SOME grade, don't flag high risk yet, maybe medium
-                  // Downgrade high risk to medium in early stages if not comprehensive failure
-             } else {
-                 reason.push(`Calificación reprobatoria (${finalGrade.toFixed(0)}%).`);
-             }
+            reason.push(`Calificación reprobatoria (${finalGrade.toFixed(0)}%).`);
         }
-        
         if (attendanceRate < 80) {
             reason.push(`Asistencia baja (${attendanceRate.toFixed(0)}%).`);
         }
@@ -919,12 +946,8 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             return { level: 'high', reason: reason.join(' ') };
         }
         
-        // Medium Risk Logic
         if (finalGrade > 59 && finalGrade <= 70) {
             return { level: 'medium', reason: `Calificación baja (${finalGrade.toFixed(0)}%).` };
-        }
-        if (days.length < 4 && finalGrade <= 59 && finalGrade > 0) {
-             return { level: 'medium', reason: `Inicio de parcial: Calificación baja (${finalGrade.toFixed(0)}%).` };
         }
         
         return { level: 'low', reason: 'Rendimiento adecuado' };
@@ -1101,7 +1124,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
-            createOfficialGroup, deleteOfficialGroup, updateOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
+            createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck,
         }}>
             {children}

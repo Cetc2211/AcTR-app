@@ -88,6 +88,8 @@ export type Group = {
   whatsappLink?: string;
   isSemesterIntegrated?: boolean;
   loadedPartials?: PartialId[]; // Controls which partials are included in the semester average
+  status?: 'active' | 'archived'; 
+  archivedAt?: string;
 };
 
 export type StudentObservation = {

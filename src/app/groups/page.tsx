@@ -237,31 +237,16 @@ export default function GroupsPage() {
   const activeGroups = groups.filter(g => !g.status || g.status === 'active');
   const archivedGroups = groups.filter(g => g.status === 'archived');
   
-  const renderGroupCard = (group: Group, index: number, isArchived: boolean = false) => {
-    const linkedOfficialGroup = group.officialGroupId ? officialGroups.find(og => og.id === group.officialGroupId) : null;
-
-    return (
+  const renderGroupCard = (group: Group, index: number, isArchived: boolean = false) => (
     <Card key={group.id} className={cn("flex flex-col hover:shadow-lg transition-shadow text-card-foreground-alt relative group", isArchived ? "opacity-80 grayscale" : "", cardColors[index % cardColors.length])}>
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
-                <CardTitle className="mb-1">{group.subject}</CardTitle>
-                
-                {linkedOfficialGroup ? (
-                   <div className="mt-2">
-                      <span className="bg-black/20 text-white px-2 py-1 rounded text-sm font-bold block w-fit">
-                          {linkedOfficialGroup.name}
-                      </span>
-                      <CardDescription className="text-card-foreground-alt/80 text-xs mt-1">
-                          Grupo Oficial Vinculado
-                      </CardDescription>
-                   </div>
-                ) : (
-                    <CardDescription className="text-card-foreground-alt/80">
-                      {group.semester && `${group.semester} | `}
-                      {group.groupName && `Grupo: ${group.groupName}`}
-                    </CardDescription>
-                )}
+                <CardTitle>{group.subject}</CardTitle>
+                <CardDescription className="text-card-foreground-alt/80">
+                  {group.semester && `${group.semester} | `}
+                  {group.groupName && `Grupo: ${group.groupName}`}
+                </CardDescription>
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -330,7 +315,6 @@ export default function GroupsPage() {
       </CardFooter>
     </Card>
   );
-  };
 
   if (isLoading) {
     return (

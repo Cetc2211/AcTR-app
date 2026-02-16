@@ -200,35 +200,68 @@ export class TutorService {
       // Compliance Monitor Logic
       // 1. Obtener todas las materias (groups) ligadas a este officialGroupId
       // 2. Iterar sus partialData para ver entregas.
-      // Esta operación es pesada. Optimizamos:
-      // Solo contamos "Actividades Entregadas" vs "Actividades Totales"
       
       const stats: {[id: string]: {completionRate: number, failingSubjects: number}} = {};
       studentIds.forEach(id => stats[id] = { completionRate: 100, failingSubjects: 0 });
 
       try {
-        const groupsRef = collection(db, 'groups'); // Materias
-        const q = query(groupsRef, where('officialGroupId', '==', officialGroupId));
-        const groupsSnap = await getDocs(q);
+        // LEEMOS DE LA COLECCIÓN PÚBLICA 'academic_compliance'
+        // Esta colección contiene documentos { studentId, groupId, completionRate, failingRisk }
+        // Necesitemos filtrar por los alumnos de interés.
+        // Como 'in' query tiene limite 10, mejor traemos todo lo reciente o filtramos en memoria si no es costoso.
+        // O hacemos batches.
+        // Opción: Query por studentId es ineficiente (N queries).
+        // Opción: Query por collectionGroup si guardamos officialGroupId en el documento.
+        // Requerimos que 'academic_compliance' tenga 'officialGroupId' o que filtremos por materias.
         
-        // Si no hay materias, devolver 100%
-        if (groupsSnap.empty) return stats;
+        // Paso 1: Obtener IDs de materias del grupo oficial
+        const groupsRef = collection(db, 'groups');
+        const qGroups = query(groupsRef, where('officialGroupId', '==', officialGroupId));
+        const groupsSnap = await getDocs(qGroups);
+        const subjectGroupIds = groupsSnap.docs.map(d => d.id);
+        
+        if (subjectGroupIds.length === 0) return stats;
 
-        // Para cada materia, deberíamos leer su data.
-        // Como 'app_partialsData' es un blob grande por grupo, esto es complejo en Firestore puro si no está normalizado.
-        // Asumiremos que existe una colección 'grades' o 'evaluations' donde se vuelcan los cierres.
-        // Si no, usaremos un mock inteligente basado en 'groups' que ya cargamos.
-        // Mock inteligente:
+        // Paso 2: Leer compliance de esas materias
+        // Optimizacion: Leer toda la coleccion 'academic_compliance' donde groupId IN subjectGroupIds
+        // Firestore 'in' limit es 10. Si hay mas de 10 materias, dividir.
         
-        groupsSnap.forEach(gDoc => {
-             // Simulación: Asignamos valores random deterministicos para demo
-             // En producción: await getDoc(doc(db, 'group_data', gDoc.id)) ...
-             studentIds.forEach(id => {
-                 // Random failure logic
-                 if (Math.random() > 0.8) stats[id].failingSubjects++;
-                 // Random completion logic variation
-                 if (Math.random() > 0.7) stats[id].completionRate -= 10;
-             });
+        const complianceRef = collection(db, 'academic_compliance');
+        // Dividir en chunks de 10
+        const chunks = [];
+        for (let i = 0; i < subjectGroupIds.length; i += 10) {
+            chunks.push(subjectGroupIds.slice(i, i + 10));
+        }
+
+        const allDocs = [];
+        for (const chunk of chunks) {
+            const q = query(complianceRef, where('groupId', 'in', chunk));
+            const snap = await getDocs(q);
+            allDocs.push(...snap.docs);
+        }
+
+        // Paso 3: Agrupar por estudiante
+        const studentMap: {[id: string]: { totalRate: number, count: number, failed: number }} = {};
+        
+        allDocs.forEach(doc => {
+            const data = doc.data();
+            const sId = data.studentId;
+            if (!studentMap[sId]) studentMap[sId] = { totalRate: 0, count: 0, failed: 0 };
+            
+            studentMap[sId].totalRate += (data.completionRate || 0);
+            studentMap[sId].count++;
+            if (data.failingRisk) studentMap[sId].failed++;
+        });
+
+        // Paso 4: Finalizar stats
+        studentIds.forEach(id => {
+            const s = studentMap[id];
+            if (s && s.count > 0) {
+                stats[id] = {
+                    completionRate: s.totalRate / s.count,
+                    failingSubjects: s.failed
+                };
+            }
         });
         
         return stats;
