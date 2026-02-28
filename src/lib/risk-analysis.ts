@@ -268,7 +268,11 @@ export const analyzeStudentRisk = (
     const zDropout = dropoutIntercept + (wAttendance * (currentAttendance - 70)) + (wSlope * attendanceSlope);
     // (currentAttendance - 70) centra el efecto: >70 baja riesgo, <70 sube riesgo rápido
     
-    let dropoutRisk = sigmoid(zDropout) * 100;
+    // ADJUST: Apply minimal sample size confidence factor for attendance too
+    // If we have very few attendance days (< 5), dampen the dropout risk calculation
+    const attendanceConfidenceFactor = Math.min(1, attendanceDays.length / 8); 
+
+    let dropoutRisk = sigmoid(zDropout * attendanceConfidenceFactor) * 100;
     
     // CORRECCIÓN: Si no hay asistencias registradas, el riesgo de abandono es 0
     if (attendanceDays.length === 0) {
@@ -277,7 +281,7 @@ export const analyzeStudentRisk = (
 
     // Penalización extra por baja participación (indicador de desconexión)
     // Solo si ya hay participaciones registradas
-    if (lowParticipation && totalParticipations > 0) dropoutRisk += 15;
+    if (lowParticipation && totalParticipations > 0) dropoutRisk += 5; // Reduced from 15 to be less aggressive early on
     if (dropoutRisk > 100) dropoutRisk = 99;
 
 
@@ -296,11 +300,16 @@ export const analyzeStudentRisk = (
 
     const riskFactors = [];
     if (pigecVulnerability) riskFactors.push("Riesgo detectado por vulnerabilidad externa (PIGEC-130)");
-    if (currentAttendance < 85) riskFactors.push(`Inasistencias críticas (${(100-currentAttendance).toFixed(0)}%)`);
+    
+    // ADJUST: Threshold for critical attendance alerts should be more lenient early on
+    // Or strictly based on percentage. 75% is failing usually. 85% is warning.
+    // If student has < 5 classes, be careful about "Critical" label.
+    if (currentAttendance < 85 && attendanceDays.length > 3) riskFactors.push(`Inasistencias críticas (${(100-currentAttendance).toFixed(0)}%)`);
+    
     if (activityCompletionRate < 0.6) riskFactors.push(`Baja entrega de actividades (${(activityCompletionRate*100).toFixed(0)}%)`);
-    if (attendanceSlope < -0.05) riskFactors.push('Tendencia de asistencia negativa');
+    if (attendanceSlope < -0.05 && attendanceDays.length > 5) riskFactors.push('Tendencia de asistencia negativa'); // Only flag slope with enough data
     if (currentGrade < 60 && totalWeightEvaluatedSoFar > 10) riskFactors.push(`Promedio actual reprobatorio (${currentGrade.toFixed(1)})`);
-    if (lowParticipation) riskFactors.push('Desconexión en clase (Baja participación)');
+    if (lowParticipation && totalParticipations > 3) riskFactors.push('Desconexión en clase (Baja participación)');
 
     let predictionMessage = "Rendimiento dentro de parámetros esperados.";
     
