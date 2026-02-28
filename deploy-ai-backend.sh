@@ -1,29 +1,21 @@
 #!/bin/bash
 
-# Script para desplegar el servicio IA en Cloud Run
-# Uso: ./deploy-ai-backend.sh <API_KEY>
-# Ejemplo: ./deploy-ai-backend.sh "AIzaSy..."
+# Script para desplegar el servicio IA en Cloud Run usando Secret Manager
+# Uso: ./deploy-ai-backend.sh
 
 set -e
 
-# Validar que la API key fue proporcionada
-if [ -z "$1" ]; then
-    echo "❌ Error: Debes proporcionar la API key de Google AI como argumento"
-    echo "Uso: ./deploy-ai-backend.sh <API_KEY>"
-    exit 1
-fi
-
-API_KEY="$1"
 PROJECT_ID="academic-tracker-qeoxi"
 REGION="us-central1"
 SERVICE_NAME="ai-report-service"
+SECRET_NAME="GOOGLE_AI_API_KEY"
 
-echo "🚀 Iniciando despliegue de servicio IA en Cloud Run"
+echo "🚀 Iniciando despliegue de servicio IA en Cloud Run (usando Secret Manager)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Proyecto: $PROJECT_ID"
 echo "Región: $REGION"
 echo "Servicio: $SERVICE_NAME"
-echo "API Key: ${API_KEY:0:10}...${API_KEY: -10}"
+echo "Secreto: $SECRET_NAME"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Ejecutar el despliegue
@@ -32,7 +24,8 @@ gcloud run deploy "$SERVICE_NAME" \
   --region="$REGION" \
   --platform=managed \
   --allow-unauthenticated \
-  --set-env-vars="GOOGLE_AI_API_KEY=$API_KEY,GCP_PROJECT_ID=$PROJECT_ID" \
+  --set-env-vars="GCP_PROJECT_ID=$PROJECT_ID" \
+  --set-secrets="GOOGLE_AI_API_KEY=$SECRET_NAME:latest" \
   --service-account="cloud-run-ai-invoker@${PROJECT_ID}.iam.gserviceaccount.com" \
   --memory=512Mi \
   --cpu=1 \
