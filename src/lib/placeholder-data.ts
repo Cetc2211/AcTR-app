@@ -67,6 +67,7 @@ export type EvaluationCriteria = {
   weight: number;
   expectedValue: number;
   isAutomated?: boolean;
+  isActive?: boolean;
 };
 
 export type OfficialGroup = {

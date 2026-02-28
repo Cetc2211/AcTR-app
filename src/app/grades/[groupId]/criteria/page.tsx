@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { useData } from '@/hooks/use-data';
 import type { EvaluationCriteria } from '@/lib/placeholder-data';
 
@@ -99,6 +100,8 @@ export default function GroupCriteriaPage() {
         name: finalName,
         weight: weight,
         expectedValue: isSelectedCriterionAutomated ? 0 : expectedValue,
+        isAutomated: isSelectedCriterionAutomated,
+        isActive: true
     };
 
     updateGroupCriteria([...criteria, newCriterion]);
@@ -114,6 +117,13 @@ export default function GroupCriteriaPage() {
     const newCriteria = criteria.filter(c => c.id !== criterionId);
     updateGroupCriteria(newCriteria);
     toast({ title: 'Criterio Eliminado', description: 'El criterio de evaluación ha sido eliminado.' });
+  };
+
+  const handleToggleActive = (id: string, currentStatus: boolean | undefined) => {
+      const updatedCriteria = criteria.map(c => 
+          c.id === id ? { ...c, isActive: currentStatus === undefined ? false : !currentStatus } : c
+      );
+      updateGroupCriteria(updatedCriteria);
   };
   
   const handleOpenEditDialog = (criterion: EvaluationCriteria) => {
@@ -274,18 +284,29 @@ export default function GroupCriteriaPage() {
           <div className="space-y-2">
             {criteria.map(criterion => (
                 <div key={criterion.id} className="flex items-center justify-between p-3 bg-muted rounded-md">
-                    <div>
-                        <span className="font-medium">{criterion.name}</span>
-                        <p className="text-xs text-muted-foreground">
-                          {criterion.name === 'Portafolio' || criterion.name === 'Actividades'
-                            ? `Automático (basado en entregas)` : 
-                            criterion.name === 'Participación' ? `Automático (basado en participaciones)`
-                            : `${criterion.expectedValue} es el valor esperado`
-                          }
-                        </p>
+                    <div className="flex items-center gap-3">
+                        <Switch 
+                            checked={criterion.isActive !== false}
+                            onCheckedChange={() => handleToggleActive(criterion.id, criterion.isActive)}
+                            title={criterion.isActive !== false ? "Desactivar criterio" : "Activar criterio"}
+                        />
+                        <div>
+                            <span className={`font-medium ${criterion.isActive === false ? 'text-muted-foreground line-through' : ''}`}>
+                                {criterion.name}
+                            </span>
+                            <p className="text-xs text-muted-foreground">
+                            {criterion.name === 'Portafolio' || criterion.name === 'Actividades'
+                                ? `Automático (basado en entregas)` : 
+                                criterion.name === 'Participación' ? `Automático (basado en participaciones)`
+                                : `${criterion.expectedValue} es el valor esperado`
+                            }
+                            </p>
+                        </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{criterion.weight}%</Badge>
+                        <Badge variant={criterion.isActive === false ? "outline" : "secondary"}>
+                            {criterion.weight}%
+                        </Badge>
                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleOpenEditDialog(criterion)}>
                             <Edit className="h-4 w-4"/>
                             <span className="sr-only">Editar</span>

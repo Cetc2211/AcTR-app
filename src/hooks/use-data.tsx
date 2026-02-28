@@ -949,26 +949,52 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         if (recoveryInfo?.applied) {
             return { finalGrade: recoveryInfo.grade ?? 0, criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }], isRecovery: true };
         }
-        if (!pData || !criteria || criteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
-
-        let finalGrade = 0;
+        
+        let totalEarned = 0;
+        let totalPossibleWeight = 0;
         const criteriaDetails: CriteriaDetail[] = [];
-        criteria.forEach(c => {
+        
+        // Filter for active criteria (default to true if undefined)
+        const activeCriteria = (criteria || []).filter(c => c.isActive !== false);
+
+        if (!pData || activeCriteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
+
+        activeCriteria.forEach(c => {
             let ratio = 0;
             if (c.name === 'Actividades' || c.name === 'Portafolio') {
                 const total = pData.activities?.length ?? 0;
-                if (total > 0) ratio = (Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length) / total;
+                if (total > 0) {
+                    // Fix: Ensure we are counting completed activities correctly
+                    const completed = Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length;
+                    ratio = completed / total;
+                }
             } else if (c.name === 'Participación') {
                 const total = Object.keys(pData.participations || {}).length;
-                if (total > 0) ratio = Object.values(pData.participations).filter((day: any) => day[studentId]).length / total;
+                if (total > 0) {
+                    // Fix: Ensure correct counting of participation days
+                    const daysAttended = Object.values(pData.participations).filter((day: any) => day[studentId]).length;
+                    ratio = daysAttended / total;
+                }
             } else {
                 const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
                 if (c.expectedValue > 0) ratio = delivered / c.expectedValue;
             }
+            
             const earned = ratio * c.weight;
-            finalGrade += earned;
+            totalEarned += earned;
+            totalPossibleWeight += c.weight;
+            
             criteriaDetails.push({ name: c.name, earned, weight: c.weight });
         });
+
+        // 3. Normalize Grade based on active weight
+        // If total active weight is less than 100, scale the result to be out of 100
+        let finalGrade = 0;
+        if (totalPossibleWeight > 0) {
+            // (PointsEarned / TotalPossiblePoints) * 100
+            finalGrade = (totalEarned / totalPossibleWeight) * 100;
+        }
+
         return { finalGrade: Math.max(0, Math.min(100, finalGrade)), criteriaDetails, isRecovery: false };
     }, []);
 
