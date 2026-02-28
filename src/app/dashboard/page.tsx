@@ -52,13 +52,47 @@ import {
 import { useEffect } from 'react';
 
 export default function DashboardPage() {
-  const { activeStudentsInGroups, groups, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks, announcements, unreadAnnouncementsCount } = useData();
+  const { activeStudentsInGroups, groups, allStudents, atRiskStudents, overallAverageAttendance, groupAverages, activePartialId, specialNotes, settings, groupRisks, announcements, unreadAnnouncementsCount } = useData();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [isRiskDialogOpen, setIsRiskDialogOpen] = useState(false);
   const [selectedRiskGroup, setSelectedRiskGroup] = useState('all');
   const [selectedGroupRisk, setSelectedGroupRisk] = useState<GroupRiskStats | null>(null);
+
+  // Filter Active Groups (Exclude Archived)
+  const activeGroups = useMemo(() => groups.filter(g => g.status !== 'archived'), [groups]);
+
+  // Students in Active Groups Only
+  const studentsInActiveGroups = useMemo(() => {
+      const uniqueIds = new Set();
+      const students: typeof activeStudentsInGroups = [];
+      activeGroups.forEach(g => {
+          g.students.forEach(s => {
+              if(!uniqueIds.has(s.id)) {
+                  uniqueIds.add(s.id);
+                  students.push(s);
+              }
+          });
+      });
+      return students;
+  }, [activeGroups]);
+
+  // Recalculate risks for active groups only
+  const activeAtRiskStudents = useMemo(() => {
+      return atRiskStudents.filter(s => 
+          activeGroups.some(g => g.students.some(gs => gs.id === s.id))
+      );
+  }, [atRiskStudents, activeGroups]);
+
+  const activeGroupRisks = useMemo(() => {
+    return Object.values(groupRisks).filter(gr => 
+      activeGroups.some(ag => ag.id === gr.groupId)
+    );
+  }, [groupRisks, activeGroups]);
+
+  // Recalculate average attendance for active groups only (simplified approximation)
+  // Since overallAverageAttendance comes from hook, we might just use it or rely on groupAverages
   
   // Welcome Dialog State
   const [showWelcome, setShowWelcome] = useState(false);
@@ -77,9 +111,9 @@ export default function DashboardPage() {
 
   const filteredAtRiskStudents = useMemo(() => {
     const students = selectedRiskGroup === 'all'
-      ? atRiskStudents
-      : atRiskStudents.filter(student => 
-          groups.find(g => g.id === selectedRiskGroup)?.students.some(s => s.id === student.id)
+      ? activeAtRiskStudents
+      : activeAtRiskStudents.filter(student => 
+          activeGroups.find(g => g.id === selectedRiskGroup)?.students.some(s => s.id === student.id)
         );
 
     if (!searchQuery) return students;
@@ -87,15 +121,21 @@ export default function DashboardPage() {
     return students.filter(student =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [atRiskStudents, searchQuery, selectedRiskGroup, groups]);
+  }, [activeAtRiskStudents, searchQuery, selectedRiskGroup, activeGroups]);
 
 
   const filteredStudentsForSearch = useMemo(() => {
     if (!studentSearchQuery) return [];
-    return activeStudentsInGroups.filter(student =>
+    // Search in ALL students (including archived) as requested
+    // Ensure we handle potential duplicates if allStudents has raw list
+    const uniqueAllStudents = Array.from(new Map(allStudents.map(s => [s.id, s])).values())
+        .concat(Array.from(new Map(activeStudentsInGroups.map(s => [s.id, s])).values())) // Fallback to ensure we have everyone
+        .filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
+
+    return uniqueAllStudents.filter(student =>
       student.name.toLowerCase().includes(studentSearchQuery.toLowerCase())
     ).slice(0, 5);
-  }, [activeStudentsInGroups, studentSearchQuery]);
+  }, [allStudents, activeStudentsInGroups, studentSearchQuery]);
 
   const activeSpecialNote = useMemo(() => {
     const today = new Date();
@@ -165,9 +205,9 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeStudentsInGroups.length}</div>
+            <div className="text-2xl font-bold">{studentsInActiveGroups.length}</div>
             <p className="text-xs text-muted-foreground">
-              Total de estudiantes registrados
+              Total de estudiantes registrados (Activos)
             </p>
           </CardContent>
         </Card>
@@ -177,9 +217,9 @@ export default function DashboardPage() {
             <BookCopy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{groups.length}</div>
+            <div className="text-2xl font-bold">{activeGroups.length}</div>
             <p className="text-xs text-muted-foreground">
-              Total de asignaturas
+              Total de asignaturas activas
             </p>
           </CardContent>
         </Card>
@@ -192,10 +232,10 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-destructive mb-4">
-              {atRiskStudents.length}
+              {activeAtRiskStudents.length}
             </div>
              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                {Object.values(groupRisks).filter(g => g.totalRisk > 0).map(riskGroup => (
+                {activeGroupRisks.filter(g => g.totalRisk > 0).map(riskGroup => (
                     <div 
                         key={riskGroup.groupId} 
                         className="p-2 border rounded-md cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -216,7 +256,7 @@ export default function DashboardPage() {
                     </div>
                 ))}
             </div>
-             {Object.values(groupRisks).every(g => g.totalRisk === 0) && (
+             {activeGroupRisks.every(g => g.totalRisk === 0) && (
                  <p className="text-xs text-muted-foreground mt-2">
                     No hay estudiantes en riesgo calculado.
                 </p>
@@ -313,7 +353,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {groups.slice(0, 5).map((group) => {
+                {activeGroups.slice(0, 5).map((group) => {
                   return (
                     <TableRow key={group.id}>
                       <TableCell>
@@ -341,8 +381,8 @@ export default function DashboardPage() {
                     <SelectValue placeholder="Seleccionar grupo..." />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">Todos los grupos</SelectItem>
-                    {groups.map(group => (
+                    <SelectItem value="all">Todos los grupos activos</SelectItem>
+                    {activeGroups.map(group => (
                         <SelectItem key={group.id} value={group.id}>{group.subject}</SelectItem>
                     ))}
                 </SelectContent>
