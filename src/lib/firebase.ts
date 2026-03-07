@@ -1,7 +1,7 @@
 // src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, initializeFirestore, memoryLocalCache, memoryLruGarbageCollector } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentSingleTabManager } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBliGErw1WiGhY6lZeCSh6WU0Kg2ZK7oa0",
@@ -16,18 +16,16 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
-// Initialize Firestore with Memory Cache optimized for f1-micro (512MB RAM)
-// Uses aggressive garbage collection to prevent memory exhaustion
+// Initialize Firestore with Persistent Cache for cross-device sync
+// Uses IndexedDB for physical persistence, survives tab closures and device switches
 import { Firestore } from 'firebase/firestore';
 let db: Firestore;
 
 try {
     db = initializeFirestore(app, {
-        // Memory cache with 5MB limit and LRU garbage collection
-        localCache: memoryLocalCache({
-            garbageCollector: memoryLruGarbageCollector({
-                cacheSizeBytes: 5 * 1024 * 1024  // 5MB max cache for f1-micro
-            })
+        // Persistent cache with single-tab manager for cross-browser sync
+        localCache: persistentLocalCache({
+            tabManager: persistentSingleTabManager()
         }),
         // Network optimizations for limited connections
         experimentalAutoDetectLongPolling: true,

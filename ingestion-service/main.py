@@ -51,13 +51,15 @@ def get_db_connection():
     db_pass = get_db_password()
     
     def getconn():
+        # SECURITY: Cloud SQL connector uses SSL/TLS encryption by default
+        # All connections are encrypted in transit
         conn = connector.connect(
             DB_INSTANCE_CONNECTION_NAME,
             "pg8000",
             user=DB_USER,
             password=db_pass,
             db=DB_NAME,
-            ip_type=IPTypes.PUBLIC  # Use PRIVATE if connected via VPC
+            ip_type=IPTypes.PUBLIC  # Uses SSL encryption
         )
         return conn
 
@@ -247,7 +249,8 @@ def ingest_event():
             return jsonify({"status": "failure", "message": "Database connection failed during initialization."}), 500
 
         with db_pool.connect() as conn:
-            # Insert Document Metadata
+            # SECURITY: Using parameterized queries to prevent SQL injection
+            # All user inputs are passed as parameters, not concatenated into SQL strings
             result = conn.execute(text("""
                 INSERT INTO documents (filename, gcs_path, document_type, summary, status)
                 VALUES (:filename, :gcs_path, :dtype, :summary, :status)

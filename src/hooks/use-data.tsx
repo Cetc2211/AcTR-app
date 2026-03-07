@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { get, set, del, clear } from 'idb-keyval';
 import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy, arrayUnion, waitForPendingWrites } from 'firebase/firestore';
 import type { Student, Group, OfficialGroup, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup, Announcement, StudentJustification, JustificationCategory } from '@/lib/placeholder-data';
 import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
@@ -156,6 +156,8 @@ interface DataContextType {
     fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
     triggerPedagogicalCheck: (studentId: string) => void;
     syncPublicData: () => Promise<void>;
+    forceCloudSync: () => Promise<void>; // New: Force sync with cloud
+    syncStatus: 'synced' | 'pending' | 'syncing'; // New: Cloud sync status
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -192,6 +194,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
     const [activeGroupId, setActiveGroupIdState] = useState<string | null>(null);
     const [activePartialId, setActivePartialIdState] = useState<PartialId>('p1');
+    const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'syncing'>('synced');
 
     
     // --- ASYNC DATA HYDRATION ---
@@ -394,6 +397,26 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             unsubscribeAnn();
             unsubscribeJust();
         };
+    }, []);
+
+    // Monitor cloud sync status
+    useEffect(() => {
+        const checkSyncStatus = async () => {
+            try {
+                setSyncStatus('pending');
+                await waitForPendingWrites(db);
+                setSyncStatus('synced');
+            } catch (error) {
+                console.error("Error checking sync status:", error);
+                setSyncStatus('pending');
+            }
+        };
+
+        // Check immediately and set up interval
+        checkSyncStatus();
+        const interval = setInterval(checkSyncStatus, 5000); // Check every 5 seconds
+
+        return () => clearInterval(interval);
     }, []);
 
     const createSetterWithStorage = <T,>(
@@ -957,7 +980,24 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
              });
         }
     }, [user, allObservations, groups, allPartialsData, activePartialId]);
-    
+
+    const forceCloudSync = useCallback(async () => {
+        try {
+            setSyncStatus('syncing');
+            toast({ title: "Sincronizando con la nube...", description: "Limpiando caché local y descargando datos frescos." });
+
+            // a) Clear local cache using idb-keyval
+            await clear();
+
+            // b) Force reload to download fresh data from cloud
+            window.location.reload();
+        } catch (error) {
+            console.error("Error during force sync:", error);
+            setSyncStatus('pending');
+            toast({ variant: "destructive", title: "Error de sincronización", description: "No se pudo sincronizar con la nube." });
+        }
+    }, [toast]);
+
     // --- CALCULATIONS & DERIVED DATA ---
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
         const meritInfo = pData.meritGrades?.[studentId];
@@ -1220,7 +1260,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
             addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
-            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck, syncPublicData,
+            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck, syncPublicData, forceCloudSync, syncStatus,
         }}>
             {children}
         </DataContext.Provider>

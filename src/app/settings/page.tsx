@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ThemeSwitcher, themes } from '@/components/theme-switcher';
 import { Separator } from '@/components/ui/separator';
 import { useData } from '@/hooks/use-data';
-import { Upload, Download, RotateCcw, Loader2, KeyRound, PlusCircle, Edit, Trash2, CalendarIcon, Image as ImageIcon, Phone } from 'lucide-react';
+import { Upload, Download, RotateCcw, Loader2, KeyRound, PlusCircle, Edit, Trash2, CalendarIcon, Image as ImageIcon, Phone, Cloud } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -48,7 +48,7 @@ type ExportData = {
 };
 
 export default function SettingsPage() {
-    const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote, syncPublicData } = useData();
+    const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote, syncPublicData, forceCloudSync, syncStatus } = useData();
     const [localSettings, setLocalSettings] = useState(settings);
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
     const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
@@ -269,7 +269,15 @@ export default function SettingsPage() {
     return (
         <div className="flex flex-col gap-6">
         <div>
-            <h1 className="text-3xl font-bold">Ajustes</h1>
+            <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-3xl font-bold">Ajustes</h1>
+                <div className="flex items-center gap-1">
+                    <Cloud className={`h-4 w-4 ${syncStatus === 'synced' ? 'text-green-500' : 'text-red-500'}`} />
+                    <span className="text-xs text-muted-foreground">
+                        {syncStatus === 'synced' ? 'Sincronizado' : syncStatus === 'syncing' ? 'Sincronizando...' : 'Pendiente'}
+                    </span>
+                </div>
+            </div>
             <p className="text-muted-foreground">
             Personaliza la aplicación, gestiona tu horario y administra tus datos.
             </p>
@@ -580,10 +588,16 @@ export default function SettingsPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <Button onClick={handleSyncData} disabled={isSyncing}>
-                    {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
-                    Sincronizar Todo
-                </Button>
+                <div className="flex gap-2">
+                    <Button onClick={handleSyncData} disabled={isSyncing}>
+                        {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                        Sincronizar Todo
+                    </Button>
+                    <Button variant="outline" onClick={forceCloudSync}>
+                        <Cloud className="mr-2 h-4 w-4" />
+                        Sincronización Forzada
+                    </Button>
+                </div>
             </CardContent>
         </Card>
 

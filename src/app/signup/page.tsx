@@ -1,6 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+echo "You can view these logs in GCP Console > Logging > Logs Explorer"echo "Note: Firebase Auth automatically logs authentication events to GCP Cloud Logging"fi    exit 1    echo "❌ Failed to enable audit logs"else    echo "Failed login attempts will now be logged to Cloud Storage"    echo "✅ Audit logs for authentication events enabled"if [ $? -eq 0 ]; then  --project=$PROJECT_ID  --log-filter='resource.type="firebaseauth.googleapis.com/Project" AND (protoPayload.methodName="google.firebase.auth.v1.AuthenticationService.SignInWithPassword" OR protoPayload.methodName="google.firebase.auth.v1.AuthenticationService.SignInWithEmailLink")' \  storage.googleapis.com/academic-tracker-audit-logs \gcloud logging sinks create auth-audit-logs \# Enable Data Access audit logs for Firebase Authenticationecho "Enabling Cloud Audit Logs for Firebase Authentication..."PROJECT_ID="academic-tracker-qeoxi"# This enables logging of authentication events including failed login attempts# Script to enable Cloud Audit Logs for Firebase Authenticationimport { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -24,7 +47,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 
 const SignupFormSchema = z.object({
   email: z.string().email({ message: 'Por favor, ingresa un email válido.' }),
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres.' }),
+  password: z.string()
+    .min(8, { message: 'La contraseña debe tener al menos 8 caracteres.' })
+    .regex(/[A-Z]/, { message: 'La contraseña debe contener al menos una letra mayúscula.' })
+    .regex(/[a-z]/, { message: 'La contraseña debe contener al menos una letra minúscula.' })
+    .regex(/[0-9]/, { message: 'La contraseña debe contener al menos un número.' })
+    .regex(/[^A-Za-z0-9]/, { message: 'La contraseña debe contener al menos un carácter especial.' }),
   confirmPassword: z.string(),
   accessCode: z.string().min(1, { message: 'El código de institución es requerido.' })
 }).refine((data) => data.password === data.confirmPassword, {
