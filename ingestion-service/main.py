@@ -64,6 +64,12 @@ def get_db_connection():
     pool = sqlalchemy.create_engine(
         "postgresql+pg8000://",
         creator=getconn,
+        # Optimized pool settings for f1-micro Cloud SQL instance (512MB RAM)
+        pool_size=3,          # Reduced base pool size for f1-micro
+        max_overflow=2,       # Max additional connections (total max 5)
+        pool_pre_ping=True,   # Verify connections before use
+        pool_recycle=300,     # Recycle connections every 5 minutes
+        echo=False,           # Disable SQL logging to save memory
     )
     return pool
 
@@ -266,12 +272,72 @@ def ingest_event():
                     "model": "text-embedding-004"
                 })
             
-            conn.commit()
+            conn.commit()  # Explicit commit within the context manager ensures connection is properly closed
 
         return jsonify({"status": "success", "message": f"Processed {file_name}"}), 200
 
     except Exception as e:
         logger.error(f"Error processing event: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/load-groups', methods=['GET'])
+def load_groups():
+    """
+    Optimized endpoint to load groups with only necessary fields.
+    Uses LIMIT to prevent loading entire database into memory.
+    """
+    try:
+        if db_pool is None:
+            return jsonify({"error": "Database connection not available"}), 500
+
+        with db_pool.connect() as conn:
+            # Query only necessary fields, with LIMIT for safety
+            result = conn.execute(text("""
+                SELECT id, name, code
+                FROM courses
+                ORDER BY name
+                LIMIT 100  -- Prevent loading too much data
+            """))
+            
+            groups = [{"id": row[0], "name": row[1], "code": row[2]} for row in result]
+            
+            return jsonify({"groups": groups}), 200
+
+    except Exception as e:
+        logger.error(f"Error loading groups: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/load-tutoring-data', methods=['GET'])
+def load_tutoring_data():
+    """
+    Optimized endpoint to load tutoring-related data.
+    Select only required fields and use JOINs efficiently.
+    """
+    try:
+        if db_pool is None:
+            return jsonify({"error": "Database connection not available"}), 500
+
+        with db_pool.connect() as conn:
+            # Example: Load students with their course info, limited
+            result = conn.execute(text("""
+                SELECT s.id, s.name, s.email, c.name as course_name
+                FROM students s
+                LEFT JOIN courses c ON s.course_id = c.id
+                ORDER BY s.name
+                LIMIT 50  -- Limit to prevent memory overload
+            """))
+            
+            tutoring_data = [{
+                "student_id": row[0], 
+                "student_name": row[1], 
+                "email": row[2], 
+                "course_name": row[3]
+            } for row in result]
+            
+            return jsonify({"tutoring_data": tutoring_data}), 200
+
+    except Exception as e:
+        logger.error(f"Error loading tutoring data: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":

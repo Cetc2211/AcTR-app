@@ -80,10 +80,10 @@ export class TutorService {
         if (baseStudents.length === 0) return [];
 
         // B. Obtener Inasistencias Globales (Aproximación por Fetch Reciente)
-        // Traemos las últimas 500 inasistencias registradas en el sistema para cruzar datos
-        // Idealmente filtraríamos por fecha >= InicioSemestre
+        // Traemos las últimas 200 inasistencias registradas en el sistema para cruzar datos
+        // Limitado para evitar sobrecarga de memoria en f1-micro
         const absencesRef = collection(db, 'absences');
-        const qAbsences = query(absencesRef, orderBy('timestamp', 'desc'), limit(500));
+        const qAbsences = query(absencesRef, orderBy('timestamp', 'desc'), limit(200));
         const absencesSnap = await getDocs(qAbsences);
 
         const absenceCounts: { [studentId: string]: number } = {};
@@ -178,7 +178,7 @@ export class TutorService {
       try {
           // Nota: Firestore 'in' query supports up to 10 values. Si son más alumnos, hay que segmentar.
           // Para MVP, traemos las últimas globales y filtramos.
-          const q = query(collection(db, 'observations'), orderBy('date', 'desc'), limit(100));
+          const q = query(collection(db, 'observations'), orderBy('date', 'desc'), limit(50));
           const snap = await getDocs(q);
           const map: {[id: string]: StudentObservation[]} = {};
           
@@ -277,7 +277,7 @@ export class TutorService {
       // Simplificado: Traemos todo y filtramos en memoria (MVP)
       try {
         const ref = collection(db, 'tutor_interventions');
-        const q = query(ref, orderBy('timestamp', 'desc'), limit(100)); // Últimas 100 acciones
+        const q = query(ref, orderBy('timestamp', 'desc'), limit(50)); // Últimas 50 acciones
         const snap = await getDocs(q);
         const map: {[id: string]: any[]} = {};
         

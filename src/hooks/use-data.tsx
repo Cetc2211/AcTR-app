@@ -320,12 +320,32 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [user, authLoading]);
 
     useEffect(() => {
+        // Load cached official groups on mount
+        const cached = localStorage.getItem('cached_official_groups');
+        if (cached) {
+            try {
+                const { data, timestamp } = JSON.parse(cached);
+                // Cache valid for 5 minutes
+                if (Date.now() - timestamp < 5 * 60 * 1000) {
+                    setOfficialGroups(data);
+                }
+            } catch (e) {
+                console.error("Error loading cached official groups:", e);
+            }
+        }
+
         const unsubscribe = onSnapshot(collection(db, 'official_groups'), (snapshot) => {
             const fetchedGroups: OfficialGroup[] = [];
             snapshot.forEach((doc) => {
                 fetchedGroups.push({ id: doc.id, ...doc.data() } as OfficialGroup);
             });
             setOfficialGroups(fetchedGroups);
+            
+            // Cache the data with timestamp
+            localStorage.setItem('cached_official_groups', JSON.stringify({
+                data: fetchedGroups,
+                timestamp: Date.now()
+            }));
         }, (error) => {
             console.error("Error fetching official groups:", error);
         });
