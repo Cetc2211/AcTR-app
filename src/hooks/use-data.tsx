@@ -399,6 +399,140 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
     }, []);
 
+    // Real-time listeners for cross-device synchronization
+    useEffect(() => {
+        if (!user) return;
+
+        console.log('Setting up real-time listeners for cross-device sync');
+
+        // Listener for groups
+        const unsubscribeGroups = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_groups'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudGroups = data.value as Group[];
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    // Update local state and cache
+                    setGroupsState(cloudGroups);
+                    set('app_groups', { value: cloudGroups, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local groups cache:', err));
+
+                    console.log('Groups updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in groups real-time listener:', error)
+        );
+
+        // Listener for students
+        const unsubscribeStudents = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_students'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudStudents = data.value as Student[];
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    setAllStudentsState(cloudStudents);
+                    set('app_students', { value: cloudStudents, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local students cache:', err));
+
+                    console.log('Students updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in students real-time listener:', error)
+        );
+
+        // Listener for observations
+        const unsubscribeObservations = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_observations'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudObservations = data.value as { [studentId: string]: StudentObservation[] };
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    setAllObservationsState(cloudObservations);
+                    set('app_observations', { value: cloudObservations, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local observations cache:', err));
+
+                    console.log('Observations updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in observations real-time listener:', error)
+        );
+
+        // Listener for special notes
+        const unsubscribeSpecialNotes = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_specialNotes'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudSpecialNotes = data.value as SpecialNote[];
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    setSpecialNotesState(cloudSpecialNotes);
+                    set('app_specialNotes', { value: cloudSpecialNotes, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local special notes cache:', err));
+
+                    console.log('Special notes updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in special notes real-time listener:', error)
+        );
+
+        // Listener for partials data
+        const unsubscribePartials = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_partialsData'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudPartials = data.value as AllPartialsData;
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    setAllPartialsDataState(cloudPartials);
+                    set('app_partialsData', { value: cloudPartials, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local partials cache:', err));
+
+                    console.log('Partials data updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in partials data real-time listener:', error)
+        );
+
+        // Listener for settings
+        const unsubscribeSettings = onSnapshot(
+            doc(db, 'users', user.uid, 'userData', 'app_settings'),
+            (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const cloudSettings = normalizeSettingsValue(data.value as AppSettings);
+                    const cloudTimestamp = data.lastUpdated || 0;
+
+                    setSettingsState(cloudSettings);
+                    set('app_settings', { value: cloudSettings, lastUpdated: cloudTimestamp })
+                        .catch(err => console.error('Error updating local settings cache:', err));
+
+                    console.log('Settings updated from cloud (real-time)');
+                }
+            },
+            (error) => console.error('Error in settings real-time listener:', error)
+        );
+
+        return () => {
+            unsubscribeGroups();
+            unsubscribeStudents();
+            unsubscribeObservations();
+            unsubscribeSpecialNotes();
+            unsubscribePartials();
+            unsubscribeSettings();
+            console.log('Real-time listeners cleaned up');
+        };
+    }, [user]);
+
+    // Monitor cloud sync status
+
     // Monitor cloud sync status
     useEffect(() => {
         const checkSyncStatus = async () => {
@@ -984,19 +1118,68 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     const forceCloudSync = useCallback(async () => {
         try {
             setSyncStatus('syncing');
-            toast({ title: "Sincronizando con la nube...", description: "Limpiando caché local y descargando datos frescos." });
+            toast({ title: "Sincronizando con la nube...", description: "Descargando datos frescos desde la nube." });
 
-            // a) Clear local cache using idb-keyval
+            if (!user) {
+                toast({ variant: "destructive", title: "Error", description: "Debes estar autenticado para sincronizar." });
+                return;
+            }
+
+            // Clear local cache
             await clear();
 
-            // b) Force reload to download fresh data from cloud
-            window.location.reload();
+            // Force reload all data from cloud
+            const syncFromCloud = async <T,>(key: string, setter: (val: T) => void, defaultValue: T) => {
+                try {
+                    const docRef = doc(db, 'users', user.uid, 'userData', key);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const cloudPayload = docSnap.data();
+                        const cloudData = cloudPayload.value as T;
+                        const cloudTimestamp = cloudPayload.lastUpdated || Date.now();
+
+                        // Save to local cache
+                        await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
+                        // Update state
+                        setter(cloudData);
+
+                        console.log(`✅ Sincronizado ${key} desde la nube`);
+                    } else {
+                        // No cloud data, use default
+                        setter(defaultValue);
+                        console.log(`ℹ️ No hay datos en la nube para ${key}, usando valores por defecto`);
+                    }
+                } catch (error) {
+                    console.error(`Error sincronizando ${key}:`, error);
+                }
+            };
+
+            // Sync all data from cloud
+            await Promise.all([
+                syncFromCloud('app_groups', setGroupsState, []),
+                syncFromCloud('app_students', setAllStudentsState, []),
+                syncFromCloud('app_observations', setAllObservationsState, {}),
+                syncFromCloud('app_specialNotes', setSpecialNotesState, []),
+                syncFromCloud('app_partialsData', setAllPartialsDataState, {}),
+                syncFromCloud('app_settings', (data) => setSettingsState(normalizeSettingsValue(data)), defaultSettings),
+            ]);
+
+            // Reload active group ID
+            const activeGroupId = await get<string>('activeGroupId_v1');
+            if (activeGroupId) {
+                setActiveGroupIdState(activeGroupId);
+            }
+
+            setSyncStatus('synced');
+            toast({ title: "Sincronización completada", description: "Los datos han sido actualizados desde la nube." });
+
         } catch (error) {
             console.error("Error during force sync:", error);
             setSyncStatus('pending');
             toast({ variant: "destructive", title: "Error de sincronización", description: "No se pudo sincronizar con la nube." });
         }
-    }, [toast]);
+    }, [user, toast]);
 
     // --- CALCULATIONS & DERIVED DATA ---
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
