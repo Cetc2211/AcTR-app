@@ -1,29 +1,6 @@
 'use client';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-echo "You can view these logs in GCP Console > Logging > Logs Explorer"echo "Note: Firebase Auth automatically logs authentication events to GCP Cloud Logging"fi    exit 1    echo "❌ Failed to enable audit logs"else    echo "Failed login attempts will now be logged to Cloud Storage"    echo "✅ Audit logs for authentication events enabled"if [ $? -eq 0 ]; then  --project=$PROJECT_ID  --log-filter='resource.type="firebaseauth.googleapis.com/Project" AND (protoPayload.methodName="google.firebase.auth.v1.AuthenticationService.SignInWithPassword" OR protoPayload.methodName="google.firebase.auth.v1.AuthenticationService.SignInWithEmailLink")' \  storage.googleapis.com/academic-tracker-audit-logs \gcloud logging sinks create auth-audit-logs \# Enable Data Access audit logs for Firebase Authenticationecho "Enabling Cloud Audit Logs for Firebase Authentication..."PROJECT_ID="academic-tracker-qeoxi"# This enables logging of authentication events including failed login attempts# Script to enable Cloud Audit Logs for Firebase Authenticationimport { useState } from 'react';
+import { useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
