@@ -48,6 +48,8 @@ import { useData } from '@/hooks/use-data';
 import { getPartialLabel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAdmin } from '@/hooks/use-admin';
+import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,8 +65,6 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useState } from 'react';
-
-const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -91,25 +91,22 @@ const defaultSettings = {
     teacherPhoto: "",
 };
 
-
-export default function MainLayoutClient({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MainLayoutClient({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
+  const [user, isAuthLoading] = useAuthState(auth);
+  const { isAdmin, loading: loadingAdmin } = useAdmin();
+  const { officialGroups, settings, syncStatus, activeGroup, activePartialId, isLoading: isDataLoading, unreadAnnouncementsCount } = useData();
   const pathname = usePathname();
   const router = useRouter();
-  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount, officialGroups } = useData();
-  const [user, isAuthLoading] = useAuthState(auth);
   const [isTrackingManager, setIsTrackingManager] = useState(false);
   const [isTutor, setIsTutor] = useState(false);
 
   useEffect(() => {
     const checkRole = async () => {
-        if (!user || !user.email) return;
+        if (!user || !user.email || loadingAdmin) return;
         
         // Admin siempre tiene acceso
-        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+        if (isAdmin) {
              setIsTrackingManager(true);
              setIsTutor(true); // Admin también ve tutoría
              return;
@@ -197,6 +194,14 @@ export default function MainLayoutClient({
 
 
   const handleSignOut = async () => {
+    if (syncStatus === 'pending') {
+      toast({
+        title: "Cambios pendientes",
+        description: "Hay cambios locales pendientes de sincronización. Por favor, espere a que se sincronicen antes de cerrar sesión.",
+        variant: "destructive",
+      });
+      return;
+    }
     await signOut(auth);
     router.push('/login');
   };
@@ -207,6 +212,19 @@ export default function MainLayoutClient({
         <Sidebar>
           <SidebarHeader>
             <AppLogo name={settings.institutionName} logoUrl={settings.logo} />
+            <div className="px-4 py-2 flex items-center gap-2">
+              <div className={cn(
+                "h-2 w-2 rounded-full",
+                syncStatus === 'synced' ? "bg-green-500" : 
+                syncStatus === 'pending' ? "bg-red-500 animate-pulse" : 
+                "bg-yellow-500 animate-pulse"
+              )} />
+              <span className="text-xs text-sidebar-foreground/70">
+                {syncStatus === 'synced' ? 'Sincronizado' : 
+                 syncStatus === 'pending' ? 'Pendiente' : 
+                 'Sincronizando'}
+              </span>
+            </div>
           </SidebarHeader>
           <SidebarContent>
             {activeGroup ? (
@@ -279,7 +297,7 @@ export default function MainLayoutClient({
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              {user && user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() && (
+              {isAdmin && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={pathname.startsWith('/admin') && !pathname.startsWith('/admin/absences')}>
                     <Link href="/admin">

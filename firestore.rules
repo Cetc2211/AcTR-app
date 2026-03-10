@@ -2,6 +2,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isUserAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
     // This rule allows a user to read and write only their own documents.
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
@@ -12,9 +17,10 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
-    // Allow access to app configuration (roles, permissions)
+    // Allow access to app configuration (roles, permissions) - only admins can write
     match /app_config/{document=**} {
-      allow read, write: if request.auth != null;
+      allow read: if request.auth != null;
+      allow write: if isUserAdmin();
     }
 
     // Allow access to tracking logs (Bitácora)
@@ -46,6 +52,12 @@ service cloud.firestore {
     }
     match /academic_compliance/{document=**} {
       allow read, write: if request.auth != null;
+    }
+
+    // Secure admin collection - only admins can read/write
+    match /admins/{email} {
+      allow read: if request.auth != null;
+      allow write: if isUserAdmin();
     }
   }
 }

@@ -197,6 +197,61 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'syncing'>('synced');
 
     
+    // --- SANITIZATION SCRIPT ---
+    const runSanitization = async (officialGroups: OfficialGroup[]) => {
+        if (!user) return;
+        
+        try {
+            const docRef = doc(db, 'users', user.uid, 'userData', 'app_groups');
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const payload = docSnap.data();
+                const groups = payload.value as Group[];
+                
+                const corruptedGroups = groups.filter(g => !g.groupName || g.groupName.trim() === '');
+                
+                if (corruptedGroups.length > 0) {
+                    console.log(`Found ${corruptedGroups.length} corrupted groups, attempting restoration...`);
+                    
+                    const restoredGroups = groups.map(group => {
+                        if (!group.groupName || group.groupName.trim() === '') {
+                            // Try to restore from official_groups metadata
+                            const officialGroup = officialGroups.find(og => og.id === group.officialGroupId);
+                            if (officialGroup) {
+                                // Parse the name to extract semester and subject
+                                const match = officialGroup.name.match(/^(\d+)[^A-Za-z0-9]*([A-Za-z]+)/);
+                                let parsedSemester = '';
+                                let parsedSubject = '';
+                                if (match) {
+                                    parsedSemester = match[1];
+                                    parsedSubject = match[2];
+                                }
+                                return {
+                                    ...group,
+                                    groupName: officialGroup.name,
+                                    subject: parsedSubject || group.subject,
+                                    semester: parsedSemester || group.semester
+                                };
+                            }
+                        }
+                        return group;
+                    });
+                    
+                    // Update cloud with restored data
+                    await setDoc(docRef, { value: restoredGroups, lastUpdated: Date.now() }, { merge: true });
+                    
+                    // Update local state
+                    setGroupsState(restoredGroups);
+                    
+                    console.log('Sanitization completed successfully');
+                }
+            }
+        } catch (error) {
+            console.error('Error during sanitization:', error);
+        }
+    };
+
     // --- ASYNC DATA HYDRATION ---
     useEffect(() => {
         if (authLoading) return;
@@ -263,7 +318,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
                 // Step 3: Background Cloud Sync (SLOW PHASE)
                 if (user) {
-                     const syncKey = async <T,>(key: string, localWrapper: { value: T, lastUpdated: number } | undefined, setter: (val: T) => void) => {
+                    const syncKey = async <T,>(key: string, localWrapper: { value: T, lastUpdated: number } | undefined, setter: (val: T) => void) => {
                          try {
                             const docRef = doc(db, 'users', user.uid, 'userData', key);
                             const docSnap = await getDoc(docRef);
@@ -277,10 +332,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                                 const cloudTimestamp = cloudPayload.lastUpdated || 0;
 
                                 if (cloudTimestamp > localTimestamp) {
-                                    // Cloud is newer -> Update Local & State
-                                    console.log(`Cloud update for ${key}`);
-                                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
-                                    setter(cloudData);
+                                    // Cloud is newer -> Deep Merge instead of full replacement
+                                    console.log(`Cloud update for ${key} - performing deep merge`);
+                                    let mergedData: T;
+                                    if (key === 'app_groups') {
+                                        // For groups, merge arrays to rescue cloud-only groups
+                                        const localGroups = (localData as Group[]) || [];
+                                        const cloudGroups = cloudData as Group[];
+                                        mergedData = [...cloudGroups] as T; // Start with cloud
+                                        localGroups.forEach(localGroup => {
+                                            if (!cloudGroups.some(cg => cg.id === localGroup.id)) {
+                                                (mergedData as Group[]).push(localGroup);
+                                            }
+                                        });
+                                    } else {
+                                        // For other data types, prefer cloud but could extend merge logic
+                                        mergedData = cloudData;
+                                    }
+                                    await set(key, { value: mergedData, lastUpdated: cloudTimestamp });
+                                    setter(mergedData);
                                 } else if (localTimestamp > cloudTimestamp) {
                                     // Local is newer -> Push to Cloud
                                     console.log(`Pushing local ${key} to cloud`);
@@ -349,6 +419,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 data: fetchedGroups,
                 timestamp: Date.now()
             }));
+
+            // Run sanitization once when official groups are loaded
+            if (user) {
+                runSanitization(fetchedGroups);
+            }
         }, (error) => {
             console.error("Error fetching official groups:", error);
         });
@@ -564,6 +639,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 typeof value === 'function'
                     ? (value as (prevState: T) => T)(oldValue)
                     : value;
+            
+            // Schema Validation Gatekeeper
+            if (key === 'app_groups') {
+                const groups = newValue as Group[];
+                const invalidGroups = groups.filter(g => 
+                    !g.groupName || g.groupName.trim() === '' ||
+                    !g.subject || g.subject.trim() === '' ||
+                    !g.semester || g.semester.trim() === ''
+                );
+                if (invalidGroups.length > 0) {
+                    console.warn('Schema validation failed for groups:', invalidGroups);
+                    // Attempt to consolidate local data before push
+                    try {
+                        const localPayload = await get(key);
+                        if (localPayload && typeof localPayload === 'object' && 'value' in localPayload) {
+                            const localGroups = localPayload.value as Group[];
+                            // Merge with local data to rescue valid groups
+                            const mergedGroups = [...groups];
+                            localGroups.forEach(localGroup => {
+                                if (!mergedGroups.some(g => g.id === localGroup.id)) {
+                                    mergedGroups.push(localGroup);
+                                }
+                            });
+                            setter(mergedGroups as T);
+                            return; // Do not push invalid data to cloud
+                        }
+                    } catch (e) {
+                        console.error('Error consolidating local data:', e);
+                    }
+                    // If consolidation fails, prevent push
+                    console.error('Preventing push of invalid group data to Firebase');
+                    return;
+                }
+            }
             
             // 1. Update React State immediately for UI responsiveness
             setter(newValue);
@@ -1432,7 +1541,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             unsubscribeStudents();
             unsubscribeMeta();
         };
-    }, [activeGroupId, activeGroup?.officialGroupId]); // Re-subscribe if group changes
+    }, [activeGroupId, activeGroup?.officialGroupId, activeGroup?.groupName, activeGroup?.semester, activeGroup?.students, setGroups, toast]); // Re-subscribe if group changes
 
     return (
         <DataContext.Provider value={{

@@ -8,6 +8,7 @@ import { db, auth } from '@/lib/firebase';
 import { useData } from '@/hooks/use-data';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
+import { useAdmin } from '@/hooks/use-admin';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -33,8 +34,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
-
 type AbsenceRecord = {
   id: string;
   groupId: string;
@@ -54,6 +53,7 @@ type AbsenceRecord = {
 };
 
 export default function AbsencesPage() {
+  const { isAdmin, loading: loadingAdmin } = useAdmin();
   const [user, loadingAuth] = useAuthState(auth);
   const { settings, justifications, allStudents } = useData(); // Get Global Settings and User Identity
   const router = useRouter();
@@ -141,14 +141,14 @@ export default function AbsencesPage() {
   // Verify access
   useEffect(() => {
     const verifyAccess = async () => {
-        if (loadingAuth) return;
+        if (loadingAuth || loadingAdmin) return;
         
         if (!user) {
             router.push('/login');
             return;
         }
 
-        if (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+        if (isAdmin) {
             setHasAccess(true);
             setIsManager(true);
             return;

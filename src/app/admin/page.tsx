@@ -18,12 +18,13 @@ import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, ArrowRight } from 'luc
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/lib/firebase'; // Added db
 import { notFound, useRouter } from 'next/navigation';
-import { doc, getDoc, setDoc } from 'firebase/firestore'; // Added Firestore imports
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'; // Added Firestore imports
 import { useData } from '@/hooks/use-data';
-
-const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
+import { useAdmin } from '@/hooks/use-admin';
+import { useAdmin } from '@/hooks/use-admin';
 
 export default function AdminPage() {
+    const { isAdmin, loading: loadingAdmin } = useAdmin();
     const [user, isLoading] = useAuthState(auth);
     const { toast } = useToast();
     const router = useRouter();
@@ -31,9 +32,11 @@ export default function AdminPage() {
 
     const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([]);
     const [trackingManagers, setTrackingManagers] = useState<string[]>([]); // New State
+    const [admins, setAdmins] = useState<string[]>([]);
     
     const [newEmail, setNewEmail] = useState('');
     const [newTrackingEmail, setNewTrackingEmail] = useState(''); // New State
+    const [newAdminEmail, setNewAdminEmail] = useState('');
 
     const [isSaving, setIsSaving] = useState(false);
     const [isLoadingConfig, setIsLoadingConfig] = useState(true);
@@ -70,6 +73,14 @@ export default function AdminPage() {
                         }
                     }
                 }
+
+                // Fetch admins
+                const adminsSnapshot = await getDocs(collection(db, 'admins'));
+                const adminEmails: string[] = [];
+                adminsSnapshot.forEach((doc) => {
+                    adminEmails.push(doc.id);
+                });
+                setAdmins(adminEmails);
             } catch (error) {
                 console.error("Error fetching admin config:", error);
                 toast({ variant: 'destructive', title: 'Error', description: 'No se pudo cargar la configuración.' });
@@ -111,7 +122,7 @@ export default function AdminPage() {
             return;
         }
         const emailToAdd = newEmail.toLowerCase().trim();
-        if (authorizedEmails.includes(emailToAdd) || emailToAdd === ADMIN_EMAIL) {
+        if (authorizedEmails.includes(emailToAdd)) {
             toast({ variant: 'destructive', title: 'Correo duplicado', description: 'Este correo ya está en la lista.' });
             return;
         }
@@ -120,10 +131,6 @@ export default function AdminPage() {
     };
 
     const handleRemoveEmail = (emailToRemove: string) => {
-        if (emailToRemove.toLowerCase() === ADMIN_EMAIL) {
-            toast({ variant: 'destructive', title: 'Acción no permitida', description: 'No puedes eliminar al administrador principal.' });
-            return;
-        }
         saveConfig(authorizedEmails.filter(email => email.toLowerCase() !== emailToRemove.toLowerCase()), trackingManagers);
     };
 
@@ -145,8 +152,47 @@ export default function AdminPage() {
         saveConfig(authorizedEmails, trackingManagers.filter(email => email.toLowerCase() !== emailToRemove.toLowerCase()));
     };
 
+    const handleAddAdmin = async () => {
+        if (!newAdminEmail.trim() || !newAdminEmail.includes('@')) {
+            toast({ variant: 'destructive', title: 'Correo inválido', description: 'Por favor, ingresa un correo electrónico válido.' });
+            return;
+        }
+        const emailToAdd = newAdminEmail.trim().toLowerCase();
+        if (admins.includes(emailToAdd)) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Este email ya es administrador.' });
+            return;
+        }
+        try {
+            await setDoc(doc(db, 'admins', emailToAdd), {
+                createdAt: new Date().toISOString(),
+                createdBy: user?.email
+            });
+            setAdmins([...admins, emailToAdd]);
+            setNewAdminEmail('');
+            toast({ title: 'Administrador añadido', description: `Se ha añadido ${emailToAdd} como administrador.` });
+        } catch (error) {
+            console.error("Error adding admin:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo añadir el administrador.' });
+        }
+    };
 
-    if (isLoading || isLoadingConfig) {
+    const handleRemoveAdmin = async (emailToRemove: string) => {
+        if (admins.length === 1) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Debe haber al menos un administrador.' });
+            return;
+        }
+        try {
+            await deleteDoc(doc(db, 'admins', emailToRemove));
+            setAdmins(admins.filter(email => email !== emailToRemove));
+            toast({ title: 'Administrador removido', description: `Se ha removido ${emailToRemove} como administrador.` });
+        } catch (error) {
+            console.error("Error removing admin:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo remover el administrador.' });
+        }
+    };
+
+
+    if (isLoading || isLoadingConfig || loadingAdmin) {
         return (
             <div className="flex h-full w-full items-center justify-center">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...
@@ -154,7 +200,7 @@ export default function AdminPage() {
         );
     }
     
-    if (user?.email?.toLowerCase() !== ADMIN_EMAIL) {
+    if (!isAdmin) {
         return notFound();
     }
   
@@ -215,33 +261,60 @@ export default function AdminPage() {
                 </CardContent>
             </Card>
 
+            {/* Administradores Card */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Registro de Usuarios</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Administradores del Sistema
+                    </CardTitle>
                     <CardDescription>
-                        Solo los correos electrónicos en esta lista (y el administrador principal) podrán crear una cuenta.
+                        Usuarios con acceso completo al panel de administración. Gestiona quién puede acceder a esta página.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="admin-email">Administrador Principal</Label>
-                        <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
-                            <Shield className="h-5 w-5 text-primary" />
-                            <span className="font-mono text-sm">{ADMIN_EMAIL}</span>
-                        </div>
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="new-email">Añadir Nuevo Correo Autorizado</Label>
+                        <Label htmlFor="new-admin-email">Añadir Administrador</Label>
                         <div className="flex items-center gap-2">
                             <Input
-                                id="new-email"
+                                id="new-admin-email"
                                 type="email"
-                                placeholder="usuario@ejemplo.com"
-                                value={newEmail}
-                                onChange={(e) => setNewEmail(e.target.value)}
+                                placeholder="admin@ejemplo.com"
+                                value={newAdminEmail}
+                                onChange={(e) => setNewAdminEmail(e.target.value)}
                             />
-                            <Button onClick={handleAddEmail}>
+                            <Button onClick={handleAddAdmin}>
                                 <PlusCircle className="mr-2 h-4 w-4" />
+                                Añadir Admin
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Administradores Actuales</Label>
+                        <div className="space-y-2 p-3 border rounded-md max-h-60 overflow-y-auto">
+                            {admins.length > 0 ? (
+                                admins.map(email => (
+                                    <div key={email} className="flex justify-between items-center bg-background p-2 rounded">
+                                        <span className="text-sm">{email}</span>
+                                        <Button size="icon" variant="ghost" onClick={() => handleRemoveAdmin(email)} disabled={admins.length === 1}>
+                                            <Trash2 className="h-4 w-4 text-destructive" />
+                                        </Button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">No hay administradores configurados.</p>
+                            )}
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <p className="text-xs text-muted-foreground">
+                        Debe haber al menos un administrador. Los cambios se aplican inmediatamente.
+                    </p>
+                </CardFooter>
+            </Card>
+
+            {/* Registro de Usuarios Card */}
                                 Agregar
                             </Button>
                         </div>
