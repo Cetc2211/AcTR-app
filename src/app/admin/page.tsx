@@ -315,11 +315,31 @@ export default function AdminPage() {
             </Card>
 
             {/* Registro de Usuarios Card */}
-                                Agregar
+            <Card>
+                <CardHeader>
+                    <CardTitle>Registro de Usuarios</CardTitle>
+                    <CardDescription>
+                        Solo los correos electrónicos en esta lista podrán crear una cuenta.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="new-email">Añadir Nuevo Correo Autorizado</Label>
+                        <div className="flex items-center gap-2">
+                            <Input
+                                id="new-email"
+                                type="email"
+                                placeholder="usuario@ejemplo.com"
+                                value={newEmail}
+                                onChange={(e) => setNewEmail(e.target.value)}
+                            />
+                            <Button onClick={handleAddEmail}>
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Añadir
                             </Button>
                         </div>
                     </div>
-                     <div className="space-y-2">
+                    <div className="space-y-2">
                         <Label>Lista de Correos Autorizados</Label>
                         <div className="space-y-2 p-3 border rounded-md max-h-60 overflow-y-auto">
                             {authorizedEmails.length > 0 ? (
