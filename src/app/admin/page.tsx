@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -14,13 +13,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, ArrowRight } from 'lucide-react';
+import { Loader2, Shield, PlusCircle, Trash2, Eye, Users } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, db } from '@/lib/firebase'; // Added db
+import { auth, db } from '@/lib/firebase';
 import { notFound, useRouter } from 'next/navigation';
-import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore'; // Added Firestore imports
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 import { useData } from '@/hooks/use-data';
-import { useAdmin } from '@/hooks/use-admin';
 import { useAdmin } from '@/hooks/use-admin';
 
 export default function AdminPage() {
@@ -31,11 +29,11 @@ export default function AdminPage() {
     const { officialGroups } = useData();
 
     const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([]);
-    const [trackingManagers, setTrackingManagers] = useState<string[]>([]); // New State
+    const [trackingManagers, setTrackingManagers] = useState<string[]>([]);
     const [admins, setAdmins] = useState<string[]>([]);
     
     const [newEmail, setNewEmail] = useState('');
-    const [newTrackingEmail, setNewTrackingEmail] = useState(''); // New State
+    const [newTrackingEmail, setNewTrackingEmail] = useState('');
     const [newAdminEmail, setNewAdminEmail] = useState('');
 
     const [isSaving, setIsSaving] = useState(false);
@@ -54,7 +52,7 @@ export default function AdminPage() {
                     if (data.authorized_emails && Array.isArray(data.authorized_emails)) {
                         setAuthorizedEmails(data.authorized_emails);
                     }
-                     if (data.tracking_managers && Array.isArray(data.tracking_managers)) {
+                    if (data.tracking_managers && Array.isArray(data.tracking_managers)) {
                         setTrackingManagers(data.tracking_managers);
                     }
                 } else {
@@ -141,8 +139,8 @@ export default function AdminPage() {
         }
         const emailToAdd = newTrackingEmail.toLowerCase().trim();
         if (trackingManagers.includes(emailToAdd)) {
-             toast({ variant: 'destructive', title: 'Correo duplicado', description: 'Este correo ya es responsable de seguimiento.' });
-             return;
+            toast({ variant: 'destructive', title: 'Correo duplicado', description: 'Este correo ya es responsable de seguimiento.' });
+            return;
         }
         saveConfig(authorizedEmails, [...trackingManagers, emailToAdd]);
         setNewTrackingEmail('');
@@ -191,7 +189,6 @@ export default function AdminPage() {
         }
     };
 
-
     if (isLoading || isLoadingConfig || loadingAdmin) {
         return (
             <div className="flex h-full w-full items-center justify-center">
@@ -222,7 +219,7 @@ export default function AdminPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                     <div className="space-y-2">
+                    <div className="space-y-2">
                         <Label htmlFor="new-tracking-email">Añadir Responsable</Label>
                         <div className="flex items-center gap-2">
                             <Input
@@ -238,7 +235,7 @@ export default function AdminPage() {
                             </Button>
                         </div>
                     </div>
-                     <div className="space-y-2">
+                    <div className="space-y-2">
                         <Label>Usuarios con Acceso</Label>
                         <div className="space-y-2 p-3 border rounded-md max-h-60 overflow-y-auto">
                             {trackingManagers.length > 0 ? (
@@ -319,12 +316,12 @@ export default function AdminPage() {
                 <CardHeader>
                     <CardTitle>Registro de Usuarios</CardTitle>
                     <CardDescription>
-                        Solo los correos electrónicos en esta lista podrán crear una cuenta.
+                        Correos electrónicos autorizados para registrarse en la aplicación.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="new-email">Añadir Nuevo Correo Autorizado</Label>
+                        <Label htmlFor="new-email">Autorizar Nuevo Usuario</Label>
                         <div className="flex items-center gap-2">
                             <Input
                                 id="new-email"
@@ -335,7 +332,7 @@ export default function AdminPage() {
                             />
                             <Button onClick={handleAddEmail}>
                                 <PlusCircle className="mr-2 h-4 w-4" />
-                                Añadir
+                                Agregar
                             </Button>
                         </div>
                     </div>
@@ -364,7 +361,7 @@ export default function AdminPage() {
                 </CardFooter>
             </Card>
 
-            {/* Gestión de Grupos Oficiales (Fase 1) */}
+            {/* Gestión de Grupos Oficiales */}
             <Card className="border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-800">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -377,10 +374,10 @@ export default function AdminPage() {
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <div className="space-y-1">
-                         <p className="text-sm font-medium">Grupos activos en el sistema</p>
-                         <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                        <p className="text-sm font-medium">Grupos activos en el sistema</p>
+                        <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                             {officialGroups ? officialGroups.length : 0}
-                         </p>
+                        </p>
                     </div>
                     <Button 
                         onClick={() => router.push('/admin/official-groups')}
