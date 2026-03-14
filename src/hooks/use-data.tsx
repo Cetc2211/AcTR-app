@@ -332,23 +332,95 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                                 const cloudTimestamp = cloudPayload.lastUpdated || 0;
 
                                 if (cloudTimestamp > localTimestamp) {
-                                    // Cloud is newer -> Deep Merge instead of full replacement
-                                    console.log(`Cloud update for ${key} - performing deep merge`);
+                                    // Cloud is newer -> Intelligent Deep Merge
+                                    console.log(`Cloud update for ${key} - performing intelligent deep merge`);
                                     let mergedData: T;
+                                    
                                     if (key === 'app_groups') {
-                                        // For groups, merge arrays to rescue cloud-only groups
+                                        // Intelligent merge for groups: preserve both local and cloud data
                                         const localGroups = (localData as Group[]) || [];
                                         const cloudGroups = cloudData as Group[];
-                                        mergedData = [...cloudGroups] as T; // Start with cloud
+                                        
+                                        // Create a map for quick lookup
+                                        const mergedMap = new Map<string, Group>();
+                                        
+                                        // First, add all cloud groups (they have newer timestamp globally)
+                                        cloudGroups.forEach(cg => {
+                                            mergedMap.set(cg.id, cg);
+                                        });
+                                        
+                                        // Then merge local groups that might have local-only changes
                                         localGroups.forEach(localGroup => {
-                                            if (!cloudGroups.some(cg => cg.id === localGroup.id)) {
-                                                (mergedData as Group[]).push(localGroup);
+                                            const existingInCloud = mergedMap.get(localGroup.id);
+                                            if (existingInCloud) {
+                                                // Group exists in both - merge students intelligently
+                                                const mergedStudents = [...existingInCloud.students];
+                                                
+                                                // Add local students that don't exist in cloud version
+                                                localGroup.students.forEach(localStudent => {
+                                                    if (!mergedStudents.some(s => s.id === localStudent.id)) {
+                                                        mergedStudents.push(localStudent);
+                                                    }
+                                                });
+                                                
+                                                // Preserve any local-only criteria if cloud doesn't have it
+                                                const mergedCriteria = existingInCloud.evaluationCriteria?.length > 0 
+                                                    ? existingInCloud.evaluationCriteria 
+                                                    : localGroup.evaluationCriteria;
+                                                
+                                                mergedMap.set(localGroup.id, {
+                                                    ...existingInCloud,
+                                                    students: mergedStudents,
+                                                    evaluationCriteria: mergedCriteria
+                                                });
+                                            } else {
+                                                // Group only exists locally - preserve it
+                                                console.log(`Preserving local-only group: ${localGroup.groupName}`);
+                                                mergedMap.set(localGroup.id, localGroup);
                                             }
                                         });
+                                        
+                                        mergedData = Array.from(mergedMap.values()) as T;
+                                    } else if (key === 'app_students') {
+                                        // Merge students: combine both arrays, preferring cloud for duplicates
+                                        const localStudents = (localData as Student[]) || [];
+                                        const cloudStudents = cloudData as Student[];
+                                        
+                                        const mergedStudents = [...cloudStudents];
+                                        localStudents.forEach(ls => {
+                                            if (!mergedStudents.some(cs => cs.id === ls.id)) {
+                                                mergedStudents.push(ls);
+                                            }
+                                        });
+                                        mergedData = mergedStudents as T;
+                                    } else if (key === 'app_partialsData') {
+                                        // For partials data, do a deep merge
+                                        const localPartials = (localData as AllPartialsData) || {};
+                                        const cloudPartials = cloudData as AllPartialsData;
+                                        
+                                        const mergedPartials = { ...cloudPartials };
+                                        
+                                        // Merge each group's data
+                                        Object.keys(localPartials).forEach(groupId => {
+                                            if (!mergedPartials[groupId]) {
+                                                // Local group not in cloud - add it
+                                                mergedPartials[groupId] = localPartials[groupId];
+                                            } else {
+                                                // Merge partials within the group
+                                                Object.keys(localPartials[groupId]).forEach(partialId => {
+                                                    if (!mergedPartials[groupId][partialId]) {
+                                                        mergedPartials[groupId][partialId] = localPartials[groupId][partialId];
+                                                    }
+                                                });
+                                            }
+                                        });
+                                        
+                                        mergedData = mergedPartials as T;
                                     } else {
-                                        // For other data types, prefer cloud but could extend merge logic
+                                        // For other data types, prefer cloud
                                         mergedData = cloudData;
                                     }
+                                    
                                     await set(key, { value: mergedData, lastUpdated: cloudTimestamp });
                                     setter(mergedData);
                                 } else if (localTimestamp > cloudTimestamp) {
@@ -480,119 +552,182 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log('Setting up real-time listeners for cross-device sync');
 
-        // Listener for groups
+        // Helper to safely update local state only if cloud is newer
+        const safeUpdateLocal = async <T,>(
+            key: string,
+            cloudData: T,
+            cloudTimestamp: number,
+            setter: React.Dispatch<React.SetStateAction<T>>
+        ) => {
+            try {
+                // Get local timestamp
+                const localPayload = await get(key);
+                const localTimestamp = localPayload?.lastUpdated || 0;
+                
+                // Only update if cloud is actually newer
+                if (cloudTimestamp > localTimestamp) {
+                    console.log(`Updating ${key} from cloud - newer timestamp (${cloudTimestamp} > ${localTimestamp})`);
+                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
+                    setter(cloudData);
+                } else if (localTimestamp > 0) {
+                    console.log(`Skipping ${key} update - local is same or newer`);
+                }
+            } catch (err) {
+                console.error(`Error in safeUpdateLocal for ${key}:`, err);
+            }
+        };
+
+        // Listener for groups - with safe merge logic
         const unsubscribeGroups = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_groups'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudGroups = data.value as Group[];
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    // Update local state and cache
-                    setGroupsState(cloudGroups);
-                    set('app_groups', { value: cloudGroups, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local groups cache:', err));
-
-                    console.log('Groups updated from cloud (real-time)');
+                    
+                    // Get current local data
+                    const localPayload = await get('app_groups');
+                    const localGroups = localPayload?.value as Group[] || [];
+                    const localTimestamp = localPayload?.lastUpdated || 0;
+                    
+                    // Only process if cloud is newer
+                    if (cloudTimestamp > localTimestamp) {
+                        // Intelligent merge - preserve local-only groups
+                        const mergedMap = new Map<string, Group>();
+                        
+                        // Add cloud groups first
+                        cloudGroups.forEach(cg => mergedMap.set(cg.id, cg));
+                        
+                        // Merge local groups that don't exist in cloud
+                        localGroups.forEach(lg => {
+                            if (!mergedMap.has(lg.id)) {
+                                console.log(`Preserving local-only group in real-time sync: ${lg.groupName}`);
+                                mergedMap.set(lg.id, lg);
+                            }
+                        });
+                        
+                        const mergedGroups = Array.from(mergedMap.values());
+                        await set('app_groups', { value: mergedGroups, lastUpdated: cloudTimestamp });
+                        setGroupsState(mergedGroups);
+                        console.log('Groups updated from cloud (real-time with merge)');
+                    }
                 }
             },
-            (error) => console.error('Error in groups real-time listener:', error)
+            (error) => {
+                if (error.code === 'unavailable') {
+                    console.log('Firestore temporarily unavailable - offline mode');
+                } else {
+                    console.error('Error in groups real-time listener:', error);
+                }
+            }
         );
 
-        // Listener for students
+        // Listener for students - with safe update
         const unsubscribeStudents = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_students'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudStudents = data.value as Student[];
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    setAllStudentsState(cloudStudents);
-                    set('app_students', { value: cloudStudents, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local students cache:', err));
-
-                    console.log('Students updated from cloud (real-time)');
+                    await safeUpdateLocal('app_students', cloudStudents, cloudTimestamp, setAllStudentsState);
                 }
             },
-            (error) => console.error('Error in students real-time listener:', error)
+            (error) => {
+                if (error.code !== 'unavailable') {
+                    console.error('Error in students real-time listener:', error);
+                }
+            }
         );
 
         // Listener for observations
         const unsubscribeObservations = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_observations'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudObservations = data.value as { [studentId: string]: StudentObservation[] };
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    setAllObservationsState(cloudObservations);
-                    set('app_observations', { value: cloudObservations, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local observations cache:', err));
-
-                    console.log('Observations updated from cloud (real-time)');
+                    await safeUpdateLocal('app_observations', cloudObservations, cloudTimestamp, setAllObservationsState);
                 }
             },
-            (error) => console.error('Error in observations real-time listener:', error)
+            (error) => {
+                if (error.code !== 'unavailable') {
+                    console.error('Error in observations real-time listener:', error);
+                }
+            }
         );
 
         // Listener for special notes
         const unsubscribeSpecialNotes = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_specialNotes'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudSpecialNotes = data.value as SpecialNote[];
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    setSpecialNotesState(cloudSpecialNotes);
-                    set('app_specialNotes', { value: cloudSpecialNotes, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local special notes cache:', err));
-
-                    console.log('Special notes updated from cloud (real-time)');
+                    await safeUpdateLocal('app_specialNotes', cloudSpecialNotes, cloudTimestamp, setSpecialNotesState);
                 }
             },
-            (error) => console.error('Error in special notes real-time listener:', error)
+            (error) => {
+                if (error.code !== 'unavailable') {
+                    console.error('Error in special notes real-time listener:', error);
+                }
+            }
         );
 
         // Listener for partials data
         const unsubscribePartials = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_partialsData'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudPartials = data.value as AllPartialsData;
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    setAllPartialsDataState(cloudPartials);
-                    set('app_partialsData', { value: cloudPartials, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local partials cache:', err));
-
-                    console.log('Partials data updated from cloud (real-time)');
+                    
+                    // Deep merge for partials
+                    const localPayload = await get('app_partialsData');
+                    const localPartials = localPayload?.value as AllPartialsData || {};
+                    const localTimestamp = localPayload?.lastUpdated || 0;
+                    
+                    if (cloudTimestamp > localTimestamp) {
+                        const mergedPartials = { ...cloudPartials };
+                        Object.keys(localPartials).forEach(groupId => {
+                            if (!mergedPartials[groupId]) {
+                                mergedPartials[groupId] = localPartials[groupId];
+                            }
+                        });
+                        
+                        await set('app_partialsData', { value: mergedPartials, lastUpdated: cloudTimestamp });
+                        setAllPartialsDataState(mergedPartials);
+                        console.log('Partials data updated from cloud (real-time with merge)');
+                    }
                 }
             },
-            (error) => console.error('Error in partials data real-time listener:', error)
+            (error) => {
+                if (error.code !== 'unavailable') {
+                    console.error('Error in partials data real-time listener:', error);
+                }
+            }
         );
 
         // Listener for settings
         const unsubscribeSettings = onSnapshot(
             doc(db, 'users', user.uid, 'userData', 'app_settings'),
-            (docSnap) => {
+            async (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     const cloudSettings = normalizeSettingsValue(data.value as AppSettings);
                     const cloudTimestamp = data.lastUpdated || 0;
-
-                    setSettingsState(cloudSettings);
-                    set('app_settings', { value: cloudSettings, lastUpdated: cloudTimestamp })
-                        .catch(err => console.error('Error updating local settings cache:', err));
-
-                    console.log('Settings updated from cloud (real-time)');
+                    await safeUpdateLocal('app_settings', cloudSettings, cloudTimestamp, setSettingsState);
                 }
             },
-            (error) => console.error('Error in settings real-time listener:', error)
+            (error) => {
+                if (error.code !== 'unavailable') {
+                    console.error('Error in settings real-time listener:', error);
+                }
+            }
         );
 
         return () => {
