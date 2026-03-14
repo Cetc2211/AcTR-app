@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import {
@@ -65,6 +66,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useState } from 'react';
+import { ConnectionStatus } from '@/components/connection-status';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -208,6 +210,9 @@ export default function MainLayoutClient({ children }: { children: React.ReactNo
 
   return (
     <>
+      {/* Banner de estado de conexión */}
+      <ConnectionStatus syncStatus={syncStatus} />
+      
       <SidebarProvider>
         <Sidebar>
           <SidebarHeader>
