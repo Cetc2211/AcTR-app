@@ -1,0 +1,16 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[1931],{38605:function(e,r,t){Promise.resolve().then(t.bind(t,68157))},16463:function(e,r,t){"use strict";var n=t(71169);t.o(n,"notFound")&&t.d(r,{notFound:function(){return n.notFound}}),t.o(n,"useParams")&&t.d(r,{useParams:function(){return n.useParams}}),t.o(n,"usePathname")&&t.d(r,{usePathname:function(){return n.usePathname}}),t.o(n,"useRouter")&&t.d(r,{useRouter:function(){return n.useRouter}})},68157:function(e,r,t){"use strict";t.r(r),t.d(r,{default:function(){return i}});var n=t(57437),a=t(56452),u=t(89506),s=t(2265),o=t(16463),c=t(38087);function i(){let[e,r]=(0,a.F_)(u.I),t=(0,o.useRouter)();return(0,s.useEffect)(()=>{r||(e?t.replace("/dashboard"):t.replace("/login"))},[e,r,t]),(0,n.jsxs)("div",{className:"flex h-screen w-full items-center justify-center",children:[(0,n.jsx)(c.Z,{className:"h-8 w-8 animate-spin"}),(0,n.jsx)("span",{className:"ml-4",children:"Cargando..."})]})}},89506:function(e,r,t){"use strict";t.d(r,{I:function(){return o},db:function(){return c}});var n=t(15236),a=t(75735),u=t(69842);let s=(0,n.C6)().length?(0,n.Mq)():(0,n.ZF)({projectId:"actracker-master",appId:"1:660718374201:web:4889a6d15d8aee23ddace8",storageBucket:"actracker-master.firebasestorage.app",apiKey:"AIzaSyCDy-W8_3sB3WS8gVKZuzV_P6PdG1tBOUc",authDomain:"actracker-master.firebaseapp.com",messagingSenderId:"660718374201"}),o=(0,a.v0)(s),c=(0,u.ad)(s)},6497:function(e,r,t){"use strict";t.d(r,{Z:function(){return c}});var n=t(2265);/**
+ * @license lucide-react v0.475.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let a=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase(),u=function(){for(var e=arguments.length,r=Array(e),t=0;t<e;t++)r[t]=arguments[t];return r.filter((e,r,t)=>!!e&&""!==e.trim()&&t.indexOf(e)===r).join(" ").trim()};/**
+ * @license lucide-react v0.475.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */var s={xmlns:"http://www.w3.org/2000/svg",width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"};/**
+ * @license lucide-react v0.475.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let o=(0,n.forwardRef)((e,r)=>{let{color:t="currentColor",size:a=24,strokeWidth:o=2,absoluteStrokeWidth:c,className:i="",children:d,iconNode:l,...f}=e;return(0,n.createElement)("svg",{ref:r,...s,width:a,height:a,stroke:t,strokeWidth:c?24*Number(o)/Number(a):o,className:u("lucide",i),...f},[...l.map(e=>{let[r,t]=e;return(0,n.createElement)(r,t)}),...Array.isArray(d)?d:[d]])}),c=(e,r)=>{let t=(0,n.forwardRef)((t,s)=>{let{className:c,...i}=t;return(0,n.createElement)(o,{ref:s,iconNode:r,className:u("lucide-".concat(a(e)),c),...i})});return t.displayName="".concat(e),t}},38087:function(e,r,t){"use strict";t.d(r,{Z:function(){return n}});let n=(0,t(6497).Z)("LoaderCircle",[["path",{d:"M21 12a9 9 0 1 1-6.219-8.56",key:"13zald"}]])}},function(e){e.O(0,[4358,139,537,6452,2971,7023,1744],function(){return e(e.s=38605)}),_N_E=e.O()}]);
