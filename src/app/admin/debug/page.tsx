@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -30,7 +29,6 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
-  CheckCircle,
   Wifi,
   WifiOff,
   Database,
@@ -38,9 +36,8 @@ import {
   Clock,
 } from 'lucide-react';
 import { secureLogger, type LogEntry, type LogLevel } from '@/lib/secure-logger';
-import { auth, db } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { useAdmin } from '@/hooks/use-admin';
+import { notFound } from 'next/navigation';
 
 // Level colors and icons
 const levelConfig: Record<LogLevel, { color: string; bgColor: string; Icon: React.ComponentType<{ className?: string }> }> = {
@@ -125,6 +122,7 @@ function SystemInfo({ info }: { info: Record<string, string> }) {
 
 export default function DebugConsolePage() {
   const { toast } = useToast();
+  const { isAdmin, loading: loadingAdmin } = useAdmin();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
   const [filters, setFilters] = useState<Record<LogLevel, boolean>>({
@@ -135,31 +133,9 @@ export default function DebugConsolePage() {
   });
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set());
   const [systemInfo, setSystemInfo] = useState<Record<string, string>>({});
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const logsEndRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef(true);
-
-  // Check admin status
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        setIsAdmin(false);
-        return;
-      }
-
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        const userData = userDoc.data();
-        setIsAdmin(userData?.role === 'admin');
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   // Subscribe to logs
   useEffect(() => {
@@ -272,7 +248,7 @@ export default function DebugConsolePage() {
   }, [toast]);
 
   // Loading state while checking admin
-  if (isAdmin === null) {
+  if (loadingAdmin) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -282,13 +258,7 @@ export default function DebugConsolePage() {
 
   // Not admin
   if (!isAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <AlertCircle className="h-12 w-12 text-red-500" />
-        <h1 className="text-2xl font-bold">Acceso Denegado</h1>
-        <p className="text-muted-foreground">Solo los administradores pueden acceder a esta página.</p>
-      </div>
-    );
+    return notFound();
   }
 
   return (
@@ -406,7 +376,7 @@ export default function DebugConsolePage() {
               <Clock className="h-5 w-5" />
               Logs ({filteredLogs.length} de {logs.length})
             </CardTitle>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 flex-wrap">
               {(['error', 'warn', 'info', 'debug'] as LogLevel[]).map(level => (
                 <FilterButton
                   key={level}
