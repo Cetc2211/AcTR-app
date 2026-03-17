@@ -13,16 +13,22 @@ export function useAdmin() {
       if (loadingAuth) return;
 
       if (!user?.email) {
+        console.log('[useAdmin] No user email found');
         setIsAdmin(false);
         setLoadingAdmin(false);
         return;
       }
 
       try {
-        const adminDoc = await getDoc(doc(db, 'admins', user.email.toLowerCase()));
+        const emailLower = user.email.toLowerCase();
+        console.log('[useAdmin] Checking admin status for:', emailLower);
+        
+        const adminDoc = await getDoc(doc(db, 'admins', emailLower));
+        console.log('[useAdmin] Admin doc exists:', adminDoc.exists());
+        
         setIsAdmin(adminDoc.exists());
       } catch (error) {
-        console.error("Error checking admin status:", error);
+        console.error("[useAdmin] Error checking admin status:", error);
         setIsAdmin(false);
       } finally {
         setLoadingAdmin(false);
