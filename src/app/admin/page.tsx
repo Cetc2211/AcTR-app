@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { Loader2, Shield, PlusCircle, Trash2, Eye, Users } from 'lucide-react';
+import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, Bug } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/lib/firebase';
 import { notFound, useRouter } from 'next/navigation';
@@ -385,6 +385,34 @@ export default function AdminPage() {
                     >
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Aperturar / Gestionar Grupos
+                    </Button>
+                </CardContent>
+            </Card>
+
+            {/* Consola de Diagnóstico */}
+            <Card className="border-purple-200 bg-purple-50/50 dark:bg-purple-950/20 dark:border-purple-800">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Bug className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                        Consola de Diagnóstico
+                    </CardTitle>
+                    <CardDescription>
+                        Monitorea procesos, errores y sincronización en tiempo real. Ideal para debuggear problemas sin conectar a una computadora.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium">Herramienta de diagnóstico</p>
+                        <p className="text-xs text-muted-foreground">
+                            Los datos sensibles se filtran automáticamente
+                        </p>
+                    </div>
+                    <Button 
+                        onClick={() => router.push('/admin/debug')}
+                        className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                        <Bug className="mr-2 h-4 w-4" />
+                        Abrir Consola
                     </Button>
                 </CardContent>
             </Card>
