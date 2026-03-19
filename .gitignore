@@ -1,0 +1,21 @@
+# Ignorar archivos generados por Next.js
+.next/
+node_modules/.evi
+node_modules
+
+# Ignorar archivos de configuración local y variables de entorno
+.env.local
+.env.*.local
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+google-cloud-sdk/
+y/

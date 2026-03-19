@@ -1,0 +1,166 @@
+From 41dd8734fce16691814354b5f7f5adc1b18d9500 Mon Sep 17 00:00:00 2001
+From: Z User <z@container>
+Date: Tue, 17 Mar 2026 05:02:37 +0000
+Subject: [PATCH 5/5] fix: Improve sync timeout handling with adaptive timeouts
+ and photo stripping for large data
+
+---
+ src/hooks/use-data.tsx | 104 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 83 insertions(+), 21 deletions(-)
+
+diff --git a/src/hooks/use-data.tsx b/src/hooks/use-data.tsx
+index ae8391a..c8cbf0d 100755
+--- a/src/hooks/use-data.tsx
++++ b/src/hooks/use-data.tsx
+@@ -1560,7 +1560,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+             console.log("  - groups:", dataToUpload.groups?.length || 0);
+             console.log("  - students:", dataToUpload.students?.length || 0);
+ 
+-            // Upload with progress tracking and timeout
++            // Upload with progress tracking and adaptive timeout
+             const uploadToCloud = async <T,>(key: string, data: T, stepName: string): Promise<{ success: boolean; count: number; size: string; error?: string }> => {
+                 const stepNumber = key === 'app_groups' ? 1 :
+                                    key === 'app_students' ? 2 :
+@@ -1582,57 +1582,119 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+                     // Check if data is too large (> 900KB, Firebase limit is 1MB per document)
+                     const jsonStr = JSON.stringify(data);
+                     const bytes = new Blob([jsonStr]).size;
++                    const isLargeData = bytes > 900000;
++
++                    // Calculate adaptive timeout based on data size:
++                    // - Small data (< 500KB): 60 seconds
++                    // - Medium data (500KB - 2MB): 120 seconds
++                    // - Large data (> 2MB): 300 seconds (5 minutes)
++                    let timeoutMs = 60000;
++                    if (bytes > 2000000) {
++                        timeoutMs = 300000; // 5 minutes for large data
++                    } else if (bytes > 500000) {
++                        timeoutMs = 120000; // 2 minutes for medium data
++                    }
+ 
+-                    if (bytes > 900000) {
+-                        console.warn(`⚠️ ${key} es muy grande (${size}), puede tardar más...`);
++                    if (isLargeData) {
++                        console.warn(`⚠️ ${key} es muy grande (${size}), timeout extendido a ${timeoutMs/1000}s...`);
+                         setSyncProgress(prev => prev ? {
+                             ...prev,
+-                            currentTask: `Subiendo ${stepName} (archivo grande: ${size})...`
++                            currentTask: `Subiendo ${stepName} (archivo grande: ${size}, timeout: ${timeoutMs/1000}s)...`
+                         } : null);
+                     }
+ 
++                    // For very large data, strip photos BEFORE attempting upload to save time
++                    let dataToUpload = data;
++                    let originalData = data; // Keep original for IndexedDB
++                    if (bytes > 1000000) {
++                        console.log(`⚠️ ${key} excede 1MB, removiendo fotos para subir a la nube...`);
++                        setSyncProgress(prev => prev ? {
++                            ...prev,
++                            currentTask: `Preparando ${stepName} (sin fotos por tamaño)...`
++                        } : null);
++
++                        if (key === 'app_students' && Array.isArray(data)) {
++                            dataToUpload = data.map(s => ({...s, photo: s.photo?.startsWith('data:') ? 'https://placehold.co/100x100.png' : s.photo})) as T;
++                        } else if (key === 'app_groups' && Array.isArray(data)) {
++                            // Strip photos from students inside groups
++                            dataToUpload = (data as Group[]).map(g => ({
++                                ...g,
++                                students: g.students?.map(s => ({
++                                    ...s,
++                                    photo: s.photo?.startsWith('data:') ? 'https://placehold.co/100x100.png' : s.photo
++                                }))
++                            })) as T;
++                        }
++                        console.log(`📊 Tamaño reducido: ${getDataSize(dataToUpload)}`);
++                    }
++
+                     const docRef = doc(db, 'users', user.uid, 'userData', key);
+-                    const payload = { value: data, lastUpdated: now };
+-                    
+-                    // Save to IndexedDB first to ensure local persistence
+-                    await set(key, payload);
++
++                    // IMPORTANT: Save ORIGINAL data (with photos) to IndexedDB, but upload STRIPPED data to Firebase
++                    // This ensures local photos are preserved while staying under Firebase's 1MB limit
++                    const originalPayload = { value: originalData, lastUpdated: now };
++                    await set(key, originalPayload);
++
++                    const uploadPayload = { value: dataToUpload, lastUpdated: now };
+ 
+                     // Create a timeout promise
+                     const timeoutPromise = new Promise<never>((_, reject) => {
+-                        setTimeout(() => reject(new Error(`Timeout: La subida de ${stepName} tardó demasiado`)), 60000);
++                        setTimeout(() => reject(new Error(`Timeout: La subida de ${stepName} tardó más de ${timeoutMs/1000}s`)), timeoutMs);
+                     });
+ 
+                     // Race between upload and timeout
+                     await Promise.race([
+-                        setDoc(docRef, payload, { merge: true }),
++                        setDoc(docRef, uploadPayload, { merge: true }),
+                         timeoutPromise
+                     ]);
+ 
+-                    const count = Array.isArray(data) ? data.length : typeof data === 'object' ? Object.keys(data).length : 1;
+-                    console.log(`✅ Subido ${key} - ${count} items (${size})`);
++                    const count = Array.isArray(dataToUpload) ? dataToUpload.length : (dataToUpload && typeof dataToUpload === 'object') ? Object.keys(dataToUpload).length : 1;
++                    console.log(`✅ Subido ${key} - ${count} items (${getDataSize(dataToUpload)})`);
+                     return { success: true, count, size };
+                 } catch (error: any) {
+                     console.error(`❌ Error subiendo ${key}:`, error);
+                     const errorMsg = error?.message || 'Error desconocido';
+ 
+-                    // If it's a size error, try to strip photos
++                    // If it's still a size error after our optimization, try more aggressive stripping
+                     if (error.code === 'invalid-argument' || error.message?.includes('too large')) {
+-                        console.log(`⚠️ Intentando subir ${key} sin fotos...`);
++                        console.log(`⚠️ Intentando subir ${key} sin ningún dato binario...`);
+                         setSyncProgress(prev => prev ? {
+                             ...prev,
+-                            currentTask: `Subiendo ${stepName} (sin fotos por tamaño)...`
++                            currentTask: `Reintentando ${stepName} (datos mínimos)...`
+                         } : null);
+ 
+                         try {
+-                            if (key === 'app_students' && Array.isArray(data)) {
+-                                const strippedData = data.map(s => ({...s, photo: s.photo?.startsWith('data:') ? 'https://placehold.co/100x100.png' : s.photo}));
++                            // More aggressive stripping for groups
++                            if (key === 'app_groups' && Array.isArray(data)) {
++                                const minimalData = (data as Group[]).map(g => ({
++                                    id: g.id,
++                                    subject: g.subject,
++                                    semester: g.semester,
++                                    groupName: g.groupName,
++                                    facilitator: g.facilitator,
++                                    whatsappLink: g.whatsappLink,
++                                    criteria: g.criteria,
++                                    status: g.status,
++                                    officialGroupId: g.officialGroupId,
++                                    students: g.students?.map(s => ({
++                                        id: s.id,
++                                        name: s.name,
++                                        email: s.email,
++                                        phone: s.phone,
++                                        tutorName: s.tutorName,
++                                        tutorPhone: s.tutorPhone,
++                                        officialGroupId: s.officialGroupId,
++                                        photo: ''
++                                    }))
++                                }));
+                                 const strippedDocRef = doc(db, 'users', user.uid, 'userData', key);
+-                                await setDoc(strippedDocRef, { value: strippedData, lastUpdated: now }, { merge: true });
+-                                console.log(`✅ Subido ${key} sin fotos`);
+-                                return { success: true, count: strippedData.length, size: 'reduced' };
++                                const strippedPayload = { value: minimalData, lastUpdated: now };
++                                await setDoc(strippedDocRef, strippedPayload, { merge: true });
++                                console.log(`✅ Subido ${key} con datos mínimos`);
++                                return { success: true, count: minimalData.length, size: 'minimal' };
+                             }
+                         } catch (retryError: any) {
+-                            console.error(`❌ Error en reintento:`, retryError);
++                            console.error(`❌ Error en reintento mínimo:`, retryError);
+                             return { success: false, count: 0, size: 'error', error: `Error de tamaño: ${retryError.message}` };
+                         }
+                     }
+-- 
+2.47.3
+

@@ -1,0 +1,174 @@
+From 20ac4f455e4b65c4c16ffca03ebb399112ef2104 Mon Sep 17 00:00:00 2001
+From: Z User <z@container>
+Date: Mon, 16 Mar 2026 23:49:53 +0000
+Subject: [PATCH 1/5] fix: Read from IndexedDB directly in uploadLocalToCloud
+
+- Now reads directly from IndexedDB to avoid React stale closure issues
+- Merges IndexedDB data with React state (prefers source with more data)
+- Added detailed logging to diagnose data flow issues
+- Increased timeout to 60 seconds per upload
+- Removed old AcTracker Master Firebase directory
+---
+ src/hooks/use-data.tsx | 87 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 62 insertions(+), 25 deletions(-)
+
+diff --git a/src/hooks/use-data.tsx b/src/hooks/use-data.tsx
+index 6134759..ae8391a 100755
+--- a/src/hooks/use-data.tsx
++++ b/src/hooks/use-data.tsx
+@@ -1467,7 +1467,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+ 
+     // --- UPLOAD LOCAL DATA TO CLOUD ---
+     // This function uploads ALL local data to Firebase, overwriting cloud data
+-    // IMPORTANT: First saves current React state to IndexedDB, then uploads to cloud
++    // IMPORTANT: Reads DIRECTLY from IndexedDB to avoid React stale closure issues
+     const uploadLocalToCloud = useCallback(async () => {
+         const startTime = Date.now();
+ 
+@@ -1493,14 +1493,6 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+ 
+             console.log("🔄 Iniciando subida de datos locales a Firebase...");
+             console.log("👤 Usuario:", user.uid);
+-            
+-            // DEBUG: Log actual state values
+-            console.log("📊 ESTADO ACTUAL:");
+-            console.log("  - groups:", groups?.length, groups);
+-            console.log("  - allStudents:", allStudents?.length, allStudents);
+-            console.log("  - allObservations:", Object.keys(allObservations || {}).length);
+-            console.log("  - specialNotes:", specialNotes?.length);
+-            console.log("  - allPartialsData:", Object.keys(allPartialsData || {}).length);
+ 
+             const now = Date.now();
+ 
+@@ -1514,9 +1506,59 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+                 return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+             };
+ 
+-            // First, save current React state to IndexedDB
+-            console.log("💾 Guardando estado actual a IndexedDB...");
+-            setSyncProgress(prev => prev ? { ...prev, currentTask: 'Guardando datos locales...' } : null);
++            // Helper to read directly from IndexedDB - avoids stale closure issues
++            const readFromIDB = async <T,>(key: string): Promise<{ value: T; lastUpdated: number } | null> => {
++                try {
++                    const data = await get(key);
++                    console.log(`📖 Leído ${key} de IDB:`, data);
++                    if (data && typeof data === 'object' && 'value' in data) {
++                        return data as { value: T; lastUpdated: number };
++                    } else if (data) {
++                        // Legacy format
++                        return { value: data as T, lastUpdated: 0 };
++                    }
++                } catch (e) {
++                    console.error(`Error leyendo ${key} de IDB:`, e);
++                }
++                return null;
++            };
++
++            // Read ALL data directly from IndexedDB (avoids React stale state)
++            console.log("📖 Leyendo datos directamente de IndexedDB...");
++            setSyncProgress(prev => prev ? { ...prev, currentTask: 'Leyendo datos locales...' } : null);
++
++            const idbGroups = await readFromIDB<Group[]>('app_groups');
++            const idbStudents = await readFromIDB<Student[]>('app_students');
++            const idbObservations = await readFromIDB<{ [studentId: string]: StudentObservation[] }>('app_observations');
++            const idbSpecialNotes = await readFromIDB<SpecialNote[]>('app_specialNotes');
++            const idbPartialsData = await readFromIDB<AllPartialsData>('app_partialsData');
++            const idbSettings = await readFromIDB<AppSettings>('app_settings');
++
++            console.log("📊 DATOS EN INDEXEDDB:");
++            console.log("  - app_groups:", idbGroups?.value?.length || 0, "items");
++            console.log("  - app_students:", idbStudents?.value?.length || 0, "items");
++            console.log("  - app_observations:", Object.keys(idbObservations?.value || {}).length, "keys");
++            console.log("  - app_specialNotes:", idbSpecialNotes?.value?.length || 0, "items");
++            console.log("  - app_partialsData:", Object.keys(idbPartialsData?.value || {}).length, "groups");
++
++            // Also check React state as fallback
++            console.log("📊 DATOS EN REACT STATE:");
++            console.log("  - groups:", groups?.length || 0, "items");
++            console.log("  - allStudents:", allStudents?.length || 0, "items");
++
++            // Merge IDB data with React state (prefer whichever has more data)
++            const dataToUpload = {
++                groups: (idbGroups?.value?.length || 0) >= (groups?.length || 0) ? idbGroups?.value : groups,
++                students: (idbStudents?.value?.length || 0) >= (allStudents?.length || 0) ? idbStudents?.value : allStudents,
++                observations: Object.keys(idbObservations?.value || {}).length >= Object.keys(allObservations || {}).length ? idbObservations?.value : allObservations,
++                specialNotes: (idbSpecialNotes?.value?.length || 0) >= (specialNotes?.length || 0) ? idbSpecialNotes?.value : specialNotes,
++                partialsData: Object.keys(idbPartialsData?.value || {}).length >= Object.keys(allPartialsData || {}).length ? idbPartialsData?.value : allPartialsData,
++                settings: idbSettings?.value || settings
++            };
++
++            console.log("📊 DATOS A SUBIR (después de merge):");
++            console.log("  - groups:", dataToUpload.groups?.length || 0);
++            console.log("  - students:", dataToUpload.students?.length || 0);
+ 
+             // Upload with progress tracking and timeout
+             const uploadToCloud = async <T,>(key: string, data: T, stepName: string): Promise<{ success: boolean; count: number; size: string; error?: string }> => {
+@@ -1536,11 +1578,6 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+                 try {
+                     const size = getDataSize(data);
+                     console.log(`📤 Subiendo ${key}... (${size})`);
+-                    
+-                    // Check if data is empty or null
+-                    if (!data || (Array.isArray(data) && data.length === 0) || (typeof data === 'object' && Object.keys(data).length === 0)) {
+-                        console.log(`⚠️ ${key} está vacío, subiendo estructura vacía`);
+-                    }
+ 
+                     // Check if data is too large (> 900KB, Firebase limit is 1MB per document)
+                     const jsonStr = JSON.stringify(data);
+@@ -1557,12 +1594,12 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+                     const docRef = doc(db, 'users', user.uid, 'userData', key);
+                     const payload = { value: data, lastUpdated: now };
+                     
+-                    // Save to IndexedDB first
++                    // Save to IndexedDB first to ensure local persistence
+                     await set(key, payload);
+ 
+                     // Create a timeout promise
+                     const timeoutPromise = new Promise<never>((_, reject) => {
+-                        setTimeout(() => reject(new Error(`Timeout: La subida de ${stepName} tardó demasiado`)), 30000);
++                        setTimeout(() => reject(new Error(`Timeout: La subida de ${stepName} tardó demasiado`)), 60000);
+                     });
+ 
+                     // Race between upload and timeout
+@@ -1607,32 +1644,32 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) =>
+             const results: { success: boolean; count: number; size: string; key: string; error?: string }[] = [];
+ 
+             // Upload groups
+-            const r1 = await uploadToCloud('app_groups', groups, 'grupos');
++            const r1 = await uploadToCloud('app_groups', dataToUpload.groups || [], 'grupos');
+             results.push({...r1, key: 'app_groups'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r1, key: 'app_groups'}] } : null);
+ 
+             // Upload students
+-            const r2 = await uploadToCloud('app_students', allStudents, 'estudiantes');
++            const r2 = await uploadToCloud('app_students', dataToUpload.students || [], 'estudiantes');
+             results.push({...r2, key: 'app_students'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r2, key: 'app_students'}] } : null);
+ 
+             // Upload observations
+-            const r3 = await uploadToCloud('app_observations', allObservations, 'observaciones');
++            const r3 = await uploadToCloud('app_observations', dataToUpload.observations || {}, 'observaciones');
+             results.push({...r3, key: 'app_observations'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r3, key: 'app_observations'}] } : null);
+ 
+             // Upload special notes
+-            const r4 = await uploadToCloud('app_specialNotes', specialNotes, 'notas especiales');
++            const r4 = await uploadToCloud('app_specialNotes', dataToUpload.specialNotes || [], 'notas especiales');
+             results.push({...r4, key: 'app_specialNotes'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r4, key: 'app_specialNotes'}] } : null);
+ 
+             // Upload partials data
+-            const r5 = await uploadToCloud('app_partialsData', allPartialsData, 'datos de parciales');
++            const r5 = await uploadToCloud('app_partialsData', dataToUpload.partialsData || {}, 'datos de parciales');
+             results.push({...r5, key: 'app_partialsData'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r5, key: 'app_partialsData'}] } : null);
+ 
+             // Upload settings
+-            const normalizedSettings = normalizeSettingsValue(settings);
++            const normalizedSettings = normalizeSettingsValue(dataToUpload.settings || defaultSettings);
+             const r6 = await uploadToCloud('app_settings', normalizedSettings, 'configuración');
+             results.push({...r6, key: 'app_settings'});
+             setSyncProgress(prev => prev ? { ...prev, results: [...prev.results, {...r6, key: 'app_settings'}] } : null);
+-- 
+2.47.3
+
