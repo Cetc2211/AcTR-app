@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, Bug, Database, RefreshCw, Search, AlertTriangle, Send } from 'lucide-react';
+import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, Bug, Database, RefreshCw, Search, AlertTriangle, Send, Brain } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/lib/firebase';
 import { notFound, useRouter } from 'next/navigation';
@@ -487,6 +487,35 @@ export default function AdminPage() {
                         className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
                     >
                         <Send className="mr-2 h-4 w-4" />
+                        Abrir Diagnóstico
+                    </Button>
+                </CardContent>
+            </Card>
+
+            {/* Diagnóstico del Sistema de Riesgo */}
+            <Card className="border-indigo-200 bg-indigo-50/50 dark:bg-indigo-950/20 dark:border-indigo-800">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Brain className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                        Diagnóstico del Sistema de Riesgo (IRC)
+                    </CardTitle>
+                    <CardDescription>
+                        Analiza discrepancias entre el sistema de riesgo simple y el IRC (Índice de Riesgo Compuesto).
+                        Identifica estudiantes con evaluaciones contradictorias.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium">Comparación de sistemas de riesgo</p>
+                        <p className="text-xs text-muted-foreground">
+                            Dashboard vs IRC • Datos clínicos vs Simple
+                        </p>
+                    </div>
+                    <Button 
+                        onClick={() => router.push('/admin/risk-diagnostic')}
+                        className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                        <Brain className="mr-2 h-4 w-4" />
                         Abrir Diagnóstico
                     </Button>
                 </CardContent>
