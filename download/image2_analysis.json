@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "La imagen muestra una pantalla de un sistema de gestión educativa, específicamente el **perfil del estudiante** para un centro de bachillerato tecnológico. A continuación, se detalla su contenido:\n\n### **Elementos principales de la pantalla:**\n1. **Barra superior (header):**\n   - Fecha: \"miércoles 12 de mar\" (12 de marzo, miércoles).\n   - Hora y batería: \"9:41\" y \"88%\" de carga.\n   - Botón \"PDF\" para descargar información.\n\n2. **Título y descripción:**\n   - Título: \"Perfil del Estudiante\".\n   - Subtítulo: \"Información detallada de FACIO PAREDES AIRAM AMMAIRAMY para el Primer Parcial\".\n\n3. **Datos del estudiante:**\n   - Nombre completo: **FACIO PAREDES AIRAM AMMAIRAMY**.\n   - Asignatura: \"Humanidades III\".\n   - Campos sin registrar:\n     - Correo: \"No registrado\".\n     - Teléfono: \"No registrado\".\n     - Tutor: \"No registrado\".\n     - Teléfono del tutor: \"No registrado\".\n   - Botones de acción:\n     - \"Ver Bitácora\".\n     - \"Enviar informe via WhatsApp\".\n     - \"Capturar Tamizaje Clínico\" (destacado en azul).\n\n4. **Sección de rendimiento académico:**\n   - Mensaje: \"Sin datos de rendimiento\".\n   - Texto: \"No hay información de calificaciones registrada para este estudiante en ningún parcial\".\n\n5. **Calificación final:**\n   - Título: \"Calificación Final\".\n   - Valor: **0.0%** (en color rojo).\n\n6. **Bitácora del Semestre:**\n   - Título: \"Bitácora del Semestre\".\n   - Mensaje: \"No hay observaciones\".\n\n7. **Recomendaciones y retroalimentación (Primer Parcial):**\n   - Descripción: \"Análisis personalizado del docente sobre el rendimiento del estudiante\".\n   - Mensaje: \"No hay retroalimentación para este parcial. Haz clic en 'Editar' para agregar una\".\n   - Botones: \"Editar\" y \"Generar con IA\".\n   - Firma del docente: \"Mtro. Cecilio Topete Cruz\" con la leyenda \"Firma del Docente\" y una imagen de firma.\n\n8. **Menú lateral (izquierda):**\n   - Logo y nombre del centro: \"Centro de Bachillerato Tecnológico Agropecuario No.130\".\n   - Estado: \"Sincronizado\" (con punto verde).\n   - Grupo activo: \"Humanidades III\" y \"Primer Parcial\".\n   - Opciones de menú (Dashboard, Sala de Anuncios, Grupos, Bitácora, Calificaciones, Asistencia, Participaciones, Actividades, Eva. Semestral, Actas, Informes, Seguimiento, Estadísticas, Contacto y Soporte, Ajustes, Admin).\n\n9. **Pie de página:**\n   - Texto: \"By Cetec\".\n\n### **Mensajes de error o advertencias:**\n- **\"Sin datos de rendimiento\"**: Indica que no hay calificaciones registradas.\n- **\"No hay retroalimentación para este parcial\"**: Avisa que no hay comentarios del docente.\n- **Campos \"No registrado\"**: Señalan información faltante (correo, teléfono, tutor).\n\n### **Información general:**\nLa pantalla corresponde a un perfil estudiantil en un sistema educativo, mostrando datos personales, académicos (con calificación 0.0% por falta de registros) y opciones de interacción (enviar informes, capturar tamizaje clínico). El diseño es funcional, con un menú lateral para navegación y secciones claras para rendimiento y retroalimentación.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1773951618,
+  "id": "20260320041948b58d2712ac2846de",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260320041948b58d2712ac2846de",
+  "usage": {
+    "completion_tokens": 838,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6067,
+    "prompt_tokens_details": {
+      "cached_tokens": 30
+    },
+    "total_tokens": 6905
+  }
+}

@@ -111,7 +111,16 @@ export default function StudentProfilePage() {
             for (const pId of partials) {
                 const pData = await fetchPartialData(primaryGroup.id, pId);
                 
-                if (pData && (Object.keys(pData.grades).length > 0 || Object.keys(pData.recoveryGrades).length > 0)) {
+                // Check if there's any relevant data for this partial
+                // Must check all possible data sources: grades, recovery, activities, participations, merit
+                const hasGrades = Object.keys(pData.grades).length > 0;
+                const hasRecovery = Object.keys(pData.recoveryGrades).length > 0;
+                const hasActivities = (pData.activities?.length || 0) > 0 && Object.keys(pData.activityRecords || {}).length > 0;
+                const hasParticipations = Object.keys(pData.participations || {}).length > 0;
+                const hasMerit = Object.keys(pData.meritGrades || {}).length > 0;
+                const hasAttendance = Object.keys(pData.attendance || {}).length > 0;
+                
+                if (pData && (hasGrades || hasRecovery || hasActivities || hasParticipations || hasMerit || hasAttendance)) {
                     const gradeDetails = calculateDetailedFinalGrade(student.id, pData, primaryGroup.criteria);
 
                     let p = 0, a = 0, total = 0;
