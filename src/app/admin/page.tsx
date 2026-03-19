@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
-import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, Bug, Database, RefreshCw, Search } from 'lucide-react';
+import { Loader2, Shield, PlusCircle, Trash2, Eye, Users, Bug, Database, RefreshCw, Search, AlertTriangle, Send } from 'lucide-react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '@/lib/firebase';
 import { notFound, useRouter } from 'next/navigation';
@@ -460,6 +460,35 @@ export default function AdminPage() {
                         <strong> Diagnóstico:</strong> Detecta discrepancias | 
                         <strong> Migrar:</strong> Fusiona datos de diferentes cuentas
                     </p>
+                </CardContent>
+            </Card>
+
+            {/* Diagnóstico de Inasistencias */}
+            <Card className="border-red-200 bg-red-50/50 dark:bg-red-950/20 dark:border-red-800">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                        Diagnóstico de Reportes de Inasistencia
+                    </CardTitle>
+                    <CardDescription>
+                        Verifica por qué los reportes de inasistencia no llegan a la responsable. 
+                        Compara el UID entre diferentes instalaciones para identificar problemas de cuenta.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium">Herramienta de diagnóstico</p>
+                        <p className="text-xs text-muted-foreground">
+                            Identifica discrepancias en el UID de autenticación
+                        </p>
+                    </div>
+                    <Button 
+                        onClick={() => router.push('/admin/absences-debug')}
+                        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
+                    >
+                        <Send className="mr-2 h-4 w-4" />
+                        Abrir Diagnóstico
+                    </Button>
                 </CardContent>
             </Card>
         </div>
