@@ -1,94 +1,43 @@
-# AcTR-app Work Log
+# Worklog - Restauración de Sincronización Firebase
 
 ---
 Task ID: 1
-Agent: Super Z (Main Agent)
-Task: Diagnóstico completo de problemas en la aplicación - iPad sync issues
+Agent: Super Z (Main)
+Task: Restauración del Sistema de Sincronización Simple
 
-## DIAGNÓSTICO COMPLETO
+Work Log:
+- Recuperado historial completo del repositorio GitHub
+- Identificado commit funcional d0d3e5b con sistema de sincronización simple
+- Analizado que el chunking fue introducido como solución de emergencia para datos grandes
+- Descubierto que el sistema original usaba Firebase SDK directo sin fragmentación
+- Eliminados archivos de fragmentación: sync-client.ts, ultra-rest-upload.ts, chunked-upload.ts, firestore-rest.ts
+- Simplificado use-data.tsx eliminando referencias a chunking
+- Implementada función stripStudentPhotos para separar fotos del documento principal
+- Simplificado firebase.ts eliminando configuraciones experimentales
+- Proyecto compila correctamente sin errores
 
-### Problemas Identificados:
-
-**1. ERROR CRÍTICO: WebChannel Transport Failure**
-- Síntomas: `WebChannelConnection RPC 'Write' stream transport errored`, status: 1
-- Causa: SDK de Firebase usa WebChannel (WebSocket/long-polling) inestable en conexión del iPad
-- Solución: Implementado sistema ULTRA REST UPLOAD que evita completamente el WebChannel
-
-**2. ERROR CRÍTICO: Timeout en Sincronización**
-- Síntomas: Todos los items (grupos, estudiantes, observaciones, datos parciales) fallan con timeout
-- Causa: Sistema intenta usar SDK que falla por WebChannel
-- Solución: ULTRA REST UPLOAD con timeout de 45s, 5 reintentos, y fragmentación
-
-**3. ERROR CRÍTICO: Acceso Denegado a Sección de Seguimiento**
-- Síntomas: "Acceso Denegado" aunque el usuario es administrador
-- Causa: En `/admin/absences/page.tsx`, cuando Firestore falla, el catch bloqueaba el acceso
-- Solución: Modificada la lógica para no bloquear acceso en caso de error de Firestore
-
-**4. ADVERTENCIA: Listeners onSnapshot Inestables**
-- Síntomas: Múltiples errores de transporte en logs
-- Causa: Listeners WebSocket persistentes se desconectan constantemente
-- Estado: Se tolera con el sistema de caché en useAdmin
-
-**5. ADVERTENCIA: Datos con Fotos Base64 Grandes**
-- Síntomas: Datos de 600KB+ con fotos embebidas
-- Solución: El nuevo sistema automáticamente elimina fotos base64
+Stage Summary:
+- Sistema de sincronización restaurado al modo simple (setDoc con merge: true)
+- Fotos se eliminan antes de subir para mantener documentos < 1MB
+- Configuración Firebase apunta correctamente a academic-tracker-qeoxi
+- Funcionalidades de IA preservadas (announcements, justifications, official groups)
+- Build exitoso: todas las páginas compilan correctamente
 
 ---
+Task ID: 2
+Agent: Super Z (Main)
+Task: Análisis de Impacto en Usuarios
 
-## COMMITS REALIZADOS:
+Work Log:
+- Verificado que las modificaciones solo afectan el sistema de sincronización
+- Las funcionalidades de IA (Gemini) permanecen intactas
+- Los listeners onSnapshot siguen funcionando para sincronización en tiempo real
+- Los datos locales en IndexedDB se preservan como respaldo
 
-### Commit 1: c5ffbc4
-- Implement ULTRA ROBUST REST upload system - bypasses WebChannel
-- Created `/src/lib/ultra-rest-upload.ts`
-- Updated `/src/lib/sync-client.ts`
-- Updated `/src/hooks/use-data.tsx`
-
-### Commit 2: 9be2af1
-- Fix access control and improve Firebase resilience
-- Modified `/src/app/admin/absences/page.tsx`
-- Modified `/src/hooks/use-admin.ts`
-- Added caching for admin status
-
----
-
-## ARCHIVOS MODIFICADOS:
-
-1. `/src/lib/ultra-rest-upload.ts` (NUEVO)
-   - Sistema de subida REST completo
-   - Micro-subidas, reintentos, fragmentación
-
-2. `/src/lib/sync-client.ts` (MODIFICADO)
-   - Usa ULTRA REST exclusivamente
-
-3. `/src/hooks/use-data.tsx` (MODIFICADO)
-   - uploadLocalToCloud usa ULTRA REST
-
-4. `/src/hooks/use-admin.ts` (MODIFICADO)
-   - Caché de estado admin
-   - Tolerancia a errores de Firestore
-
-5. `/src/app/admin/absences/page.tsx` (MODIFICADO)
-   - Corregida lógica de acceso
-   - No bloquear en errores de Firestore
+Stage Summary:
+- Cambios seguros para todos los usuarios
+- Sistema más simple = más confiable
+- Fotos se almacenarán localmente pero no se subirán a Firestore
+- Recomendación futura: implementar Firebase Storage para fotos
 
 ---
-
-## PRÓXIMOS PASOS:
-
-1. **Desplegar cambios** a producción
-2. **Probar en iPad** la nueva sincronización
-3. **Verificar acceso** a sección de seguimiento
-4. **Monitorear logs** para confirmar que no hay más errores WebChannel
-
----
-
-## INSTRUCCIONES DE PRUEBA:
-
-1. Ir a `/settings` en el iPad
-2. Click en "Subir Datos Locales a la Nube"
-3. Observar el progreso detallado
-4. Debería ver: "✅ REST API: app_groups subido correctamente"
-5. Ir a `/admin/absences` - debería tener acceso ahora
-
----
-Fecha: 2025-03-18

@@ -10,10 +10,39 @@ import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
 import { format } from 'date-fns';
 import { getPartialLabel } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { smartUpload, smartDownload, uploadWithChunks, uploadMicroItems, isChunked } from '@/lib/chunked-upload';
-import { robustUpload, batchUpload, checkFirebaseHealth } from '@/lib/sync-client';
-import { ultraUploadAll, checkUltraRestConnection, stripPhotos } from '@/lib/ultra-rest-upload';
-import { getIdToken } from 'firebase/auth';
+// Chunking system removed - using simple Firebase SDK sync
+// Photos are now stored separately to avoid document size issues
+
+/**
+ * Strip base64 photos from student data to reduce document size
+ * Photos should be stored in Firebase Storage separately
+ */
+function stripStudentPhotos(data: unknown): unknown {
+    if (Array.isArray(data)) {
+        return data.map(item => {
+            if (item && typeof item === 'object') {
+                const processed = { ...item } as Record<string, unknown>;
+                // Remove photo from students
+                if ('photo' in processed && typeof processed.photo === 'string' && processed.photo.startsWith('data:')) {
+                    delete processed.photo;
+                }
+                // Remove photos from nested students array in groups
+                if ('students' in processed && Array.isArray(processed.students)) {
+                    processed.students = processed.students.map((s: Record<string, unknown>) => {
+                        if (s.photo && typeof s.photo === 'string' && s.photo.startsWith('data:')) {
+                            const { photo, ...rest } = s;
+                            return rest;
+                        }
+                        return s;
+                    });
+                }
+                return processed;
+            }
+            return item;
+        });
+    }
+    return data;
+}
 
 // TYPE DEFINITIONS
 type ExportData = {
@@ -571,24 +600,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log('Setting up real-time listeners for cross-device sync');
 
-        // Helper to download data (normal or chunked)
+        // Helper to download data - simple Firebase SDK
         const downloadData = async <T,>(key: string): Promise<{ value: T; lastUpdated: number } | null> => {
             try {
-                // First check if chunked data exists
-                const metaRef = doc(db, 'users', user.uid, 'userData', `${key}_meta`);
-                const metaSnap = await getDoc(metaRef);
-                
-                if (metaSnap.exists()) {
-                    // Data is chunked - download and recombine
-                    console.log(`📥 Descargando ${key} en modo fragmentado...`);
-                    const result = await smartDownload<T>(user.uid, key);
-                    if (result) {
-                        return { value: result, lastUpdated: Date.now() };
-                    }
-                    return null;
-                }
-                
-                // Normal data
                 const docRef = doc(db, 'users', user.uid, 'userData', key);
                 const docSnap = await getDoc(docRef);
                 
@@ -1500,9 +1514,8 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     }, [user, toast]);
 
     // --- UPLOAD LOCAL DATA TO CLOUD ---
-    // This function uploads ALL local data to Firebase, overwriting cloud data
-    // IMPORTANT: Reads DIRECTLY from IndexedDB to avoid React stale closure issues
-    // V3: Uses ULTRA ROBUST REST API - evita completamente el WebChannel del SDK
+    // Simple Firebase SDK upload - no chunking, no REST API complexity
+    // Photos are stripped to keep documents under 1MB
     const uploadLocalToCloud = useCallback(async () => {
         const startTime = Date.now();
 
@@ -1526,33 +1539,16 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 return;
             }
 
-            console.log("🔄 Iniciando subida ULTRA REST a Firebase...");
+            console.log("🔄 Iniciando subida a Firebase...");
             console.log("👤 Usuario:", user.uid);
 
-            // STEP 1: Check REST connection (NOT SDK - avoids WebChannel issues)
-            console.log("🔍 Verificando conexión REST...");
-            setSyncProgress(prev => prev ? { ...prev, currentTask: 'Verificando conexión REST...' } : null);
-            
-            const connectionCheck = await checkUltraRestConnection();
-            console.log(`📊 Estado de conexión REST: ${connectionCheck.healthy ? 'OK' : 'DEGRADADO'} (${connectionCheck.latency}ms)`);
-            
-            if (!connectionCheck.healthy) {
-                console.warn(`⚠️ Conexión REST degradada: ${connectionCheck.error}`);
-                toast({ 
-                    title: "⚠️ Conexión lenta", 
-                    description: `La conexión está lenta (${connectionCheck.latency}ms). Usando modo persistente...`,
-                    duration: 5000
-                });
-            }
-
-            // Helper to read directly from IndexedDB - avoids stale closure issues
+            // Helper to read directly from IndexedDB
             const readFromIDB = async <T,>(key: string): Promise<{ value: T; lastUpdated: number } | null> => {
                 try {
                     const data = await get(key);
                     if (data && typeof data === 'object' && 'value' in data) {
                         return data as { value: T; lastUpdated: number };
                     } else if (data) {
-                        // Legacy format
                         return { value: data as T, lastUpdated: 0 };
                     }
                 } catch (e) {
@@ -1571,10 +1567,10 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
             };
 
-            // Read ALL data directly from IndexedDB (avoids React stale state)
-            console.log("📖 Leyendo datos directamente de IndexedDB...");
+            console.log("📖 Leyendo datos de IndexedDB...");
             setSyncProgress(prev => prev ? { ...prev, currentTask: 'Leyendo datos locales...' } : null);
 
+            // Read data from IndexedDB
             const idbGroups = await readFromIDB<Group[]>('app_groups');
             const idbStudents = await readFromIDB<Student[]>('app_students');
             const idbObservations = await readFromIDB<{ [studentId: string]: StudentObservation[] }>('app_observations');
@@ -1582,32 +1578,25 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             const idbPartialsData = await readFromIDB<AllPartialsData>('app_partialsData');
             const idbSettings = await readFromIDB<AppSettings>('app_settings');
 
-            console.log("📊 DATOS EN INDEXEDDB:");
-            console.log("  - app_groups:", idbGroups?.value?.length || 0, "items", `- ${getDataSize(idbGroups?.value)}`);
-            console.log("  - app_students:", idbStudents?.value?.length || 0, "items", `- ${getDataSize(idbStudents?.value)}`);
-            console.log("  - app_observations:", Object.keys(idbObservations?.value || {}).length, "keys", `- ${getDataSize(idbObservations?.value)}`);
-            console.log("  - app_specialNotes:", idbSpecialNotes?.value?.length || 0, "items", `- ${getDataSize(idbSpecialNotes?.value)}`);
-            console.log("  - app_partialsData:", Object.keys(idbPartialsData?.value || {}).length, "groups", `- ${getDataSize(idbPartialsData?.value)}`);
-
             // Merge IDB data with React state (prefer whichever has more data)
-            // STRIP PHOTOS to reduce data size
             const mergedGroups = (idbGroups?.value?.length || 0) >= (groups?.length || 0) ? idbGroups?.value : groups;
             const mergedStudents = (idbStudents?.value?.length || 0) >= (allStudents?.length || 0) ? idbStudents?.value : allStudents;
             
+            // STRIP PHOTOS to keep documents under 1MB
             const dataToUpload = {
-                groups: stripPhotos(mergedGroups),
-                students: stripPhotos(mergedStudents),
+                groups: stripStudentPhotos(mergedGroups),
+                students: stripStudentPhotos(mergedStudents),
                 observations: Object.keys(idbObservations?.value || {}).length >= Object.keys(allObservations || {}).length ? idbObservations?.value : allObservations,
                 specialNotes: (idbSpecialNotes?.value?.length || 0) >= (specialNotes?.length || 0) ? idbSpecialNotes?.value : specialNotes,
                 partialsData: Object.keys(idbPartialsData?.value || {}).length >= Object.keys(allPartialsData || {}).length ? idbPartialsData?.value : allPartialsData,
                 settings: idbSettings?.value || settings
             };
 
-            console.log("📊 DATOS A SUBIR (optimizados):");
+            console.log("📊 DATOS A SUBIR (sin fotos):");
             console.log("  - groups:", dataToUpload.groups?.length || 0, `- ${getDataSize(dataToUpload.groups)}`);
             console.log("  - students:", dataToUpload.students?.length || 0, `- ${getDataSize(dataToUpload.students)}`);
 
-            // STEP 2: Use ULTRA REST upload - uploads one item at a time with confirmation
+            // Upload items sequentially using simple Firebase SDK
             const uploadItems = [
                 { key: 'app_groups', data: dataToUpload.groups || [], name: 'Grupos' },
                 { key: 'app_students', data: dataToUpload.students || [], name: 'Estudiantes' },
@@ -1616,33 +1605,37 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 { key: 'app_partialsData', data: dataToUpload.partialsData || {}, name: 'Datos de parciales' },
                 { key: 'app_settings', data: normalizeSettingsValue(dataToUpload.settings || defaultSettings), name: 'Configuración' }
             ];
-            
+
             setSyncProgress(prev => prev ? { ...prev, step: 'uploading' } : null);
             
-            const result = await ultraUploadAll(
-                user.uid,
-                uploadItems,
-                (current, total, status) => {
-                    setSyncProgress(prev => prev ? {
-                        ...prev,
-                        currentStep: current + 1,
-                        currentTask: status
-                    } : null);
+            let uploadedCount = 0;
+            const errors: string[] = [];
+            const results: { key: string; success: boolean; count: number; size: string; error?: string }[] = [];
+
+            for (let i = 0; i < uploadItems.length; i++) {
+                const item = uploadItems[i];
+                setSyncProgress(prev => prev ? {
+                    ...prev,
+                    currentStep: i + 1,
+                    currentTask: `Subiendo ${item.name}...`
+                } : null);
+
+                try {
+                    const docRef = doc(db, 'users', user.uid, 'userData', item.key);
+                    await setDoc(docRef, { value: item.data, lastUpdated: Date.now() }, { merge: true });
+                    uploadedCount++;
+                    console.log(`✅ ${item.name} subido correctamente`);
+                    results.push({ key: item.key, success: true, count: Array.isArray(item.data) ? item.data.length : Object.keys(item.data).length, size: getDataSize(item.data) });
+                } catch (uploadError: any) {
+                    console.error(`❌ Error subiendo ${item.name}:`, uploadError);
+                    errors.push(`${item.name}: ${uploadError.message}`);
+                    results.push({ key: item.key, success: false, count: 0, size: getDataSize(item.data), error: uploadError.message });
                 }
-            );
+            }
 
             const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-            console.log(`🎯 Resultado ULTRA REST: ${result.uploadedItems}/${result.totalItems} en ${duration}s`);
+            console.log(`🎯 Subida completada: ${uploadedCount}/${uploadItems.length} en ${duration}s`);
 
-            // Build results for progress display
-            const results = uploadItems.map((item, i) => ({
-                key: item.key,
-                success: !result.errors.some(e => e.includes(item.name)),
-                count: Array.isArray(item.data) ? item.data.length : Object.keys(item.data).length,
-                size: getDataSize(item.data)
-            }));
-
-            // Update final progress
             setSyncProgress(prev => prev ? {
                 ...prev,
                 step: 'completed',
@@ -1651,18 +1644,18 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 results: results
             } : null);
             
-            if (result.success) {
+            if (uploadedCount === uploadItems.length) {
                 setSyncStatus('synced');
                 toast({
                     title: "✅ Datos subidos correctamente",
-                    description: `${result.uploadedItems} colecciones en ${duration}s vía REST API.`
+                    description: `${uploadedCount} colecciones en ${duration}s.`
                 });
-            } else if (result.uploadedItems > 0) {
+            } else if (uploadedCount > 0) {
                 setSyncStatus('pending');
                 toast({
                     variant: "destructive",
                     title: "⚠️ Sincronización parcial",
-                    description: `${result.uploadedItems}/${result.totalItems} subidos. Errores: ${result.errors.slice(0, 2).join('; ')}`
+                    description: `${uploadedCount}/${uploadItems.length} subidos. Errores: ${errors.slice(0, 2).join('; ')}`
                 });
             } else {
                 setSyncStatus('pending');
