@@ -387,65 +387,6 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
     }, [user, authLoading]);
     
-    // --- FIN REEMPLAZO ---
-    /*
-    const loadFromStorage = useCallback(<T,>(key: string, defaultValue: T): T => {
-        if (typeof window === 'undefined') return defaultValue;
-        try {
-            const storedValue = localStorage.getItem(getStorageKey(key));
-            return storedValue ? JSON.parse(storedValue) : defaultValue;
-        } catch (error) {
-            console.error(`Error loading ${key} from localStorage`, error);
-            setError(error as Error);
-            return defaultValue;
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (!authLoading) {
-            if (user) {
-                try {
-                    setGroups(loadFromStorage('app_groups', []));
-                    setOfficialGroups(loadFromStorage('app_officialGroups', []));
-                    setAnnouncements(loadFromStorage('app_announcements', []));
-                    setJustifications(loadFromStorage('app_justifications', []));
-                    setAllStudents(loadFromStorage('app_students', []));
-                    setAllObservations(loadFromStorage('app_observations', {}));
-                    setAllPartialsData(loadFromStorage('app_partialsData', {}));
-                    setSettingsState(loadFromStorage('app_settings', defaultSettings));
-                    
-                    const storedActiveGroupId = loadFromStorage('activeGroupId_v1', null);
-                    // ... (rest of logic)
-                }
-            }
-        }
-    }, ...);
-    */
-                    // setAllStudents(loadFromStorage('app_students', []));
-                    // setAllObservations(loadFromStorage('app_observations', {}));
-                    // setAllPartialsData(loadFromStorage('app_partialsData', {}));
-                    // setSettingsState(loadFromStorage('app_settings', defaultSettings));
-/*
-                    const storedActiveGroupId = loadFromStorage('activeGroupId_v1', null);
-                    const availableGroups = loadFromStorage('app_groups', []);
-                    if(availableGroups.some((g: Group) => g.id === storedActiveGroupId)){
-                        setActiveGroupIdState(storedActiveGroupId);
-                    } else if (availableGroups.length > 0) {
-                        setActiveGroupIdState(availableGroups[0].id);
-                    }
-*/
-                } catch (e) {
-                    setError(e as Error);
-                } finally {
-                    // setIsLoading(false);
-                }
-            } else {
-                 setIsLoading(false); // No user, stop loading
-            }
-        }
-    }, [user, authLoading]);
-
-    
     // Derived State
     const activeGroup = useMemo(() => {
         if (!activeGroupId) return null;
