@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Expediente del paciente
+model Expediente {
+  id            String       @id @default(cuid())
+  nombre        String
+  apellido      String
+  edad          Int?
+  grupo         String?
+  email         String?
+  telefono      String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  pruebas       PruebaEnviada[]
+  resultados    ResultadoPrueba[]
+  diagnosticos  ImpresionDiagnostica[]
+}
+
+// Prueba enviada a un expediente
+model PruebaEnviada {
+  id              String     @id @default(cuid())
+  expedienteId    String
+  expediente      Expediente @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+  tipoPrueba      String     // gad-7, phq-9, bdi-ii, bai
+  token           String     @unique // Token único para el link
+  estado          String     @default("pendiente") // pendiente, enviado, completado
+  fechaEnvio      DateTime?
+  fechaCompletado DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  resultado       ResultadoPrueba?
+}
+
+// Resultado de una prueba
+model ResultadoPrueba {
+  id              String       @id @default(cuid())
+  expedienteId    String
+  expediente      Expediente   @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+  pruebaId        String       @unique
+  prueba          PruebaEnviada @relation(fields: [pruebaId], references: [id], onDelete: Cascade)
+  tipoPrueba      String
+  puntaje         Int
+  respuestas      String       // JSON stringificado
+  interpretacion  String?
+  nivelRiesgo     String?      // bajo, medio, alto, critico
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+// Impresión diagnóstica generada
+model ImpresionDiagnostica {
+  id                  String     @id @default(cuid())
+  expedienteId        String
+  expediente          Expediente @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+  hipotesisPrincipal  String?
+  hipotesisSecundarias String? // JSON array stringificado
+  nivelSeveridad      String?
+  factoresRiesgo      String?     // JSON array
+  factoresProtectores String? // JSON array
+  recomendaciones     String?     // JSON array
+  requiereUrgente     Boolean     @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+}

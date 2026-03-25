@@ -1,0 +1,70 @@
+================================================================================
+INSTRUCCIONES PARA ACTUALIZAR EL REPOSITORIO AcTR-app
+================================================================================
+
+FECHA: 2025-01-20
+COMMIT: 4ecb888 - Mejoras de sincronización offline y entre dispositivos
+
+================================================================================
+ARCHIVOS MODIFICADOS/NUEVOS:
+================================================================================
+
+1. src/lib/firebase.ts
+   - Cambiado persistentSingleTabManager a persistentMultipleTabManager
+   - Agregado soporte para variables de entorno
+   - Mejor manejo de datos offline
+
+2. src/hooks/use-online-status.ts (NUEVO)
+   - Hook para detectar estado de conexión
+   - Detecta cuando se recupera la conexión
+
+3. src/components/connection-status.tsx (NUEVO)
+   - Componente visual de estado de conexión
+   - Banner de "Sin conexión"
+   - Indicador de sincronización
+
+4. src/hooks/use-data.tsx
+   - Merge inteligente de grupos entre local y cloud
+   - Mejor sincronización en tiempo real
+   - Manejo de errores de conexión
+
+5. src/app/main-layout-client.tsx
+   - Integración del componente ConnectionStatus
+
+6. src/app/admin/page.tsx
+   - Correcciones previas de imports duplicados
+
+================================================================================
+CÓMO APLICAR LOS CAMBIOS EN GITHUB:
+================================================================================
+
+OPCIÓN A - Editar directamente en GitHub Web:
+1. Ve a https://github.com/Cetc2211/AcTR-app
+2. Navega a cada archivo
+3. Haz clic en el ícono de lápiz (Edit)
+4. Copia el contenido del archivo correspondiente
+5. Haz commit con el mensaje: "Mejoras de sincronización offline"
+
+OPCIÓN B - GitHub Codespaces:
+1. Ve a tu repositorio en GitHub
+2. Clic en "Code" → "Codespaces" → "Create codespace on main"
+3. Arrastra los archivos a la estructura de carpetas correspondiente
+4. Usa el panel de Source Control para hacer commit y push
+
+OPCIÓN C - GitHub.dev (Editor web):
+1. Ve a https://github.dev/Cetc2211/AcTR-app
+2. Arrastra los archivos al editor
+3. Usa el panel de Source Control (Ctrl+Shift+G)
+4. Haz commit y sync
+
+================================================================================
+PROBLEMAS QUE RESUELVE:
+================================================================================
+
+✓ Grupos que no se cargan correctamente entre dispositivos
+✓ Pérdida de datos al sincronizar
+✓ Funcionalidad offline deficiente
+✓ Inconsistencias entre pestañas/navegadores
+✓ App "trabada" sin conexión a internet
+
+================================================================================

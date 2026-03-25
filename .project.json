@@ -1,0 +1,94 @@
+{
+  "name": "AcTR-app",
+  "version": "3.1.0",
+  "description": "Sistema de Tracking Académico con IRA (Índice de Riesgo Académico) para CBTa 130",
+  "framework": "nextjs",
+  "frameworkVersion": "14.x",
+  "runtime": "nodejs18.x",
+  
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cetc2211/AcTR-app.git",
+    "branch": "main"
+  },
+  
+  "deployment": {
+    "platform": "vercel",
+    "url": "https://actr-app.vercel.app",
+    "region": "us-east-1"
+  },
+  
+  "backend": {
+    "type": "cloud-run",
+    "url": "https://ai-report-service-jjaeoswhya-uc.a.run.app",
+    "model": "gemini-1.5-flash"
+  },
+  
+  "database": {
+    "type": "firestore",
+    "projectId": "academic-tracker-qeoxi"
+  },
+  
+  "authentication": {
+    "provider": "firebase",
+    "methods": ["email-password", "google"]
+  },
+  
+  "environment": {
+    "required": [
+      "NEXT_PUBLIC_FIREBASE_API_KEY",
+      "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+      "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+      "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+      "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+      "NEXT_PUBLIC_FIREBASE_APP_ID",
+      "NEXT_PUBLIC_CLOUD_RUN_ENDPOINT"
+    ],
+    "optional": [
+      "GCP_PROJECT_ID",
+      "GCP_REGION"
+    ]
+  },
+  
+  "features": {
+    "ira": {
+      "version": "3.1",
+      "description": "Índice de Riesgo Académico con factores de confianza progresivo",
+      "factors": ["asistencia", "calificacion", "actividades", "participacion"]
+    },
+    "pigec": {
+      "enabled": true,
+      "description": "Integración con plataforma PIGEC-130 para estrategias pedagógicas"
+    },
+    "reports": {
+      "ai": true,
+      "pdf": true,
+      "formats": ["estudiante", "grupo", "seguimiento"]
+    }
+  },
+  
+  "devSetup": {
+    "installCommand": "npm install",
+    "devCommand": "npm run dev",
+    "buildCommand": "npm run build",
+    "port": 3000
+  },
+  
+  "compatibility": {
+    "google-ai-studio": {
+      "supported": true,
+      "notes": "Proyecto compatible con Google AI Studio. Clonar desde GitHub y configurar variables de entorno."
+    },
+    "ipad": {
+      "supported": true,
+      "browser": "Safari recomendado",
+      "notes": "La aplicación web es responsive y funciona en iPad. Para desarrollo, usar Google AI Studio desde el navegador."
+    }
+  },
+  
+  "documentation": {
+    "pedagogical": "/REGLAS_PEDAGOGICAS_IRA.md",
+    "secrets": "/VERIFICACION_SECRETOS_VERCEL.md",
+    "environment": "/CONFIGURACION_VARIABLES_ENTORNO.md"
+  }
+}

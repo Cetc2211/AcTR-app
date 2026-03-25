@@ -1,0 +1,729 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Image from 'next/image';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { ThemeSwitcher, themes } from '@/components/theme-switcher';
+import { Separator } from '@/components/ui/separator';
+import { useData } from '@/hooks/use-data';
+import { Upload, Download, RotateCcw, Loader2, KeyRound, PlusCircle, Edit, Trash2, CalendarIcon, Image as ImageIcon, Phone, Cloud } from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import type { Group, Student, StudentObservation, PartialId, SpecialNote, PartialData, AppSettings, AllPartialsData } from '@/lib/placeholder-data';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { NoteDialog } from '@/components/note-dialog';
+import { MODEL_OPTIONS, DEFAULT_MODEL, normalizeModel, describeModel } from '@/lib/ai-models';
+
+
+type ExportData = {
+  version: string;
+  groups: Group[];
+  students: Student[];
+  observations: { [studentId: string]: StudentObservation[] };
+  specialNotes: SpecialNote[];
+  settings: AppSettings;
+  partialsData: AllPartialsData; 
+};
+
+export default function SettingsPage() {
+    const { settings, isLoading, groups, allStudents, allObservations, specialNotes, fetchPartialData, setSettings, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote, syncPublicData, forceCloudSync, uploadLocalToCloud, syncStatus } = useData();
+    const [localSettings, setLocalSettings] = useState(settings);
+    const [logoPreview, setLogoPreview] = useState<string | null>(null);
+    const [signaturePreview, setSignaturePreview] = useState<string | null>(null);
+    const [scheduleImagePreview, setScheduleImagePreview] = useState<string | null>(null);
+    const [teacherPhotoPreview, setTeacherPhotoPreview] = useState<string | null>(null);
+    const { toast } = useToast();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [importFile, setImportFile] = useState<File | null>(null);
+    const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+    const [isTestingKey, setIsTestingKey] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    
+    const getModelLabel = useMemo(() => {
+        return (value: string) => MODEL_OPTIONS.find(opt => opt.value === value)?.label || describeModel(value);
+    }, []);
+    
+    useEffect(() => {
+        if(!isLoading && settings) {
+            const normalizedModel = normalizeModel(settings.aiModel);
+            setLocalSettings({ ...settings, aiModel: normalizedModel });
+            setLogoPreview(settings.logo);
+            setSignaturePreview(settings.signature);
+            setScheduleImagePreview(settings.scheduleImageUrl);
+            setTeacherPhotoPreview(settings.teacherPhoto);
+        }
+    }, [settings, isLoading]);
+    
+    const handleSave = async () => {
+        setIsSaving(true);
+        const newSettings = { 
+            ...localSettings, 
+            logo: logoPreview || '',
+            signature: signaturePreview || '',
+            scheduleImageUrl: scheduleImagePreview || '',
+            teacherPhoto: teacherPhotoPreview || '',
+        };
+        
+        try {
+            await setSettings(newSettings);
+            toast({
+              title: 'Ajustes Guardados',
+              description: 'La información ha sido actualizada.',
+            });
+        } catch (e) {
+          toast({variant: "destructive", title: "Error", description: "No se pudieron guardar los ajustes."})
+        } finally {
+          setIsSaving(false);
+        }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setLocalSettings(prev => ({ ...prev, [id]: value }));
+    };
+
+    const handleImageChange = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      setter: React.Dispatch<React.SetStateAction<string | null>>
+    ) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setter(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    const handleThemeChange = (theme: string) => {
+        setLocalSettings(prev => ({ ...prev, theme }));
+        document.body.className = theme;
+    };
+
+    const handleExportData = async () => {
+        setIsExporting(true);
+        toast({ title: "Exportando datos...", description: "Recopilando toda tu información."});
+        try {
+            const partialsDataToExport: AllPartialsData = {};
+            for (const group of groups) {
+                partialsDataToExport[group.id] = {};
+                const partials: PartialId[] = ['p1', 'p2', 'p3'];
+                for (const pId of partials) {
+                    const pData = await fetchPartialData(group.id, pId);
+                    if (pData) {
+                       // Omit criteria from export as it belongs to group
+                       const { criteria, ...dataToSave } = pData;
+                       partialsDataToExport[group.id][pId] = dataToSave;
+                    }
+                }
+            }
+            
+            const exportData: ExportData = {
+                version: "2.2.0-granular",
+                groups,
+                students: allStudents,
+                observations: allObservations,
+                specialNotes,
+                settings,
+                partialsData: partialsDataToExport,
+            };
+
+            const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(exportData, null, 2))}`;
+            const link = document.createElement('a');
+            link.href = jsonString;
+            link.download = `academic_tracker_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            toast({ title: "Exportación completa", description: "Tus datos han sido guardados." });
+
+        } catch (error) {
+            console.error("Export error:", error);
+            toast({ variant: 'destructive', title: "Error de exportación", description: "No se pudieron exportar los datos." });
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+    const handleImportFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setImportFile(file);
+        }
+    };
+    
+    const handleConfirmImport = async () => {
+        if (!importFile) return;
+        setIsImporting(true);
+        toast({ title: 'Importando datos...', description: 'Esto puede tardar un momento y sobreescribirá tus datos actuales.' });
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const text = e.target?.result;
+                if (typeof text !== 'string') throw new Error("File could not be read");
+                
+                const data = JSON.parse(text) as ExportData;
+
+                await importAllData(data);
+
+                toast({ title: "Importación exitosa", description: "Tus datos han sido restaurados. La página se recargará." });
+                setTimeout(() => window.location.reload(), 2000);
+
+            } catch (error: any) {
+                console.error("Import error:", error);
+                const errorMessage = error.message && error.message.includes('quota') 
+                    ? "La importación falló por exceder la cuota de almacenamiento. El archivo de respaldo es demasiado grande."
+                    : error.message || "El archivo puede estar corrupto.";
+                toast({ variant: 'destructive', title: "Error de importación", description: errorMessage });
+            } finally {
+                setIsImporting(false);
+                setImportFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            }
+        };
+        reader.readAsText(importFile);
+    };
+
+    const triggerFileSelect = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleResetApp = async () => {
+       setIsSaving(true);
+        toast({ title: 'Restableciendo datos...', description: 'Este proceso es irreversible y puede tardar.' });
+        await resetAllData();
+        setIsSaving(false);
+        setIsResetDialogOpen(false);
+    };
+
+    const handleSaveNote = (noteId?: string) => (text: string, dateRange: any) => {
+        if (!text || !dateRange?.from || !dateRange?.to) {
+            toast({ variant: 'destructive', title: 'Datos incompletos', description: 'Se requiere un mensaje y un rango de fechas.' });
+            return;
+        }
+        const noteData = {
+            text,
+            startDate: format(dateRange.from, 'yyyy-MM-dd'),
+            endDate: format(dateRange.to, 'yyyy-MM-dd'),
+        };
+        if (noteId) {
+            updateSpecialNote(noteId, noteData);
+        } else {
+            addSpecialNote(noteData);
+        }
+    };
+    
+    const handleSyncData = async () => {
+        setIsSyncing(true);
+        try {
+            await syncPublicData();
+            toast({
+                title: 'Datos Sincronizados',
+                description: 'La información del tutor se ha actualizado en la nube.',
+            });
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: 'Error de Sincronización',
+                description: 'No se pudieron actualizar los datos públicos.',
+                variant: 'destructive'
+            });
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex h-full w-full items-center justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...
+            </div>
+        );
+    }
+  
+    return (
+        <div className="flex flex-col gap-6">
+        <div>
+            <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-3xl font-bold">Ajustes</h1>
+                <div className="flex items-center gap-1">
+                    <Cloud className={`h-4 w-4 ${syncStatus === 'synced' ? 'text-green-500' : 'text-red-500'}`} />
+                    <span className="text-xs text-muted-foreground">
+                        {syncStatus === 'synced' ? 'Sincronizado' : syncStatus === 'syncing' ? 'Sincronizando...' : 'Pendiente'}
+                    </span>
+                </div>
+            </div>
+            <p className="text-muted-foreground">
+            Personaliza la aplicación, gestiona tu horario y administra tus datos.
+            </p>
+        </div>
+         <Card>
+            <CardHeader>
+                <CardTitle>Integración con Inteligencia Artificial</CardTitle>
+                <CardDescription>
+                    El sistema utiliza Google Cloud y Vertex AI para generar informes automáticos.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                        {/* 
+                        NOTE: AI Model selection is now handled by the backend service (Cloud Run).
+                        The backend uses gemini-1.0-pro exclusively and handles all AI operations.
+                        Users no longer need to select a model - it's centralized in the backend.
+                        
+                        Model selection UI temporarily hidden. If needed in the future, uncomment:
+                        
+                        <div className="space-y-2">
+                            <Label htmlFor="aiModel">Modelo de IA preferido</Label>
+                            <p className="text-xs text-muted-foreground">Selecciona el modelo que deseas usar para generar los informes. Si tu clave no tiene acceso al modelo seleccionado, el servidor intentará fallbacks automáticos.</p>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    id="aiModel"
+                                    className="input"
+                                    value={normalizeModel(localSettings.aiModel) || DEFAULT_MODEL}
+                                    onChange={async (e) => {
+                                        const newModel = normalizeModel(e.target.value);
+                                        const updated = { ...localSettings, aiModel: newModel } as typeof localSettings;
+                                        setLocalSettings(updated);
+                                        try {
+                                            await setSettings(updated);
+                                            toast({ title: 'Ajustes guardados', description: `Modelo IA: ${getModelLabel(newModel)}` });
+                                        } catch (err) {
+                                            console.error('Error saving AI model setting', err);
+                                            toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar la selección de modelo.' });
+                                        }
+                                    }}
+                                >
+                                    {MODEL_OPTIONS.map(({ value, label }) => (
+                                        <option key={value} value={value}>{label}</option>
+                                    ))}
+                                </select>
+                                <Button size="sm" variant="outline" onClick={async () => { const defaultModel = DEFAULT_MODEL; const updated = { ...localSettings, aiModel: defaultModel }; setLocalSettings(updated); try { await setSettings(updated); toast({ title: 'Predeterminado aplicado', description: `Se ha seleccionado ${getModelLabel(defaultModel)} como predeterminado.` }); } catch(e) { toast({ variant: 'destructive', title: 'Error', description: 'No se pudo guardar el predeterminado.' }); } }}>
+                                    Predeterminado
+                                </Button>
+                            </div>
+                        </div>
+                        */}
+                        
+                        <div className="space-y-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                            <p className="text-sm font-medium text-blue-900">🤖 Inteligencia Artificial</p>
+                            <p className="text-xs text-blue-800">El sistema utiliza <strong>Gemini 1.0 Pro</strong> para generar análisis académicos automáticamente. No requiere configuración.</p>
+                        </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+            <CardTitle>Personalización</CardTitle>
+            <CardDescription>
+                Actualiza los datos que aparecerán en los informes y en tu dashboard.
+            </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+            <div className="space-y-2">
+                <Label htmlFor="institutionName">Nombre de la Institución</Label>
+                <Input
+                id="institutionName"
+                value={localSettings.institutionName}
+                onChange={handleInputChange}
+                />
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="facilitatorName">Nombre del Docente</Label>
+                <Input
+                id="facilitatorName"
+                value={localSettings.facilitatorName}
+                onChange={handleInputChange}
+                placeholder="Ej: Mtro. Juan Pérez"
+                />
+                 <p className="text-xs text-muted-foreground">
+                    Este nombre se usará por defecto al crear nuevos grupos.
+                </p>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="whatsappContactNumber">Teléfono de Contacto para Inasistencias</Label>
+                 <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                        id="whatsappContactNumber"
+                        type="tel"
+                        value={localSettings.whatsappContactNumber || ''}
+                        onChange={handleInputChange}
+                        placeholder="Ej: 5215512345678"
+                    />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                    Número de WhatsApp a donde se enviarán los reportes de inasistencia. Incluye el código de país.
+                </p>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="teacherPhoto">Foto del Docente (para avatar)</Label>
+                <div className="flex items-center gap-4">
+                    <Image
+                        src={teacherPhotoPreview || 'https://placehold.co/100x100.png'}
+                        alt="Vista previa de la foto del docente"
+                        width={64}
+                        height={64}
+                        className="rounded-full object-cover aspect-square"
+                    />
+                    <Input id="teacherPhoto" type="file" className="max-w-sm" onChange={(e) => handleImageChange(e, setTeacherPhotoPreview)} accept="image/png, image/jpeg" />
+                </div>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="logo">Logo de la Institución</Label>
+                <div className="flex items-center gap-4">
+                <div className="relative h-20 w-20">
+                    <Image
+                    src={logoPreview || 'https://placehold.co/200x200.png'}
+                    alt="Logo actual"
+                    fill
+                    className="rounded-md object-contain"
+                    data-ai-hint="school logo"
+                    />
+                </div>
+                <Input id="logo" type="file" className="max-w-sm" onChange={(e) => handleImageChange(e, setLogoPreview)} accept="image/png, image/jpeg" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                Sube un archivo PNG o JPG. Tamaño recomendado: 200x200px.
+                </p>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="signature">Firma del Docente</Label>
+                <div className="flex items-center gap-4">
+                <div className="relative h-20 w-40 bg-muted rounded-md flex items-center justify-center">
+                    {signaturePreview ? (
+                        <Image
+                        src={signaturePreview}
+                        alt="Firma actual"
+                        fill
+                        className="object-contain p-2"
+                        />
+                    ) : <span className="text-xs text-muted-foreground">Sin firma</span>}
+                </div>
+                <Input id="signature" type="file" className="max-w-sm" onChange={(e) => handleImageChange(e, setSignaturePreview)} accept="image/png" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                 Para mejores resultados, sube una imagen de tu firma con fondo transparente (formato PNG).
+                </p>
+            </div>
+             <div className="space-y-2">
+                <Label htmlFor="schedule">Horario de Clases</Label>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-24 w-48 border rounded-md flex items-center justify-center bg-muted">
+                      {scheduleImagePreview ? (
+                          <Image
+                          src={scheduleImagePreview}
+                          alt="Vista previa del horario"
+                          fill
+                          className="object-contain p-1"
+                          />
+                      ) : <ImageIcon className="h-8 w-8 text-muted-foreground" />}
+                  </div>
+                  <Input id="schedule" type="file" className="max-w-sm" onChange={(e) => handleImageChange(e, setScheduleImagePreview)} accept="image/png, image/jpeg, image/webp" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                 Sube una imagen de tu horario para tenerla a la mano en el dashboard.
+                </p>
+            </div>
+            </CardContent>
+            <Separator className="my-4" />
+            <CardHeader>
+                <CardTitle>Apariencia</CardTitle>
+                <CardDescription>
+                    Elige un tema para personalizar los colores de la aplicación.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ThemeSwitcher selectedTheme={localSettings.theme} onThemeChange={handleThemeChange} />
+            </CardContent>
+            <CardFooter className="border-t px-6 py-4">
+            <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                Guardar Cambios
+            </Button>
+            </CardFooter>
+        </Card>
+        
+        <Card>
+            <CardHeader>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle>Consideraciones Especiales del Horario</CardTitle>
+                        <CardDescription>
+                            Define recordatorios o notas sobre cambios en el horario que aparecerán en el dashboard.
+                        </CardDescription>
+                    </div>
+                    <NoteDialog onSave={handleSaveNote()}>
+                        <Button>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Añadir Nota
+                        </Button>
+                    </NoteDialog>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                    {specialNotes.length > 0 ? (
+                        specialNotes.map(note => (
+                            <div key={note.id} className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                                <div className="flex-1">
+                                    <p className="font-medium">{note.text}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        <CalendarIcon className="inline h-4 w-4 mr-1" />
+                                        {format(parseISO(note.startDate), 'dd MMM', { locale: es })} - {format(parseISO(note.endDate), 'dd MMM yyyy', { locale: es })}
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <NoteDialog note={note} onSave={handleSaveNote(note.id)}>
+                                        <Button size="icon" variant="ghost"><Edit className="h-4 w-4" /></Button>
+                                    </NoteDialog>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button size="icon" variant="ghost"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>¿Eliminar esta nota?</AlertDialogTitle>
+                                                <AlertDialogDescription>Esta acción no se puede deshacer.</AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => deleteSpecialNote(note.id)}>Sí, eliminar</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-center text-muted-foreground py-4">No hay consideraciones especiales añadidas.</p>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Copia de Seguridad y Restauración</CardTitle>
+                <CardDescription>
+                    Guarda todos tus datos en un archivo o restaura la aplicación desde uno. La importación sobreescribirá todos los datos actuales.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button onClick={handleExportData} variant="outline" disabled={isExporting}>
+                    {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                    Exportar Mis Datos
+                </Button>
+                <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button onClick={triggerFileSelect}>
+                                <Upload className="mr-2 h-4 w-4" />
+                                Importar Mis Datos
+                            </Button>
+                        </AlertDialogTrigger>
+                        {importFile && (
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Confirmas la importación?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Esta acción sobreescribirá permanentemente TODOS tus datos actuales con los datos del archivo &quot;{importFile.name}&quot;. Esta acción no se puede deshacer.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel onClick={() => setImportFile(null)}>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleConfirmImport} disabled={isImporting}>
+                                        {isImporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Sí, importar y sobreescribir
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        )}
+                    </AlertDialog>
+                <input 
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept=".json"
+                    onChange={handleImportFileChange}
+                />
+            </CardContent>
+            <CardFooter>
+                <p className="text-xs text-muted-foreground">
+                    Asegúrate de que el archivo de importación haya sido generado por esta aplicación.
+                </p>
+            </CardFooter>
+        </Card>
+
+        <Card className="border-blue-500">
+            <CardHeader>
+                <CardTitle className="text-blue-600 flex items-center gap-2">
+                    <Cloud className="h-5 w-5" />
+                    Sincronización con la Nube
+                </CardTitle>
+                <CardDescription>
+                    Gestiona cómo se sincronizan tus datos entre dispositivos. Usa estas opciones cuando haya inconsistencias.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                    {/* UPLOAD TO CLOUD */}
+                    <div className="p-4 border rounded-lg bg-green-50 border-green-200">
+                        <h4 className="font-medium text-green-800 mb-2">📤 Subir a la Nube</h4>
+                        <p className="text-sm text-green-700 mb-3">
+                            Si tus datos correctos están en ESTE dispositivo, usa esta opción para subirlos a Firebase y que estén disponibles en otros dispositivos.
+                        </p>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button className="w-full bg-green-600 hover:bg-green-700">
+                                    <Cloud className="mr-2 h-4 w-4" />
+                                    Subir Datos Locales a la Nube
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Subir datos a la nube?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Esto subirá TODOS los datos de este dispositivo a Firebase, sobrescribiendo cualquier dato existente en la nube. Los datos en otros dispositivos se actualizarán cuando se conecten.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={uploadLocalToCloud}>
+                                        Sí, subir mis datos
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+
+                    {/* DOWNLOAD FROM CLOUD */}
+                    <div className="p-4 border rounded-lg bg-blue-50 border-blue-200">
+                        <h4 className="font-medium text-blue-800 mb-2">📥 Descargar de la Nube</h4>
+                        <p className="text-sm text-blue-700 mb-3">
+                            Si los datos correctos están en la NUBE (otro dispositivo), usa esta opción para descargarlos y reemplazar los datos locales.
+                        </p>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="outline" className="w-full border-blue-500 text-blue-600 hover:bg-blue-100">
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Descargar Datos de la Nube
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Descargar datos de la nube?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Esto descargará TODOS los datos de Firebase, reemplazando los datos locales de este dispositivo. Los cambios locales no guardados se perderán.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction onClick={forceCloudSync}>
+                                        Sí, descargar datos
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                </div>
+
+                {/* SYNC STATUS */}
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div className="flex items-center gap-2">
+                        <div className={`h-3 w-3 rounded-full ${
+                            syncStatus === 'synced' ? 'bg-green-500' : 
+                            syncStatus === 'syncing' ? 'bg-blue-500 animate-pulse' : 
+                            'bg-yellow-500'
+                        }`} />
+                        <span className="text-sm font-medium">
+                            Estado: {syncStatus === 'synced' ? 'Sincronizado' : syncStatus === 'syncing' ? 'Sincronizando...' : 'Pendiente'}
+                        </span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                        {groups.length} grupos, {allStudents.length} estudiantes
+                    </span>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Sincronización de Datos Públicos</CardTitle>
+                <CardDescription>
+                    Sincroniza manualmente la información visible para los tutores (calificaciones y reportes). Úsalo si los datos no aparecen en la vista de tutores.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="flex gap-2">
+                    <Button onClick={handleSyncData} disabled={isSyncing}>
+                        {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                        Sincronizar Todo
+                    </Button>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-destructive">Zona de Peligro</CardTitle>
+                <CardDescription>
+                    Estas acciones no se pueden deshacer. Úsalas con precaución.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                    <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive">
+                                <RotateCcw className="mr-2 h-4 w-4" />
+                                Restablecer Mis Datos
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción borrará permanentemente TODOS tus datos de la aplicación, incluyendo grupos, estudiantes, calificaciones y ajustes. La página se recargará.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleResetApp}>Sí, borrar mis datos</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+            </CardContent>
+            <CardFooter>
+                <p className="text-xs text-muted-foreground">
+                    Esta función eliminará todos tus datos guardados en el navegador.
+                </p>
+            </CardFooter>
+        </Card>
+        </div>
+    );
+}

@@ -1,0 +1,16 @@
+{
+  "overrides": {
+    "mcpServers": {
+      "firebase": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "firebase-tools@latest",
+          "experimental:mcp",
+          "--only",
+          "auth,firestore"
+        ]
+      }
+    }
+  }
+}

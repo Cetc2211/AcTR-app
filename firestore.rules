@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isClinico() {
+      return request.auth != null && request.auth.token.role == 'clinico';
+    }
+    
+    function isOrientador() {
+      return request.auth != null && request.auth.token.role == 'orientador';
+    }
+    
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // ============================================
+    // COLECCIÓN DE ADMINS (Academic Tracker)
+    // Determina quién ve el menú de Admin
+    // ============================================
+    match /admins/{email} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE GRUPOS OFICIALES (Academic Tracker)
+    // Fuente única de verdad para los grupos
+    // ============================================
+    match /official_groups/{groupId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIONES DE ESTUDIANTES
+    // ============================================
+    match /students/{studentId} {
+      allow read: if true;
+      allow write: if true;
+
+      match /clinical_records/{recordId} {
+        allow read, write: if true;
+      }
+    }
+
+    // ============================================
+    // COLECCIÓN DE GRUPOS (Legacy/Alternativo)
+    // ============================================
+    match /groups/{groupId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE MATRÍCULAS GENERADAS (PIGEC)
+    // ============================================
+    match /matriculas_estudiantes/{matriculaId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE SESIONES DE EVALUACIÓN (PIGEC)
+    // ============================================
+    match /evaluation_sessions/{sessionId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE RESULTADOS DE PRUEBAS (PIGEC)
+    // ============================================
+    match /test_results/{resultId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE CONFIGURACIÓN DE PRUEBAS
+    // ============================================
+    match /configuracion_pruebas/{testId} {
+      allow read: if true; 
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE ANUNCIOS (Academic Tracker)
+    // ============================================
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE JUSTIFICACIONES (Academic Tracker)
+    // ============================================
+    match /justifications/{justificationId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE CONFIGURACIÓN DE APP
+    // ============================================
+    match /app_config/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE INASISTENCIAS (Academic Tracker)
+    // Reportes de ausencias por grupo
+    // ============================================
+    match /absences/{absenceId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE LOGS DE SEGUIMIENTO (Academic Tracker)
+    // Bitácora de intervenciones y seguimiento
+    // ============================================
+    match /tracking_logs/{logId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE CUMPLIMIENTO ACADÉMICO (Academic Tracker)
+    // Estadísticas de estudiantes para reportes
+    // ============================================
+    match /academic_compliance/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // ============================================
+    // COLECCIÓN DE USUARIOS (Academic Tracker)
+    // Datos privados del usuario por UID
+    // ============================================
+    match /users/{userId} {
+      // El usuario solo puede acceder a sus propios datos
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Subcolección userData para sincronización de datos
+      match /userData/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
