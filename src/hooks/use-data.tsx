@@ -3,9 +3,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { Student, Group, PartialId, StudentObservation, OfficialGroup, Announcement, Justification, JustificationCategory } from '@/lib/placeholder-data';
 import { getPartialLabel } from '@/lib/utils';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import type { User } from 'firebase/auth';
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, addDoc } from 'firebase/firestore';
 
 
 // TYPE DEFINITIONS
@@ -257,6 +258,137 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
     const getStorageKey = (baseKey: string) => user ? `${baseKey}_${user.uid}` : `${baseKey}_logged_out`;
 
+    // --- REEMPLAZO DE LOCALSTORAGE POR FIRESTORE ---
+    useEffect(() => {
+        if (authLoading) return;
+        if (!user) {
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+        // Suscribirse a los datos del usuario en Firestore
+        // Estructura esperada: users/{uid} contiene un documento con los datos principales
+        // O subcolecciones: users/{uid}/groups, users/{uid}/students, etc.
+        // Dado el esquema "functional" proporcionado, parece usar colecciones raíz o user-scoped.
+        // Vamos a asumir una estructura centralizada en 'users/{uid}' para simplificar la migración inicial 
+        // o leer de colecciones raíz filtrando por ownerId si fuera necesario.
+        
+        // Estrategia: Leer todo de Firestore al inicio.
+        const fetchData = async () => {
+            try {
+                // 1. Grupos (Academic Groups)
+                // Buscamos en una colección 'groups' donde el owner sea el usuario, O dentro del documento del usuario
+                // Por compatibilidad con el código anterior, vamos a intentar leer de una colección 'user_data' o similar
+                // O mejor aún, leer de las colecciones que mencionaste: "official_groups", "students", etc.
+                
+                // NOTA: Si en tu base de datos anterior todo estaba en un solo JSON gigante en localStorage,
+                // al migrar a Firestore idealmente deberíamos tener colecciones.
+                // Como mencionaste "official_groups", "students" en el JSON, asumiremos colecciones en la raíz o bajo el usuario.
+                
+                // Para no romper nada, intentaremos leer de un documento principal de configuración del usuario
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (userDocSnap.exists()) {
+                    const data = userDocSnap.data();
+                    setSettingsState(data.settings || defaultSettings);
+                    // Si existen datos legacy aquí, los usamos. Si no, buscaremos en colecciones.
+                    if (data.groups) setGroups(data.groups);
+                    if (data.activeGroupId) setActiveGroupIdState(data.activeGroupId);
+                } else {
+                    // Si no existe, lo creamos con defaults
+                    await setDoc(userDocRef, { email: user.email, settings: defaultSettings }, { merge: true });
+                }
+
+                // Cargar Official Groups
+                try {
+                    // Ajusta esta ruta si tus datos están en otro lado (ej: users/{uid}/official_groups)
+                    // Usaremos una subcolección por defecto para aislar datos de usuarios
+                    const officialGroupsRef = collection(db, `users/${user.uid}/official_groups`);
+                    const ogSnap = await getDocs(officialGroupsRef);
+                    const ogList = ogSnap.docs.map(d => ({ id: d.id, ...d.data() } as OfficialGroup));
+                    if (ogList.length > 0) setOfficialGroups(ogList);
+                } catch (e) { console.log("No official groups found or error", e); }
+
+                 // Cargar Students (Global pool)
+                 try {
+                    const studentsRef = collection(db, `users/${user.uid}/students`);
+                    const stSnap = await getDocs(studentsRef);
+                    const stList = stSnap.docs.map(d => ({ id: d.id, ...d.data() } as Student));
+                    if (stList.length > 0) setAllStudents(stList);
+                } catch (e) { console.log("No students found or error", e); }
+
+                // Cargar Grupos Académicos (Si no estaban en el userDoc)
+                try {
+                    const groupsRef = collection(db, `users/${user.uid}/groups`);
+                    const gSnap = await getDocs(groupsRef);
+                    const gList = gSnap.docs.map(d => ({ id: d.id, ...d.data() } as Group));
+                    if (gList.length > 0) setGroups(gList);
+                } catch (e) { console.log("No groups found or error", e); }
+                
+                 // Cargar Anuncios
+                 try {
+                    const annRef = collection(db, `users/${user.uid}/announcements`);
+                    const annSnap = await getDocs(annRef);
+                    const annList = annSnap.docs.map(d => ({ id: d.id, ...d.data() } as Announcement));
+                     if (annList.length > 0) setAnnouncements(annList);
+                } catch (e) { console.log("No announcements found", e); }
+
+                 // Cargar Justificaciones
+                 try {
+                    const justRef = collection(db, `users/${user.uid}/justifications`);
+                    const justSnap = await getDocs(justRef);
+                    const justList = justSnap.docs.map(d => ({ id: d.id, ...d.data() } as Justification));
+                    if (justList.length > 0) setJustifications(justList);
+                } catch (e) { console.log("No just found", e); }
+
+                 // Cargar Observaciones
+                 try {
+                    const obsRef = collection(db, `users/${user.uid}/observations`);
+                    const obsSnap = await getDocs(obsRef);
+                    const obsMap: {[studentId: string]: StudentObservation[]} = {};
+                    obsSnap.docs.forEach(d => {
+                         // Asumimos que el documento se llama como el ID del estudiante y contiene { observations: [...] }
+                         // O el documento es la observación y tiene un campo studentId.
+                         // Dado el tipo {[studentId: string]: StudentObservation[]}, lo más lógico para Firestore es:
+                         // Colección 'observations', docId = studentId, data = { list: [...] }
+                         const data = d.data();
+                         if (data.list) {
+                             obsMap[d.id] = data.list as StudentObservation[];
+                         }
+                    });
+                    if (Object.keys(obsMap).length > 0) setAllObservations(obsMap);
+                } catch (e) { console.log("No observations found", e); }
+
+                 // Cargar Datos Parciales (Grades, Attendance, etc.)
+                 try {
+                    const pdRef = collection(db, `users/${user.uid}/partials_data`);
+                    const pdSnap = await getDocs(pdRef);
+                    const pdMap: AllPartialsData = {};
+                    pdSnap.docs.forEach(d => {
+                         // DocId = groupId, Data = { p1: ..., p2: ... }
+                         pdMap[d.id] = d.data() as AllPartialsDataForGroup;
+                    });
+                     if (Object.keys(pdMap).length > 0) setAllPartialsData(pdMap);
+                } catch (e) { console.log("No partials data found", e); }
+
+
+
+            } catch (err) {
+                console.error("Error fetching data from Firestore:", err);
+                setError(err as Error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+
+    }, [user, authLoading]);
+    
+    // --- FIN REEMPLAZO ---
+    /*
     const loadFromStorage = useCallback(<T,>(key: string, defaultValue: T): T => {
         if (typeof window === 'undefined') return defaultValue;
         try {
@@ -283,22 +415,36 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                     setSettingsState(loadFromStorage('app_settings', defaultSettings));
                     
                     const storedActiveGroupId = loadFromStorage('activeGroupId_v1', null);
+                    // ... (rest of logic)
+                }
+            }
+        }
+    }, ...);
+    */
+                    // setAllStudents(loadFromStorage('app_students', []));
+                    // setAllObservations(loadFromStorage('app_observations', {}));
+                    // setAllPartialsData(loadFromStorage('app_partialsData', {}));
+                    // setSettingsState(loadFromStorage('app_settings', defaultSettings));
+/*
+                    const storedActiveGroupId = loadFromStorage('activeGroupId_v1', null);
                     const availableGroups = loadFromStorage('app_groups', []);
                     if(availableGroups.some((g: Group) => g.id === storedActiveGroupId)){
                         setActiveGroupIdState(storedActiveGroupId);
                     } else if (availableGroups.length > 0) {
                         setActiveGroupIdState(availableGroups[0].id);
                     }
+*/
                 } catch (e) {
                     setError(e as Error);
                 } finally {
-                    setIsLoading(false);
+                    // setIsLoading(false);
                 }
             } else {
                  setIsLoading(false); // No user, stop loading
             }
         }
-    }, [user, loadFromStorage, authLoading]);
+    }, [user, authLoading]);
+
     
     // Derived State
     const activeGroup = useMemo(() => {
@@ -346,9 +492,13 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }, [allPartialsData, isLoading, user]);
 
 
-    const setActiveGroupId = useCallback((groupId: string | null) => {
+    const setActiveGroupId = useCallback(async (groupId: string | null) => {
         setActiveGroupIdState(groupId);
-    }, []);
+        if (user) {
+             const userDocRef = doc(db, 'users', user.uid);
+             await updateDoc(userDocRef, { activeGroupId: groupId });
+        }
+    }, [user]);
 
     // ---- Calculation Logic ----
     const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
@@ -516,25 +666,62 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             }
             return newGroups;
         });
+        if (user) {
+             const groupRef = doc(db, `users/${user.uid}/groups`, group.id);
+             await setDoc(groupRef, group);
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
 
     const addStudentsToGroup = useCallback(async (groupId: string, students: Student[]) => {
         const newStudentIds = new Set(students.map(s => s.id));
         setAllStudents(prev => [...prev.filter(s => !newStudentIds.has(s.id)), ...students]);
         setGroups(prev => prev.map(g => g.id === groupId ? {...g, students: [...g.students, ...students]} : g));
+        
+        if (user) {
+             // Update global students
+             const batchPromises = students.map(s => 
+                  setDoc(doc(db, `users/${user.uid}/students`, s.id), s, { merge: true })
+             );
+             await Promise.all(batchPromises);
+             
+             // Update group students
+             const groupRef = doc(db, `users/${user.uid}/groups`, groupId);
+             const groupSnap = await getDoc(groupRef);
+             if (groupSnap.exists()) {
+                 const currentStudents = (groupSnap.data() as Group).students || [];
+                 // Avoid duplicates?? The state logic just appends.
+                 // We should probably filter.
+                 const existingIds = new Set(currentStudents.map(s => s.id));
+                 const toAdd = students.filter(s => !existingIds.has(s.id));
+                 await updateDoc(groupRef, { students: [...currentStudents, ...toAdd] });
+             }
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
 
     const removeStudentFromGroup = useCallback(async (groupId: string, studentId: string) => {
         setGroups(prev => prev.map(g => g.id === groupId ? {...g, students: g.students.filter(s => s.id !== studentId)} : g));
+        if (user) {
+             const groupRef = doc(db, `users/${user.uid}/groups`, groupId);
+             const groupSnap = await getDoc(groupRef);
+             if (groupSnap.exists()) {
+                 const currentStudents = (groupSnap.data() as Group).students || [];
+                 const newStudents = currentStudents.filter(s => s.id !== studentId);
+                 await updateDoc(groupRef, { students: newStudents });
+             }
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
     
     const updateGroup = useCallback(async (groupId: string, data: Partial<Omit<Group, 'id' | 'students'>>) => {
         setGroups(prev => prev.map(g => g.id === groupId ? { ...g, ...data } : g));
+        if (user) {
+             const groupRef = doc(db, `users/${user.uid}/groups`, groupId);
+             await updateDoc(groupRef, data);
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
 
     const updateStudent = useCallback(async (studentId: string, data: Partial<Student>) => {
         setAllStudents(prev => prev.map(s => s.id === studentId ? {...s, ...data} : s));
@@ -542,27 +729,52 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             ...g,
             students: g.students.map(s => s.id === studentId ? { ...s, ...data } : s),
         })));
+        
+        if (user) {
+             const studentRef = doc(db, `users/${user.uid}/students`, studentId);
+             await setDoc(studentRef, data, { merge: true });
+             
+             // Update in groups (inefficient but necessary with this data model)
+             // We use the `groups` from state to know which ones to update
+             for (const group of groups) {
+                 if (group.students.some(s => s.id === studentId)) {
+                     const updatedGroupStudents = group.students.map(s => s.id === studentId ? { ...s, ...data } : s);
+                     const groupRef = doc(db, `users/${user.uid}/groups`, group.id);
+                     await updateDoc(groupRef, { students: updatedGroupStudents });
+                 }
+             }
+        }
         return Promise.resolve();
-    }, []);
+    }, [user, groups]);
 
     const updateGroupCriteria = useCallback(async (criteria: EvaluationCriteria[]) => {
         if(activeGroupId) {
             setGroups(prev => prev.map(g => g.id === activeGroupId ? { ...g, criteria } : g));
+             if (activeGroupId && user) {
+                  const groupRef = doc(db, `users/${user.uid}/groups`, activeGroupId);
+                  updateDoc(groupRef, { criteria });
+             }
         }
         return Promise.resolve();
-    }, [activeGroupId]);
+    }, [activeGroupId, user]);
     
     const deleteGroup = useCallback(async (groupId: string) => {
         setGroups(prev => {
             const newGroups = prev.filter(g => g.id !== groupId);
             if (activeGroupId === groupId) {
                 const newActiveId = newGroups.length > 0 ? newGroups[0].id : null;
-                setActiveGroupIdState(newActiveId);
+                if(newActiveId !== activeGroupId) setActiveGroupIdState(newActiveId);
             }
             return newGroups;
         });
+        if (user) {
+             const groupRef = doc(db, `users/${user.uid}/groups`, groupId);
+             await deleteDoc(groupRef);
+             // Also delete partials data for this group? Maybe keep for history?
+             // For now, let's just delete the group metadata
+        }
         return Promise.resolve();
-    }, [activeGroupId]);
+    }, [activeGroupId, user]);
 
     const addStudentObservation = useCallback(async (observation: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => {
         const newObservation: StudentObservation = {
@@ -572,14 +784,26 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             followUpUpdates: [],
             isClosed: false,
         };
-        setAllObservations(prev => ({
-            ...prev,
-            [observation.studentId]: [...(prev[observation.studentId] || []), newObservation]
-        }));
+        
+        let updatedList: StudentObservation[] = [];
+        setAllObservations(prev => {
+            const currentList = prev[observation.studentId] || [];
+            updatedList = [...currentList, newObservation];
+            return {
+                ...prev,
+                [observation.studentId]: updatedList
+            };
+        });
+
+        if (user) {
+             const studentObsRef = doc(db, `users/${user.uid}/observations`, observation.studentId);
+             await setDoc(studentObsRef, { list: updatedList }, { merge: true });
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
 
     const updateStudentObservation = useCallback(async (studentId: string, observationId: string, updateText: string, isClosing: boolean) => {
+        let updatedList: StudentObservation[] = [];
         setAllObservations(prev => {
             const studentObs = (prev[studentId] || []).map(obs => {
                 if (obs.id === observationId) {
@@ -592,9 +816,15 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 }
                 return obs;
             });
+            updatedList = studentObs;
             return { ...prev, [studentId]: studentObs };
         });
-    }, []);
+
+        if (user) {
+             const studentObsRef = doc(db, `users/${user.uid}/observations`, studentId);
+             await setDoc(studentObsRef, { list: updatedList }, { merge: true });
+        }
+    }, [user]);
     
     const resetAllData = useCallback(async () => {
         if(typeof window !== 'undefined' && user) {
@@ -618,11 +848,12 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
         return async (setter: React.SetStateAction<T>) => {
             if (!activeGroupId) return Promise.resolve();
             
+            let newValue: T;
             setAllPartialsData(prevAllData => {
                 const currentGroupData = prevAllData[activeGroupId] || {};
                 const currentPartialData = currentGroupData[activePartialId] || defaultPartialData;
                 const currentValue = currentPartialData[field] as T;
-                const newValue = typeof setter === 'function' ? (setter as (prevState: T) => T)(currentValue) : setter;
+                newValue = typeof setter === 'function' ? (setter as (prevState: T) => T)(currentValue) : setter;
 
                 const newPartialData = { ...currentPartialData, [field]: newValue };
                 return {
@@ -633,14 +864,23 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                     },
                 };
             });
+
+            if (user) {
+                 const docRef = doc(db, `users/${user.uid}/partials_data`, activeGroupId);
+                 await setDoc(docRef, { [activePartialId]: { [field]: newValue! } }, { merge: true });
+            }
             return Promise.resolve();
         };
-    }, [activeGroupId, activePartialId]);
+    }, [activeGroupId, activePartialId, user]);
 
     const setSettings = useCallback(async (newSettings: Partial<AppSettings>) => {
         setSettingsState(prev => ({...prev, ...newSettings}));
+         if (user) {
+             const userDocRef = doc(db, 'users', user.uid);
+             await setDoc(userDocRef, { settings: newSettings }, { merge: true });
+        }
         return Promise.resolve();
-    }, []);
+    }, [user]);
 
     const setGrades = createSetterForPartialData<Grades>('grades');
     const setAttendance = createSetterForPartialData<AttendanceRecord>('attendance');
@@ -662,7 +902,11 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 }
             };
         });
-    }, [activeGroupId, activePartialId]);
+        if (user) {
+             const docRef = doc(db, `users/${user.uid}/partials_data`, activeGroupId);
+             await setDoc(docRef, { [activePartialId]: { feedbacks: { [studentId]: feedback } } }, { merge: true });
+        }
+    }, [activeGroupId, activePartialId, user]);
 
     const setGroupAnalysis = useCallback(async (analysis: string) => {
         if (!activeGroupId) return Promise.resolve();
@@ -676,7 +920,11 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 }
             };
         });
-    }, [activeGroupId, activePartialId]);
+        if (user) {
+             const docRef = doc(db, `users/${user.uid}/partials_data`, activeGroupId);
+             await setDoc(docRef, { [activePartialId]: { groupAnalysis: analysis } }, { merge: true });
+        }
+    }, [activeGroupId, activePartialId, user]);
     
     const takeAttendanceForDate = useCallback(async (groupId: string, date: string) => {
         const group = groups.find(g => g.id === groupId);
@@ -697,7 +945,12 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 },
             };
         });
-    }, [groups, activePartialId]);
+
+        if (user) {
+             const docRef = doc(db, `users/${user.uid}/partials_data`, groupId);
+             await setDoc(docRef, { [activePartialId]: { attendance: { [date]: newAttendanceRecord } } }, { merge: true });
+        }
+    }, [groups, activePartialId, user]);
     
     const fetchPartialData = useCallback(async (groupId: string, partialId: PartialId): Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null> => {
         const group = groups.find(g => g.id === groupId);
@@ -822,12 +1075,21 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             students: []
         };
         setOfficialGroups(prev => [...prev, newGroup]);
+        
+        if (user) {
+             const docRef = doc(db, `users/${user.uid}/official_groups`, newGroup.id);
+             await setDoc(docRef, newGroup);
+        }
         return newGroup.id;
-    }, []);
+    }, [user]);
 
     const deleteOfficialGroup = useCallback(async (groupId: string) => {
         setOfficialGroups(prev => prev.filter(g => g.id !== groupId));
-    }, []);
+        if (user) {
+             const docRef = doc(db, `users/${user.uid}/official_groups`, groupId);
+             await deleteDoc(docRef);
+        }
+    }, [user]);
 
     const createAnnouncement = useCallback(async (title: string, content: string, target?: string, expiresAt?: Date) => {
         const newAnn: Announcement = {
@@ -839,11 +1101,17 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             createdAt: new Date().toISOString()
         };
         setAnnouncements(prev => [newAnn, ...prev]);
-    }, []);
+        if(user) {
+             setDoc(doc(db, `users/${user.uid}/announcements`, newAnn.id), newAnn);
+        }
+    }, [user]);
 
     const deleteAnnouncement = useCallback(async (id: string) => {
         setAnnouncements(prev => prev.filter(a => a.id !== id));
-    }, []);
+        if(user) {
+             deleteDoc(doc(db, `users/${user.uid}/announcements`, id));
+        }
+    }, [user]);
 
     const createJustification = useCallback(async (groupId: string, studentId: string, date: Date, reason: string, category: JustificationCategory) => {
         const newJust: Justification = {
@@ -856,7 +1124,10 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
              createdAt: new Date().toISOString()
         };
         setJustifications(prev => [newJust, ...prev]);
-    }, []);
+        if(user) {
+             setDoc(doc(db, `users/${user.uid}/justifications`, newJust.id), newJust);
+        }
+    }, [user]);
 
     const addStudentsToOfficialGroup = useCallback(async (groupId: string, newStudents: Student[]) => {
         setAllStudents(prev => {
@@ -864,6 +1135,8 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
              const studentsToAdd = newStudents.filter(s => !existingIds.has(s.id));
              return [...prev, ...studentsToAdd];
         });
+        
+        const studentsToAdd = newStudents;
 
         setOfficialGroups(prev => prev.map(g => {
             if (g.id === groupId) {
@@ -873,7 +1146,28 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             }
             return g;
         }));
-    }, []);
+
+        if (user) {
+             const group = officialGroups.find(g => g.id === groupId);
+             // Necesitamos la versión actualizada de students, así que recalculamos un poco o usamos la lógica de setOfficialGroups anterior con cuidado.
+             // Para estar seguros, leemos lo que vamos a escribir:
+             let updatedStudentIds: string[] = [];
+             
+             if (group) {
+                 const currentStudentIds = new Set(group.students || []);
+                 newStudents.forEach(s => currentStudentIds.add(s.id));
+                 updatedStudentIds = Array.from(currentStudentIds);
+                 
+                 await updateDoc(doc(db, `users/${user.uid}/official_groups`, groupId), { students: updatedStudentIds });
+             }
+
+            // Guardar estudiantes nuevos en colección students
+             const batchPromises = studentsToAdd.map(s => 
+                  setDoc(doc(db, `users/${user.uid}/students`, s.id), s, { merge: true })
+             );
+             await Promise.all(batchPromises);
+        }
+    }, [user, officialGroups]);
 
     const getOfficialGroupStudents = useCallback(async (groupId: string): Promise<Student[]> => {
         const group = officialGroups.find(g => g.id === groupId);
