@@ -34,7 +34,7 @@ export default function LayoutProvider({
   }, []);
 
   return (
-    <body className={isAuthPage ? '' : 'theme-default'}>
+    <body className={`font-sans antialiased ${isAuthPage ? '' : 'theme-default'}`}>
         <DataProvider>
         {isAuthPage ? (
             children
