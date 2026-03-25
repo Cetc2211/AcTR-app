@@ -1,13 +1,10 @@
-
 import './globals.css';
-import { DataProvider } from '@/hooks/use-data';
-import MainLayoutClient from './main-layout-client';
-import { Toaster } from '@/components/ui/toaster';
-import type { Metadata } from 'next';
+import LayoutProvider from './layout-provider';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Academic Tracker Pro',
-  description: 'Una aplicación para el seguimiento académico de estudiantes.',
+  description: 'Gestiona el rendimiento académico de tus estudiantes con el poder de la IA.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -19,19 +16,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+        <meta name="theme-color" content="#10b981" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-      <body className="bg-background">
-            <DataProvider>
-              <MainLayoutClient>{children}</MainLayoutClient>
-            </DataProvider>
-          <Toaster />
-      </body>
+      <LayoutProvider>{children}</LayoutProvider>
     </html>
   );
 }

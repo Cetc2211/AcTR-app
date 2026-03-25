@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
-import type { Student, PartialId, StudentObservation } from '@/lib/placeholder-data';
+import { Student, PartialId, StudentObservation } from '@/lib/placeholder-data';
 import { BookText, User, Search, AlertCircle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

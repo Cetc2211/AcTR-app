@@ -9,36 +9,10 @@ export default {
   ],
   theme: {
     extend: {
-      typography: ({ theme }: { theme: any }) => ({
-        DEFAULT: {
-          css: {
-            'pre, code': {
-              backgroundColor: theme('colors.muted'),
-              color: theme('colors.foreground'),
-              border: `1px solid ${theme('colors.border')}`,
-              borderRadius: theme('borderRadius.md'),
-            },
-            'pre': {
-              padding: theme('padding.4'),
-            },
-            'code': {
-              padding: '0.2em 0.4em',
-              fontWeight: '400',
-            },
-            'code::before': {
-              content: '""',
-            },
-            'code::after': {
-              content: '""',
-            },
-          },
-        },
-      }),
       fontFamily: {
         body: ['"PT Sans"', 'sans-serif'],
         headline: ['"PT Sans"', 'sans-serif'],
         code: ['monospace'],
-        dancing: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -144,5 +118,5 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config;

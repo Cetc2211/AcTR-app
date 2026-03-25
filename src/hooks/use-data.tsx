@@ -1,26 +1,117 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { get, set, del, clear } from 'idb-keyval';
-import { auth, db } from '@/lib/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, updateDoc, addDoc, deleteDoc, onSnapshot, orderBy, arrayUnion, waitForPendingWrites } from 'firebase/firestore';
-import type { Student, Group, OfficialGroup, PartialId, StudentObservation, SpecialNote, EvaluationCriteria, GradeDetail, Grades, RecoveryGrade, RecoveryGrades, MeritGrade, MeritGrades, AttendanceRecord, ParticipationRecord, Activity, ActivityRecord, CalculatedRisk, StudentWithRisk, CriteriaDetail, StudentStats, GroupedActivities, AppSettings, PartialData, AllPartialsData, AllPartialsDataForGroup, Announcement, StudentJustification, JustificationCategory } from '@/lib/placeholder-data';
-import { DEFAULT_MODEL, normalizeModel } from '@/lib/ai-models';
-import { format } from 'date-fns';
+import { Student, Group, PartialId, StudentObservation } from '@/lib/placeholder-data';
 import { getPartialLabel } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import type { User } from 'firebase/auth';
+
 
 // TYPE DEFINITIONS
-type ExportData = {
-  version: string;
-  groups: Group[];
-  students: Student[];
-  observations: { [studentId: string]: StudentObservation[] };
-  specialNotes: SpecialNote[];
-  settings: AppSettings;
-  partialsData: AllPartialsData; 
+export type EvaluationCriteria = {
+  id: string;
+  name: string;
+  weight: number;
+  expectedValue: number;
+  isAutomated?: boolean;
 };
+
+export type GradeDetail = {
+  delivered: number | null;
+};
+
+export type Grades = {
+  [studentId: string]: {
+    [criterionId: string]: GradeDetail;
+  };
+};
+
+export type RecoveryGrade = {
+    grade: number | null;
+    applied: boolean;
+};
+
+export type RecoveryGrades = {
+    [studentId: string]: RecoveryGrade;
+};
+
+export type AttendanceRecord = {
+  [date: string]: {
+    [studentId: string]: boolean;
+  };
+};
+
+export type ParticipationRecord = {
+  [date: string]: {
+    [studentId: string]: boolean;
+  };
+};
+
+export type Activity = {
+  id: string;
+  name: string;
+  dueDate: string; // YYYY-MM-DD
+  programmedDate: string; // YYYY-MM-DD
+};
+
+export type ActivityRecord = {
+    [studentId: string]: {
+        [activityId: string]: boolean;
+    };
+};
+
+
+export type GroupedActivities = {
+  [dueDate: string]: Activity[];
+};
+
+export type GroupStats = {
+  average: number;
+  highRiskCount: number;
+}
+
+export type CalculatedRisk = {
+    level: 'low' | 'medium' | 'high';
+    reason: string;
+}
+export type StudentWithRisk = Student & { calculatedRisk: CalculatedRisk };
+
+export type CriteriaDetail = {
+    name: string;
+    earned: number;
+    weight: number;
+}
+
+export type StudentStats = {
+    finalGrade: number;
+    criteriaDetails: CriteriaDetail[];
+    isRecovery: boolean;
+    partialId: PartialId;
+    attendance: { p: number; a: number; total: number; rate: number };
+    observations: StudentObservation[];
+};
+
+
+export type PartialData = {
+    grades: Grades;
+    attendance: AttendanceRecord;
+    participations: ParticipationRecord;
+    activities: Activity[];
+    activityRecords: ActivityRecord;
+    recoveryGrades: RecoveryGrades;
+    feedbacks: { [studentId: string]: string };
+    groupAnalysis?: string;
+};
+
+export type AllPartialsDataForGroup = {
+    [partialId in PartialId]?: PartialData;
+};
+
+export type AllPartialsData = {
+  [groupId: string]: AllPartialsDataForGroup;
+};
+
 
 export type UserProfile = {
     name: string;
@@ -28,17 +119,22 @@ export type UserProfile = {
     photoURL: string;
 }
 
-export const defaultSettings: AppSettings = {
+export type AppSettings = {
+    institutionName: string;
+    logo: string;
+    theme: string;
+    apiKey: string;
+    signature: string;
+    facilitatorName?: string;
+};
+
+const defaultSettings: AppSettings = {
     institutionName: "Mi Institución",
     logo: "",
-    theme: "theme-candy",
+    theme: "theme-mint",
     apiKey: "",
     signature: "",
     facilitatorName: "",
-    scheduleImageUrl: "",
-    teacherPhoto: "",
-    whatsappContactNumber: "",
-    aiModel: DEFAULT_MODEL,
 };
 
 const defaultPartialData: PartialData = {
@@ -52,1652 +148,703 @@ const defaultPartialData: PartialData = {
     groupAnalysis: '',
 };
 
-const normalizeSettingsValue = (settings: AppSettings): AppSettings => {
-    const aiModel = normalizeModel(settings.aiModel);
-    if (aiModel === settings.aiModel) {
-        return settings;
-    }
-    return { ...settings, aiModel };
-};
+type GroupReportSummary = {
+    totalStudents: number;
+    approvedCount: number;
+    failedCount: number;
+    groupAverage: number;
+    attendanceRate: number;
+    participationRate: number;
+}
 
-export type GroupRiskStats = {
-    groupId: string;
-    groupName: string;
-    totalRisk: number;
-    high: number;
-    medium: number;
-    studentsByRisk: {
-        high: StudentWithRisk[];
-        medium: StudentWithRisk[];
-    };
-};
+type RecoverySummary = {
+    recoveryStudentsCount: number;
+    approvedOnRecovery: number;
+    failedOnRecovery: number;
+}
 
-// --- DATA CONTEXT & PROVIDER ---
+
+// CONTEXT TYPE
 interface DataContextType {
-    // State
-    isLoading: boolean;
-    error: Error | null;
-    groups: Group[];
-    allStudents: Student[];
-    activeStudentsInGroups: Student[];
-    allObservations: { [studentId: string]: StudentObservation[] };
-    specialNotes: SpecialNote[];
-    settings: AppSettings;
-    activeGroup: Group | null;
-    activeGroupId: string | null;
-    activePartialId: PartialId;
-    partialData: PartialData;
-    allPartialsDataForActiveGroup: AllPartialsDataForGroup;
-    groupAverages: { [groupId: string]: number };
-    atRiskStudents: StudentWithRisk[];
-    groupRisks: { [groupId: string]: GroupRiskStats };
-    overallAverageAttendance: number;
-    officialGroups: OfficialGroup[];
-
-    // State Setters
-    setGroups: (setter: React.SetStateAction<Group[]>) => Promise<void>;
-    setAllStudents: (setter: React.SetStateAction<Student[]>) => Promise<void>;
-    setAllObservations: (setter: React.SetStateAction<{ [studentId: string]: StudentObservation[] }>) => Promise<void>;
-    setAllPartialsData: (setter: React.SetStateAction<AllPartialsData>) => Promise<void>;
-    setSpecialNotes: (setter: React.SetStateAction<SpecialNote[]>) => Promise<void>;
-    setSettings: (settings: AppSettings) => Promise<void>;
-    setActiveGroupId: (groupId: string | null) => void;
-    setActivePartialId: (partialId: PartialId) => void;
-
-    // Derived Setters for PartialData
-    setGrades: (setter: React.SetStateAction<Grades>) => Promise<void>;
-    setAttendance: (setter: React.SetStateAction<AttendanceRecord>) => Promise<void>;
-    setParticipations: (setter: React.SetStateAction<ParticipationRecord>) => Promise<void>;
-    setActivities: (setter: React.SetStateAction<Activity[]>) => Promise<void>;
-    setActivityRecords: (setter: React.SetStateAction<ActivityRecord>) => Promise<void>;
-    setRecoveryGrades: (setter: React.SetStateAction<RecoveryGrades>) => Promise<void>;
-    setMeritGrades: (setter: React.SetStateAction<MeritGrades>) => Promise<void>; // New Setter
-    setStudentFeedback: (studentId: string, feedback: string) => Promise<void>;
-    setGroupAnalysis: (analysis: string) => Promise<void>;
-
-    // Core Actions
-    addStudentsToGroup: (groupId: string, students: Student[]) => Promise<void>;
-    removeStudentFromGroup: (groupId: string, studentId: string) => Promise<void>;
-    updateGroup: (groupId: string, data: Partial<Omit<Group, 'id' | 'students'>>) => Promise<void>;
-    updateStudent: (studentId: string, data: Partial<Student>) => Promise<void>;
-    updateGroupCriteria: (criteria: EvaluationCriteria[]) => Promise<void>;
-    deleteGroup: (groupId: string) => Promise<void>;
-    addStudentObservation: (observation: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => Promise<void>;
-    updateStudentObservation: (studentId: string, observationId: string, updateText: string, isClosing: boolean) => Promise<void>;
-    takeAttendanceForDate: (groupId: string, date: string) => Promise<void>;
-    deleteAttendanceDate: (date: string) => Promise<void>;
-    resetAllData: () => Promise<void>;
-    importAllData: (data: ExportData) => Promise<void>;
-    addSpecialNote: (note: Omit<SpecialNote, 'id'>) => Promise<void>;
-    updateSpecialNote: (noteId: string, note: Partial<Omit<SpecialNote, 'id'>>) => Promise<void>;
-    deleteSpecialNote: (noteId: string) => Promise<void>;
-    
-    // Official Groups
-    createOfficialGroup: (name: string) => Promise<string>;
-    deleteOfficialGroup: (id: string) => Promise<void>;
-    addStudentsToOfficialGroup: (officialGroupId: string, students: Student[]) => Promise<void>;
-    getOfficialGroupStudents: (officialGroupId: string) => Promise<Student[]>;
-
-    // Justifications & Announcements
-    announcements: Announcement[];
-    justifications: StudentJustification[];
-    unreadAnnouncementsCount: number;
-    markAnnouncementsAsRead: () => void;
-    createAnnouncement: (title: string, message: string, targetGroup?: string, expiresAt?: string) => Promise<void>;
-    createJustification: (studentId: string, date: string, reason: string, category: JustificationCategory) => Promise<void>;
-    deleteAnnouncement: (id: string) => Promise<void>;
-    deleteJustification: (id: string) => Promise<void>;
+  // State
+  isLoading: boolean;
+  error: Error | null;
+  user: User | null | undefined;
+  groups: Group[];
+  allStudents: Student[];
+  activeStudentsInGroups: Student[];
+  allObservations: {[studentId: string]: StudentObservation[]};
+  settings: AppSettings;
+  
+  activeGroup: Group | null;
+  activePartialId: PartialId;
+  
+  partialData: PartialData;
+  allPartialsDataForActiveGroup: AllPartialsDataForGroup;
 
 
-    // Calculation & Fetching
-    calculateFinalGrade: (studentId: string) => number;
-    calculateDetailedFinalGrade: (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => { finalGrade: number; criteriaDetails: CriteriaDetail[]; isRecovery: boolean };
-    getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
-    fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
-    triggerPedagogicalCheck: (studentId: string) => void;
-    syncPublicData: () => Promise<void>;
-    forceCloudSync: () => Promise<void>; // New: Force sync with cloud
-    syncStatus: 'synced' | 'pending' | 'syncing'; // New: Cloud sync status
+  groupAverages: {[groupId: string]: number};
+  atRiskStudents: StudentWithRisk[];
+  overallAverageParticipation: number;
+
+  // Setters / Updaters
+  addStudentsToGroup: (groupId: string, students: Student[]) => Promise<void>;
+  removeStudentFromGroup: (groupId: string, studentId: string) => Promise<void>;
+  updateGroup: (groupId: string, data: Partial<Omit<Group, 'id' | 'students'>>) => Promise<void>;
+  updateStudent: (studentId: string, data: Partial<Student>) => Promise<void>;
+  updateGroupCriteria: (criteria: EvaluationCriteria[]) => Promise<void>;
+  createGroup: (group: Group) => Promise<void>;
+  
+  setActiveGroupId: (groupId: string | null) => void;
+  setActivePartialId: (partialId: PartialId) => void;
+  
+  setGrades: (setter: React.SetStateAction<Grades>) => Promise<void>;
+  setAttendance: (setter: React.SetStateAction<AttendanceRecord>) => Promise<void>;
+  setParticipations: (setter: React.SetStateAction<ParticipationRecord>) => Promise<void>;
+  setActivities: (setter: React.SetStateAction<Activity[]>) => Promise<void>;
+  setActivityRecords: (setter: React.SetStateAction<ActivityRecord>) => Promise<void>;
+  setRecoveryGrades: (setter: React.SetStateAction<RecoveryGrades>) => Promise<void>;
+  setStudentFeedback: (studentId: string, feedback: string) => Promise<void>;
+  setGroupAnalysis: (analysis: string) => Promise<void>;
+  setSettings: (newSettings: Partial<AppSettings>) => Promise<void>;
+  resetAllData: () => Promise<void>;
+
+
+  // Functions
+  deleteGroup: (groupId: string) => Promise<void>;
+  addStudentObservation: (observation: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => Promise<void>;
+  updateStudentObservation: (studentId: string, observationId: string, updateText: string, isClosing: boolean) => Promise<void>;
+  calculateFinalGrade: (studentId: string) => number;
+  calculateDetailedFinalGrade: (studentId: string, pData: PartialData, criteria: EvaluationCriteria[]) => { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean };
+  getStudentRiskLevel: (finalGrade: number, pAttendance: AttendanceRecord, studentId: string) => CalculatedRisk;
+  fetchPartialData: (groupId: string, partialId: PartialId) => Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null>;
+  takeAttendanceForDate: (groupId: string, date: string) => Promise<void>;
+  generateFeedbackWithAI: (student: Student, stats: StudentStats) => Promise<string>;
+  generateGroupAnalysisWithAI: (group: Group, summary: GroupReportSummary, recoverySummary: RecoverySummary, atRisk: StudentWithRisk[], observations: (StudentObservation & { studentName: string })[]) => Promise<string>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // --- STATE MANAGEMENT ---
-    const { toast } = useToast();
+// DATA PROVIDER COMPONENT
+export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
+    
     const [user, authLoading] = useAuthState(auth);
 
-    const [groups, setGroupsState] = useState<Group[]>([]);
-    const [allStudents, setAllStudentsState] = useState<Student[]>([]);
-    const [allObservations, setAllObservationsState] = useState<{ [studentId: string]: StudentObservation[] }>({});
-    const [specialNotes, setSpecialNotesState] = useState<SpecialNote[]>([]);
-    const [allPartialsData, setAllPartialsDataState] = useState<AllPartialsData>({});
-    const [settings, setSettingsState] = useState(defaultSettings);
-    const [officialGroups, setOfficialGroups] = useState<OfficialGroup[]>([]);
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const [justifications, setJustifications] = useState<StudentJustification[]>([]);
-    const [unreadAnnouncementsCount, setUnreadAnnouncementsCount] = useState(0); 
-
-    useEffect(() => {
-        const lastRead = localStorage.getItem('lastReadAnnouncementTime');
-        const lastReadTime = lastRead ? new Date(lastRead).getTime() : 0;
-        
-        const unread = announcements.filter(a => new Date(a.createdAt).getTime() > lastReadTime).length;
-        setUnreadAnnouncementsCount(unread);
-    }, [announcements]);
-
-    const markAnnouncementsAsRead = useCallback(() => {
-        localStorage.setItem('lastReadAnnouncementTime', new Date().toISOString());
-        setUnreadAnnouncementsCount(0);
-    }, []);
+    // Main State
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [allStudents, setAllStudents] = useState<Student[]>([]);
+    const [allObservations, setAllObservations] = useState<{[studentId: string]: StudentObservation[]}>({});
+    const [settings, setSettingsState] = useState<AppSettings>(defaultSettings);
     const [activeGroupId, setActiveGroupIdState] = useState<string | null>(null);
-    const [activePartialId, setActivePartialIdState] = useState<PartialId>('p1');
-    const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'syncing'>('synced');
+    const [activePartialId, setActivePartialId] = useState<PartialId>('p1');
+    const [allPartialsData, setAllPartialsData] = useState<AllPartialsData>({});
 
-    
-    // --- SANITIZATION SCRIPT ---
-    const runSanitization = async (officialGroups: OfficialGroup[]) => {
-        if (!user) return;
-        
+    const getStorageKey = (baseKey: string) => user ? `${baseKey}_${user.uid}` : `${baseKey}_logged_out`;
+
+    const loadFromStorage = useCallback(<T,>(key: string, defaultValue: T): T => {
+        if (typeof window === 'undefined') return defaultValue;
         try {
-            const docRef = doc(db, 'users', user.uid, 'userData', 'app_groups');
-            const docSnap = await getDoc(docRef);
-            
-            if (docSnap.exists()) {
-                const payload = docSnap.data();
-                const groups = payload.value as Group[];
-                
-                const corruptedGroups = groups.filter(g => !g.groupName || g.groupName.trim() === '');
-                
-                if (corruptedGroups.length > 0) {
-                    console.log(`Found ${corruptedGroups.length} corrupted groups, attempting restoration...`);
-                    
-                    const restoredGroups = groups.map(group => {
-                        if (!group.groupName || group.groupName.trim() === '') {
-                            // Try to restore from official_groups metadata
-                            const officialGroup = officialGroups.find(og => og.id === group.officialGroupId);
-                            if (officialGroup) {
-                                // Parse the name to extract semester and subject
-                                const match = officialGroup.name.match(/^(\d+)[^A-Za-z0-9]*([A-Za-z]+)/);
-                                let parsedSemester = '';
-                                let parsedSubject = '';
-                                if (match) {
-                                    parsedSemester = match[1];
-                                    parsedSubject = match[2];
-                                }
-                                return {
-                                    ...group,
-                                    groupName: officialGroup.name,
-                                    subject: parsedSubject || group.subject,
-                                    semester: parsedSemester || group.semester
-                                };
-                            }
-                        }
-                        return group;
-                    });
-                    
-                    // Update cloud with restored data
-                    await setDoc(docRef, { value: restoredGroups, lastUpdated: Date.now() }, { merge: true });
-                    
-                    // Update local state
-                    setGroupsState(restoredGroups);
-                    
-                    console.log('Sanitization completed successfully');
-                }
-            }
+            const storedValue = localStorage.getItem(getStorageKey(key));
+            return storedValue ? JSON.parse(storedValue) : defaultValue;
         } catch (error) {
-            console.error('Error during sanitization:', error);
+            console.error(`Error loading ${key} from localStorage`, error);
+            setError(error as Error);
+            return defaultValue;
         }
-    };
-
-    // --- ASYNC DATA HYDRATION ---
-    useEffect(() => {
-        if (authLoading) return;
-
-        const hydrateData = async () => {
-            setIsLoading(true);
-            try {
-                // Step 1: helper to load local
-                const readLocal = async <T,>(key: string): Promise<{ value: T, lastUpdated: number } | undefined> => {
-                     try {
-                            const localPayload = await get(key);
-                            if (localPayload && typeof localPayload === 'object' && 'value' in localPayload && 'lastUpdated' in localPayload) {
-                                 return localPayload as { value: T, lastUpdated: number };
-                            } else if (localPayload) {
-                                 // Legacy format support
-                                 return { value: localPayload as T, lastUpdated: 0 };
-                            }
-                     } catch (e) {
-                         console.warn(`Error reading local data for ${key}`, e);
-                     }
-                     return undefined;
-                };
-
-                // Step 2: Load Local Data in Parallel (FAST PHASE)
-                const [
-                    localGroups,
-                    localStudents,
-                    localObservations,
-                    localSpecialNotes,
-                    localPartials,
-                    localSettingsRaw,
-                    localActiveGroupId
-                ] = await Promise.all([
-                    readLocal<Group[]>('app_groups'),
-                    readLocal<Student[]>('app_students'),
-                    readLocal<{ [studentId: string]: StudentObservation[] }>('app_observations'),
-                    readLocal<SpecialNote[]>('app_specialNotes'),
-                    readLocal<AllPartialsData>('app_partialsData'),
-                    readLocal<AppSettings>('app_settings'),
-                    get<string>('activeGroupId_v1')
-                ]);
-
-                // Apply Local Data Optimistically
-                if (localGroups) setGroupsState(localGroups.value);
-                if (localStudents) setAllStudentsState(localStudents.value);
-                if (localObservations) setAllObservationsState(localObservations.value);
-                if (localSpecialNotes) setSpecialNotesState(localSpecialNotes.value);
-                if (localPartials) setAllPartialsDataState(localPartials.value);
-                
-                const resolvedSettings = normalizeSettingsValue(localSettingsRaw?.value || defaultSettings);
-                setSettingsState(resolvedSettings);
-
-                const currentGroups = localGroups?.value || [];
-                if (localActiveGroupId && currentGroups.some(g => g.id === localActiveGroupId)) {
-                    setActiveGroupIdState(localActiveGroupId);
-                } else if (currentGroups.length > 0) {
-                    setActiveGroupIdState(currentGroups[0].id);
-                } else {
-                    setActiveGroupIdState(null);
-                }
-
-                // CRITICAL OPTIMIZATION: Release UI before Cloud Sync
-                setIsLoading(false);
-
-                // Step 3: Background Cloud Sync (SLOW PHASE)
-                if (user) {
-                    const syncKey = async <T,>(key: string, localWrapper: { value: T, lastUpdated: number } | undefined, setter: (val: T) => void) => {
-                         try {
-                            const docRef = doc(db, 'users', user.uid, 'userData', key);
-                            const docSnap = await getDoc(docRef);
-                            
-                            const localData = localWrapper?.value;
-                            const localTimestamp = localWrapper?.lastUpdated || 0;
-
-                            if (docSnap.exists()) {
-                                const cloudPayload = docSnap.data();
-                                const cloudData = cloudPayload.value as T;
-                                const cloudTimestamp = cloudPayload.lastUpdated || 0;
-
-                                if (cloudTimestamp > localTimestamp) {
-                                    // Cloud is newer -> Intelligent Deep Merge
-                                    console.log(`Cloud update for ${key} - performing intelligent deep merge`);
-                                    let mergedData: T;
-                                    
-                                    if (key === 'app_groups') {
-                                        // Intelligent merge for groups: preserve both local and cloud data
-                                        const localGroups = (localData as Group[]) || [];
-                                        const cloudGroups = cloudData as Group[];
-                                        
-                                        // Create a map for quick lookup
-                                        const mergedMap = new Map<string, Group>();
-                                        
-                                        // First, add all cloud groups (they have newer timestamp globally)
-                                        cloudGroups.forEach(cg => {
-                                            mergedMap.set(cg.id, cg);
-                                        });
-                                        
-                                        // Then merge local groups that might have local-only changes
-                                        localGroups.forEach(localGroup => {
-                                            const existingInCloud = mergedMap.get(localGroup.id);
-                                            if (existingInCloud) {
-                                                // Group exists in both - merge students intelligently
-                                                const mergedStudents = [...existingInCloud.students];
-                                                
-                                                // Add local students that don't exist in cloud version
-                                                localGroup.students.forEach(localStudent => {
-                                                    if (!mergedStudents.some(s => s.id === localStudent.id)) {
-                                                        mergedStudents.push(localStudent);
-                                                    }
-                                                });
-                                                
-                                                // Preserve any local-only criteria if cloud doesn't have it
-                                                const mergedCriteria = existingInCloud.evaluationCriteria?.length > 0 
-                                                    ? existingInCloud.evaluationCriteria 
-                                                    : localGroup.evaluationCriteria;
-                                                
-                                                mergedMap.set(localGroup.id, {
-                                                    ...existingInCloud,
-                                                    students: mergedStudents,
-                                                    evaluationCriteria: mergedCriteria
-                                                });
-                                            } else {
-                                                // Group only exists locally - preserve it
-                                                console.log(`Preserving local-only group: ${localGroup.groupName}`);
-                                                mergedMap.set(localGroup.id, localGroup);
-                                            }
-                                        });
-                                        
-                                        mergedData = Array.from(mergedMap.values()) as T;
-                                    } else if (key === 'app_students') {
-                                        // Merge students: combine both arrays, preferring cloud for duplicates
-                                        const localStudents = (localData as Student[]) || [];
-                                        const cloudStudents = cloudData as Student[];
-                                        
-                                        const mergedStudents = [...cloudStudents];
-                                        localStudents.forEach(ls => {
-                                            if (!mergedStudents.some(cs => cs.id === ls.id)) {
-                                                mergedStudents.push(ls);
-                                            }
-                                        });
-                                        mergedData = mergedStudents as T;
-                                    } else if (key === 'app_partialsData') {
-                                        // For partials data, do a deep merge
-                                        const localPartials = (localData as AllPartialsData) || {};
-                                        const cloudPartials = cloudData as AllPartialsData;
-                                        
-                                        const mergedPartials = { ...cloudPartials };
-                                        
-                                        // Merge each group's data
-                                        Object.keys(localPartials).forEach(groupId => {
-                                            if (!mergedPartials[groupId]) {
-                                                // Local group not in cloud - add it
-                                                mergedPartials[groupId] = localPartials[groupId];
-                                            } else {
-                                                // Merge partials within the group
-                                                Object.keys(localPartials[groupId]).forEach(partialId => {
-                                                    if (!mergedPartials[groupId][partialId]) {
-                                                        mergedPartials[groupId][partialId] = localPartials[groupId][partialId];
-                                                    }
-                                                });
-                                            }
-                                        });
-                                        
-                                        mergedData = mergedPartials as T;
-                                    } else {
-                                        // For other data types, prefer cloud
-                                        mergedData = cloudData;
-                                    }
-                                    
-                                    await set(key, { value: mergedData, lastUpdated: cloudTimestamp });
-                                    setter(mergedData);
-                                } else if (localTimestamp > cloudTimestamp) {
-                                    // Local is newer -> Push to Cloud
-                                    console.log(`Pushing local ${key} to cloud`);
-                                    await setDoc(docRef, { value: localData, lastUpdated: localTimestamp }, { merge: true });
-                                }
-                            } else if (localData) {
-                                // Cloud empty -> Push local
-                                await setDoc(docRef, { value: localData, lastUpdated: Date.now() });
-                            }
-                         } catch(err) {
-                             console.error(`Background sync error for ${key}:`, err);
-                         }
-                    };
-
-                    // Run cloud syncs in parallel background
-                    await Promise.all([
-                        syncKey('app_groups', localGroups, setGroupsState),
-                        syncKey('app_students', localStudents, setAllStudentsState),
-                        syncKey('app_observations', localObservations, setAllObservationsState),
-                        syncKey('app_specialNotes', localSpecialNotes, setSpecialNotesState),
-                        syncKey('app_partialsData', localPartials, setAllPartialsDataState),
-                        syncKey('app_settings', localSettingsRaw, async (val) => {
-                             const norm = normalizeSettingsValue(val);
-                             setSettingsState(norm);
-                             if (norm.aiModel !== val.aiModel) {
-                                 await set('app_settings', norm);
-                             }
-                        })
-                    ]);
-                }
-
-            } catch (e) {
-                console.error("Data hydration error:", e);
-                setError(e instanceof Error ? e : new Error('An unknown error occurred during data hydration'));
-                // Ensure loading is off if error occurs early
-                setIsLoading(false); 
-            }
-        };
-        hydrateData();
-    }, [user, authLoading]);
-
-    useEffect(() => {
-        // Load cached official groups on mount
-        const cached = localStorage.getItem('cached_official_groups');
-        if (cached) {
-            try {
-                const { data, timestamp } = JSON.parse(cached);
-                // Cache valid for 5 minutes
-                if (Date.now() - timestamp < 5 * 60 * 1000) {
-                    setOfficialGroups(data);
-                }
-            } catch (e) {
-                console.error("Error loading cached official groups:", e);
-            }
-        }
-
-        const unsubscribe = onSnapshot(collection(db, 'official_groups'), (snapshot) => {
-            const fetchedGroups: OfficialGroup[] = [];
-            snapshot.forEach((doc) => {
-                fetchedGroups.push({ id: doc.id, ...doc.data() } as OfficialGroup);
-            });
-            setOfficialGroups(fetchedGroups);
-            
-            // Cache the data with timestamp
-            localStorage.setItem('cached_official_groups', JSON.stringify({
-                data: fetchedGroups,
-                timestamp: Date.now()
-            }));
-
-            // Run sanitization once when official groups are loaded
-            if (user) {
-                runSanitization(fetchedGroups);
-            }
-        }, (error) => {
-            console.error("Error fetching official groups:", error);
-        });
-
-        const unsubscribeAnn = onSnapshot(query(collection(db, 'announcements'), where('isActive', '==', true)), (snapshot) => {
-            const fetched: Announcement[] = [];
-            const now = Date.now();
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                
-                // Expiration Logic:
-                // 1. If explicit 'expiresAt' exists, check it.
-                // 2. If NO 'expiresAt', assume 48 hours default lifetime from 'createdAt'.
-                let shouldShow = true;
-
-                if (data.expiresAt) {
-                    if (new Date(data.expiresAt).getTime() < now) {
-                        shouldShow = false;
-                    }
-                } else if (data.createdAt) {
-                    // Fallback for legacy/permanent announcements: Enforce 48h limit
-                    const createdTime = new Date(data.createdAt).getTime();
-                    const fortyEightHours = 48 * 60 * 60 * 1000;
-                    if (now - createdTime > fortyEightHours) {
-                        shouldShow = false;
-                    }
-                }
-
-                if (shouldShow) {
-                    fetched.push({ id: doc.id, ...(data as any) } as Announcement);
-                }
-            });
-            // Sort in memory to avoid index requirement
-            fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setAnnouncements(fetched);
-        }, (e) => console.error("Error announcements", e));
-
-        const unsubscribeJust = onSnapshot(query(collection(db, 'justifications'), orderBy('date', 'desc')), (snapshot) => {
-            const fetched: StudentJustification[] = [];
-            snapshot.forEach((doc) => fetched.push({ id: doc.id, ...doc.data() } as StudentJustification));
-            setJustifications(fetched);
-        }, (e) => console.error("Error justifications", e));
-
-        return () => {
-            unsubscribe();
-            unsubscribeAnn();
-            unsubscribeJust();
-        };
-    }, []);
-
-    // Real-time listeners for cross-device synchronization
-    useEffect(() => {
-        if (!user) return;
-
-        console.log('Setting up real-time listeners for cross-device sync');
-
-        // Helper to safely update local state only if cloud is newer
-        const safeUpdateLocal = async <T,>(
-            key: string,
-            cloudData: T,
-            cloudTimestamp: number,
-            setter: React.Dispatch<React.SetStateAction<T>>
-        ) => {
-            try {
-                // Get local timestamp
-                const localPayload = await get(key);
-                const localTimestamp = localPayload?.lastUpdated || 0;
-                
-                // Only update if cloud is actually newer
-                if (cloudTimestamp > localTimestamp) {
-                    console.log(`Updating ${key} from cloud - newer timestamp (${cloudTimestamp} > ${localTimestamp})`);
-                    await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
-                    setter(cloudData);
-                } else if (localTimestamp > 0) {
-                    console.log(`Skipping ${key} update - local is same or newer`);
-                }
-            } catch (err) {
-                console.error(`Error in safeUpdateLocal for ${key}:`, err);
-            }
-        };
-
-        // Listener for groups - with safe merge logic
-        const unsubscribeGroups = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_groups'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudGroups = data.value as Group[];
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    
-                    // Get current local data
-                    const localPayload = await get('app_groups');
-                    const localGroups = localPayload?.value as Group[] || [];
-                    const localTimestamp = localPayload?.lastUpdated || 0;
-                    
-                    // Only process if cloud is newer
-                    if (cloudTimestamp > localTimestamp) {
-                        // Intelligent merge - preserve local-only groups
-                        const mergedMap = new Map<string, Group>();
-                        
-                        // Add cloud groups first
-                        cloudGroups.forEach(cg => mergedMap.set(cg.id, cg));
-                        
-                        // Merge local groups that don't exist in cloud
-                        localGroups.forEach(lg => {
-                            if (!mergedMap.has(lg.id)) {
-                                console.log(`Preserving local-only group in real-time sync: ${lg.groupName}`);
-                                mergedMap.set(lg.id, lg);
-                            }
-                        });
-                        
-                        const mergedGroups = Array.from(mergedMap.values());
-                        await set('app_groups', { value: mergedGroups, lastUpdated: cloudTimestamp });
-                        setGroupsState(mergedGroups);
-                        console.log('Groups updated from cloud (real-time with merge)');
-                    }
-                }
-            },
-            (error) => {
-                if (error.code === 'unavailable') {
-                    console.log('Firestore temporarily unavailable - offline mode');
-                } else {
-                    console.error('Error in groups real-time listener:', error);
-                }
-            }
-        );
-
-        // Listener for students - with safe update
-        const unsubscribeStudents = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_students'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudStudents = data.value as Student[];
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    await safeUpdateLocal('app_students', cloudStudents, cloudTimestamp, setAllStudentsState);
-                }
-            },
-            (error) => {
-                if (error.code !== 'unavailable') {
-                    console.error('Error in students real-time listener:', error);
-                }
-            }
-        );
-
-        // Listener for observations
-        const unsubscribeObservations = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_observations'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudObservations = data.value as { [studentId: string]: StudentObservation[] };
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    await safeUpdateLocal('app_observations', cloudObservations, cloudTimestamp, setAllObservationsState);
-                }
-            },
-            (error) => {
-                if (error.code !== 'unavailable') {
-                    console.error('Error in observations real-time listener:', error);
-                }
-            }
-        );
-
-        // Listener for special notes
-        const unsubscribeSpecialNotes = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_specialNotes'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudSpecialNotes = data.value as SpecialNote[];
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    await safeUpdateLocal('app_specialNotes', cloudSpecialNotes, cloudTimestamp, setSpecialNotesState);
-                }
-            },
-            (error) => {
-                if (error.code !== 'unavailable') {
-                    console.error('Error in special notes real-time listener:', error);
-                }
-            }
-        );
-
-        // Listener for partials data
-        const unsubscribePartials = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_partialsData'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudPartials = data.value as AllPartialsData;
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    
-                    // Deep merge for partials
-                    const localPayload = await get('app_partialsData');
-                    const localPartials = localPayload?.value as AllPartialsData || {};
-                    const localTimestamp = localPayload?.lastUpdated || 0;
-                    
-                    if (cloudTimestamp > localTimestamp) {
-                        const mergedPartials = { ...cloudPartials };
-                        Object.keys(localPartials).forEach(groupId => {
-                            if (!mergedPartials[groupId]) {
-                                mergedPartials[groupId] = localPartials[groupId];
-                            }
-                        });
-                        
-                        await set('app_partialsData', { value: mergedPartials, lastUpdated: cloudTimestamp });
-                        setAllPartialsDataState(mergedPartials);
-                        console.log('Partials data updated from cloud (real-time with merge)');
-                    }
-                }
-            },
-            (error) => {
-                if (error.code !== 'unavailable') {
-                    console.error('Error in partials data real-time listener:', error);
-                }
-            }
-        );
-
-        // Listener for settings
-        const unsubscribeSettings = onSnapshot(
-            doc(db, 'users', user.uid, 'userData', 'app_settings'),
-            async (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const cloudSettings = normalizeSettingsValue(data.value as AppSettings);
-                    const cloudTimestamp = data.lastUpdated || 0;
-                    await safeUpdateLocal('app_settings', cloudSettings, cloudTimestamp, setSettingsState);
-                }
-            },
-            (error) => {
-                if (error.code !== 'unavailable') {
-                    console.error('Error in settings real-time listener:', error);
-                }
-            }
-        );
-
-        return () => {
-            unsubscribeGroups();
-            unsubscribeStudents();
-            unsubscribeObservations();
-            unsubscribeSpecialNotes();
-            unsubscribePartials();
-            unsubscribeSettings();
-            console.log('Real-time listeners cleaned up');
-        };
     }, [user]);
 
-    // Monitor cloud sync status
-
-    // Monitor cloud sync status
     useEffect(() => {
-        const checkSyncStatus = async () => {
-            try {
-                setSyncStatus('pending');
-                await waitForPendingWrites(db);
-                setSyncStatus('synced');
-            } catch (error) {
-                console.error("Error checking sync status:", error);
-                setSyncStatus('pending');
-            }
-        };
-
-        // Check immediately and set up interval
-        checkSyncStatus();
-        const interval = setInterval(checkSyncStatus, 5000); // Check every 5 seconds
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const createSetterWithStorage = <T,>(
-        setter: React.Dispatch<React.SetStateAction<T>>,
-        key: string,
-        inMemoryState: T,
-    ) => {
-        return async (value: React.SetStateAction<T>) => {
-            const oldValue = inMemoryState;
-            const newValue =
-                typeof value === 'function'
-                    ? (value as (prevState: T) => T)(oldValue)
-                    : value;
-            
-            // Schema Validation Gatekeeper
-            if (key === 'app_groups') {
-                const groups = newValue as Group[];
-                const invalidGroups = groups.filter(g => 
-                    !g.groupName || g.groupName.trim() === '' ||
-                    !g.subject || g.subject.trim() === '' ||
-                    !g.semester || g.semester.trim() === ''
-                );
-                if (invalidGroups.length > 0) {
-                    console.warn('Schema validation failed for groups:', invalidGroups);
-                    // Attempt to consolidate local data before push
-                    try {
-                        const localPayload = await get(key);
-                        if (localPayload && typeof localPayload === 'object' && 'value' in localPayload) {
-                            const localGroups = localPayload.value as Group[];
-                            // Merge with local data to rescue valid groups
-                            const mergedGroups = [...groups];
-                            localGroups.forEach(localGroup => {
-                                if (!mergedGroups.some(g => g.id === localGroup.id)) {
-                                    mergedGroups.push(localGroup);
-                                }
-                            });
-                            setter(mergedGroups as T);
-                            return; // Do not push invalid data to cloud
-                        }
-                    } catch (e) {
-                        console.error('Error consolidating local data:', e);
-                    }
-                    // If consolidation fails, prevent push
-                    console.error('Preventing push of invalid group data to Firebase');
-                    return;
-                }
-            }
-            
-            // 1. Update React State immediately for UI responsiveness
-            setter(newValue);
-            
-            // 2. Prepare payload with timestamp
-            const now = Date.now();
-            const payload = { value: newValue, lastUpdated: now };
-            
-            // 3. Save to Local IDB immediately
-            try {
-                await set(key, payload); // Save entire payload to match new structure
-            } catch (e) {
-                console.error(`Error saving ${key} to IDB:`, e);
-            }
-
-            // 4. Background Sync to Cloud
+        if (!authLoading) {
             if (user) {
-                const docRef = doc(db, 'users', user.uid, 'userData', key);
-                // Fire and forget - let the offline persistence SDK handle the queue
-                setDoc(docRef, payload, { merge: true }).catch(err => {
-                    console.error(`Sync error for ${key}:`, err);
-                    // Silent retry logic handled by SDK, but we log it.
-                    // If critical, we could toast here.
-                });
-            }
-        };
-    };
-
-    const setGroups = createSetterWithStorage(setGroupsState, 'app_groups', groups);
-    const setAllStudents = createSetterWithStorage(setAllStudentsState, 'app_students', allStudents);
-    const setAllObservations = createSetterWithStorage(setAllObservationsState, 'app_observations', allObservations);
-    const setSpecialNotes = createSetterWithStorage(setSpecialNotesState, 'app_specialNotes', specialNotes);
-    const setAllPartialsData = createSetterWithStorage(setAllPartialsDataState, 'app_partialsData', allPartialsData);
-    
-    // Explicit Settings Setter with Timestamp Logic
-    const setSettings = async (newSettings: AppSettings) => {
-        const normalizedSettings = normalizeSettingsValue(newSettings);
-        setSettingsState(normalizedSettings);
-        
-        const now = Date.now();
-        const payload = { value: normalizedSettings, lastUpdated: now };
-
-        try {
-             await set('app_settings', payload);
-        } catch(e) { console.error("Error saving local settings:", e); }
-
-        if (user) {
-            try {
-                const docRef = doc(db, 'users', user.uid, 'userData', 'app_settings');
-                await setDoc(docRef, payload, { merge: true });
-            } catch (err) {
-                console.error("Error saving settings to Firestore:", err);
+                try {
+                    setGroups(loadFromStorage('app_groups', []));
+                    setAllStudents(loadFromStorage('app_students', []));
+                    setAllObservations(loadFromStorage('app_observations', {}));
+                    setAllPartialsData(loadFromStorage('app_partialsData', {}));
+                    setSettingsState(loadFromStorage('app_settings', defaultSettings));
+                    
+                    const storedActiveGroupId = loadFromStorage('activeGroupId_v1', null);
+                    const availableGroups = loadFromStorage('app_groups', []);
+                    if(availableGroups.some((g: Group) => g.id === storedActiveGroupId)){
+                        setActiveGroupIdState(storedActiveGroupId);
+                    } else if (availableGroups.length > 0) {
+                        setActiveGroupIdState(availableGroups[0].id);
+                    }
+                } catch (e) {
+                    setError(e as Error);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                 setIsLoading(false); // No user, stop loading
             }
         }
-    };
-
-    const setActiveGroupId = useCallback(async (groupId: string | null) => {
-        setActiveGroupIdState(groupId);
-        if (groupId) {
-            await set('activeGroupId_v1', groupId);
-        } else {
-            await del('activeGroupId_v1');
-        }
-    }, []);
+    }, [user, loadFromStorage, authLoading]);
     
-
-    // --- MEMOIZED DERIVED STATE ---
+    // Derived State
     const activeGroup = useMemo(() => {
-      if (!activeGroupId) return null;
-      return groups.find(g => g.id === activeGroupId) || null;
+        if (!activeGroupId) return null;
+        return groups.find(g => g.id === activeGroupId) || null;
     }, [groups, activeGroupId]);
 
-    const activeStudentsInGroups = useMemo(() => Array.from(new Map(groups.flatMap(g => g.students.map(s => [s.id, s]))).values()), [groups]);
-    const allPartialsDataForActiveGroup = useMemo(() => allPartialsData[activeGroupId || ''] || {}, [allPartialsData, activeGroupId]);
-    const partialData = useMemo(() => allPartialsDataForActiveGroup[activePartialId] || defaultPartialData, [allPartialsDataForActiveGroup, activePartialId]);
-
-    // --- CORE FUNCTIONS / ACTIONS ---
-    const setActivePartialId = (partialId: PartialId) => setActivePartialIdState(partialId);
-
-    const createPartialDataSetter = useCallback((field: keyof PartialData) => {
-        return async (setter: React.SetStateAction<any>) => {
-            if (!activeGroupId) return;
-
-            setAllPartialsData(prev => {
-                const groupData = prev[activeGroupId] || {};
-                const pData = groupData[activePartialId] || defaultPartialData;
-                const oldValue = pData[field];
-                const newValue = typeof setter === 'function' ? (setter as any)(oldValue) : setter;
-                const updatedPData = { ...pData, [field]: newValue };
-                const updatedGroupData = { ...groupData, [activePartialId]: updatedPData };
-                
-                const finalState = { ...prev, [activeGroupId]: updatedGroupData };
-                set('app_partialsData', finalState); // Persist change
-                
-                // SYNC ACADEMIC STATUS PUBLICLY (Background)
-                if ((field === 'grades' || field === 'activityRecords' || field === 'activities') && user && activeGroupId) {
-                    const group = groups.find(g => g.id === activeGroupId);
-                    if (group) {
-                         // Batch approach or individual writes. We use individual for simplicity in reducer
-                         // We calculate simplified stats to avoid heavy logic inside reducer
-                         const activities = updatedPData.activities || [];
-                         const totalActivities = activities.length;
-                         
-                         group.students.forEach(student => {
-                             const records = updatedPData.activityRecords?.[student.id] || {};
-                             const submitted = Object.values(records).filter(Boolean).length;
-                             const completionRate = totalActivities > 0 ? (submitted / totalActivities) * 100 : 100;
-                             
-                             const statsRef = doc(db, 'academic_compliance', `${student.id}_${activeGroupId}`);
-                             setDoc(statsRef, {
-                                 studentId: student.id,
-                                 groupId: activeGroupId,
-                                 groupName: group.groupName || group.subject,
-                                 subject: group.subject,
-                                 completionRate: completionRate,
-                                 failingRisk: completionRate < 60,
-                                 lastUpdated: new Date().toISOString(),
-                                 teacherEmail: user.email
-                             }, { merge: true }).catch(e => console.error("Error syncing academic stats:", e));
-                         });
-                    }
-                }
-                
-                return finalState;
-            });
-        };
-    }, [activeGroupId, activePartialId, setAllPartialsData, groups, user]);
+    const allPartialsDataForActiveGroup = useMemo(() => {
+        if (!activeGroupId) return {};
+        return allPartialsData[activeGroupId] || {};
+    }, [activeGroupId, allPartialsData]);
     
-    const setGrades = createPartialDataSetter('grades');
-    
-    // Custom setAttendance to sync absences to shared cloud collection
-    const setAttendance = useCallback(async (setter: React.SetStateAction<AttendanceRecord>) => {
-        if (!activeGroupId) return;
+    const partialData = useMemo((): PartialData => {
+        if (!activeGroupId) return defaultPartialData;
+        return allPartialsDataForActiveGroup[activePartialId] || defaultPartialData;
+    }, [allPartialsDataForActiveGroup, activePartialId, activeGroupId]);
 
-        let newAttendance: AttendanceRecord | undefined;
+    // Data Persistence Effects
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_groups'), JSON.stringify(groups));
+    }, [groups, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_students'), JSON.stringify(allStudents));
+    }, [allStudents, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_observations'), JSON.stringify(allObservations));
+    }, [allObservations, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_settings'), JSON.stringify(settings));
+    }, [settings, isLoading, user]);
+     useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('activeGroupId_v1'), JSON.stringify(activeGroupId));
+    }, [activeGroupId, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_partialsData'), JSON.stringify(allPartialsData));
+    }, [allPartialsData, isLoading, user]);
 
-        await setAllPartialsData(prev => {
-            const groupData = prev[activeGroupId] || {};
-            const pData = groupData[activePartialId] || defaultPartialData;
-            const oldValue = pData.attendance;
-            const newValue = typeof setter === 'function' ? (setter as any)(oldValue) : setter;
-            
-            newAttendance = newValue;
 
-            const updatedPData = { ...pData, attendance: newValue };
-            const updatedGroupData = { ...groupData, [activePartialId]: updatedPData };
-            const finalState = { ...prev, [activeGroupId]: updatedGroupData };
-            set('app_partialsData', finalState);
-            return finalState;
-        });
+    const setActiveGroupId = useCallback((groupId: string | null) => {
+        setActiveGroupIdState(groupId);
+    }, []);
 
-        // Sync to 'absences' collection in Firestore
-        if (newAttendance && user) {
-             const group = groups.find(g => g.id === activeGroupId);
-             if (group) {
-                 for (const [date, records] of Object.entries(newAttendance)) {
-                     const absentStudentIds = Object.entries(records)
-                        .filter(([_, isPresent]) => !isPresent)
-                        .map(([studentId]) => studentId);
-                     
-                     // Create a safe ID for the document
-                     const safeDate = date.replace(/\//g, '-');
-                     const docId = `${activeGroupId}_${safeDate}`; 
-                     const docRef = doc(db, 'absences', docId);
-                     
-                     const absentStudents = group.students
-                        .filter(s => absentStudentIds.includes(s.id))
-                        .map(s => ({ id: s.id, name: s.name }));
-
-                     // Fire and forget - don't await to keep UI snappy
-                     setDoc(docRef, {
-                         groupId: activeGroupId,
-                         groupName: group.groupName || group.subject,
-                         date: date,
-                         teacherId: user.uid,
-                         teacherEmail: user.email,
-                         absentStudents: absentStudents,
-                         whatsappLink: group.whatsappLink || '',
-                         timestamp: new Date().toISOString()
-                     }, { merge: true }).catch(e => console.error("Error syncing absences:", e));
-                 }
-             }
+    // ---- Calculation Logic ----
+    const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
+        if (!pData || !criteria || criteria.length === 0) {
+            return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
         }
-    }, [activeGroupId, activePartialId, setAllPartialsData, groups, user]);
 
-    const setParticipations = createPartialDataSetter('participations');
-    const setActivities = createPartialDataSetter('activities');
-    const setActivityRecords = createPartialDataSetter('activityRecords');
-    const setRecoveryGrades = createPartialDataSetter('recoveryGrades');
-    const setMeritGrades = createPartialDataSetter('meritGrades');
+        const recoveryInfo = pData.recoveryGrades?.[studentId];
+        if (recoveryInfo?.applied) {
+            return {
+                finalGrade: recoveryInfo.grade ?? 0,
+                criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }],
+                isRecovery: true,
+            };
+        }
+        
+        let finalGrade = 0;
+        const criteriaDetails: CriteriaDetail[] = [];
+        
+        for (const criterion of criteria) {
+            let performanceRatio = 0;
 
-    const setStudentFeedback = useCallback(async (studentId: string, feedback: string) => {
-        if (!activeGroupId) return;
-        setAllPartialsData(prev => {
-            const groupData = prev[activeGroupId] || {};
-            const pData = groupData[activePartialId] || defaultPartialData;
-            const newFeedbacks = { ...(pData.feedbacks || {}), [studentId]: feedback };
-            const finalState = { ...prev, [activeGroupId]: { ...groupData, [activePartialId]: { ...pData, feedbacks: newFeedbacks } } };
-            set('app_partialsData', finalState);
-            return finalState;
+             if (criterion.name === 'Actividades' || criterion.name === 'Portafolio') {
+                const totalActivities = pData.activities?.length ?? 0;
+                if (totalActivities > 0) {
+                    const deliveredActivities = Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length;
+                    performanceRatio = deliveredActivities / totalActivities;
+                }
+            } else if (criterion.name === 'Participación') {
+                 const totalClasses = Object.keys(pData.participations || {}).length;
+                 if (totalClasses > 0) {
+                    const studentParticipations = Object.values(pData.participations).filter(day => day[studentId]).length;
+                    performanceRatio = studentParticipations / totalClasses;
+                 }
+            } else {
+                const delivered = pData.grades?.[studentId]?.[criterion.id]?.delivered ?? 0;
+                const expected = criterion.expectedValue;
+                if (expected > 0) {
+                    performanceRatio = (delivered ?? 0) / expected;
+                }
+            }
+            const earnedPercentage = performanceRatio * criterion.weight;
+            finalGrade += earnedPercentage;
+            criteriaDetails.push({ name: criterion.name, earned: earnedPercentage, weight: criterion.weight });
+        }
+        
+        const grade = Math.max(0, Math.min(100, finalGrade));
+        return { finalGrade: grade, criteriaDetails: criteriaDetails, isRecovery: false };
+    }, []);
+
+    const calculateFinalGrade = useCallback((studentId: string): number => {
+        if (!activeGroup || !partialData) return 0;
+        return calculateDetailedFinalGrade(studentId, partialData, activeGroup.criteria).finalGrade;
+    }, [activeGroup, partialData, calculateDetailedFinalGrade]);
+
+
+    const getStudentRiskLevel = useCallback((finalGrade: number, pAttendance: AttendanceRecord | undefined, studentId: string): CalculatedRisk => {
+        const safeAttendance = pAttendance || {};
+        const studentAttendanceDays = Object.keys(safeAttendance).filter(date => Object.prototype.hasOwnProperty.call(safeAttendance[date], studentId));
+        const totalDaysForStudent = studentAttendanceDays.length;
+
+        const absences = studentAttendanceDays.reduce((count, date) => {
+            return safeAttendance[date][studentId] === false ? count + 1 : count;
+        }, 0);
+        
+        if (absences > 3) {
+            return {
+                level: 'high',
+                reason: `Ausentismo crítico (${absences} faltas). Requiere atención independientemente del promedio.`
+            };
+        }
+
+        if (finalGrade < 50 && absences >= 2) {
+             return {
+                level: 'high',
+                reason: `Promedio de ${finalGrade.toFixed(0)}% y ${absences} faltas.`
+            };
+        }
+        
+        if (finalGrade <= 70 && absences >= 2) {
+            return {
+                level: 'medium',
+                reason: `Promedio de ${finalGrade.toFixed(0)}% y ${absences} faltas.`
+            };
+        }
+        
+        return {level: 'low', reason: 'Sin riesgo detectado' };
+    }, []);
+    
+    // --- Calculated / Memoized State ---
+    const groupAverages = useMemo(() => {
+        const averages: {[groupId: string]: number} = {};
+        groups.forEach(group => {
+            if (!group || !group.criteria || group.criteria.length === 0) {
+                averages[group.id] = 0;
+                return;
+            }
+            const groupPartialData = allPartialsData[group.id]?.[activePartialId];
+            if (!groupPartialData) {
+                averages[group.id] = 0;
+                return;
+            }
+            const groupGrades = group.students.map(s => calculateDetailedFinalGrade(s.id, groupPartialData, group.criteria).finalGrade);
+            if(groupGrades.length === 0) {
+                averages[group.id] = 0;
+                return;
+            }
+            const total = groupGrades.reduce((sum, grade) => sum + grade, 0);
+            averages[group.id] = groupGrades.length > 0 ? total / groupGrades.length : 0;
         });
-    }, [activeGroupId, activePartialId, setAllPartialsData]);
+        return averages;
+    }, [groups, allPartialsData, activePartialId, calculateDetailedFinalGrade]);
 
-    const setGroupAnalysis = useCallback(async (analysis: string) => {
-        if (!activeGroupId) return;
-        setAllPartialsData(prev => {
-            const groupData = prev[activeGroupId] || {};
-            const pData = groupData[activePartialId] || defaultPartialData;
-            const finalState = { ...prev, [activeGroupId]: { ...groupData, [activePartialId]: { ...pData, groupAnalysis: analysis } } };
-            set('app_partialsData', finalState);
-            return finalState;
+    const atRiskStudents = useMemo(() => {
+        const students: StudentWithRisk[] = [];
+        const studentsAtRiskInPartial = new Map<string, StudentWithRisk>();
+        groups.forEach(group => {
+            if (!group || !group.criteria || group.criteria.length === 0) return;
+            const groupPartialData = allPartialsData[group.id]?.[activePartialId];
+            if (!groupPartialData) return;
+
+            group.students.forEach(student => {
+                const finalGrade = calculateDetailedFinalGrade(student.id, groupPartialData, group.criteria).finalGrade;
+                const risk = getStudentRiskLevel(finalGrade, groupPartialData.attendance, student.id);
+
+                if (risk.level === 'high' || risk.level === 'medium') {
+                    studentsAtRiskInPartial.set(student.id, { ...student, calculatedRisk: risk });
+                }
+            });
         });
-    }, [activeGroupId, activePartialId, setAllPartialsData]);
+        students.push(...Array.from(studentsAtRiskInPartial.values()));
+        return students;
+    }, [groups, allPartialsData, activePartialId, calculateDetailedFinalGrade, getStudentRiskLevel]);
+
+    const overallAverageParticipation = useMemo(() => {
+        if (!activeGroup) return 100;
+        const pData = allPartialsData[activeGroup.id]?.[activePartialId];
+        if (!pData || Object.keys(pData.participations).length === 0) return 100;
+
+        let totalRatio = 0;
+        let studentsWithOpportunities = 0;
+        activeGroup.students.forEach(student => {
+            const participationDates = Object.keys(pData.participations);
+            const studentParticipationOpportunities = participationDates.filter(date => Object.prototype.hasOwnProperty.call(pData.participations[date], student.id)).length;
+
+            if (studentParticipationOpportunities > 0) {
+                 const studentParticipations = Object.values(pData.participations).filter(p => p[student.id]).length;
+                 totalRatio += studentParticipations / studentParticipationOpportunities;
+                 studentsWithOpportunities++;
+            }
+        });
+        if (studentsWithOpportunities > 0) {
+            return (totalRatio / studentsWithOpportunities) * 100;
+        }
+        return 100;
+    }, [activeGroup, allPartialsData, activePartialId]);
+
+
+    // ---- HOOK FUNCTIONS ----
+    const createGroup = useCallback(async (group: Group) => {
+        setGroups(prev => {
+            const newGroups = [...prev, group];
+            if(newGroups.length === 1) {
+                setActiveGroupIdState(newGroups[0].id);
+            }
+            return newGroups;
+        });
+        return Promise.resolve();
+    }, []);
 
     const addStudentsToGroup = useCallback(async (groupId: string, students: Student[]) => {
-        console.log(`Adding ${students.length} students to group ${groupId}`);
-        try {
-            await setAllStudents(prev => [...prev, ...students.filter(s => !prev.some(ps => ps.id === s.id))]);
-            await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g));
-            console.log('Students added successfully');
-        } catch (error) {
-            console.error('Error in addStudentsToGroup:', error);
-            throw error;
-        }
-    }, [setAllStudents, setGroups]);
+        const newStudentIds = new Set(students.map(s => s.id));
+        setAllStudents(prev => [...prev.filter(s => !newStudentIds.has(s.id)), ...students]);
+        setGroups(prev => prev.map(g => g.id === groupId ? {...g, students: [...g.students, ...students]} : g));
+        return Promise.resolve();
+    }, []);
 
     const removeStudentFromGroup = useCallback(async (groupId: string, studentId: string) => {
-        await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: g.students.filter(s => s.id !== studentId) } : g));
-    }, [setGroups]);
-
+        setGroups(prev => prev.map(g => g.id === groupId ? {...g, students: g.students.filter(s => s.id !== studentId)} : g));
+        return Promise.resolve();
+    }, []);
+    
     const updateGroup = useCallback(async (groupId: string, data: Partial<Omit<Group, 'id' | 'students'>>) => {
-        await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, ...data } : g));
-    }, [setGroups]);
+        setGroups(prev => prev.map(g => g.id === groupId ? { ...g, ...data } : g));
+        return Promise.resolve();
+    }, []);
 
     const updateStudent = useCallback(async (studentId: string, data: Partial<Student>) => {
-        await setAllStudents(prev => prev.map(s => (s.id === studentId ? { ...s, ...data } : s)));
-        await setGroups(prev =>
-            prev.map(g => ({
-                ...g,
-                students: g.students.map(s => (s.id === studentId ? { ...s, ...data } : s)),
-            }))
-        );
-    }, [setAllStudents, setGroups]);
+        setAllStudents(prev => prev.map(s => s.id === studentId ? {...s, ...data} : s));
+        setGroups(prev => prev.map(g => ({
+            ...g,
+            students: g.students.map(s => s.id === studentId ? { ...s, ...data } : s),
+        })));
+        return Promise.resolve();
+    }, []);
 
     const updateGroupCriteria = useCallback(async (criteria: EvaluationCriteria[]) => {
-        if (!activeGroupId) return;
-        await setGroups(prev => prev.map(g => g.id === activeGroupId ? { ...g, criteria } : g));
-    }, [activeGroupId, setGroups]);
-
+        if(activeGroupId) {
+            setGroups(prev => prev.map(g => g.id === activeGroupId ? { ...g, criteria } : g));
+        }
+        return Promise.resolve();
+    }, [activeGroupId]);
+    
     const deleteGroup = useCallback(async (groupId: string) => {
-        await setGroups(prev => prev.filter(g => g.id !== groupId));
-        if (activeGroupId === groupId) setActiveGroupId(null);
-    }, [activeGroupId, setGroups, setActiveGroupId]);
-
-// Helper to check for pending pedagogical strategies (Technical Spec 2.0)
-const checkAndInjectStrategies = async (studentId: string, addObs: Function) => {
-    try {
-        const strategiesRef = collection(db, 'pedagogical_strategies');
-        const q = query(strategiesRef, where('student_id', '==', studentId), where('is_injected', '==', false));
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach(async (docSnap) => {
-            const strategy = docSnap.data();
-            console.log(`Injecting Strategy for ${studentId}: ${strategy.category}`);
-            
-            // 1. Inject into Teacher Log
-            await addObs({
-                studentId,
-                type: 'Pedagógico', // Special type for filtered support
-                details: `${strategy.category}: ${strategy.strategy_text}`,
-                partialId: 'p1', // Default
-                requiresCanalization: false,
-                requiresFollowUp: false
-            });
-
-            // 2. Mark as injected to avoid duplication via field update
-            const docRef = doc(db, 'pedagogical_strategies', docSnap.id);
-            await updateDoc(docRef, { is_injected: true });
+        setGroups(prev => {
+            const newGroups = prev.filter(g => g.id !== groupId);
+            if (activeGroupId === groupId) {
+                const newActiveId = newGroups.length > 0 ? newGroups[0].id : null;
+                setActiveGroupIdState(newActiveId);
+            }
+            return newGroups;
         });
-    } catch (e) {
-        // Silent fail or log - don't block UI
-        console.warn("Error checking pedagogical strategies:", e);
-    }
-};
+        return Promise.resolve();
+    }, [activeGroupId]);
 
-    const addStudentObservation = useCallback(async (obs: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => {
-        const newObs = { ...obs, id: `OBS-${Date.now()}`, date: new Date().toISOString(), followUpUpdates: [], isClosed: false };
-        await setAllObservations(prev => ({ ...prev, [obs.studentId]: [...(prev[obs.studentId] || []), newObs] }));
-
-        // SYNC TO PUBLIC COLLECTION FOR TUTORS
-        // This allows tutors to see observations created by any teacher
-        if (user) {
-             const docRef = doc(db, 'observations', newObs.id);
-             setDoc(docRef, { 
-                 ...newObs, 
-                 teacherId: user.uid, 
-                 teacherEmail: user.email,
-                 timestamp: new Date().toISOString()
-             }, { merge: true }).catch(e => console.error("Error syncing observation public:", e));
-        }
-    }, [setAllObservations, user]);
-
-    // Expose injection Trigger
-    const triggerPedagogicalCheck = useCallback((studentId: string) => {
-        checkAndInjectStrategies(studentId, addStudentObservation);
-    }, [addStudentObservation]);
-
-    const updateStudentObservation = useCallback(async (studentId: string, obsId: string, updateText: string, isClosing: boolean) => {
-        const updateData = { date: new Date().toISOString(), update: updateText };
-        
-        await setAllObservations(prev => ({
+    const addStudentObservation = useCallback(async (observation: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => {
+        const newObservation: StudentObservation = {
+            ...observation,
+            id: `OBS-${Date.now()}`,
+            date: new Date().toISOString(),
+            followUpUpdates: [],
+            isClosed: false,
+        };
+        setAllObservations(prev => ({
             ...prev,
-            [studentId]: (prev[studentId] || []).map(obs => obs.id === obsId ? {
-                ...obs,
-                followUpUpdates: [...obs.followUpUpdates, updateData],
-                isClosed: isClosing
-            } : obs)
+            [observation.studentId]: [...(prev[observation.studentId] || []), newObservation]
         }));
+        return Promise.resolve();
+    }, []);
 
-        // SYNC UPDATE TO PUBLIC COLLECTION
-        if (user) {
-             const docRef = doc(db, 'observations', obsId);
-             // We use arrayUnion for updates to avoid reading first, but structure is nested objects in local state
-             // Firestore arrayUnion works on pure arrays. 
-             // Better to just update the specific field if possible, or overwrite the array.
-             // Here we just merge the changes.
-             updateDoc(docRef, {
-                 followUpUpdates: arrayUnion(updateData),
-                 isClosed: isClosing,
-                 lastUpdated: new Date().toISOString()
-             }).catch(e => console.error("Error syncing observation update public:", e));
+    const updateStudentObservation = useCallback(async (studentId: string, observationId: string, updateText: string, isClosing: boolean) => {
+        setAllObservations(prev => {
+            const studentObs = (prev[studentId] || []).map(obs => {
+                if (obs.id === observationId) {
+                    const newUpdate = { date: new Date().toISOString(), update: updateText };
+                    return {
+                        ...obs,
+                        followUpUpdates: [...obs.followUpUpdates, newUpdate],
+                        isClosed: isClosing
+                    };
+                }
+                return obs;
+            });
+            return { ...prev, [studentId]: studentObs };
+        });
+    }, []);
+    
+    const resetAllData = useCallback(async () => {
+        if(typeof window !== 'undefined' && user) {
+            localStorage.removeItem(getStorageKey('app_groups'));
+            localStorage.removeItem(getStorageKey('app_students'));
+            localStorage.removeItem(getStorageKey('app_observations'));
+            localStorage.removeItem(getStorageKey('app_partialsData'));
+            localStorage.removeItem(getStorageKey('activeGroupId_v1'));
         }
-    }, [setAllObservations, user]);
+        setGroups([]);
+        setAllStudents([]);
+        setAllObservations({});
+        setAllPartialsData({});
+        setActiveGroupIdState(null);
+        setActivePartialId('p1');
+        window.location.reload();
+        return Promise.resolve();
+    }, [user, getStorageKey]);
 
+    const createSetterForPartialData = useCallback(<T,>(field: keyof PartialData) => {
+        return async (setter: React.SetStateAction<T>) => {
+            if (!activeGroupId) return Promise.resolve();
+            
+            setAllPartialsData(prevAllData => {
+                const currentGroupData = prevAllData[activeGroupId] || {};
+                const currentPartialData = currentGroupData[activePartialId] || defaultPartialData;
+                const currentValue = currentPartialData[field] as T;
+                const newValue = typeof setter === 'function' ? (setter as (prevState: T) => T)(currentValue) : setter;
+
+                const newPartialData = { ...currentPartialData, [field]: newValue };
+                return {
+                    ...prevAllData,
+                    [activeGroupId]: {
+                        ...currentGroupData,
+                        [activePartialId]: newPartialData,
+                    },
+                };
+            });
+            return Promise.resolve();
+        };
+    }, [activeGroupId, activePartialId]);
+
+    const setSettings = useCallback(async (newSettings: Partial<AppSettings>) => {
+        setSettingsState(prev => ({...prev, ...newSettings}));
+        return Promise.resolve();
+    }, []);
+
+    const setGrades = createSetterForPartialData<Grades>('grades');
+    const setAttendance = createSetterForPartialData<AttendanceRecord>('attendance');
+    const setParticipations = createSetterForPartialData<ParticipationRecord>('participations');
+    const setActivities = createSetterForPartialData<Activity[]>('activities');
+    const setActivityRecords = createSetterForPartialData<ActivityRecord>('activityRecords');
+    const setRecoveryGrades = createSetterForPartialData<RecoveryGrades>('recoveryGrades');
+    
+    const setStudentFeedback = useCallback(async (studentId: string, feedback: string) => {
+        if (!activeGroupId) return Promise.resolve();
+        setAllPartialsData(prev => {
+            const newFeedbacks = { ...(prev[activeGroupId]?.[activePartialId]?.feedbacks || {}), [studentId]: feedback };
+            const newPData = { ...(prev[activeGroupId]?.[activePartialId] || defaultPartialData), feedbacks: newFeedbacks };
+            return {
+                ...prev,
+                [activeGroupId]: {
+                    ...(prev[activeGroupId] || {}),
+                    [activePartialId]: newPData
+                }
+            };
+        });
+    }, [activeGroupId, activePartialId]);
+
+    const setGroupAnalysis = useCallback(async (analysis: string) => {
+        if (!activeGroupId) return Promise.resolve();
+        setAllPartialsData(prev => {
+            const newPData = { ...(prev[activeGroupId]?.[activePartialId] || defaultPartialData), groupAnalysis: analysis };
+            return {
+                ...prev,
+                [activeGroupId]: {
+                    ...(prev[activeGroupId] || {}),
+                    [activePartialId]: newPData
+                }
+            };
+        });
+    }, [activeGroupId, activePartialId]);
+    
     const takeAttendanceForDate = useCallback(async (groupId: string, date: string) => {
         const group = groups.find(g => g.id === groupId);
         if (!group) return;
+
+        const newAttendanceRecord = group.students.reduce((acc, s) => ({...acc, [s.id]: true}), {});
         
-        // 1. Update Local State
-        setAllPartialsData(prev => {
-            const groupData = prev[groupId] || {};
-            const pData = groupData[activePartialId] || defaultPartialData;
-            if (pData.attendance[date]) return prev;
-            const newAttendance = group.students.reduce((acc, s) => ({ ...acc, [s.id]: true }), {});
-            const finalState = { ...prev, [groupId]: { ...groupData, [activePartialId]: { ...pData, attendance: { ...pData.attendance, [date]: newAttendance }, participations: { ...pData.participations, [date]: {} } } } };
-            set('app_partialsData', finalState);
-            return finalState;
+        setAllPartialsData(prevAllData => {
+            const currentGroupData = prevAllData[groupId] || {};
+            const currentPartialData = currentGroupData[activePartialId] || defaultPartialData;
+            const newAttendance = {...currentPartialData.attendance, [date]: newAttendanceRecord };
+            const newPartialData = { ...currentPartialData, attendance: newAttendance };
+            return {
+                ...prevAllData,
+                [groupId]: {
+                    ...currentGroupData,
+                    [activePartialId]: newPartialData,
+                },
+            };
         });
-
-        // 2. Initial Sync to 'absences' collection (Empty list initially as everyone is present)
-        if (user) {
-             const safeDate = date.replace(/\//g, '-');
-             const docId = `${groupId}_${safeDate}`; 
-             const docRef = doc(db, 'absences', docId);
-             
-             setDoc(docRef, {
-                 groupId: groupId,
-                 groupName: group.groupName || group.subject,
-                 date: date,
-                 teacherId: user.uid,
-                 teacherEmail: user.email,
-                 absentStudents: [], // Initially empty
-                 whatsappLink: group.whatsappLink || '',
-                 timestamp: new Date().toISOString()
-             }, { merge: true }).catch(e => console.error("Error syncing initial attendance:", e));
-        }
-
-    }, [groups, activePartialId, setAllPartialsData, user]);
-
-    const deleteAttendanceDate = useCallback(async (date: string) => {
-        if (!activeGroupId) return;
-        setAllPartialsData(prev => {
-            const groupData = prev[activeGroupId] || {};
-            const pData = groupData[activePartialId] || defaultPartialData;
-            const { [date]: _, ...newAttendance } = pData.attendance;
-            const { [date]: __, ...newParticipations } = pData.participations;
-            const finalState = { ...prev, [activeGroupId]: { ...groupData, [activePartialId]: { ...pData, attendance: newAttendance, participations: newParticipations } } };
-            set('app_partialsData', finalState);
-            return finalState;
-        });
-    }, [activeGroupId, activePartialId, setAllPartialsData]);
-
-    const resetAllData = useCallback(async () => {
-       setIsLoading(true);
-        try {
-            await clear();
-            setTimeout(() => window.location.reload(), 500);
-        } catch (e) {
-            setError(e as Error);
-        }
-    }, []);
-
-    const importAllData = useCallback(async (data: ExportData) => {
-        if (!data.version || !data.groups || !data.students || !data.settings) {
-            throw new Error("Archivo de importación inválido o corrupto.");
-        }
-        await clear();
-
-        await set('app_groups', data.groups || []);
-        await set('app_students', data.students || []);
-        await set('app_observations', data.observations || {});
-        await set('app_specialNotes', data.specialNotes || []);
-        await set('app_settings', data.settings);
-        await set('app_partialsData', data.partialsData || {});
-        
-        if (data.groups && data.groups.length > 0) {
-           await set('activeGroupId_v1', data.groups[0].id);
-        }
-    }, []);
+    }, [groups, activePartialId]);
     
-    // Special Notes Actions
-    const addSpecialNote = useCallback(async (note: Omit<SpecialNote, 'id'>) => {
-        const newNote = { ...note, id: `NOTE-${Date.now()}` };
-        await setSpecialNotes(prev => [...prev, newNote]);
-    }, [setSpecialNotes]);
-
-    const updateSpecialNote = useCallback(async (noteId: string, noteUpdate: Partial<Omit<SpecialNote, 'id'>>) => {
-        await setSpecialNotes(prev => prev.map(n => n.id === noteId ? { ...n, ...noteUpdate } : n));
-    }, [setSpecialNotes]);
-
-    const deleteSpecialNote = useCallback(async (noteId: string) => {
-        await setSpecialNotes(prev => prev.filter(n => n.id !== noteId));
-    }, [setSpecialNotes]);
-
-    // Official Groups Actions
-    const createOfficialGroup = useCallback(async (name: string) => {
-        const docRef = await addDoc(collection(db, 'official_groups'), {
-            name,
-            createdAt: new Date().toISOString(),
-        });
-        return docRef.id;
-    }, []);
-
-    const deleteOfficialGroup = useCallback(async (id: string) => {
-        await deleteDoc(doc(db, 'official_groups', id));
-    }, []);
-
-    const addStudentsToOfficialGroup = useCallback(async (officialGroupId: string, students: Student[]) => {
-        const batchPromises = students.map(async (student) => {
-             // Add to central 'students' collection, linked to official_group_id
-             await addDoc(collection(db, 'students'), {
-                 ...student,
-                 official_group_id: officialGroupId
-             });
-        });
-        await Promise.all(batchPromises);
-    }, []);
-
-    const getOfficialGroupStudents = useCallback(async (officialGroupId: string) => {
-        const q = query(collection(db, 'students'), where('official_group_id', '==', officialGroupId));
-        const snapshot = await getDocs(q);
-        const students: Student[] = [];
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            students.push({ ...data, id: doc.id } as Student);
-        });
-        return students;
-    }, []);
-
-    const createAnnouncement = useCallback(async (title: string, message: string, targetGroup?: string, expiresAt?: string) => {
-        const newAnn: any = {
-            title,
-            message,
-            type: 'info',
-            isActive: true,
-            createdAt: new Date().toISOString()
-        };
-        
-        if (targetGroup) {
-            newAnn.targetGroup = targetGroup;
-        }
-
-        if (expiresAt) {
-            newAnn.expiresAt = expiresAt;
-        }
-
-        await addDoc(collection(db, 'announcements'), newAnn);
-    }, []);
-
-    const deleteAnnouncement = useCallback(async (id: string) => {
-         await updateDoc(doc(db, 'announcements', id), { isActive: false });
-    }, []);
-
-    const createJustification = useCallback(async (studentId: string, date: string, reason: string, category: JustificationCategory = 'Otro') => {
-        if (!user) return;
-        const newJust: Omit<StudentJustification, 'id'> = {
-            studentId,
-            date,
-            reason,
-            category,
-            adminEmail: user.email || 'unknown',
-            timestamp: new Date().toISOString()
-        };
-        await addDoc(collection(db, 'justifications'), newJust);
-    }, [user]);
-
-    const deleteJustification = useCallback(async (id: string) => {
-        // Implementation for deletion if needed
-    }, []);
-
-
-    const syncPublicData = useCallback(async () => {
-        if (!user) return;
-        
-        // 1. Sync Observations
-        for (const [studentId, obsList] of Object.entries(allObservations)) {
-            for (const obs of obsList) {
-                const docRef = doc(db, 'observations', obs.id);
-                await setDoc(docRef, { 
-                    ...obs,
-                    teacherId: user.uid, 
-                    teacherEmail: user.email,
-                    timestamp: new Date().toISOString()
-                }, { merge: true });
-            }
-        }
-        
-        // 2. Sync Academic Compliance
-        for (const group of groups) {
-             const groupPartials = allPartialsData[group.id] || {};
-             // Use active partial or iterate all? Academic risk usually based on 'current' active one or accumulation.
-             // We will sync for the Current Active Partial ID globally set or iterate if we had that context.
-             // For simplicity, we use activePartialId from state.
-             
-             const pData = groupPartials[activePartialId];
-             if (!pData) continue;
-             
-             const activities = pData.activities || [];
-             const totalActivities = activities.length;
-             
-             group.students.forEach(student => {
-                 const records = pData.activityRecords?.[student.id] || {};
-                 const submitted = Object.values(records).filter(Boolean).length;
-                 const completionRate = totalActivities > 0 ? (submitted / totalActivities) * 100 : 100;
-                 // TODO: Calculate grades from pData.grades as well if needed.
-                 
-                 const statsRef = doc(db, 'academic_compliance', `${student.id}_${group.id}`);
-                 setDoc(statsRef, {
-                     studentId: student.id,
-                     groupId: group.id,
-                     groupName: group.groupName || group.subject,
-                     subject: group.subject,
-                     completionRate: completionRate,
-                     failingRisk: completionRate < 60,
-                     lastUpdated: new Date().toISOString(),
-                     teacherEmail: user.email
-                 }, { merge: true }).catch(e => console.error(e));
-             });
-        }
-    }, [user, allObservations, groups, allPartialsData, activePartialId]);
-
-    const forceCloudSync = useCallback(async () => {
-        try {
-            setSyncStatus('syncing');
-            toast({ title: "Sincronizando con la nube...", description: "Descargando datos frescos desde la nube." });
-
-            if (!user) {
-                toast({ variant: "destructive", title: "Error", description: "Debes estar autenticado para sincronizar." });
-                return;
-            }
-
-            // Clear local cache
-            await clear();
-
-            // Force reload all data from cloud
-            const syncFromCloud = async <T,>(key: string, setter: (val: T) => void, defaultValue: T) => {
-                try {
-                    const docRef = doc(db, 'users', user.uid, 'userData', key);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const cloudPayload = docSnap.data();
-                        const cloudData = cloudPayload.value as T;
-                        const cloudTimestamp = cloudPayload.lastUpdated || Date.now();
-
-                        // Save to local cache
-                        await set(key, { value: cloudData, lastUpdated: cloudTimestamp });
-                        // Update state
-                        setter(cloudData);
-
-                        console.log(`✅ Sincronizado ${key} desde la nube`);
-                    } else {
-                        // No cloud data, use default
-                        setter(defaultValue);
-                        console.log(`ℹ️ No hay datos en la nube para ${key}, usando valores por defecto`);
-                    }
-                } catch (error) {
-                    console.error(`Error sincronizando ${key}:`, error);
-                }
-            };
-
-            // Sync all data from cloud
-            await Promise.all([
-                syncFromCloud('app_groups', setGroupsState, []),
-                syncFromCloud('app_students', setAllStudentsState, []),
-                syncFromCloud('app_observations', setAllObservationsState, {}),
-                syncFromCloud('app_specialNotes', setSpecialNotesState, []),
-                syncFromCloud('app_partialsData', setAllPartialsDataState, {}),
-                syncFromCloud('app_settings', (data) => setSettingsState(normalizeSettingsValue(data)), defaultSettings),
-            ]);
-
-            // Reload active group ID
-            const activeGroupId = await get<string>('activeGroupId_v1');
-            if (activeGroupId) {
-                setActiveGroupIdState(activeGroupId);
-            }
-
-            setSyncStatus('synced');
-            toast({ title: "Sincronización completada", description: "Los datos han sido actualizados desde la nube." });
-
-        } catch (error) {
-            console.error("Error during force sync:", error);
-            setSyncStatus('pending');
-            toast({ variant: "destructive", title: "Error de sincronización", description: "No se pudo sincronizar con la nube." });
-        }
-    }, [user, toast]);
-
-    // --- CALCULATIONS & DERIVED DATA ---
-    const calculateDetailedFinalGrade = useCallback((studentId: string, pData: PartialData, criteria: EvaluationCriteria[]): { finalGrade: number, criteriaDetails: CriteriaDetail[], isRecovery: boolean } => {
-        const meritInfo = pData.meritGrades?.[studentId];
-        if (meritInfo?.applied) {
-            return { finalGrade: meritInfo.grade ?? 0, criteriaDetails: [{ name: 'Asignación Directa', earned: meritInfo.grade ?? 0, weight: 100 }], isRecovery: false };
-        }
-        
-        const recoveryInfo = pData.recoveryGrades?.[studentId];
-        if (recoveryInfo?.applied) {
-            return { finalGrade: recoveryInfo.grade ?? 0, criteriaDetails: [{ name: 'Recuperación', earned: recoveryInfo.grade ?? 0, weight: 100 }], isRecovery: true };
-        }
-        
-        let totalEarned = 0;
-        let totalPossibleWeight = 0;
-        const criteriaDetails: CriteriaDetail[] = [];
-        
-        // Filter for active criteria (default to true if undefined)
-        const activeCriteria = (criteria || []).filter(c => c.isActive !== false);
-
-        if (!pData || activeCriteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
-
-        activeCriteria.forEach(c => {
-            let ratio = 0;
-            if (c.name === 'Actividades' || c.name === 'Portafolio') {
-                const total = pData.activities?.length ?? 0;
-                if (total > 0) {
-                    // Fix: Ensure we are counting completed activities correctly
-                    const completed = Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length;
-                    ratio = completed / total;
-                }
-            } else if (c.name === 'Participación') {
-                const total = Object.keys(pData.participations || {}).length;
-                if (total > 0) {
-                    // Fix: Ensure correct counting of participation days
-                    const daysAttended = Object.values(pData.participations).filter((day: any) => day[studentId]).length;
-                    ratio = daysAttended / total;
-                }
-            } else {
-                const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
-                if (c.expectedValue > 0) ratio = delivered / c.expectedValue;
-            }
-            
-            const earned = ratio * c.weight;
-            totalEarned += earned;
-            totalPossibleWeight += c.weight;
-            
-            criteriaDetails.push({ name: c.name, earned, weight: c.weight });
-        });
-
-        // 3. Normalize Grade based on active weight
-        // If total active weight is less than 100, scale the result to be out of 100
-        let finalGrade = 0;
-        if (totalPossibleWeight > 0) {
-            // (PointsEarned / TotalPossiblePoints) * 100
-            finalGrade = (totalEarned / totalPossibleWeight) * 100;
-        }
-
-        return { finalGrade: Math.max(0, Math.min(100, finalGrade)), criteriaDetails, isRecovery: false };
-    }, []);
-
-    const calculateFinalGrade = useCallback((studentId: string) => {
-        if (!activeGroup) return 0;
-        const data = allPartialsData[activeGroup.id]?.[activePartialId];
-        return calculateDetailedFinalGrade(studentId, data || defaultPartialData, activeGroup?.criteria || []).finalGrade;
-    }, [activeGroup, activePartialId, allPartialsData, calculateDetailedFinalGrade]);
-
-    const getStudentRiskLevel = useCallback((finalGrade: number, pAttendance: AttendanceRecord, studentId: string): CalculatedRisk => {
-        const days = Object.keys(pAttendance).filter(d => Object.prototype.hasOwnProperty.call(pAttendance[d], studentId));
-        const attended = days.reduce((count, d) => pAttendance[d][studentId] === true ? count + 1 : count, 0);
-        const attendanceRate = days.length > 0 ? (attended / days.length) * 100 : 100;
-        
-        let reason = [];
-        if (finalGrade <= 59) {
-            reason.push(`Calificación reprobatoria (${finalGrade.toFixed(0)}%).`);
-        }
-        if (attendanceRate < 80) {
-            reason.push(`Asistencia baja (${attendanceRate.toFixed(0)}%).`);
-        }
-        
-        if (reason.length > 0) {
-            return { level: 'high', reason: reason.join(' ') };
-        }
-        
-        if (finalGrade > 59 && finalGrade <= 70) {
-            return { level: 'medium', reason: `Calificación baja (${finalGrade.toFixed(0)}%).` };
-        }
-        
-        return { level: 'low', reason: 'Rendimiento adecuado' };
-    }, []);
-
-    const groupAverages = useMemo(() => {
-        return groups.reduce((acc, group) => {
-            const data = allPartialsData[group.id]?.[activePartialId];
-            if (!data || !group.criteria || group.criteria.length === 0) { acc[group.id] = 0; return acc; }
-            const grades = group.students.map(s => calculateDetailedFinalGrade(s.id, data, group.criteria).finalGrade);
-            acc[group.id] = grades.length > 0 ? grades.reduce((sum, g) => sum + g, 0) / grades.length : 0;
-            return acc;
-        }, {} as { [gid: string]: number });
-    }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade]);
-
-    const atRiskStudents = useMemo(() => {
-        return groups.flatMap(group => {
-            const data = allPartialsData[group.id]?.[activePartialId];
-            if (!data || !group.criteria || group.criteria.length === 0) return [];
-            return group.students.map(student => {
-                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
-                const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
-                return { ...student, calculatedRisk: risk };
-            }).filter(s => s.calculatedRisk.level !== 'low');
-        }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
-    }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade, getStudentRiskLevel]);
-
-    const groupRisks = useMemo(() => {
-        const risks: { [groupId: string]: GroupRiskStats } = {};
-        groups.forEach(group => {
-            const data = allPartialsData[group.id]?.[activePartialId];
-            if (!data || !group.criteria || group.criteria.length === 0) {
-                 risks[group.id] = { groupId: group.id, groupName: group.subject, totalRisk: 0, high: 0, medium: 0, studentsByRisk: { high: [], medium: [] } };
-                 return;
-            }
-
-            const high: StudentWithRisk[] = [];
-            const medium: StudentWithRisk[] = [];
-
-            group.students.forEach(student => {
-                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
-                const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
-                const sWithRisk = { ...student, calculatedRisk: risk };
-                
-                if (risk.level === 'high') high.push(sWithRisk);
-                else if (risk.level === 'medium') medium.push(sWithRisk);
-            });
-
-            risks[group.id] = {
-                groupId: group.id,
-                groupName: group.subject,
-                totalRisk: high.length + medium.length,
-                high: high.length,
-                medium: medium.length,
-                studentsByRisk: { high, medium }
-            };
-        });
-        return risks;
-    }, [groups, activePartialId, allPartialsData, calculateDetailedFinalGrade, getStudentRiskLevel]);
-
-    const overallAverageAttendance = useMemo(() => {
-        if (!activeGroup) return 100;
-        let totalPossible = 0;
-        let totalPresent = 0;
-        
-        const attendanceForPartial = partialData.attendance;
-
-        activeGroup.students.forEach(student => {
-            Object.keys(attendanceForPartial).forEach(date => {
-                // Check if the student has a record for this date
-                if (Object.prototype.hasOwnProperty.call(attendanceForPartial[date], student.id)) {
-                    totalPossible++;
-                    if (attendanceForPartial[date][student.id]) {
-                        totalPresent++;
-                    }
-                }
-            });
-        });
-
-        if (totalPossible === 0) return 100;
-        return (totalPresent / totalPossible) * 100;
-    }, [activeGroup, partialData.attendance]);
-
     const fetchPartialData = useCallback(async (groupId: string, partialId: PartialId): Promise<(PartialData & { criteria: EvaluationCriteria[] }) | null> => {
         const group = groups.find(g => g.id === groupId);
-        return group ? { ...(allPartialsData[groupId]?.[partialId] || defaultPartialData), criteria: group.criteria || [] } : null;
+        if (!group) return null;
+        const pData = allPartialsData[groupId]?.[partialId] || defaultPartialData;
+        return {...pData, criteria: group?.criteria || []};
     }, [allPartialsData, groups]);
-    
-    // --- REAL-TIME SYNC ENGINE ---
-    useEffect(() => {
-        if (!activeGroupId || !activeGroup?.officialGroupId) return;
 
-        // 1. Subscribe to Student List Changes (New Students added by Admin)
-        const q = query(
-            collection(db, 'students'), 
-            where('official_group_id', '==', activeGroup.officialGroupId)
-        );
-
-        const unsubscribeStudents = onSnapshot(q, (snapshot) => {
-            const freshStudents: Student[] = [];
-            snapshot.forEach((doc) => {
-                freshStudents.push({ ...doc.data(), id: doc.id } as Student);
+    const callGoogleAI = async (prompt: string): Promise<string> => {
+        if (!settings.apiKey) {
+            throw new Error("No se ha configurado una clave API de Google AI. Ve a Ajustes para agregarla.");
+        }
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${settings.apiKey}`;
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
             });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Error del servicio de IA: ${errorData.error?.message || response.statusText}`);
+            }
+            const data = await response.json();
+            const feedbackText = data.candidates[0]?.content?.parts[0]?.text;
+            if (!feedbackText) {
+                throw new Error("La respuesta de la IA no contiene texto.");
+            }
+            return feedbackText;
+        } catch (error) {
+            if (error instanceof Error) {
+                 throw new Error(error.message);
+            }
+            throw new Error("Ocurrió un error desconocido al conectar con el servicio de IA.");
+        }
+    };
+    
+    const generateFeedbackWithAI = useCallback(async (student: Student, stats: StudentStats): Promise<string> => {
+        const criteriaSummary = stats.criteriaDetails.map(c => `- ${c.name}: ${c.earned.toFixed(0)}% de ${c.weight}%`).join('\n');
+        const observationsSummary = stats.observations.length > 0 
+            ? `Observaciones importantes en bitácora:\n` + stats.observations.map(o => `- Tipo: ${o.type}. Detalles: ${o.details}. ${o.canalizationTarget ? `Canalizado a: ${o.canalizationTarget}` : ''}`).join('\n')
+            : "No hay observaciones en bitácora para este parcial.";
+
+        const prompt = `
+            Eres un asistente de docentes experto en pedagogía y comunicación asertiva.
+            Tu tarea es generar una retroalimentación constructiva, profesional y personalizada para un estudiante, integrando sus datos académicos y de comportamiento.
+            La retroalimentación debe ser balanceada: inicia con fortalezas, luego aborda áreas de oportunidad y finaliza con recomendaciones claras.
+
+            INSTRUCCIONES CLAVE:
+            1.  **Analiza la Bitácora:** No solo listes las observaciones. Interprétalas y adapta el tono.
+                - Si hay 'Problema de conducta', enfoca el mensaje en el apoyo. Ejemplo: "He notado algunos desafíos en... y quiero que sepas que estoy aquí para ayudarte a encontrar mejores estrategias. No es para señalar, sino para que juntos logremos un ambiente positivo".
+                - Si hay 'Episodio emocional' y fue canalizado, muestra empatía. Ejemplo: "Soy consciente de la situación que estás atravesando y quiero que sepas que tienes mi apoyo. Es importante que aproveches el acompañamiento que se te ha brindado".
+                - Si hay 'Méritos', úsalos para reforzar positivamente. Ejemplo: "Quiero felicitarte especialmente por [mérito], demuestra tu gran capacidad para...".
+            2.  **Conecta los Puntos:** Relaciona el rendimiento académico (calificaciones, asistencia) con las observaciones de la bitácora si es posible.
+            3.  **Tono:** Usa un tono de apoyo y motivador, enfocado en el crecimiento del estudiante.
+            4.  **Formato:** Redacta en párrafos fluidos. No uses asteriscos ni guiones para listas en el texto final.
+            5.  **Sin Despedidas:** No incluyas ninguna despedida, firma o nombre al final. La salida debe ser únicamente el cuerpo de la retroalimentación.
+
+            DATOS DEL ESTUDIANTE:
+            - Nombre: ${student.name}
+            - Calificación final del parcial: ${stats.finalGrade.toFixed(0)}%
+            - Tasa de asistencia: ${stats.attendance.rate.toFixed(0)}%
+            - Desglose de calificación:
+            ${criteriaSummary}
+            - Información de la bitácora:
+            ${observationsSummary}
+
+            Por favor, redacta la retroalimentación para ${student.name}, aplicando todas las instrucciones.
+        `;
+        return callGoogleAI(prompt);
+    }, [settings.apiKey]);
+    
+    const generateGroupAnalysisWithAI = useCallback(async (group: Group, summary: GroupReportSummary, recoverySummary: RecoverySummary, atRisk: StudentWithRisk[], observations: (StudentObservation & { studentName: string })[]): Promise<string> => {
+        const partialLabel = getPartialLabel(activePartialId);
+        const atRiskSummary = atRisk.length > 0 ? `Se han identificado ${atRisk.length} estudiantes en riesgo (${atRisk.filter(s=>s.calculatedRisk.level==='high').length} en riesgo alto y ${atRisk.filter(s=>s.calculatedRisk.level==='medium').length} en riesgo medio).` : "No se han identificado estudiantes en riesgo significativo en este parcial.";
+        const observationsSummary = observations.length > 0 ? `Se han registrado ${observations.length} observaciones notables en la bitácora durante este periodo. Las más comunes son sobre: ${[...new Set(observations.map(o => o.type.toLowerCase()))].join(', ')}.` : "No se han registrado observaciones significativas en la bitácora para este grupo en el parcial.";
+        const recoveryContext = recoverySummary.recoveryStudentsCount > 0 ? `Un total de ${recoverySummary.recoveryStudentsCount} estudiantes requirieron calificación de recuperación. De ellos, ${recoverySummary.approvedOnRecovery} lograron aprobar gracias a esta medida, mientras que ${recoverySummary.failedOnRecovery} no alcanzaron la calificación aprobatoria. Esto indica que la estrategia de recuperación fue parcialmente exitosa.` : `No hubo estudiantes que requirieran calificación de recuperación en este parcial, lo cual es un indicador positivo.`;
+
+        const prompt = `
+            Actúa como un analista educativo experto redactando un informe para un docente. Tu tarea es generar un análisis narrativo profesional, objetivo y fluido sobre el rendimiento de un grupo de estudiantes para el ${partialLabel}.
+            Sintetiza los datos cuantitativos y cualitativos proporcionados en un texto coherente. La redacción debe ser formal, directa y constructiva, como si la hubiera escrito el propio docente para sus archivos o para un directivo.
             
-            // Compare to avoid infinite loops if data is identical
-            // We use a simple length + ID check for efficiency
-            const currentIds = new Set(activeGroup.students.map(s => s.id));
-            const hasChanges = freshStudents.length !== activeGroup.students.length || 
-                               freshStudents.some(s => !currentIds.has(s.id)) ||
-                               freshStudents.some(s => { // Deep check for name updates
-                                   const curr = activeGroup.students.find(c => c.id === s.id);
-                                   return curr && (curr.name !== s.name || curr.phone !== s.phone);
-                               });
+            IMPORTANTE: No utilices asteriscos (*) para listas o para dar énfasis. La redacción debe ser en párrafos fluidos. No uses "lenguaje de IA" o formatos típicos de chatbot.
 
-            if (hasChanges) {
-                console.log("Real-time Sync: Updating students from official source...");
-                toast({ title: "Lista Actualizada", description: "Se han detectado cambios en el grupo oficial." });
-                
-                setGroups(prev => prev.map(g => {
-                    if (g.id === activeGroupId) {
-                        return { ...g, students: freshStudents };
-                    }
-                    return g;
-                }));
-            }
-        }, (error) => {
-            console.error("Error watching official students:", error);
+            DATOS DEL GRUPO A ANALIZAR:
+            - Asignatura: ${group.subject}
+            - Parcial: ${partialLabel}
+            - Número de estudiantes: ${summary.totalStudents}
+            - Promedio general del grupo: ${summary.groupAverage.toFixed(1)}%
+            - Tasa de aprobación (incluyendo recuperación): ${(summary.approvedCount / summary.totalStudents * 100).toFixed(1)}% (${summary.approvedCount} de ${summary.totalStudents} estudiantes)
+            - Tasa de asistencia general: ${summary.attendanceRate.toFixed(1)}%
+            - Resumen de estudiantes en riesgo: ${atRiskSummary}
+            - Resumen de la bitácora: ${observationsSummary}
+            - Análisis de recuperación: ${recoveryContext}
+
+            Basado en estos datos, redacta el análisis cualitativo. Estructura el informe de la siguiente manera:
+            1. Un párrafo inicial con el panorama general del rendimiento del grupo en el ${partialLabel}, mencionando el promedio y la tasa de aprobación.
+            2. Un segundo párrafo analizando las posibles causas o correlaciones (ej. relación entre asistencia, observaciones de bitácora y rendimiento).
+            3. Un tercer párrafo enfocado en la estrategia de recuperación (si aplica), comentando su efectividad y sugiriendo acciones para los estudiantes que no lograron aprobar ni con esta medida.
+            4. Un párrafo final de cierre y recomendaciones. En este párrafo, se debe exhortar de manera profesional a que el personal directivo (director, subdirector académico), tutores de grupo y responsables de programas de apoyo (tutorías, atención socioemocional, psicología) se mantengan atentos y aborden a los estudiantes con bajo rendimiento, ausentismo o cualquier situación de riesgo identificada, así como a aquellos que aprobaron en recuperación, para asegurar su éxito en periodos ordinarios futuros.
+        `;
+        return callGoogleAI(prompt);
+    }, [settings.apiKey, activePartialId]);
+
+    const activeStudentsInGroups = useMemo(() => {
+      const studentSet = new Map<string, Student>();
+      groups.forEach(group => {
+        (group.students || []).forEach(student => {
+          if (student && student.id) {
+            studentSet.set(student.id, student);
+          }
         });
+      });
+      return Array.from(studentSet.values());
+    }, [groups]);
 
-        // 2. Subscribe to Official Group Metadata Changes (Name/Semester changes)
-        const docRef = doc(db, 'official_groups', activeGroup.officialGroupId);
-        const unsubscribeMeta = onSnapshot(docRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const officialName = data.name;
-                
-                // Parse Metadata
-                const match = officialName.match(/^(\d+)[^A-Za-z0-9]*([A-Za-z]+)/);
-                let newSemester = '';
-                let newGroupName = '';
-                if (match) {
-                    newSemester = match[1];
-                    newGroupName = match[2];
-                }
-
-                // Check if update needed
-                if (newSemester && (activeGroup.semester !== newSemester || activeGroup.groupName !== newGroupName)) {
-                     console.log("Real-time Sync: Updating Group Metadata...");
-                     setGroups(prev => prev.map(g => {
-                        if (g.id === activeGroupId) {
-                            return { 
-                                ...g, 
-                                semester: newSemester, 
-                                groupName: newGroupName 
-                            };
-                        }
-                        return g;
-                    }));
-                }
-            }
-        });
-
-        return () => {
-            unsubscribeStudents();
-            unsubscribeMeta();
-        };
-    }, [activeGroupId, activeGroup?.officialGroupId, activeGroup?.groupName, activeGroup?.semester, activeGroup?.students, setGroups, toast]); // Re-subscribe if group changes
+    const contextValue: DataContextType = {
+        isLoading: isLoading || authLoading,
+        error,
+        user,
+        groups,
+        allStudents,
+        activeStudentsInGroups,
+        allObservations,
+        settings,
+        activeGroup,
+        activePartialId,
+        partialData,
+        allPartialsDataForActiveGroup,
+        groupAverages,
+        atRiskStudents,
+        overallAverageParticipation,
+        addStudentsToGroup,
+        removeStudentFromGroup,
+        updateGroup,
+        updateStudent,
+        updateGroupCriteria,
+        createGroup,
+        setActiveGroupId,
+        setActivePartialId,
+        setGrades,
+        setAttendance,
+        setParticipations,
+        setActivities,
+        setActivityRecords,
+        setRecoveryGrades,
+        setStudentFeedback,
+        setGroupAnalysis,
+        setSettings,
+        deleteGroup,
+        addStudentObservation,
+        updateStudentObservation,
+        calculateFinalGrade,
+        getStudentRiskLevel,
+        calculateDetailedFinalGrade,
+        fetchPartialData,
+        takeAttendanceForDate,
+        resetAllData,
+        generateFeedbackWithAI,
+        generateGroupAnalysisWithAI,
+    };
 
     return (
-        <DataContext.Provider value={{
-            isLoading, error, groups, allStudents, activeStudentsInGroups, allObservations, specialNotes, settings, activeGroup, activeGroupId, activePartialId, partialData, allPartialsDataForActiveGroup, groupAverages, atRiskStudents, groupRisks, overallAverageAttendance, officialGroups,
-            announcements, justifications, unreadAnnouncementsCount, markAnnouncementsAsRead,
-            setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
-            setSettings, setActiveGroupId, setActivePartialId,
-            setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
-            addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
-            createOfficialGroup, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
-            calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck, syncPublicData, forceCloudSync, syncStatus,
-        }}>
+        <DataContext.Provider value={contextValue}>
             {children}
         </DataContext.Provider>
     );
 };
 
 export const useData = (): DataContextType => {
-    const context = useContext(DataContext);
-    if (context === undefined) {
-        throw new Error('useData debe ser usado dentro de un DataProvider');
-    }
-    return context;
+  const context = useContext(DataContext);
+  if (context === undefined) {
+    throw new Error('useData must be used within a DataProvider');
+  }
+  return context;
 };

@@ -23,7 +23,7 @@ export default function LayoutProvider({
   useEffect(() => {
     // Attempt to read theme from localStorage to prevent flicker on load
     try {
-        const storedSettings = localStorage.getItem('app_settings'); 
+        const storedSettings = localStorage.getItem('app_settings_undefined'); // use-data hook saves with user_uid which is undefined on server
         if (storedSettings) {
             const settings = JSON.parse(storedSettings);
             document.body.className = settings.theme || defaultSettings.theme;

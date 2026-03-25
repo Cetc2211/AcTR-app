@@ -19,7 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
-import type { Student, Activity, GroupedActivities } from '@/lib/placeholder-data';
+import { Student } from '@/lib/placeholder-data';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useData } from '@/hooks/use-data';
-
+import type { Activity, ActivityRecord, GroupedActivities } from '@/hooks/use-data';
 
 export default function ActivitiesPage() {
   const { 
@@ -57,7 +57,7 @@ export default function ActivitiesPage() {
   
   const groupedActivities = useMemo(() => {
     const groups: GroupedActivities = {};
-    activities.forEach((activity: Activity) => {
+    activities.forEach(activity => {
       const dueDate = activity.dueDate.split('T')[0]; // Normalize date
       if (!groups[dueDate]) {
         groups[dueDate] = [];
@@ -137,7 +137,6 @@ export default function ActivitiesPage() {
                             initialFocus
                             locale={es}
                             className="rounded-md border"
-                            disabled={(date) => date > new Date("2999-01-01") || date < new Date("1900-01-01")}
                         />
                      </div>
                 </div>
@@ -250,7 +249,7 @@ export default function ActivitiesPage() {
                     {activities.length === 0 && studentsToDisplay.length > 0 && (
                         <TableRow>
                             <TableCell colSpan={1} className="text-center h-24">
-                            Aún no hay actividades registradas. <br/> Haz clic en &quot;Registrar Nueva Actividad&quot; para empezar.
+                            Aún no hay actividades registradas. <br/> Haz clic en "Registrar Nueva Actividad" para empezar.
                             </TableCell>
                         </TableRow>
                     )}
