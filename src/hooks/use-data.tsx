@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { Student, Group, PartialId, StudentObservation } from '@/lib/placeholder-data';
+import { Student, Group, PartialId, StudentObservation, OfficialGroup, Announcement, Justification, JustificationCategory } from '@/lib/placeholder-data';
 import { getPartialLabel } from '@/lib/utils';
 import { auth } from '@/lib/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -173,6 +173,7 @@ interface DataContextType {
   groups: Group[];
   allStudents: Student[];
   activeStudentsInGroups: Student[];
+  officialGroups: OfficialGroup[];
   allObservations: {[studentId: string]: StudentObservation[]};
   settings: AppSettings;
   
@@ -186,9 +187,19 @@ interface DataContextType {
   groupAverages: {[groupId: string]: number};
   atRiskStudents: StudentWithRisk[];
   overallAverageParticipation: number;
+  announcements: Announcement[];
+  justifications: Justification[];
 
   // Setters / Updaters
   addStudentsToGroup: (groupId: string, students: Student[]) => Promise<void>;
+  addStudentsToOfficialGroup: (groupId: string, students: Student[]) => Promise<void>; 
+  createOfficialGroup: (name: string) => Promise<string>;
+  deleteOfficialGroup: (groupId: string) => Promise<void>;
+  createAnnouncement: (title: string, content: string, target?: string, expiresAt?: Date) => Promise<void>;
+  deleteAnnouncement: (id: string) => Promise<void>;
+  createJustification: (groupId: string, studentId: string, date: Date, reason: string, category: JustificationCategory) => Promise<void>;
+  
+  getOfficialGroupStudents: (groupId: string) => Promise<Student[]>;
   removeStudentFromGroup: (groupId: string, studentId: string) => Promise<void>;
   updateGroup: (groupId: string, data: Partial<Omit<Group, 'id' | 'students'>>) => Promise<void>;
   updateStudent: (studentId: string, data: Partial<Student>) => Promise<void>;
@@ -234,6 +245,9 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
     // Main State
     const [groups, setGroups] = useState<Group[]>([]);
+    const [officialGroups, setOfficialGroups] = useState<OfficialGroup[]>([]);
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [justifications, setJustifications] = useState<Justification[]>([]);
     const [allStudents, setAllStudents] = useState<Student[]>([]);
     const [allObservations, setAllObservations] = useState<{[studentId: string]: StudentObservation[]}>({});
     const [settings, setSettingsState] = useState<AppSettings>(defaultSettings);
@@ -260,6 +274,9 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
             if (user) {
                 try {
                     setGroups(loadFromStorage('app_groups', []));
+                    setOfficialGroups(loadFromStorage('app_officialGroups', []));
+                    setAnnouncements(loadFromStorage('app_announcements', []));
+                    setJustifications(loadFromStorage('app_justifications', []));
                     setAllStudents(loadFromStorage('app_students', []));
                     setAllObservations(loadFromStorage('app_observations', {}));
                     setAllPartialsData(loadFromStorage('app_partialsData', {}));
@@ -303,6 +320,15 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
     useEffect(() => {
         if(!isLoading && user) localStorage.setItem(getStorageKey('app_groups'), JSON.stringify(groups));
     }, [groups, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_officialGroups'), JSON.stringify(officialGroups));
+    }, [officialGroups, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_announcements'), JSON.stringify(announcements));
+    }, [announcements, isLoading, user]);
+    useEffect(() => {
+        if(!isLoading && user) localStorage.setItem(getStorageKey('app_justifications'), JSON.stringify(justifications));
+    }, [justifications, isLoading, user]);
     useEffect(() => {
         if(!isLoading && user) localStorage.setItem(getStorageKey('app_students'), JSON.stringify(allStudents));
     }, [allStudents, isLoading, user]);
@@ -788,11 +814,79 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
       return Array.from(studentSet.values());
     }, [groups]);
 
+    const createOfficialGroup = useCallback(async (name: string): Promise<string> => {
+        const newGroup = {
+            id: `OG-${Date.now()}`,
+            name,
+            createdAt: new Date().toISOString(),
+            students: []
+        };
+        setOfficialGroups(prev => [...prev, newGroup]);
+        return newGroup.id;
+    }, []);
+
+    const deleteOfficialGroup = useCallback(async (groupId: string) => {
+        setOfficialGroups(prev => prev.filter(g => g.id !== groupId));
+    }, []);
+
+    const createAnnouncement = useCallback(async (title: string, content: string, target?: string, expiresAt?: Date) => {
+        const newAnn: Announcement = {
+            id: `ANN-${Date.now()}`,
+            title,
+            content,
+            target,
+            expiresAt: expiresAt?.toISOString() || '',
+            createdAt: new Date().toISOString()
+        };
+        setAnnouncements(prev => [newAnn, ...prev]);
+    }, []);
+
+    const deleteAnnouncement = useCallback(async (id: string) => {
+        setAnnouncements(prev => prev.filter(a => a.id !== id));
+    }, []);
+
+    const createJustification = useCallback(async (groupId: string, studentId: string, date: Date, reason: string, category: JustificationCategory) => {
+        const newJust: Justification = {
+             id: `JUST-${Date.now()}`,
+             groupId,
+             studentId,
+             date: date.toISOString(),
+             reason,
+             category,
+             createdAt: new Date().toISOString()
+        };
+        setJustifications(prev => [newJust, ...prev]);
+    }, []);
+
+    const addStudentsToOfficialGroup = useCallback(async (groupId: string, newStudents: Student[]) => {
+        setAllStudents(prev => {
+             const existingIds = new Set(prev.map(s => s.id));
+             const studentsToAdd = newStudents.filter(s => !existingIds.has(s.id));
+             return [...prev, ...studentsToAdd];
+        });
+
+        setOfficialGroups(prev => prev.map(g => {
+            if (g.id === groupId) {
+                 const currentStudentIds = new Set(g.students || []);
+                 newStudents.forEach(s => currentStudentIds.add(s.id));
+                 return { ...g, students: Array.from(currentStudentIds) };
+            }
+            return g;
+        }));
+    }, []);
+
+    const getOfficialGroupStudents = useCallback(async (groupId: string): Promise<Student[]> => {
+        const group = officialGroups.find(g => g.id === groupId);
+        if (!group || !group.students) return [];
+        return allStudents.filter(s => group.students?.includes(s.id));
+    }, [officialGroups, allStudents]);
+
     const contextValue: DataContextType = {
         isLoading: isLoading || authLoading,
         error,
         user,
         groups,
+        officialGroups,
         allStudents,
         activeStudentsInGroups,
         allObservations,
@@ -804,7 +898,16 @@ export const DataProvider: React.FC<{children: React.ReactNode}> = ({ children }
         groupAverages,
         atRiskStudents,
         overallAverageParticipation,
+        announcements,
+        justifications,
         addStudentsToGroup,
+        addStudentsToOfficialGroup,
+        createOfficialGroup,
+        deleteOfficialGroup,
+        createAnnouncement,
+        deleteAnnouncement,
+        createJustification,
+        getOfficialGroupStudents,
         removeStudentFromGroup,
         updateGroup,
         updateStudent,

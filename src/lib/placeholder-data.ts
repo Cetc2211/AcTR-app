@@ -35,3 +35,31 @@ export type StudentObservation = {
     followUpUpdates: { date: string; update: string }[];
     isClosed: boolean;
 };
+
+export type OfficialGroup = {
+    id: string;
+    name: string;
+    createdAt?: string;
+    students?: string[]; // IDs of students
+};
+
+export type JustificationCategory = 'Salud' | 'Familiar' | 'Personal' | 'Otro';
+
+export type Announcement = {
+    id: string;
+    title: string;
+    content: string;
+    target?: string;
+    expiresAt: string;
+    createdAt: string;
+};
+
+export type Justification = {
+    id: string;
+    studentId: string;
+    groupId: string;
+    date: string;
+    reason: string;
+    category: JustificationCategory;
+    createdAt: string;
+};
