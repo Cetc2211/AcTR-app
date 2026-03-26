@@ -32,11 +32,23 @@ export default function AdminPage() {
 
     // Verificar permisos y cargar lista
     useEffect(() => {
-        if (!user) {
+        if (!isDataLoading && !user) {
             setIsAdmin(false);
             setCheckingAdmin(false);
             return;
         }
+
+        if (!user) return;
+        
+        // --- BYPASS DE EMERGENCIA INMEDIATO ---
+        // Se ejecuta antes de cualquier llamada a la base de datos
+        // para asegurar acceso instantáneo a mpceciliotopetecruz@gmail.com
+        const currentEmail = user.email ? user.email.toLowerCase().trim() : '';
+        if (currentEmail === 'mpceciliotopetecruz@gmail.com') {
+            setIsAdmin(true);
+            setCheckingAdmin(false); // Detener spinner inmediatamente para este usuario
+        }
+        // --------------------------------------
 
         const q = query(collection(db, 'admins'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -48,22 +60,33 @@ export default function AdminPage() {
                 const email = data.email || doc.id; // Support both ID as email or field
                 if (email) {
                     emails.push(email);
-                    if (email.toLowerCase() === user.email?.toLowerCase()) {
+                    if (email.toLowerCase() === currentEmail) {
                         currentUserIsAdmin = true;
                     }
                 }
             });
 
-            if (user.email?.toLowerCase() === 'mpceciliotopetecruz@gmail.com') {
+            // Re-validar en onSnapshot por si acaso no entró en el bypass inicial
+            if (currentEmail === 'mpceciliotopetecruz@gmail.com') {
                 currentUserIsAdmin = true;
             }
 
             setAuthorizedEmails(emails);
-            setIsAdmin(currentUserIsAdmin);
-            setCheckingAdmin(false);
+            // Solo actualizamos si no somos el super admin, para no causar parpadeos
+            // o si queremos actualizar la lista pero mantener el acceso
+            if (currentEmail !== 'mpceciliotopetecruz@gmail.com') {
+                 setIsAdmin(currentUserIsAdmin);
+                 setCheckingAdmin(false);
+            } else {
+                // Para super admin, ya seteamos true arriba, pero aseguramos
+                 setIsAdmin(true);
+                 setCheckingAdmin(false);
+            }
         }, (error) => {
             console.error("Error fetching admins:", error);
-            if (user.email?.toLowerCase() === 'mpceciliotopetecruz@gmail.com') {
+            
+            // Re-validar en error también
+            if (currentEmail === 'mpceciliotopetecruz@gmail.com') {
                 setIsAdmin(true);
             } else {
                 setIsAdmin(false);
@@ -77,7 +100,7 @@ export default function AdminPage() {
         });
 
         return () => unsubscribe();
-    }, [user, toast]);
+    }, [user, isDataLoading, toast]);
 
 
     const handleAddEmail = async () => {
@@ -169,6 +192,10 @@ export default function AdminPage() {
                     <CardTitle className="mt-4 text-2xl text-destructive">Acceso Denegado</CardTitle>
                     <CardDescription>
                         No tienes los permisos necesarios para acceder a esta página. Esta sección es exclusiva para el administrador de la aplicación.
+                        <br/><br/>
+                        <span className="text-xs text-muted-foreground font-mono bg-muted p-1 rounded">
+                           Usuario actual: {user?.email || 'No identificado'}
+                        </span>
                     </CardDescription>
                 </CardHeader>
             </Card>
