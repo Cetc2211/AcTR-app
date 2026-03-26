@@ -17,10 +17,36 @@ import { Loader2, ShieldCheck, UserX, UserPlus, Lock } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { getAuth } from 'firebase/auth'; // Import auth directly
+
 
 export default function AdminPage() {
-    const { user, isLoading: isDataLoading } = useData();
+    const { user: dataUser, isLoading: isDataLoading } = useData();
     const { toast } = useToast();
+    
+    // Fallback auth check
+    const [authUser, setAuthUser] = useState<any>(null);
+    const [authChecked, setAuthChecked] = useState(false);
+    
+    useEffect(() => {
+        if (dataUser) {
+            setAuthUser(dataUser);
+            setAuthChecked(true);
+        }
+        
+        // Always try direct auth just in case useData is slow/failing
+        const auth = getAuth();
+        const unsubscribe = auth.onAuthStateChanged((u) => {
+             console.log("Direct auth user found:", u?.email);
+             if (u) {
+                 setAuthUser(u);
+             }
+             setAuthChecked(true);
+        });
+        return () => unsubscribe();
+    }, [dataUser]);
+
+    const user = authUser || dataUser;
 
     // Estado para verificar si el usuario es administrador
     const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -32,21 +58,29 @@ export default function AdminPage() {
 
     // Verificar permisos y cargar lista
     useEffect(() => {
-        if (!isDataLoading && !user) {
-            setIsAdmin(false);
-            setCheckingAdmin(false);
+        // Wait for direct auth check or useData loading
+        if (!authChecked && isDataLoading) {
             return;
         }
 
-        if (!user) return;
-        
+        if (!user) {
+            // Give it a small grace period if just loaded
+            if (authChecked) {
+                 setIsAdmin(false);
+                 setCheckingAdmin(false);
+            }
+            return;
+        }
+
         // --- BYPASS DE EMERGENCIA INMEDIATO ---
         // Se ejecuta antes de cualquier llamada a la base de datos
         // para asegurar acceso instantáneo a mpceciliotopetecruz@gmail.com
         const currentEmail = user.email ? user.email.toLowerCase().trim() : '';
         if (currentEmail === 'mpceciliotopetecruz@gmail.com') {
+            console.log("BYPASS ACTIVATED for:", currentEmail);
             setIsAdmin(true);
             setCheckingAdmin(false); // Detener spinner inmediatamente para este usuario
+            // No return here, we still want to fetch the list for display
         }
         // --------------------------------------
 
@@ -100,7 +134,7 @@ export default function AdminPage() {
         });
 
         return () => unsubscribe();
-    }, [user, isDataLoading, toast]);
+    }, [user, isDataLoading, authChecked, toast]);
 
 
     const handleAddEmail = async () => {
@@ -198,6 +232,22 @@ export default function AdminPage() {
                         </span>
                     </CardDescription>
                 </CardHeader>
+                <CardContent className="flex justify-center">
+                     {!user && (
+                         <Button onClick={() => window.location.href = '/login'}>
+                            Ir a Iniciar Sesión
+                         </Button>
+                     )}
+                     {user && (
+                         <Button variant="outline" onClick={() => {
+                             // Force logout
+                             import('firebase/auth').then(({getAuth, signOut}) => signOut(getAuth()));
+                             window.location.reload();
+                         }}>
+                             Cerrar Sesión y Reintentar
+                         </Button>
+                     )}
+                </CardContent>
             </Card>
         );
     }
