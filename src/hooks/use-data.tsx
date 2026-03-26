@@ -1694,53 +1694,80 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         let totalPossibleWeight = 0;
         const criteriaDetails: CriteriaDetail[] = [];
         
-        // Filter for active criteria (default to true if undefined)
-        const activeCriteria = (criteria || []).filter(c => c.isActive !== false);
+        // Filter for active criteria removed. Calculation now includes all defined criteria.
+        // const activeCriteria = (criteria || []).filter(c => c.isActive !== false);
 
-        if (!pData || activeCriteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
+        if (!pData || (criteria || []).length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
 
         // PRE-CÁLCULO DE RATIO GLOBAL PARA ACTIVIDADES / PORTAFOLIO
         // Regla: Ambos usan la misma base: total de actividades definidas vs total de entregas marcadas
-        const totalExpectedActivities = pData.activities?.length ?? 0;
+        // Filtrar actividades eliminadas: Solo contar entregas de actividades que existen en la lista actual
+        const validActivityIds = new Set(pData.activities?.map(a => a.id) || []);
+        const totalExpectedActivities = validActivityIds.size;
+        
         const studentActivityRecords = pData.activityRecords?.[studentId] || {};
-        const deliveredActivitiesCount = Object.values(studentActivityRecords).filter(v => v === true).length;
+        // Contar solo si es true Y si la actividad existe
+        const deliveredActivitiesCount = Object.entries(studentActivityRecords)
+            .filter(([activityId, delivered]) => delivered === true && validActivityIds.has(activityId))
+            .length;
         
         // El ratio es el mismo para cualquier criterio que sea 'Actividades' o 'Portafolio'
         const globalActivityRatio = totalExpectedActivities > 0 ? deliveredActivitiesCount / totalExpectedActivities : 0;
 
-        activeCriteria.forEach(c => {
+        // PRE-CÁLCULO DE RATIO GLOBAL PARA RATIO DE PARTICIPACIÓN
+        let globalParticipationRatio = 0;
+        const totalParticipationDays = Object.keys(pData.participations || {}).length;
+        if (totalParticipationDays > 0) {
+             const daysAttended = Object.values(pData.participations).filter((day: any) => day[studentId]).length;
+             globalParticipationRatio = daysAttended / totalParticipationDays;
+        }
+
+        // --- CÁLCULO DE CALIFICACIÓN INDEPENDIENTE DEL ESTADO "ACTIVO" ---
+        // Iteramos sobre TODOS los criterios definidos, sin importar c.active
+        // La calificación siempre debe reflejar la realidad de los datos.
+        // El estado 'active' se usará solo para alertas visuales en la UI, no aquí.
+        
+        criteria.forEach(c => {
             let ratio = 0;
             if (c.name === 'Actividades' || c.name === 'Portafolio') {
-                // Usamos el ratio unificado calculado arriba
                 ratio = globalActivityRatio;
 
             } else if (c.name === 'Participación') {
-                const total = Object.keys(pData.participations || {}).length;
-                if (total > 0) {
-                    const daysAttended = Object.values(pData.participations).filter((day: any) => day[studentId]).length;
-                    ratio = daysAttended / total;
-                }
+                ratio = globalParticipationRatio;
             } else {
                 const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
-                if (c.expectedValue > 0) ratio = delivered / c.expectedValue;
+                // Clamp ratio to max 1 ?? Or allow extra credit? Usually max 1 for individual items unless specified.
+                // Assuming standard max 1
+                if (c.expectedValue > 0) ratio = Math.min(1, delivered / c.expectedValue);
             }
             
+            // Calculate earned points
             const earned = ratio * c.weight;
             totalEarned += earned;
             totalPossibleWeight += c.weight;
             
-            criteriaDetails.push({ name: c.name, earned, weight: c.weight });
+            // Push precise number for data, UI can format
+            criteriaDetails.push({ name: c.name, earned: Number(earned.toFixed(2)), weight: c.weight });
         });
 
-        // 3. Normalize Grade based on active weight
-        // If total active weight is less than 100, scale the result to be out of 100
+        // 3. Normalize Grade based on TOTAL DEFINED WEIGHT
+        // Anteriormente normalizábamos solo sobre activeCriteria.
+        // Ahora normalizamos sobre todo lo que existe. Si el docente definió 100%, 
+        // la calificación será real (ej: 40/100 si falta el examen, aunque el examen no esté "activo" aun).
+        
+        // CORRECTION: Ensure totalEarned is precise sum of components
+        totalEarned = Number(totalEarned.toFixed(2));
+        
         let finalGrade = 0;
         if (totalPossibleWeight > 0) {
             // (PointsEarned / TotalPossiblePoints) * 100
-            finalGrade = (totalEarned / totalPossibleWeight) * 100;
+             finalGrade = (totalEarned / totalPossibleWeight) * 100;
         }
 
-        return { finalGrade: Math.max(0, Math.min(100, finalGrade)), criteriaDetails, isRecovery: false };
+        // Clamp final grade
+        finalGrade = Math.max(0, Math.min(100, Number(finalGrade.toFixed(2))));
+
+        return { finalGrade, criteriaDetails, isRecovery: false };
     }, []);
 
     const calculateFinalGrade = useCallback((studentId: string) => {
