@@ -15,43 +15,64 @@ import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ShieldCheck, UserX, UserPlus, Lock } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
-
-// DECLARACIÓN DEL ADMINISTRADOR
-// ¡IMPORTANTE! Cambia esta dirección por tu correo electrónico.
-const ADMIN_EMAIL = "mpceciliotopetecruz@gmail.com";
+import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function AdminPage() {
-    const { user, isLoading } = useData();
+    const { user, isLoading: isDataLoading } = useData();
     const { toast } = useToast();
 
-    // Este estado será para la lista de usuarios autorizados
+    // Estado para verificar si el usuario es administrador
+    const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+    const [checkingAdmin, setCheckingAdmin] = useState(true);
+
+    // Lista de correos autorizados (admins)
     const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([]);
     const [newEmail, setNewEmail] = useState('');
 
-    const isAdmin = useMemo(() => user?.email === ADMIN_EMAIL, [user]);
-
-    // Simular carga de datos
+    // Verificar permisos y cargar lista
     useEffect(() => {
-        if (isAdmin) {
-            // Aquí cargaríamos la lista desde la base de datos en un futuro
-            // Por ahora, es una lista simulada.
-            const storedEmails = localStorage.getItem('authorized_emails');
-            if(storedEmails) {
-              setAuthorizedEmails(JSON.parse(storedEmails));
-            } else {
-              setAuthorizedEmails(['test@example.com', 'demo@example.com']);
-            }
+        if (!user) {
+            setIsAdmin(false);
+            setCheckingAdmin(false);
+            return;
         }
-    }, [isAdmin]);
-    
-    useEffect(() => {
-        if (isAdmin) {
-            localStorage.setItem('authorized_emails', JSON.stringify(authorizedEmails));
-        }
-    }, [authorizedEmails, isAdmin]);
+
+        const q = query(collection(db, 'admins'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const emails: string[] = [];
+            let currentUserIsAdmin = false;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const email = data.email || doc.id; // Support both ID as email or field
+                if (email) {
+                    emails.push(email);
+                    if (email.toLowerCase() === user.email?.toLowerCase()) {
+                        currentUserIsAdmin = true;
+                    }
+                }
+            });
+
+            setAuthorizedEmails(emails);
+            setIsAdmin(currentUserIsAdmin);
+            setCheckingAdmin(false);
+        }, (error) => {
+            console.error("Error fetching admins:", error);
+            setIsAdmin(false);
+            setCheckingAdmin(false);
+             toast({
+                variant: 'destructive',
+                title: 'Error de conexión',
+                description: 'No se pudo verificar los permisos de administrador.',
+            });
+        });
+
+        return () => unsubscribe();
+    }, [user, toast]);
 
 
-    const handleAddEmail = () => {
+    const handleAddEmail = async () => {
         if (!newEmail || !newEmail.includes('@')) {
             toast({
                 variant: 'destructive',
@@ -60,7 +81,10 @@ export default function AdminPage() {
             });
             return;
         }
-        if (authorizedEmails.includes(newEmail)) {
+        
+        const emailToAdd = newEmail.trim().toLowerCase();
+
+        if (authorizedEmails.some(e => e.toLowerCase() === emailToAdd)) {
             toast({
                 variant: 'destructive',
                 title: 'Correo duplicado',
@@ -69,28 +93,60 @@ export default function AdminPage() {
             return;
         }
 
-        // Aquí iría la lógica para guardarlo en la base de datos
-        setAuthorizedEmails(prev => [...prev, newEmail]);
-        setNewEmail('');
-        toast({
-            title: 'Usuario Autorizado',
-            description: `El correo ${newEmail} ahora puede registrarse en la aplicación.`,
-        });
+        try {
+            // Usamos el email como ID del documento para unicidad y fácil acceso
+            await setDoc(doc(db, 'admins', emailToAdd), {
+                email: emailToAdd,
+                createdAt: serverTimestamp(),
+                createdBy: user?.email
+            });
+            
+            setNewEmail('');
+            toast({
+                title: 'Usuario Autorizado',
+                description: `El correo ${emailToAdd} ha sido añadido a la lista de administradores.`,
+            });
+        } catch (error) {
+            console.error("Error adding admin:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'No se pudo añadir el usuario.',
+            });
+        }
     };
 
-    const handleRemoveEmail = (emailToRemove: string) => {
-         // Aquí iría la lógica para eliminarlo de la base de datos
-        setAuthorizedEmails(prev => prev.filter(email => email !== emailToRemove));
-        toast({
-            title: 'Acceso Revocado',
-            description: `El correo ${emailToRemove} ya no podrá crear una cuenta.`,
-        });
+    const handleRemoveEmail = async (emailToRemove: string) => {
+        if (emailToRemove.toLowerCase() === user?.email?.toLowerCase()) {
+             toast({
+                variant: 'destructive',
+                title: 'Acción no permitida',
+                description: 'No puedes eliminar tu propio acceso de administrador.',
+            });
+            return;
+        }
+
+        try {
+            await deleteDoc(doc(db, 'admins', emailToRemove));
+            toast({
+                title: 'Acceso Revocado',
+                description: `El correo ${emailToRemove} ha sido eliminado de la lista.`,
+            });
+        } catch (error) {
+             console.error("Error removing admin:", error);
+             toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'No se pudo eliminar el usuario.',
+            });
+        }
     };
 
-    if (isLoading) {
+    if (isDataLoading || checkingAdmin) {
         return (
             <div className="flex h-full w-full items-center justify-center">
-                <Loader2 className="mr-2 h-8 w-8 animate-spin" /> Verificando acceso...
+                <Loader2 className="mr-2 h-8 w-8 animate-spin" /> 
+                <span>{checkingAdmin ? 'Verificando permisos...' : 'Cargando datos...'}</span>
             </div>
         );
     }
@@ -146,7 +202,7 @@ export default function AdminPage() {
                 <CardHeader>
                     <CardTitle>Usuarios Autorizados</CardTitle>
                     <CardDescription>
-                        Esta es la lista de usuarios que tienen permiso para crear una cuenta.
+                        Esta es la lista de usuarios que tienen permiso para acceder a esta aplicación.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -155,7 +211,11 @@ export default function AdminPage() {
                             authorizedEmails.map(email => (
                                 <div key={email} className="flex items-center justify-between rounded-md border bg-muted/30 p-3">
                                     <p className="font-mono text-sm">{email}</p>
-                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleRemoveEmail(email)}>
+                                    <Button variant="ghost" size="icon" 
+                                            className="text-destructive hover:text-destructive" 
+                                            onClick={() => handleRemoveEmail(email)}
+                                            disabled={email.toLowerCase() === user?.email?.toLowerCase()}
+                                    >
                                         <UserX className="h-4 w-4" />
                                         <span className="sr-only">Revocar acceso</span>
                                     </Button>
