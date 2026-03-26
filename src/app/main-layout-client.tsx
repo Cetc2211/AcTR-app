@@ -55,7 +55,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
 import { auth } from '@/lib/firebase';
-import { useSignOut } from 'react-firebase-hooks/auth';
+import { useSignOut, useAuthState } from 'react-firebase-hooks/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
@@ -87,7 +87,8 @@ export default function MainLayoutClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, user } = useData();
+  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError } = useData();
+  const [user, authLoading] = useAuthState(auth);
   const [signOut, isSigningOut, signOutError] = useSignOut(auth);
   const { toast } = useToast();
   
@@ -95,6 +96,37 @@ export default function MainLayoutClient({
     const theme = settings?.theme || defaultSettings.theme;
     document.body.className = theme;
   }, [settings?.theme]);
+  
+  if (authLoading) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+            <span>Verificando sesión...</span>
+        </div>
+    );
+  }
+
+  if (!user) {
+    if (pathname !== '/login') {
+         router.replace('/login');
+    }
+    return (
+       <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+            <span>Redirigiendo...</span>
+        </div>
+    );
+  }
+
+  if (pathname === '/') {
+      router.replace('/dashboard');
+      return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+            <span>Redirigiendo al Dashboard...</span>
+        </div>
+      );
+  }
   
   if (isDataLoading) {
     return (
@@ -104,18 +136,6 @@ export default function MainLayoutClient({
         </div>
     );
   }
-  
-  if (!user && !isDataLoading) {
-    router.replace('/login');
-    return (
-       <div className="flex h-screen w-full items-center justify-center">
-            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
-            <span>Redirigiendo...</span>
-        </div>
-    );
-  }
-  
-  if (!user) return null;
   
   const handleSignOut = async () => {
       const success = await signOut();
