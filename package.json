@@ -42,6 +42,7 @@
     "firebase-admin": "^12.2.0",
     "firebase-functions": "^5.0.1",
     "html2canvas": "^1.4.1",
+    "idb-keyval": "^6.2.2",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.475.0",
     "next": "14.2.5",
@@ -54,7 +55,7 @@
     "react-is": "^18.3.1",
     "react-markdown": "^9.0.1",
     "react-to-print": "^2.15.1",
-    "recharts": "^2.15.1",
+    "recharts": "^2.15.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2"
