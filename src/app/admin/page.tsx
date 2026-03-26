@@ -54,12 +54,20 @@ export default function AdminPage() {
                 }
             });
 
+            if (user.email?.toLowerCase() === 'mpceciliotopetecruz@gmail.com') {
+                currentUserIsAdmin = true;
+            }
+
             setAuthorizedEmails(emails);
             setIsAdmin(currentUserIsAdmin);
             setCheckingAdmin(false);
         }, (error) => {
             console.error("Error fetching admins:", error);
-            setIsAdmin(false);
+            if (user.email?.toLowerCase() === 'mpceciliotopetecruz@gmail.com') {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
+            }
             setCheckingAdmin(false);
              toast({
                 variant: 'destructive',

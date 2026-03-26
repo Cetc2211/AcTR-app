@@ -17,5 +17,7 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
-
+git add src/hooks/use-data.tsx
+git commit -m "fix: corregir cálculo de calificaciones filtrando actividades huérfanas y redondeo"
+git push origin main
 export { app, auth, db };
