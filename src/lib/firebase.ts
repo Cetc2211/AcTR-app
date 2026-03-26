@@ -1,7 +1,9 @@
+// src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 
+// Firebase configuration for academic-tracker-qeoxi project
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBliGErw1WiGhY6lZeCSh6WU0Kg2ZK7oa0",
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "academic-tracker-qeoxi.firebaseapp.com",
@@ -14,21 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-
-let db: any;
-try {
-    // Intentar inicializar con caché persistente y soporte offline/múltiples pestañas
-    db = initializeFirestore(app, {
-        localCache: persistentLocalCache({
-            tabManager: persistentMultipleTabManager()
-        }),
-        experimentalAutoDetectLongPolling: true, 
-        ignoreUndefinedProperties: true 
-    });
-} catch (e) {
-    // Si falla (por ejemplo, en SSR o si ya está inicializado de otra forma), fallback estándar
-    console.warn("Firestore persistence failed, falling back to standard getFirestore:", e);
-    db = getFirestore(app);
-}
+const db = getFirestore(app);
 
 export { app, auth, db };
