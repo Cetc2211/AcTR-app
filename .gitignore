@@ -19,3 +19,6 @@ node_modules
 Thumbs.db
 google-cloud-sdk/
 y/
+
+# Excluir simulación PIGEC removida
+src/lib/pigec-simulation.ts
