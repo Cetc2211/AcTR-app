@@ -6,15 +6,12 @@ export class TutorReportService {
   // Sello de IA: Conclusión Sugerida
   static generateAIConclusion(student: TutorStudentView): string {
     const riskCount = (student.riskVariables.dropoutRisk ? 1 : 0) + 
-                      (student.riskVariables.failingRisk ? 1 : 0) + 
-                      student.riskVariables.clinicalAlerts.length;
+                      (student.riskVariables.failingRisk ? 1 : 0);
     
     if (riskCount === 0) {
         return "El alumno mantiene un desempeño estable. Se sugiere continuar con el monitoreo regular sin intervenciones adicionales por el momento.";
     } else if (student.riskVariables.dropoutRisk) {
         return "ALERTA CRÍTICA: Se identifica un patrón de inasistencia severa. Se recomienda activar el protocolo de retención inmediato y citar a los padres.";
-    } else if (student.riskVariables.clinicalAlerts.length > 0) {
-        return "SEGUIMIENTO PIGEC: El alumno presenta indicadores clínicos que requieren atención. Es crucial verificar si ya está siendo atendido por el área de psicología.";
     } else {
         return "RIESGO MODERADO: Se observan indicadores de riesgo académico. Se sugiere reforzar el compromiso con el alumno mediante una entrevista motivacional.";
     }
@@ -64,29 +61,8 @@ export class TutorReportService {
     doc.rect(60, 56, limitedBarWidth, 6, 'F');
     doc.text(`${student.absencePercentage.toFixed(1)}% Inasistencias`, 165, 60);
 
-    // Historial PIGEC (Alertas Clínicas)
-    doc.setFontSize(12);
-    doc.text('Historial de Alertas Clínicas (PIGEC-130)', 15, 80);
-    let yPos = 90;
-    
-    if (student.riskVariables.clinicalAlerts.length > 0) {
-        student.riskVariables.clinicalAlerts.forEach((alert) => {
-            doc.setFillColor(254, 242, 242); // Light red bg
-            doc.rect(15, yPos - 4, pageWidth - 30, 8, 'F');
-            doc.setFontSize(10);
-            doc.setTextColor(185, 28, 28);
-            doc.text(`• ${alert}`, 20, yPos + 1);
-            yPos += 10;
-        });
-    } else {
-        doc.setFontSize(10);
-        doc.setTextColor(100);
-        doc.text('Sin alertas clínicas registradas.', 20, yPos);
-        yPos += 10;
-    }
-
     // Intervenciones del Tutor
-    yPos += 10;
+    let yPos = 80; // Adjusted position
     doc.setFontSize(12);
     doc.setTextColor(0);
     doc.text('Bitácora de Acciones Tutorales', 15, yPos);
@@ -138,7 +114,6 @@ export class TutorReportService {
     // Estadísticas
     const totalStudents = students.length;
     const atRisk = students.filter(s => s.riskVariables.dropoutRisk).length;
-    const pigecCases = students.filter(s => s.riskVariables.clinicalAlerts.length > 0).length;
 
     doc.setFillColor(243, 244, 246);
     doc.rect(15, 35, pageWidth - 30, 25, 'F');
@@ -148,7 +123,6 @@ export class TutorReportService {
     doc.setFontSize(10);
     doc.text(`Total Alumnos: ${totalStudents}`, 20, 53);
     doc.text(`En Riesgo de Deserción: ${atRisk} (${((atRisk/totalStudents)*100).toFixed(0)}%)`, 80, 53);
-    doc.text(`Casos PIGEC: ${pigecCases}`, 150, 53);
 
     // Tabla de Detalles
     let yPos = 70;
@@ -161,10 +135,9 @@ export class TutorReportService {
     doc.rect(15, yPos - 5, pageWidth - 30, 7, 'F');
     doc.text('Nombre del Alumno', 20, yPos);
     doc.text('Inasistencias', 90, yPos);
-    doc.text('Estado PIGEC', 130, yPos);
     yPos += 8;
 
-    students.filter(s => s.riskVariables.dropoutRisk || s.riskVariables.clinicalAlerts.length > 0)
+    students.filter(s => s.riskVariables.dropoutRisk)
         .forEach(s => {
             if (yPos > 270) {
                 doc.addPage();
@@ -176,9 +149,6 @@ export class TutorReportService {
             doc.setTextColor(s.riskVariables.dropoutRisk ? 220 : 0, 0, 0); // Red if risk
             doc.text(riskText, 90, yPos);
             doc.setTextColor(0);
-
-            const pigecText = s.riskVariables.clinicalAlerts.length > 0 ? 'ACTIVO' : '-';
-            doc.text(pigecText, 130, yPos);
             
             yPos += 7;
         });

@@ -22,6 +22,11 @@ import {
   HelpCircle,
   ShieldCheck,
   LogOut,
+  Megaphone,
+  GraduationCap,
+  ClipboardSignature,
+  Shield,
+  Users as UsersIcon // Alias if needed, but Users is already imported
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -37,11 +42,13 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  SidebarMenuBadge,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useData } from '@/hooks/use-data';
+import { useAdmin } from '@/hooks/use-admin';
 import { getPartialLabel } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -59,20 +66,6 @@ import { useSignOut, useAuthState } from 'react-firebase-hooks/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
-const mainNavItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/groups', icon: BookCopy, label: 'Grupos' },
-  { href: '/bitacora', icon: BookText, label: 'Bitácora' },
-  { href: '/grades', icon: FilePen, label: 'Calificaciones' },
-  { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
-  { href: '/participations', icon: PenSquare, label: 'Participaciones' },
-  { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
-  { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
-  { href: '/reports', icon: FileText, label: 'Informes' },
-  { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
-  { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },
-];
-
 const defaultSettings = {
     institutionName: "Academic Tracker",
     logo: "",
@@ -87,11 +80,39 @@ export default function MainLayoutClient({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError } = useData();
+  const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount, officialGroups } = useData();
   const [user, authLoading] = useAuthState(auth);
   const [signOut, isSigningOut, signOutError] = useSignOut(auth);
+  const { isAdmin } = useAdmin();
   const { toast } = useToast();
   
+  // Determine roles
+  const isTutor = useMemo(() => {
+      if (!user?.email || !officialGroups) return false;
+      return officialGroups.some(g => g.tutorEmail === user.email);
+  }, [user, officialGroups]);
+
+  // Tracking Manager logic would go here if we had the config, for now assuming Admin only or specific logic
+  const isTrackingManager = false; // Placeholder
+
+  const mainNavItems = useMemo(() => [
+      { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { href: '/announcements', icon: Megaphone, label: 'Sala de Anuncios', badge: unreadAnnouncementsCount > 0 ? unreadAnnouncementsCount : undefined },
+      ...(isTutor ? [{ href: '/tutor', icon: GraduationCap, label: 'Tutoría' }] : []),
+      { href: '/groups', icon: BookCopy, label: 'Grupos' },
+      { href: '/bitacora', icon: BookText, label: 'Bitácora' },
+      { href: '/grades', icon: FilePen, label: 'Calificaciones' },
+      { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
+      { href: '/participations', icon: PenSquare, label: 'Participaciones' },
+      { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
+      { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
+      { href: '/records', icon: ClipboardSignature, label: 'Actas' },
+      { href: '/reports', icon: FileText, label: 'Informes' },
+      ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
+      { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
+      { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },
+  ], [isTutor, isAdmin, isTrackingManager, unreadAnnouncementsCount]);
+
   useEffect(() => {
     const theme = settings?.theme || defaultSettings.theme;
     document.body.className = theme;
@@ -147,7 +168,7 @@ export default function MainLayoutClient({
       }
     }
 
-  const renderNavMenu = (items: typeof mainNavItems) => (
+  const renderNavMenu = (items: any[]) => (
        <SidebarMenu>
         {items.map((item) => (
             <SidebarMenuItem key={item.href}>
@@ -158,6 +179,11 @@ export default function MainLayoutClient({
                 <Link href={item.href}>
                 <item.icon />
                 <span>{item.label}</span>
+                {item.badge && (
+                    <div className="ml-auto bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold animate-pulse">
+                        {item.badge}
+                    </div>
+                )}
                 </Link>
             </SidebarMenuButton>
             </SidebarMenuItem>
@@ -222,14 +248,16 @@ export default function MainLayoutClient({
           <SidebarFooter className="flex-col !items-start gap-4">
             <Separator className="mx-0" />
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname.startsWith('/admin')}>
-                  <Link href="/admin">
-                    <ShieldCheck />
-                    <span>Panel de Admin</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {isAdmin && (
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={pathname.startsWith('/admin')}>
+                    <Link href="/admin">
+                        <ShieldCheck />
+                        <span>Panel de Admin</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={pathname.startsWith('/settings')}>
                   <Link href="/settings">

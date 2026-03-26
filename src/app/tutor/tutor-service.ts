@@ -9,7 +9,6 @@ export interface TutorStudentView extends Student {
   riskVariables: {
     dropoutRisk: boolean;
     failingRisk: boolean;
-    clinicalAlerts: string[]; // De PIGEC-130
   };
   recentLogs: StudentObservation[]; // Últimos 5 registros de bitácoras
   aiSuggestion?: string;
@@ -128,22 +127,12 @@ export class TutorService {
             const isFailingRisk = stats.failingSubjects > 2 || stats.completionRate < 60;
             
             // PIGEC Alerts (Basado en datos del perfil del alumno y psych_results mockeadas)
-            const clinicalAlerts: string[] = [];
-            if (student.clinicalStatus === 'pendiente' || (student.neuropsiScore && student.neuropsiScore < 70)) {
-                clinicalAlerts.push('Atención Clínica Requerida');
-            }
-            if (student.pedagogicalInstructions) {
-                clinicalAlerts.push(student.pedagogicalInstructions);
-            }
-
             // Propuesta IA (Motor de Decisiones)
             let aiSuggestion = undefined;
             if (isDropoutRisk && isFailingRisk) {
                  aiSuggestion = 'ALERTA MÁXIMA: Patrón de deserción inminente. Citar a tutor legal urgentemente.';
             } else if (isDropoutRisk) {
                 aiSuggestion = 'Acción recomendada: Indagar causa de inasistencias (Salud/Familiar).';
-            } else if (clinicalAlerts.length > 0 && isFailingRisk) {
-                 aiSuggestion = 'Acción recomendada: Canalizar a intervención clínica en PIGEC por bloqueo académico.';
             } else if (isFailingRisk) {
                 aiSuggestion = 'Acción recomendada: Activar compromiso académico por bajo cumplimiento de tareas.';
             }
@@ -154,8 +143,7 @@ export class TutorService {
                 absencePercentage,
                 riskVariables: {
                     dropoutRisk: isDropoutRisk,
-                    failingRisk: isFailingRisk,
-                    clinicalAlerts
+                    failingRisk: isFailingRisk
                 },
                 recentLogs: observationMap[student.id] || [],
                 aiSuggestion,

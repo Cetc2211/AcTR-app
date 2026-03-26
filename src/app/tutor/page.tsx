@@ -234,22 +234,7 @@ function StudentCard({ student, onUpdate }: { student: TutorStudentView; onUpdat
             </div>
         </div>
 
-        {/* Integración PIGEC-130: Alertas Clínicas */}
-        {student.riskVariables.clinicalAlerts.length > 0 && (
-            <div className="space-y-2 pt-2">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <BrainCircuit className="h-3.5 w-3.5 text-indigo-500" />
-                    Alertas Clínicas (PIGEC)
-                </h4>
-                <div className="flex flex-wrap gap-1.5">
-                    {student.riskVariables.clinicalAlerts.map((alert, i) => (
-                        <Badge key={i} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-300 dark:border-indigo-800 text-xs py-0.5">
-                            {alert}
-                        </Badge>
-                    ))}
-                </div>
-            </div>
-        )}
+        {/* Integración PIGEC-130: Removida para evitar corrupción de datos por propiedades inexistentes */}
 
         {/* Espejo de Bitácoras (Últimos registros) */}
         <div className="space-y-2 pt-2">
