@@ -1699,19 +1699,24 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
         if (!pData || activeCriteria.length === 0) return { finalGrade: 0, criteriaDetails: [], isRecovery: false };
 
+        // PRE-CÁLCULO DE RATIO GLOBAL PARA ACTIVIDADES / PORTAFOLIO
+        // Regla: Ambos usan la misma base: total de actividades definidas vs total de entregas marcadas
+        const totalExpectedActivities = pData.activities?.length ?? 0;
+        const studentActivityRecords = pData.activityRecords?.[studentId] || {};
+        const deliveredActivitiesCount = Object.values(studentActivityRecords).filter(v => v === true).length;
+        
+        // El ratio es el mismo para cualquier criterio que sea 'Actividades' o 'Portafolio'
+        const globalActivityRatio = totalExpectedActivities > 0 ? deliveredActivitiesCount / totalExpectedActivities : 0;
+
         activeCriteria.forEach(c => {
             let ratio = 0;
             if (c.name === 'Actividades' || c.name === 'Portafolio') {
-                const total = pData.activities?.length ?? 0;
-                if (total > 0) {
-                    // Fix: Ensure we are counting completed activities correctly
-                    const completed = Object.values(pData.activityRecords?.[studentId] || {}).filter(Boolean).length;
-                    ratio = completed / total;
-                }
+                // Usamos el ratio unificado calculado arriba
+                ratio = globalActivityRatio;
+
             } else if (c.name === 'Participación') {
                 const total = Object.keys(pData.participations || {}).length;
                 if (total > 0) {
-                    // Fix: Ensure correct counting of participation days
                     const daysAttended = Object.values(pData.participations).filter((day: any) => day[studentId]).length;
                     ratio = daysAttended / total;
                 }
