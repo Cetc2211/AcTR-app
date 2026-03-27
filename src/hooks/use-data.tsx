@@ -412,13 +412,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                                                 });
                                                 
                                                 // Preserve any local-only criteria if cloud doesn't have it
-                                                const mergedCriteria = existingInCloud.evaluationCriteria?.length > 0 
-                                                    ? existingInCloud.evaluationCriteria 
-                                                    : localGroup.evaluationCriteria;
+                                                const cloudCriteria = existingInCloud.evaluationCriteria ?? existingInCloud.criteria ?? [];
+                                                const localCriteria = localGroup.evaluationCriteria ?? localGroup.criteria ?? [];
+                                                const mergedCriteria = cloudCriteria.length > 0 ? cloudCriteria : localCriteria;
                                                 
                                                 mergedMap.set(localGroup.id, {
                                                     ...existingInCloud,
                                                     students: mergedStudents,
+                                                    criteria: mergedCriteria,
                                                     evaluationCriteria: mergedCriteria
                                                 });
                                             } else {
@@ -818,7 +819,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } catch (error) {
                 console.error("Error checking sync status:", error);
                 // Only set to pending if it's a real error, not just offline
-                if (error.code !== 'unavailable') {
+                const code = (error as { code?: string })?.code;
+                if (code !== 'unavailable') {
                     setSyncStatus('pending');
                 }
             } finally {
@@ -1583,9 +1585,12 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             const mergedStudents = (idbStudents?.value?.length || 0) >= (allStudents?.length || 0) ? idbStudents?.value : allStudents;
             
             // STRIP PHOTOS to keep documents under 1MB
+            const sanitizedGroups = stripStudentPhotos(mergedGroups) as Group[];
+            const sanitizedStudents = stripStudentPhotos(mergedStudents) as Student[];
+
             const dataToUpload = {
-                groups: stripStudentPhotos(mergedGroups),
-                students: stripStudentPhotos(mergedStudents),
+                groups: sanitizedGroups,
+                students: sanitizedStudents,
                 observations: Object.keys(idbObservations?.value || {}).length >= Object.keys(allObservations || {}).length ? idbObservations?.value : allObservations,
                 specialNotes: (idbSpecialNotes?.value?.length || 0) >= (specialNotes?.length || 0) ? idbSpecialNotes?.value : specialNotes,
                 partialsData: Object.keys(idbPartialsData?.value || {}).length >= Object.keys(allPartialsData || {}).length ? idbPartialsData?.value : allPartialsData,
@@ -1738,7 +1743,8 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 const delivered = pData.grades?.[studentId]?.[c.id]?.delivered ?? 0;
                 // Clamp ratio to max 1 ?? Or allow extra credit? Usually max 1 for individual items unless specified.
                 // Assuming standard max 1
-                if (c.expectedValue > 0) ratio = Math.min(1, delivered / c.expectedValue);
+                const expectedValue = c.expectedValue ?? 0;
+                if (expectedValue > 0) ratio = Math.min(1, delivered / expectedValue);
             }
             
             // Calculate earned points
@@ -1804,7 +1810,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
         return groups.reduce((acc, group) => {
             const data = allPartialsData[group.id]?.[activePartialId];
             if (!data || !group.criteria || group.criteria.length === 0) { acc[group.id] = 0; return acc; }
-            const grades = group.students.map(s => calculateDetailedFinalGrade(s.id, data, group.criteria).finalGrade);
+            const grades = group.students.map(s => calculateDetailedFinalGrade(s.id, data, group.criteria || []).finalGrade);
             acc[group.id] = grades.length > 0 ? grades.reduce((sum, g) => sum + g, 0) / grades.length : 0;
             return acc;
         }, {} as { [gid: string]: number });
@@ -1815,7 +1821,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             const data = allPartialsData[group.id]?.[activePartialId];
             if (!data || !group.criteria || group.criteria.length === 0) return [];
             return group.students.map(student => {
-                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
+                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria || []).finalGrade;
                 const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
                 return { ...student, calculatedRisk: risk };
             }).filter(s => s.calculatedRisk.level !== 'low');
@@ -1835,7 +1841,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             const medium: StudentWithRisk[] = [];
 
             group.students.forEach(student => {
-                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria).finalGrade;
+                const finalGrade = calculateDetailedFinalGrade(student.id, data, group.criteria || []).finalGrade;
                 const risk = getStudentRiskLevel(finalGrade, data.attendance, student.id);
                 const sWithRisk = { ...student, calculatedRisk: risk };
                 

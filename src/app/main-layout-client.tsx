@@ -45,7 +45,7 @@ import {
   SidebarMenuBadge,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useData } from '@/hooks/use-data';
 import { useAdmin } from '@/hooks/use-admin';
@@ -61,10 +61,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Image from 'next/image';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useSignOut, useAuthState } from 'react-firebase-hooks/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
+import { doc, getDoc } from 'firebase/firestore';
 
 const defaultSettings = {
     institutionName: "Academic Tracker",
@@ -85,6 +86,7 @@ export default function MainLayoutClient({
   const [signOut, isSigningOut, signOutError] = useSignOut(auth);
   const { isAdmin } = useAdmin();
   const { toast } = useToast();
+  const [isTrackingManager, setIsTrackingManager] = useState(false);
   
   // Determine roles
   const isTutor = useMemo(() => {
@@ -92,8 +94,32 @@ export default function MainLayoutClient({
       return officialGroups.some(g => g.tutorEmail === user.email);
   }, [user, officialGroups]);
 
-  // Tracking Manager logic would go here if we had the config, for now assuming Admin only or specific logic
-  const isTrackingManager = false; // Placeholder
+  useEffect(() => {
+    const loadTrackingRole = async () => {
+      if (!user?.email) {
+        setIsTrackingManager(false);
+        return;
+      }
+
+      try {
+        const rolesDoc = await getDoc(doc(db, 'app_config', 'roles'));
+        if (!rolesDoc.exists()) {
+          setIsTrackingManager(false);
+          return;
+        }
+
+        const data = rolesDoc.data() as { tracking_managers?: string[] };
+        const managers = data.tracking_managers || [];
+        const currentEmail = user.email.toLowerCase().trim();
+        setIsTrackingManager(managers.some((email) => email.toLowerCase().trim() === currentEmail));
+      } catch (error) {
+        console.error('Error loading tracking manager role:', error);
+        setIsTrackingManager(false);
+      }
+    };
+
+    loadTrackingRole();
+  }, [user?.email]);
 
   const mainNavItems = useMemo(() => [
       { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -108,6 +134,7 @@ export default function MainLayoutClient({
       { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
       { href: '/records', icon: ClipboardSignature, label: 'Actas' },
       { href: '/reports', icon: FileText, label: 'Informes' },
+      ...(isAdmin || isTrackingManager ? [{ href: '/admin/official-groups', icon: ShieldCheck, label: 'Grupos Oficiales' }] : []),
       ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
       { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
       { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },

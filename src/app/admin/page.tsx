@@ -13,11 +13,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, ShieldCheck, UserX, UserPlus, Lock } from 'lucide-react';
+import { Loader2, ShieldCheck, UserX, UserPlus, Lock, Users, AlertTriangle } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, query, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { getAuth } from 'firebase/auth'; // Import auth directly
+import Link from 'next/link';
 
 
 export default function AdminPage() {
@@ -257,8 +258,42 @@ export default function AdminPage() {
             <div>
                 <h1 className="text-3xl font-bold flex items-center gap-2"><ShieldCheck /> Panel de Administrador</h1>
                 <p className="text-muted-foreground">
-                    Gestiona los usuarios autorizados para registrarse en la aplicación.
+                    Accede a la gestión institucional y controla permisos de acceso.
                 </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5" /> Gestión de Grupos Oficiales
+                        </CardTitle>
+                        <CardDescription>
+                            Administra grupos institucionales, altas de estudiantes, anuncios y justificaciones.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild className="w-full">
+                            <Link href="/admin/official-groups">Abrir Gestión de Grupos Oficiales</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5" /> Seguimiento de Inasistencias
+                        </CardTitle>
+                        <CardDescription>
+                            Revisa ausencias, contacto con tutores y acciones de seguimiento.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild variant="outline" className="w-full">
+                            <Link href="/admin/absences">Abrir Seguimiento</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
             
             <Card>
