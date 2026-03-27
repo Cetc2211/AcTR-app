@@ -1218,4 +1218,58 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
+  body.theme-obsidian-gold,
+  body.theme-obsidian-gold-hc,
+  body.theme-obsidian-champagne,
+  body.theme-metal-armor,
+  body.theme-mercury-signals,
+  body.theme-rose-gold-soft {
+    background-attachment: fixed;
+    background-image:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 28%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0%, transparent 38%, rgba(255, 215, 0, 0.06) 62%, transparent 100%);
+  }
+
+  .theme-obsidian-gold .bg-sidebar,
+  .theme-obsidian-gold-hc .bg-sidebar,
+  .theme-obsidian-champagne .bg-sidebar,
+  .theme-mercury-signals .bg-sidebar,
+  .theme-metal-armor .bg-sidebar {
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,215,0,0.12) 55%, rgba(0,0,0,0.15) 100%);
+  }
+
+  .theme-rose-gold-soft .bg-sidebar {
+    background-image: linear-gradient(180deg, rgba(253,245,230,0.45) 0%, rgba(183,110,121,0.18) 55%, rgba(234,193,2,0.16) 100%);
+  }
+
+  .theme-obsidian-gold .bg-card,
+  .theme-obsidian-gold-hc .bg-card,
+  .theme-obsidian-champagne .bg-card,
+  .theme-metal-armor .bg-card,
+  .theme-mercury-signals .bg-card,
+  .theme-rose-gold-soft .bg-card {
+    background-image: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, transparent 42%, rgba(255,255,255,0.025) 100%);
+  }
+
+  .theme-obsidian-gold .bg-primary,
+  .theme-obsidian-gold-hc .bg-primary {
+    background-image: linear-gradient(135deg, #8a6a00 0%, #ffd700 42%, #fff0a6 52%, #d3ae36 72%, #6f5300 100%);
+  }
+
+  .theme-obsidian-champagne .bg-primary {
+    background-image: linear-gradient(135deg, #8f7b4d 0%, #fffdd0 40%, #f3e3a2 54%, #c7b377 72%, #74633c 100%);
+  }
+
+  .theme-metal-armor .bg-primary {
+    background-image: linear-gradient(135deg, #8c8c8a 0%, #d3ae36 40%, #f0ddb0 52%, #a67b00 75%, #6e5200 100%);
+  }
+
+  .theme-mercury-signals .bg-primary {
+    background-image: linear-gradient(135deg, #7a6500 0%, #e5be01 42%, #f5e4a0 52%, #a6a6a6 76%, #6b6b6b 100%);
+  }
+
+  .theme-rose-gold-soft .bg-primary {
+    background-image: linear-gradient(135deg, #8e4f5b 0%, #b76e79 42%, #fdf5e6 54%, #eac102 78%, #b89417 100%);
+  }
 }

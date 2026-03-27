@@ -108,32 +108,38 @@ export const themes = [
     {
         name: 'Obsidian Gold',
         id: 'theme-obsidian-gold',
-        colors: ['#1A1A1A', '#C0C0C0', '#FFD700']
+        colors: ['#1A1A1A', '#C0C0C0', '#FFD700'],
+        previewBackground: 'linear-gradient(135deg, #0f0f0f 0%, #232323 38%, #c0c0c0 52%, #ffd700 74%, #a67c00 100%)'
     },
     {
         name: 'Obsidian Gold HC',
         id: 'theme-obsidian-gold-hc',
-        colors: ['#000000', '#E5E5E5', '#FFD700']
+        colors: ['#000000', '#E5E5E5', '#FFD700'],
+        previewBackground: 'linear-gradient(135deg, #000000 0%, #101010 30%, #f0f0f0 52%, #ffd700 72%, #b8860b 100%)'
     },
     {
         name: 'Obsidian Champagne',
         id: 'theme-obsidian-champagne',
-        colors: ['#1A1A1A', '#C0C0C0', '#FFFDD0']
+        colors: ['#1A1A1A', '#C0C0C0', '#FFFDD0'],
+        previewBackground: 'linear-gradient(135deg, #111111 0%, #1f1f1f 36%, #c1c1c1 52%, #fffdd0 76%, #d6c28a 100%)'
     },
     {
         name: 'Rose Gold Soft',
         id: 'theme-rose-gold-soft',
-        colors: ['#B76E79', '#EAC102', '#F5E1DA']
+        colors: ['#B76E79', '#EAC102', '#F5E1DA'],
+        previewBackground: 'linear-gradient(135deg, #f5e1da 0%, #fdf5e6 35%, #b76e79 58%, #eac102 82%, #f5e1da 100%)'
     },
     {
         name: 'Metal Armor',
         id: 'theme-metal-armor',
-        colors: ['#848482', '#D3AE36', '#A67B00']
+        colors: ['#848482', '#D3AE36', '#A67B00'],
+        previewBackground: 'linear-gradient(135deg, #848482 0%, #c1c1c1 38%, #d3ae36 66%, #a67b00 100%)'
     },
     {
         name: 'Mercury Signals',
         id: 'theme-mercury-signals',
-        colors: ['#1A1A1A', '#E5BE01', '#A6A6A6']
+        colors: ['#1A1A1A', '#E5BE01', '#A6A6A6'],
+        previewBackground: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 35%, #a6a6a6 58%, #e5be01 82%, #f2f2f2 100%)'
     }
 ];
 
@@ -155,7 +161,7 @@ export function ThemeSwitcher({ selectedTheme, onThemeChange }: ThemeSwitcherPro
                     >
                         <div
                             className="h-16 w-full rounded-md flex items-center justify-center"
-                            style={{ background: theme.colors[0] }}
+                            style={{ background: theme.previewBackground || theme.colors[0] }}
                         >
                             <div className="flex -space-x-2">
                                 {theme.colors.map((color, index) => (
