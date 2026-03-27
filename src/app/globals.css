@@ -948,222 +948,222 @@ body {
 
   .theme-obsidian-gold {
     --background: 0 0% 10%;
-    --foreground: 0 0% 75%;
+    --foreground: 42 10% 79%;
     --card: 0 0% 14%;
     --card-foreground: 0 0% 90%;
     --popover: 0 0% 14%;
     --popover-foreground: 0 0% 90%;
-    --primary: 51 100% 50%;
+    --primary: 44 72% 57%;
     --primary-foreground: 0 0% 8%;
     --secondary: 0 0% 20%;
     --secondary-foreground: 0 0% 90%;
     --muted: 0 0% 22%;
     --muted-foreground: 0 0% 64%;
-    --accent: 43 74% 49%;
+    --accent: 40 42% 60%;
     --accent-foreground: 0 0% 10%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 28%;
     --input: 0 0% 24%;
-    --ring: 51 100% 50%;
+    --ring: 44 72% 57%;
     --sidebar-background: 0 0% 8%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-accent: 43 74% 49%;
+    --sidebar-accent: 40 42% 60%;
     --sidebar-accent-foreground: 0 0% 8%;
 
-    --partial-1: 51 100% 50%;
+    --partial-1: 44 72% 57%;
     --partial-1-foreground: 0 0% 8%;
-    --partial-1-foreground-alt: 51 100% 60%;
-    --partial-1-border: 51 100% 42%;
-    --partial-1-bg: 51 90% 18%;
+    --partial-1-foreground-alt: 44 50% 68%;
+    --partial-1-border: 43 52% 46%;
+    --partial-1-bg: 42 38% 18%;
 
-    --partial-2: 0 0% 75%;
+    --partial-2: 210 4% 74%;
     --partial-2-foreground: 0 0% 10%;
-    --partial-2-foreground-alt: 0 0% 80%;
-    --partial-2-border: 0 0% 60%;
-    --partial-2-bg: 0 0% 26%;
+    --partial-2-foreground-alt: 210 4% 82%;
+    --partial-2-border: 210 4% 58%;
+    --partial-2-bg: 210 6% 24%;
 
-    --partial-3: 50 86% 91%;
+    --partial-3: 36 28% 84%;
     --partial-3-foreground: 0 0% 10%;
-    --partial-3-foreground-alt: 50 86% 80%;
-    --partial-3-border: 43 74% 49%;
-    --partial-3-bg: 43 70% 20%;
+    --partial-3-foreground-alt: 36 22% 72%;
+    --partial-3-border: 39 34% 56%;
+    --partial-3-bg: 37 28% 22%;
   }
 
   .theme-obsidian-gold-hc {
     --background: 0 0% 0%;
-    --foreground: 0 0% 90%;
+    --foreground: 42 12% 91%;
     --card: 0 0% 6%;
     --card-foreground: 0 0% 92%;
     --popover: 0 0% 6%;
     --popover-foreground: 0 0% 92%;
-    --primary: 51 100% 50%;
+    --primary: 45 78% 58%;
     --primary-foreground: 0 0% 5%;
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 92%;
     --muted: 0 0% 16%;
     --muted-foreground: 0 0% 70%;
-    --accent: 43 74% 49%;
+    --accent: 42 48% 62%;
     --accent-foreground: 0 0% 5%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 22%;
     --input: 0 0% 18%;
-    --ring: 51 100% 50%;
+    --ring: 45 78% 58%;
     --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 0 0% 92%;
-    --sidebar-accent: 51 100% 50%;
+    --sidebar-accent: 45 78% 58%;
     --sidebar-accent-foreground: 0 0% 4%;
 
-    --partial-1: 51 100% 50%;
+    --partial-1: 45 78% 58%;
     --partial-1-foreground: 0 0% 5%;
-    --partial-1-foreground-alt: 51 100% 62%;
-    --partial-1-border: 51 100% 42%;
-    --partial-1-bg: 51 90% 16%;
+    --partial-1-foreground-alt: 45 58% 70%;
+    --partial-1-border: 44 58% 46%;
+    --partial-1-bg: 43 38% 15%;
 
-    --partial-2: 0 0% 90%;
+    --partial-2: 210 4% 87%;
     --partial-2-foreground: 0 0% 8%;
-    --partial-2-foreground-alt: 0 0% 76%;
-    --partial-2-border: 0 0% 68%;
-    --partial-2-bg: 0 0% 22%;
+    --partial-2-foreground-alt: 210 4% 74%;
+    --partial-2-border: 210 4% 66%;
+    --partial-2-bg: 210 5% 20%;
 
-    --partial-3: 50 86% 91%;
+    --partial-3: 35 26% 84%;
     --partial-3-foreground: 0 0% 8%;
-    --partial-3-foreground-alt: 50 86% 80%;
-    --partial-3-border: 43 74% 49%;
-    --partial-3-bg: 43 70% 18%;
+    --partial-3-foreground-alt: 35 20% 72%;
+    --partial-3-border: 40 34% 55%;
+    --partial-3-bg: 38 28% 18%;
   }
 
   .theme-obsidian-champagne {
     --background: 0 0% 10%;
-    --foreground: 0 0% 75%;
+    --foreground: 32 8% 79%;
     --card: 0 0% 14%;
     --card-foreground: 0 0% 90%;
     --popover: 0 0% 14%;
     --popover-foreground: 0 0% 90%;
-    --primary: 50 86% 91%;
+    --primary: 34 30% 77%;
     --primary-foreground: 0 0% 10%;
     --secondary: 0 0% 20%;
     --secondary-foreground: 0 0% 90%;
     --muted: 0 0% 22%;
     --muted-foreground: 0 0% 64%;
-    --accent: 43 60% 68%;
+    --accent: 31 22% 63%;
     --accent-foreground: 0 0% 10%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 28%;
     --input: 0 0% 24%;
-    --ring: 50 86% 91%;
+    --ring: 34 30% 77%;
     --sidebar-background: 0 0% 8%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-accent: 43 60% 68%;
+    --sidebar-accent: 31 22% 63%;
     --sidebar-accent-foreground: 0 0% 8%;
 
-    --partial-1: 50 86% 91%;
+    --partial-1: 34 30% 77%;
     --partial-1-foreground: 0 0% 10%;
-    --partial-1-foreground-alt: 50 60% 78%;
-    --partial-1-border: 43 60% 68%;
-    --partial-1-bg: 43 55% 20%;
+    --partial-1-foreground-alt: 34 24% 68%;
+    --partial-1-border: 33 22% 58%;
+    --partial-1-bg: 33 22% 20%;
 
-    --partial-2: 0 0% 75%;
+    --partial-2: 210 4% 74%;
     --partial-2-foreground: 0 0% 10%;
-    --partial-2-foreground-alt: 0 0% 80%;
-    --partial-2-border: 0 0% 60%;
-    --partial-2-bg: 0 0% 26%;
+    --partial-2-foreground-alt: 210 4% 82%;
+    --partial-2-border: 210 4% 58%;
+    --partial-2-bg: 210 5% 24%;
 
-    --partial-3: 43 60% 68%;
+    --partial-3: 31 22% 63%;
     --partial-3-foreground: 0 0% 10%;
-    --partial-3-foreground-alt: 43 60% 58%;
-    --partial-3-border: 43 60% 56%;
-    --partial-3-bg: 43 55% 18%;
+    --partial-3-foreground-alt: 31 18% 54%;
+    --partial-3-border: 31 18% 52%;
+    --partial-3-bg: 31 18% 18%;
   }
 
   .theme-rose-gold-soft {
-    --background: 20 47% 91%;
-    --foreground: 342 26% 34%;
-    --card: 44 100% 94%;
-    --card-foreground: 342 26% 34%;
-    --popover: 44 100% 94%;
-    --popover-foreground: 342 26% 34%;
-    --primary: 348 31% 58%;
-    --primary-foreground: 44 100% 96%;
-    --secondary: 50 84% 49%;
-    --secondary-foreground: 50 50% 18%;
-    --muted: 20 47% 86%;
-    --muted-foreground: 342 20% 42%;
-    --accent: 44 100% 94%;
-    --accent-foreground: 342 26% 30%;
+    --background: 22 24% 92%;
+    --foreground: 350 18% 30%;
+    --card: 24 30% 95%;
+    --card-foreground: 350 18% 30%;
+    --popover: 24 30% 95%;
+    --popover-foreground: 350 18% 30%;
+    --primary: 8 34% 63%;
+    --primary-foreground: 24 30% 97%;
+    --secondary: 20 16% 78%;
+    --secondary-foreground: 350 16% 24%;
+    --muted: 18 22% 87%;
+    --muted-foreground: 350 14% 42%;
+    --accent: 26 26% 84%;
+    --accent-foreground: 350 18% 28%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 20 30% 80%;
-    --input: 20 30% 84%;
-    --ring: 348 31% 58%;
-    --sidebar-background: 348 31% 58%;
-    --sidebar-foreground: 44 100% 96%;
-    --sidebar-accent: 50 84% 49%;
-    --sidebar-accent-foreground: 50 50% 16%;
+    --border: 18 16% 78%;
+    --input: 18 18% 84%;
+    --ring: 8 34% 63%;
+    --sidebar-background: 8 28% 57%;
+    --sidebar-foreground: 24 30% 97%;
+    --sidebar-accent: 26 26% 84%;
+    --sidebar-accent-foreground: 350 18% 24%;
 
-    --partial-1: 348 31% 58%;
-    --partial-1-foreground: 44 100% 96%;
-    --partial-1-foreground-alt: 348 31% 46%;
-    --partial-1-border: 348 31% 68%;
-    --partial-1-bg: 348 31% 90%;
+    --partial-1: 8 34% 63%;
+    --partial-1-foreground: 24 30% 97%;
+    --partial-1-foreground-alt: 8 26% 48%;
+    --partial-1-border: 8 24% 72%;
+    --partial-1-bg: 8 26% 90%;
 
-    --partial-2: 50 84% 49%;
-    --partial-2-foreground: 50 50% 16%;
-    --partial-2-foreground-alt: 50 50% 28%;
-    --partial-2-border: 50 84% 59%;
-    --partial-2-bg: 50 84% 90%;
+    --partial-2: 20 16% 78%;
+    --partial-2-foreground: 350 16% 24%;
+    --partial-2-foreground-alt: 350 14% 36%;
+    --partial-2-border: 20 14% 70%;
+    --partial-2-bg: 20 18% 92%;
 
-    --partial-3: 44 100% 94%;
-    --partial-3-foreground: 342 26% 30%;
-    --partial-3-foreground-alt: 342 20% 40%;
-    --partial-3-border: 20 30% 76%;
-    --partial-3-bg: 44 100% 96%;
+    --partial-3: 26 26% 84%;
+    --partial-3-foreground: 350 18% 28%;
+    --partial-3-foreground-alt: 350 14% 40%;
+    --partial-3-border: 22 18% 74%;
+    --partial-3-bg: 24 24% 95%;
   }
 
   .theme-metal-armor {
-    --background: 0 0% 52%;
+    --background: 210 5% 54%;
     --foreground: 0 0% 95%;
-    --card: 0 0% 56%;
+    --card: 210 5% 58%;
     --card-foreground: 0 0% 96%;
-    --popover: 0 0% 56%;
+    --popover: 210 5% 58%;
     --popover-foreground: 0 0% 96%;
-    --primary: 44 64% 52%;
+    --primary: 41 42% 55%;
     --primary-foreground: 0 0% 8%;
-    --secondary: 0 0% 76%;
-    --secondary-foreground: 0 0% 15%;
-    --muted: 0 0% 62%;
+    --secondary: 210 6% 77%;
+    --secondary-foreground: 210 10% 17%;
+    --muted: 210 4% 63%;
     --muted-foreground: 0 0% 90%;
-    --accent: 44 100% 33%;
+    --accent: 36 28% 39%;
     --accent-foreground: 0 0% 96%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 68%;
-    --input: 0 0% 64%;
-    --ring: 44 64% 52%;
-    --sidebar-background: 0 0% 36%;
+    --border: 210 4% 68%;
+    --input: 210 4% 64%;
+    --ring: 41 42% 55%;
+    --sidebar-background: 210 7% 39%;
     --sidebar-foreground: 0 0% 96%;
-    --sidebar-accent: 44 64% 52%;
+    --sidebar-accent: 41 42% 55%;
     --sidebar-accent-foreground: 0 0% 8%;
 
-    --partial-1: 44 64% 52%;
+    --partial-1: 41 42% 55%;
     --partial-1-foreground: 0 0% 8%;
-    --partial-1-foreground-alt: 44 64% 38%;
-    --partial-1-border: 44 64% 62%;
-    --partial-1-bg: 44 64% 88%;
+    --partial-1-foreground-alt: 41 32% 41%;
+    --partial-1-border: 41 34% 64%;
+    --partial-1-bg: 40 28% 88%;
 
-    --partial-2: 0 0% 76%;
-    --partial-2-foreground: 0 0% 15%;
-    --partial-2-foreground-alt: 0 0% 30%;
-    --partial-2-border: 0 0% 84%;
-    --partial-2-bg: 0 0% 92%;
+    --partial-2: 210 6% 77%;
+    --partial-2-foreground: 210 10% 17%;
+    --partial-2-foreground-alt: 210 8% 31%;
+    --partial-2-border: 210 6% 84%;
+    --partial-2-bg: 210 8% 92%;
 
-    --partial-3: 44 100% 33%;
+    --partial-3: 36 28% 39%;
     --partial-3-foreground: 0 0% 96%;
-    --partial-3-foreground-alt: 44 100% 48%;
-    --partial-3-border: 44 100% 42%;
-    --partial-3-bg: 44 100% 18%;
+    --partial-3-foreground-alt: 36 28% 52%;
+    --partial-3-border: 36 24% 46%;
+    --partial-3-bg: 36 24% 20%;
   }
 
   .theme-mercury-signals {
@@ -1173,41 +1173,41 @@ body {
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 14%;
     --popover-foreground: 0 0% 95%;
-    --primary: 50 99% 45%;
+    --primary: 44 58% 54%;
     --primary-foreground: 0 0% 8%;
-    --secondary: 0 0% 65%;
-    --secondary-foreground: 0 0% 14%;
+    --secondary: 210 4% 66%;
+    --secondary-foreground: 210 8% 14%;
     --muted: 0 0% 20%;
     --muted-foreground: 0 0% 78%;
-    --accent: 0 0% 65%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 210 4% 66%;
+    --accent-foreground: 210 8% 10%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 28%;
     --input: 0 0% 24%;
-    --ring: 50 99% 45%;
+    --ring: 44 58% 54%;
     --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-accent: 50 99% 45%;
+    --sidebar-accent: 44 58% 54%;
     --sidebar-accent-foreground: 0 0% 8%;
 
-    --partial-1: 50 99% 45%;
+    --partial-1: 44 58% 54%;
     --partial-1-foreground: 0 0% 8%;
-    --partial-1-foreground-alt: 50 99% 58%;
-    --partial-1-border: 50 99% 35%;
-    --partial-1-bg: 50 90% 17%;
+    --partial-1-foreground-alt: 44 42% 66%;
+    --partial-1-border: 44 42% 42%;
+    --partial-1-bg: 42 28% 17%;
 
-    --partial-2: 0 0% 65%;
-    --partial-2-foreground: 0 0% 10%;
-    --partial-2-foreground-alt: 0 0% 76%;
-    --partial-2-border: 0 0% 55%;
-    --partial-2-bg: 0 0% 24%;
+    --partial-2: 210 4% 66%;
+    --partial-2-foreground: 210 8% 10%;
+    --partial-2-foreground-alt: 210 4% 76%;
+    --partial-2-border: 210 4% 55%;
+    --partial-2-bg: 210 5% 24%;
 
-    --partial-3: 0 0% 95%;
+    --partial-3: 210 6% 92%;
     --partial-3-foreground: 0 0% 10%;
-    --partial-3-foreground-alt: 0 0% 80%;
-    --partial-3-border: 0 0% 85%;
-    --partial-3-bg: 0 0% 20%;
+    --partial-3-foreground-alt: 210 4% 80%;
+    --partial-3-border: 210 4% 82%;
+    --partial-3-bg: 210 5% 20%;
   }
 }
 
@@ -1227,8 +1227,9 @@ body {
   body.theme-rose-gold-soft {
     background-attachment: fixed;
     background-image:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 28%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0%, transparent 38%, rgba(255, 215, 0, 0.06) 62%, transparent 100%);
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.045), transparent 26%),
+      radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.03), transparent 24%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 34%, rgba(190, 160, 95, 0.055) 60%, transparent 100%);
   }
 
   .theme-obsidian-gold .bg-sidebar,
@@ -1236,11 +1237,11 @@ body {
   .theme-obsidian-champagne .bg-sidebar,
   .theme-mercury-signals .bg-sidebar,
   .theme-metal-armor .bg-sidebar {
-    background-image: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,215,0,0.12) 55%, rgba(0,0,0,0.15) 100%);
+    background-image: linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(196,168,112,0.12) 48%, rgba(58,58,58,0.16) 100%);
   }
 
   .theme-rose-gold-soft .bg-sidebar {
-    background-image: linear-gradient(180deg, rgba(253,245,230,0.45) 0%, rgba(183,110,121,0.18) 55%, rgba(234,193,2,0.16) 100%);
+    background-image: linear-gradient(180deg, rgba(255,248,244,0.42) 0%, rgba(196,138,128,0.18) 52%, rgba(141,111,103,0.14) 100%);
   }
 
   .theme-obsidian-gold .bg-card,
@@ -1249,27 +1250,95 @@ body {
   .theme-metal-armor .bg-card,
   .theme-mercury-signals .bg-card,
   .theme-rose-gold-soft .bg-card {
-    background-image: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, transparent 42%, rgba(255,255,255,0.025) 100%);
+    background-image: linear-gradient(145deg, rgba(255,255,255,0.055) 0%, transparent 38%, rgba(255,255,255,0.018) 100%);
   }
 
   .theme-obsidian-gold .bg-primary,
   .theme-obsidian-gold-hc .bg-primary {
-    background-image: linear-gradient(135deg, #8a6a00 0%, #ffd700 42%, #fff0a6 52%, #d3ae36 72%, #6f5300 100%);
+    background-image: linear-gradient(135deg, #66512c 0%, #b79552 34%, #e0c487 50%, #9d7c45 70%, #4a3920 100%);
   }
 
   .theme-obsidian-champagne .bg-primary {
-    background-image: linear-gradient(135deg, #8f7b4d 0%, #fffdd0 40%, #f3e3a2 54%, #c7b377 72%, #74633c 100%);
+    background-image: linear-gradient(135deg, #726148 0%, #b9a383 36%, #e0d3bc 52%, #a78f70 72%, #5d4f3d 100%);
   }
 
   .theme-metal-armor .bg-primary {
-    background-image: linear-gradient(135deg, #8c8c8a 0%, #d3ae36 40%, #f0ddb0 52%, #a67b00 75%, #6e5200 100%);
+    background-image: linear-gradient(135deg, #6f7478 0%, #9f8f76 36%, #d9d7d0 50%, #8d7a63 70%, #52565a 100%);
   }
 
   .theme-mercury-signals .bg-primary {
-    background-image: linear-gradient(135deg, #7a6500 0%, #e5be01 42%, #f5e4a0 52%, #a6a6a6 76%, #6b6b6b 100%);
+    background-image: linear-gradient(135deg, #67563a 0%, #af9360 36%, #ddd7ca 50%, #9ca0a3 74%, #5f6367 100%);
   }
 
   .theme-rose-gold-soft .bg-primary {
-    background-image: linear-gradient(135deg, #8e4f5b 0%, #b76e79 42%, #fdf5e6 54%, #eac102 78%, #b89417 100%);
+    background-image: linear-gradient(135deg, #845b55 0%, #c48a80 38%, #f2e5df 54%, #b9998b 74%, #7a5e58 100%);
+  }
+
+  /* Metallic input and interactive refinements */
+  .theme-obsidian-gold input,
+  .theme-obsidian-gold-hc input,
+  .theme-obsidian-champagne input,
+  .theme-metal-armor input,
+  .theme-mercury-signals input {
+    border-color: rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .theme-obsidian-gold input:focus,
+  .theme-obsidian-gold-hc input:focus,
+  .theme-obsidian-champagne input:focus,
+  .theme-metal-armor input:focus,
+  .theme-mercury-signals input:focus {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
+  }
+
+  .theme-rose-gold-soft input {
+    border-color: rgba(141, 111, 103, 0.12);
+  }
+
+  .theme-rose-gold-soft input:focus {
+    border-color: rgba(141, 111, 103, 0.2);
+    box-shadow: 0 0 6px rgba(196, 138, 128, 0.12);
+  }
+
+  /* Metallic button hover states */
+  .theme-obsidian-gold button:hover,
+  .theme-obsidian-gold-hc button:hover,
+  .theme-obsidian-champagne button:hover,
+  .theme-metal-armor button:hover,
+  .theme-mercury-signals button:hover {
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+    background-blend-mode: screen;
+  }
+
+  .theme-rose-gold-soft button:hover {
+    background-image: linear-gradient(135deg, rgba(255,248,244,0.06), rgba(255,248,244,0.02));
+    background-blend-mode: screen;
+  }
+
+  /* Metallic link/accent refinements */
+  .theme-obsidian-gold a,
+  .theme-obsidian-gold-hc a,
+  .theme-obsidian-champagne a,
+  .theme-metal-armor a,
+  .theme-mercury-signals a {
+    text-decoration-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .theme-obsidian-gold a:hover,
+  .theme-obsidian-gold-hc a:hover,
+  .theme-obsidian-champagne a:hover,
+  .theme-metal-armor a:hover,
+  .theme-mercury-signals a:hover {
+    text-decoration-color: rgba(255, 255, 255, 0.24);
+  }
+
+  .theme-rose-gold-soft a {
+    text-decoration-color: rgba(141, 111, 103, 0.12);
+  }
+
+  .theme-rose-gold-soft a:hover {
+    text-decoration-color: rgba(141, 111, 103, 0.28);
   }
 }

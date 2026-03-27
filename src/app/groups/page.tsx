@@ -61,8 +61,52 @@ import { PlusCircle, Users, ArrowRight, Loader2, MoreVertical, Archive, Trash2, 
 import { cn } from '@/lib/utils';
 
 
-const cardColors = [
-  'bg-card-1', 'bg-card-2', 'bg-card-3', 'bg-card-4', 'bg-card-5'
+const cardThemes = [
+  {
+    card: 'bg-primary text-primary-foreground',
+    description: 'text-primary-foreground/80',
+    badge: 'bg-black/20 text-white',
+    menuButton: 'text-white/60 hover:text-white hover:bg-white/15',
+    footer: 'bg-black/15',
+    actionButton: 'hover:bg-white/15',
+    archivedBadge: 'border-white/30 text-white',
+  },
+  {
+    card: 'bg-secondary text-secondary-foreground',
+    description: 'text-secondary-foreground/80',
+    badge: 'bg-black/15 text-secondary-foreground',
+    menuButton: 'text-secondary-foreground/60 hover:text-secondary-foreground hover:bg-black/5',
+    footer: 'bg-black/8',
+    actionButton: 'hover:bg-black/10',
+    archivedBadge: 'border-current/30 text-secondary-foreground',
+  },
+  {
+    card: 'bg-accent text-accent-foreground',
+    description: 'text-accent-foreground/80',
+    badge: 'bg-black/15 text-accent-foreground',
+    menuButton: 'text-accent-foreground/60 hover:text-accent-foreground hover:bg-black/5',
+    footer: 'bg-black/10',
+    actionButton: 'hover:bg-black/10',
+    archivedBadge: 'border-current/30 text-accent-foreground',
+  },
+  {
+    card: 'bg-partial-2 text-partial-2-foreground',
+    description: 'text-partial-2-foreground/80',
+    badge: 'bg-black/15 text-partial-2-foreground',
+    menuButton: 'text-partial-2-foreground/60 hover:text-partial-2-foreground hover:bg-black/5',
+    footer: 'bg-black/10',
+    actionButton: 'hover:bg-black/10',
+    archivedBadge: 'border-current/30 text-partial-2-foreground',
+  },
+  {
+    card: 'bg-partial-3 text-partial-3-foreground',
+    description: 'text-partial-3-foreground/80',
+    badge: 'bg-black/15 text-partial-3-foreground',
+    menuButton: 'text-partial-3-foreground/60 hover:text-partial-3-foreground hover:bg-black/5',
+    footer: 'bg-black/10',
+    actionButton: 'hover:bg-black/10',
+    archivedBadge: 'border-current/30 text-partial-3-foreground',
+  },
 ];
 
 
@@ -239,9 +283,10 @@ export default function GroupsPage() {
   
   const renderGroupCard = (group: Group, index: number, isArchived: boolean = false) => {
     const linkedOfficialGroup = group.officialGroupId ? officialGroups.find(og => og.id === group.officialGroupId) : null;
+    const palette = cardThemes[index % cardThemes.length];
 
     return (
-    <Card key={group.id} className={cn("flex flex-col hover:shadow-lg transition-shadow text-card-foreground-alt relative group", isArchived ? "opacity-80 grayscale" : "", cardColors[index % cardColors.length])}>
+    <Card key={group.id} className={cn("flex flex-col hover:shadow-lg transition-shadow relative group border-0 overflow-hidden", isArchived ? "opacity-80 grayscale" : "", palette.card)}>
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
@@ -249,15 +294,15 @@ export default function GroupsPage() {
                 
                 {linkedOfficialGroup ? (
                    <div className="mt-2">
-                      <span className="bg-black/20 text-white px-2 py-1 rounded text-sm font-bold block w-fit">
+                      <span className={cn("px-2 py-1 rounded text-sm font-bold block w-fit", palette.badge)}>
                           {linkedOfficialGroup.name}
                       </span>
-                      <CardDescription className="text-card-foreground-alt/80 text-xs mt-1">
+                      <CardDescription className={cn("text-xs mt-1", palette.description)}>
                           Grupo Oficial Vinculado
                       </CardDescription>
                    </div>
                 ) : (
-                    <CardDescription className="text-card-foreground-alt/80">
+                    <CardDescription className={palette.description}>
                       {group.semester && `${group.semester} | `}
                       {group.groupName && `Grupo: ${group.groupName}`}
                     </CardDescription>
@@ -265,7 +310,7 @@ export default function GroupsPage() {
             </div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 text-white/50 hover:text-white hover:bg-white/20">
+                    <Button variant="ghost" className={cn("h-8 w-8 p-0", palette.menuButton)}>
                         <span className="sr-only">Abrir menú</span>
                         <MoreVertical className="h-4 w-4" />
                     </Button>
@@ -312,20 +357,20 @@ export default function GroupsPage() {
             )}
          </div>
       </CardContent>
-      <CardFooter className="flex justify-between items-center bg-black/20 p-4">
+      <CardFooter className={cn("flex justify-between items-center p-4", palette.footer)}>
           <div className="flex items-center text-sm font-medium">
               <Users className="mr-2 h-4 w-4" />
               <span>{group.students ? group.students.length : 0} Estudiante(s)</span>
           </div>
         {!isArchived ? (
-             <Button asChild variant="ghost" size="sm" onClick={() => setActiveGroupId(group.id)} className="hover:bg-white/20">
+             <Button asChild variant="ghost" size="sm" onClick={() => setActiveGroupId(group.id)} className={palette.actionButton}>
               <Link href={`/groups/${group.id}`}>
                 Administrar
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
         ) : (
-            <span className="text-xs font-medium border border-white/30 rounded px-2 py-1">En Resguardo</span>
+            <span className={cn("text-xs font-medium border rounded px-2 py-1", palette.archivedBadge)}>En Resguardo</span>
         )}
       </CardFooter>
     </Card>
