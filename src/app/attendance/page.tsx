@@ -23,8 +23,16 @@ import { ArrowLeft } from 'lucide-react';
 import { useData } from '@/hooks/use-data';
 
 export default function AttendancePage() {
-  const { activeGroup, partialData, setAttendance, takeAttendanceForDate } = useData();
+  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, justifications } = useData();
   const { attendance } = partialData;
+
+  const justifiedAttendanceMap = useMemo(() => {
+    const justified = new Set<string>();
+    justifications.forEach((j) => {
+      justified.add(`${j.studentId}__${j.date}`);
+    });
+    return justified;
+  }, [justifications]);
 
   const studentsToDisplay = useMemo(() => {
     return activeGroup ? [...activeGroup.students].sort((a,b) => a.name.localeCompare(b.name)) : [];
@@ -43,6 +51,11 @@ export default function AttendancePage() {
   
   const handleAttendanceChange = (studentId: string, date: string, isPresent: boolean) => {
     if (!activeGroup) return;
+
+    const isJustified = justifiedAttendanceMap.has(`${studentId}__${date}`);
+    if (isJustified) {
+      return;
+    }
 
     setAttendance(prev => {
       const newAttendance = { ...prev };
@@ -74,7 +87,13 @@ export default function AttendancePage() {
                 </p>
             </div>
         </div>
-        {activeGroup && <Button onClick={handleRegisterToday}>Registrar Asistencia de Hoy</Button>}
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-block h-3 w-3 rounded-sm bg-blue-600" />
+            Inasistencia justificada (bloqueada)
+          </div>
+          {activeGroup && <Button onClick={handleRegisterToday}>Registrar Asistencia de Hoy</Button>}
+        </div>
       </div>
 
       <Card>
@@ -106,10 +125,18 @@ export default function AttendancePage() {
                     </TableCell>
                     {attendanceDates.map(date => (
                       <TableCell key={`${student.id}-${date}`} className="text-center">
+                        {(() => {
+                          const isJustified = justifiedAttendanceMap.has(`${student.id}__${date}`);
+                          const isChecked = isJustified || !!attendance[date]?.[student.id];
+                          return (
                         <Checkbox 
-                           checked={attendance[date]?.[student.id] || false}
+                           checked={isChecked}
+                           disabled={isJustified}
+                           className={isJustified ? 'border-blue-500 data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 opacity-100' : ''}
                            onCheckedChange={(checked) => handleAttendanceChange(student.id, date, !!checked)}
                         />
+                          );
+                        })()}
                       </TableCell>
                     ))}
                   </TableRow>

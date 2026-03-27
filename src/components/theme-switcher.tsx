@@ -104,6 +104,36 @@ export const themes = [
         name: 'Limonada',
         id: 'theme-limonada',
         colors: ['#F70025', '#F25C00', '#F9A603']
+    },
+    {
+        name: 'Obsidian Gold',
+        id: 'theme-obsidian-gold',
+        colors: ['#1A1A1A', '#C0C0C0', '#FFD700']
+    },
+    {
+        name: 'Obsidian Gold HC',
+        id: 'theme-obsidian-gold-hc',
+        colors: ['#000000', '#E5E5E5', '#FFD700']
+    },
+    {
+        name: 'Obsidian Champagne',
+        id: 'theme-obsidian-champagne',
+        colors: ['#1A1A1A', '#C0C0C0', '#FFFDD0']
+    },
+    {
+        name: 'Rose Gold Soft',
+        id: 'theme-rose-gold-soft',
+        colors: ['#B76E79', '#EAC102', '#F5E1DA']
+    },
+    {
+        name: 'Metal Armor',
+        id: 'theme-metal-armor',
+        colors: ['#848482', '#D3AE36', '#A67B00']
+    },
+    {
+        name: 'Mercury Signals',
+        id: 'theme-mercury-signals',
+        colors: ['#1A1A1A', '#E5BE01', '#A6A6A6']
     }
 ];
 
