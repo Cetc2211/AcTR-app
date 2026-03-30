@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
   try {
     const { alumnoId, grupoId, resultado, pruebaNombre } = await request.json();
 
+    if (!alumnoId || !pruebaNombre || typeof resultado !== 'number') {
+      return NextResponse.json({ error: 'Datos inválidos para vinculación' }, { status: 400 });
+    }
+
     // Referencia al documento del alumno en el CBTa 130
-    const alumnoRef = doc(db, 'alumnos', alumnoId);
-    const alumnoSnap = await getDoc(alumnoRef);
+    const alumnoRef = adminDb.collection('alumnos').doc(alumnoId);
+    const alumnoSnap = await alumnoRef.get();
 
     if (!alumnoSnap.exists()) {
       return NextResponse.json({ error: 'Alumno no encontrado' }, { status: 404 });
@@ -24,13 +27,18 @@ export async function POST(request: Request) {
     if (califFinal < 6) califFinal = 5;
 
     // Actualizamos el registro con el resultado de PIGEC
-    await updateDoc(alumnoRef, {
+    await alumnoRef.update({
       [`evaluaciones.${pruebaNombre}`]: califFinal,
       ultimaSincronizacion: new Date().toISOString()
     });
 
-    return NextResponse.json({ success: true, calificacionProcesada: califFinal });
+    return NextResponse.json({
+      success: true,
+      calificacionProcesada: califFinal,
+      grupoId: grupoId ?? null,
+    });
   } catch (error) {
+    console.error('Error en /api/vincular:', error);
     return NextResponse.json({ error: 'Error en el puente de datos' }, { status: 500 });
   }
 }
