@@ -1,5 +1,5 @@
-import { cert, getApps, initializeApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { cert, getApps, initializeApp, App } from 'firebase-admin/app';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
 
 type ServiceAccount = {
   project_id: string;
@@ -31,10 +31,13 @@ function getServiceAccount(): ServiceAccount {
   };
 }
 
-const app = getApps().length
-  ? getApps()[0]
-  : initializeApp({
-      credential: cert(getServiceAccount()),
-    });
+let _adminDb: Firestore | null = null;
 
-export const adminDb = getFirestore(app);
+export function getAdminDb(): Firestore {
+  if (_adminDb) return _adminDb;
+  const app: App = getApps().length
+    ? getApps()[0]
+    : initializeApp({ credential: cert(getServiceAccount()) });
+  _adminDb = getFirestore(app);
+  return _adminDb;
+}

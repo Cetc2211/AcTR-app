@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     }
 
     // Referencia al documento del alumno en el CBTa 130
-    const alumnoRef = adminDb.collection('alumnos').doc(alumnoId);
+    const alumnoRef = getAdminDb().collection('alumnos').doc(alumnoId);
     const alumnoSnap = await alumnoRef.get();
 
     if (!alumnoSnap.exists()) {
