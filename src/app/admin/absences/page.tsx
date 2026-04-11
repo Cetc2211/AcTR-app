@@ -60,6 +60,7 @@ export default function AbsencesPage() {
   const { toast } = useToast();
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [isManager, setIsManager] = useState(false);
+  const [accessCheckNonce, setAccessCheckNonce] = useState(0);
 
   const [date, setDate] = useState<Date>(new Date());
   const [records, setRecords] = useState<AbsenceRecord[]>([]);
@@ -185,7 +186,7 @@ export default function AbsencesPage() {
         }
     };
     verifyAccess();
-  }, [user, loadingAuth, router]); // Keep existing dep array for now, verifyAccess is internal to effect
+  }, [user, loadingAuth, loadingAdmin, isAdmin, router, accessCheckNonce]);
 
   // Fetch data when date changes
   const fetchAbsences = useCallback(async (selectedDate: Date) => {
@@ -593,6 +594,22 @@ export default function AbsencesPage() {
     }
   }, [date, hasAccess, fetchAbsences]); // Added fetchAbsences dependence
 
+  // Fallback de seguridad para evitar spinner infinito si la verificación se atasca.
+  useEffect(() => {
+    if (hasAccess !== null || loadingAuth || loadingAdmin) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setHasAccess(false);
+      toast({
+        variant: 'destructive',
+        title: 'Tiempo de espera agotado',
+        description: 'No se pudo validar el acceso a Seguimiento. Intenta recargar la página.',
+      });
+    }, 10000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [hasAccess, loadingAuth, loadingAdmin, toast]);
+
   if (loadingAuth || hasAccess === null) {
       return <div className="flex h-full w-full items-center justify-center p-12"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>;
   }
@@ -607,7 +624,18 @@ export default function AbsencesPage() {
             <p className="text-muted-foreground text-center max-w-md">
                 No tienes permisos para ver el monitor de seguimiento. Esta sección es exclusiva para el personal responsable del seguimiento académico.
             </p>
-            <Button onClick={() => router.push('/dashboard')}>Volver al Panel Principal</Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setHasAccess(null);
+                  setAccessCheckNonce((prev) => prev + 1);
+                }}
+              >
+                Reintentar verificación
+              </Button>
+              <Button onClick={() => router.push('/dashboard')}>Volver al Panel Principal</Button>
+            </div>
         </div>
       );
   }

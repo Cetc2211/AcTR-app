@@ -19,6 +19,8 @@ import { doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, query, serverTi
 import { db } from '@/lib/firebase';
 import { getAuth } from 'firebase/auth'; // Import auth directly
 import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { OfficialGroupsAdminPanel } from '@/components/admin/official-groups-admin-panel';
 
 
 export default function AdminPage() {
@@ -258,97 +260,110 @@ export default function AdminPage() {
             <div>
                 <h1 className="text-3xl font-bold flex items-center gap-2"><ShieldCheck /> Panel de Administrador</h1>
                 <p className="text-muted-foreground">
-                    Accede a la gestión institucional y controla permisos de acceso.
+                    Accede a la gestión institucional, grupos oficiales y permisos de acceso.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Users className="h-5 w-5" /> Gestión de Grupos Oficiales
-                        </CardTitle>
-                        <CardDescription>
-                            Administra grupos institucionales, altas de estudiantes, anuncios y justificaciones.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild className="w-full">
-                            <Link href="/admin/official-groups">Abrir Gestión de Grupos Oficiales</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+            <Tabs defaultValue="admin-tools" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="admin-tools">Administración</TabsTrigger>
+                    <TabsTrigger value="official-groups">Grupos Oficiales</TabsTrigger>
+                </TabsList>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5" /> Seguimiento de Inasistencias
-                        </CardTitle>
-                        <CardDescription>
-                            Revisa ausencias, contacto con tutores y acciones de seguimiento.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild variant="outline" className="w-full">
-                            <Link href="/admin/absences">Abrir Seguimiento</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-            
-            <Card>
-                <CardHeader>
-                    <CardTitle>Autorizar Nuevo Usuario</CardTitle>
-                    <CardDescription>
-                        Ingresa el correo electrónico del usuario al que quieres dar acceso. Una vez añadido, podrá crear su cuenta.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex w-full max-w-sm items-center space-x-2">
-                        <Input 
-                            type="email" 
-                            placeholder="correo@ejemplo.com"
-                            value={newEmail}
-                            onChange={e => setNewEmail(e.target.value)}
-                        />
-                        <Button onClick={handleAddEmail}>
-                            <UserPlus className="mr-2" /> Autorizar
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+                <TabsContent value="admin-tools" className="space-y-6 pt-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <AlertTriangle className="h-5 w-5" /> Seguimiento de Inasistencias
+                                </CardTitle>
+                                <CardDescription>
+                                    Revisa ausencias, contacto con tutores y acciones de seguimiento.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Button asChild variant="outline" className="w-full">
+                                    <Link href="/admin/absences">Abrir Seguimiento</Link>
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Usuarios Autorizados</CardTitle>
-                    <CardDescription>
-                        Esta es la lista de usuarios que tienen permiso para acceder a esta aplicación.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2">
-                        {authorizedEmails.length > 0 ? (
-                            authorizedEmails.map(email => (
-                                <div key={email} className="flex items-center justify-between rounded-md border bg-muted/30 p-3">
-                                    <p className="font-mono text-sm">{email}</p>
-                                    <Button variant="ghost" size="icon" 
-                                            className="text-destructive hover:text-destructive" 
-                                            onClick={() => handleRemoveEmail(email)}
-                                            disabled={email.toLowerCase() === user?.email?.toLowerCase()}
-                                    >
-                                        <UserX className="h-4 w-4" />
-                                        <span className="sr-only">Revocar acceso</span>
-                                    </Button>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="py-8 text-center text-sm text-muted-foreground">
-                                No hay usuarios autorizados añadidos.
-                            </p>
-                        )}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Users className="h-5 w-5" /> Gestión de Grupos Oficiales
+                                </CardTitle>
+                                <CardDescription>
+                                    Ahora esta gestión está integrada en la pestaña "Grupos Oficiales" de este panel.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground">
+                                    Usa la pestaña superior para crear grupos, registrar estudiantes y asignar tutores por correo.
+                                </p>
+                            </CardContent>
+                        </Card>
                     </div>
-                </CardContent>
-            </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Autorizar Nuevo Usuario</CardTitle>
+                            <CardDescription>
+                                Ingresa el correo electrónico del usuario al que quieres dar acceso. Una vez añadido, podrá crear su cuenta.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex w-full max-w-sm items-center space-x-2">
+                                <Input
+                                    type="email"
+                                    placeholder="correo@ejemplo.com"
+                                    value={newEmail}
+                                    onChange={e => setNewEmail(e.target.value)}
+                                />
+                                <Button onClick={handleAddEmail}>
+                                    <UserPlus className="mr-2" /> Autorizar
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Usuarios Autorizados</CardTitle>
+                            <CardDescription>
+                                Esta es la lista de usuarios que tienen permiso para acceder a esta aplicación.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2">
+                                {authorizedEmails.length > 0 ? (
+                                    authorizedEmails.map(email => (
+                                        <div key={email} className="flex items-center justify-between rounded-md border bg-muted/30 p-3">
+                                            <p className="font-mono text-sm">{email}</p>
+                                            <Button variant="ghost" size="icon"
+                                                className="text-destructive hover:text-destructive"
+                                                onClick={() => handleRemoveEmail(email)}
+                                                disabled={email.toLowerCase() === user?.email?.toLowerCase()}
+                                            >
+                                                <UserX className="h-4 w-4" />
+                                                <span className="sr-only">Revocar acceso</span>
+                                            </Button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="py-8 text-center text-sm text-muted-foreground">
+                                        No hay usuarios autorizados añadidos.
+                                    </p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="official-groups" className="pt-4">
+                    <OfficialGroupsAdminPanel showHeader={false} />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

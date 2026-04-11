@@ -1323,8 +1323,9 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
     const updateOfficialGroupTutor = useCallback(async (officialGroupId: string, tutorEmail: string) => {
         try {
             const docRef = doc(db, 'official_groups', officialGroupId);
-            await updateDoc(docRef, { tutorEmail });
-            console.log(`Tutor actualizado para grupo ${officialGroupId}: ${tutorEmail}`);
+            const normalizedTutorEmail = tutorEmail.trim().toLowerCase();
+            await updateDoc(docRef, { tutorEmail: normalizedTutorEmail });
+            console.log(`Tutor actualizado para grupo ${officialGroupId}: ${normalizedTutorEmail}`);
         } catch (error) {
             console.error('Error actualizando tutor:', error);
             throw error;

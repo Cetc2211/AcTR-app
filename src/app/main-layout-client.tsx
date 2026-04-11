@@ -91,7 +91,8 @@ export default function MainLayoutClient({
   // Determine roles
   const isTutor = useMemo(() => {
       if (!user?.email || !officialGroups) return false;
-      return officialGroups.some(g => g.tutorEmail === user.email);
+      const currentEmail = user.email.toLowerCase().trim();
+      return officialGroups.some(g => (g.tutorEmail || '').toLowerCase().trim() === currentEmail);
   }, [user, officialGroups]);
 
   useEffect(() => {
@@ -134,7 +135,6 @@ export default function MainLayoutClient({
       { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
       { href: '/records', icon: ClipboardSignature, label: 'Actas' },
       { href: '/reports', icon: FileText, label: 'Informes' },
-      ...(isAdmin || isTrackingManager ? [{ href: '/admin/official-groups', icon: ShieldCheck, label: 'Grupos Oficiales' }] : []),
       ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
       { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
       { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },
