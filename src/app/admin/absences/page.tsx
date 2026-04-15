@@ -346,9 +346,9 @@ export default function AbsencesPage() {
         const end = new Date(reportEndDate);
         end.setHours(23, 59, 59, 999);
 
-        // 1. Fetch Tracking Logs (Interventions)
-        const logsRef = collection(db, 'tracking_logs');
-        const qLogs = query(logsRef, where('date', '>=', Timestamp.fromDate(start)), where('date', '<=', Timestamp.fromDate(end)));
+        // 1. Fetch tutor interventions using the persisted collection and timestamp field.
+        const logsRef = collection(db, 'tutor_interventions');
+        const qLogs = query(logsRef, where('timestamp', '>=', Timestamp.fromDate(start)), where('timestamp', '<=', Timestamp.fromDate(end)));
         const logsSnap = await getDocs(qLogs);
         
         let calls = 0;
@@ -360,16 +360,14 @@ export default function AbsencesPage() {
 
         logsSnap.forEach(doc => {
             const data = doc.data();
-            const action = data.actionType || '';
-            const result = data.result || '';
-            const notes = (data.notes || '').toLowerCase();
+          const action = (data.action || '').toLowerCase();
 
-            if (action.includes('call') || action.includes('whatsapp')) calls++;
-            if (action.includes('home_visit')) visits++;
+          if (action.includes('llamada') || action.includes('call') || action.includes('whatsapp')) calls++;
+          if (action.includes('visita') || action.includes('home visit') || action.includes('domicili')) visits++;
             
-            if (result === 'agreement' || notes.includes('acuerdo') || notes.includes('compromiso')) agreements++;
-            if (result === 'student_found' || result === 'justified') located++;
-            if (result === 'no_answer' || result === 'continuing_monitor') pending++;
+          if (action.includes('acuerdo') || action.includes('compromiso')) agreements++;
+          if (action.includes('localizado') || action.includes('contactado') || action.includes('justificado')) located++;
+          if (action.includes('sin respuesta') || action.includes('seguimiento') || action.includes('pendiente')) pending++;
         });
 
         // 2. Fetch Absences (Incidences)
