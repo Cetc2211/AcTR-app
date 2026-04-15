@@ -158,6 +158,7 @@ interface DataContextType {
     addStudentObservation: (observation: Omit<StudentObservation, 'id' | 'date' | 'followUpUpdates' | 'isClosed'>) => Promise<void>;
     updateStudentObservation: (studentId: string, observationId: string, updateText: string, isClosing: boolean) => Promise<void>;
     takeAttendanceForDate: (groupId: string, date: string) => Promise<void>;
+    reportAbsencesForDate: (groupId: string, date: string) => Promise<void>;
     deleteAttendanceDate: (date: string) => Promise<void>;
     resetAllData: () => Promise<void>;
     importAllData: (data: ExportData) => Promise<void>;
@@ -1255,6 +1256,50 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
 
     }, [groups, activePartialId, setAllPartialsData, user]);
 
+    const reportAbsencesForDate = useCallback(async (groupId: string, date: string) => {
+        if (!user) {
+            throw new Error('Debes iniciar sesión para reportar inasistencias.');
+        }
+
+        const group = groups.find(g => g.id === groupId);
+        if (!group) {
+            throw new Error('No se encontró el grupo activo.');
+        }
+
+        const groupData = allPartialsData[groupId] || {};
+        const pData = groupData[activePartialId] || defaultPartialData;
+        const attendanceForDate = pData.attendance[date];
+
+        if (!attendanceForDate) {
+            throw new Error('Primero registra la asistencia de la fecha que quieres reportar.');
+        }
+
+        const absentStudents = group.students
+            .filter(student => attendanceForDate[student.id] === false)
+            .map(student => ({
+                id: student.id,
+                name: student.name,
+                tutorName: student.tutorName || '',
+                tutorPhone: student.tutorPhone || '',
+                studentPhone: student.phone || '',
+            }));
+
+        const safeDate = date.replace(/\//g, '-');
+        const docId = `${groupId}_${safeDate}`;
+        const docRef = doc(db, 'absences', docId);
+
+        await setDoc(docRef, {
+            groupId,
+            groupName: group.groupName || group.subject,
+            date,
+            teacherId: user.uid,
+            teacherEmail: user.email,
+            absentStudents,
+            whatsappLink: group.whatsappLink || '',
+            timestamp: new Date().toISOString(),
+        }, { merge: true });
+    }, [user, groups, allPartialsData, activePartialId]);
+
     const deleteAttendanceDate = useCallback(async (date: string) => {
         if (!activeGroupId) return;
         setAllPartialsData(prev => {
@@ -1977,7 +2022,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             setGroups, setAllStudents, setAllObservations, setAllPartialsData, setSpecialNotes,
             setSettings, setActiveGroupId, setActivePartialId,
             setGrades, setAttendance, setParticipations, setActivities, setActivityRecords, setRecoveryGrades, setMeritGrades, setStudentFeedback, setGroupAnalysis,
-            addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
+            addStudentsToGroup, removeStudentFromGroup, updateGroup, updateStudent, updateGroupCriteria, deleteGroup, addStudentObservation, updateStudentObservation, takeAttendanceForDate, reportAbsencesForDate, deleteAttendanceDate, resetAllData, importAllData, addSpecialNote, updateSpecialNote, deleteSpecialNote,
             createOfficialGroup, updateOfficialGroupTutor, deleteOfficialGroup, addStudentsToOfficialGroup, getOfficialGroupStudents, createAnnouncement, deleteAnnouncement, createJustification, deleteJustification,
             calculateFinalGrade, calculateDetailedFinalGrade, getStudentRiskLevel, fetchPartialData, triggerPedagogicalCheck, syncPublicData, forceCloudSync, uploadLocalToCloud, syncStatus, syncProgress,
         }}>

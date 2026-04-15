@@ -19,11 +19,13 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Send } from 'lucide-react';
 import { useData } from '@/hooks/use-data';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AttendancePage() {
-  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, justifications } = useData();
+  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, reportAbsencesForDate, justifications } = useData();
+  const { toast } = useToast();
   const { attendance } = partialData;
 
   const justifiedAttendanceMap = useMemo(() => {
@@ -47,6 +49,27 @@ export default function AttendancePage() {
     if (!activeGroup) return;
     const today = format(new Date(), 'yyyy-MM-dd');
     takeAttendanceForDate(activeGroup.id, today);
+  };
+
+  const handleReportAbsences = async () => {
+    if (!activeGroup) return;
+
+    const today = format(new Date(), 'yyyy-MM-dd');
+
+    try {
+      await reportAbsencesForDate(activeGroup.id, today);
+      toast({
+        title: 'Inasistencias reportadas',
+        description: 'El reporte fue enviado a la sección de Seguimiento.',
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo enviar el reporte de inasistencias.';
+      toast({
+        variant: 'destructive',
+        title: 'Error al reportar',
+        description: message,
+      });
+    }
   };
   
   const handleAttendanceChange = (studentId: string, date: string, isPresent: boolean) => {
@@ -92,7 +115,15 @@ export default function AttendancePage() {
             <span className="inline-block h-3 w-3 rounded-sm bg-blue-600" />
             Inasistencia justificada (bloqueada)
           </div>
-          {activeGroup && <Button onClick={handleRegisterToday}>Registrar Asistencia de Hoy</Button>}
+          {activeGroup && (
+            <>
+              <Button variant="outline" onClick={handleReportAbsences}>
+                <Send className="mr-2 h-4 w-4" />
+                Reportar Inasistencias
+              </Button>
+              <Button onClick={handleRegisterToday}>Registrar Asistencia de Hoy</Button>
+            </>
+          )}
         </div>
       </div>
 

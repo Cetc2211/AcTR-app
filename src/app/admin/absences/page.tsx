@@ -194,28 +194,30 @@ export default function AbsencesPage() {
 
     setIsLoading(true);
     try {
-      const formattedDate = format(selectedDate, 'dd/MM/yyyy');
-      console.log("Fetching absences for:", formattedDate);
-      
-      let q;
-      if (isManager) {
-        q = query(
-            collection(db, 'absences'),
-            where('date', '==', formattedDate)
-        );
-      } else {
-        q = query(
-            collection(db, 'absences'),
-            where('date', '==', formattedDate),
-            where('teacherId', '==', user.uid)
-        );
+      const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+      const legacyFormattedDate = format(selectedDate, 'dd/MM/yyyy');
+      console.log("Fetching absences for:", formattedDate, legacyFormattedDate);
+
+      const queries = [formattedDate];
+      if (legacyFormattedDate !== formattedDate) {
+        queries.push(legacyFormattedDate);
       }
 
-      const querySnapshot = await getDocs(q);
       const fetchedRecords: AbsenceRecord[] = [];
-      querySnapshot.forEach((doc) => {
-        fetchedRecords.push({ id: doc.id, ...doc.data() } as AbsenceRecord);
-      });
+      const fetchedById = new Map<string, AbsenceRecord>();
+
+      for (const queryDate of queries) {
+        const q = isManager
+          ? query(collection(db, 'absences'), where('date', '==', queryDate))
+          : query(collection(db, 'absences'), where('date', '==', queryDate), where('teacherId', '==', user.uid));
+
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          fetchedById.set(doc.id, { id: doc.id, ...doc.data() } as AbsenceRecord);
+        });
+      }
+
+      fetchedRecords.push(...fetchedById.values());
 
       setRecords(fetchedRecords);
     } catch (error) {
