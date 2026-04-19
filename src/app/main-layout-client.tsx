@@ -130,6 +130,7 @@ export default function MainLayoutClient({
       { href: '/bitacora', icon: BookText, label: 'Bitácora' },
       { href: '/grades', icon: FilePen, label: 'Calificaciones' },
       { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
+      { href: '/teacher-tracking', icon: Shield, label: 'Seg. Docente' },
       { href: '/participations', icon: PenSquare, label: 'Participaciones' },
       { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
       { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
