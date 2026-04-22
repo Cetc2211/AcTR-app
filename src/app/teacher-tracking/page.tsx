@@ -62,6 +62,13 @@ const STATUS_BADGE_CLASSES: Record<TeacherIncidentStatus, string> = {
 const DAY_LABELS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 const TODAY_DAY = new Date().getDay();
 
+function timeToMinutes(time: string) {
+  const [h, m] = time.split(':').map((value) => Number(value));
+  const hours = Number.isFinite(h) ? h : 0;
+  const minutes = Number.isFinite(m) ? m : 0;
+  return hours * 60 + minutes;
+}
+
 export default function TeacherTrackingPage() {
   const { groups, officialGroups } = useData();
   const { isAdmin, loading: loadingAdmin } = useAdmin();
@@ -93,6 +100,8 @@ export default function TeacherTrackingPage() {
   const [incidentContextBlock, setIncidentContextBlock] = useState<TeacherScheduleBlock | null>(null);
 
   const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [selectedPaseGroupId, setSelectedPaseGroupId] = useState<string>('all');
+  const [selectedLogGroupId, setSelectedLogGroupId] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -128,21 +137,30 @@ export default function TeacherTrackingPage() {
   );
 
   const schedulesForSelectedGroup = useMemo(
-    () => (selectedGroupId ? getSchedulesForGroup(selectedGroupId) : []),
+    () => (selectedGroupId ? getSchedulesForGroup(selectedGroupId).sort((a, b) => (a.dayOfWeek - b.dayOfWeek) || (timeToMinutes(a.startTime) - timeToMinutes(b.startTime))) : []),
     [getSchedulesForGroup, selectedGroupId],
   );
+
+  const todayScheduleByGroup = useMemo(() => {
+    const scoped = selectedPaseGroupId === 'all'
+      ? todaySchedule
+      : todaySchedule.filter((block) => block.groupId === selectedPaseGroupId);
+
+    return [...scoped].sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+  }, [todaySchedule, selectedPaseGroupId]);
 
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
       const matchesDate = !selectedDate || log.incidentDate === selectedDate;
+      const matchesGroup = selectedLogGroupId === 'all' || log.groupId === selectedLogGroupId;
       const normalizedSearch = searchTerm.trim().toLowerCase();
       const matchesSearch = !normalizedSearch
         || log.teacherName.toLowerCase().includes(normalizedSearch)
         || log.teacherEmail.toLowerCase().includes(normalizedSearch)
         || log.institutionalNotes.toLowerCase().includes(normalizedSearch);
-      return matchesDate && matchesSearch;
+      return matchesDate && matchesGroup && matchesSearch;
     });
-  }, [logs, searchTerm, selectedDate]);
+  }, [logs, searchTerm, selectedDate, selectedLogGroupId]);
 
   const teacherSubjectSuggestions = useMemo(() => {
     if (!selectedTeacherId || teacherMode !== 'directory') {
@@ -554,7 +572,7 @@ export default function TeacherTrackingPage() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium">Bloques hoy ({DAY_LABELS[TODAY_DAY]})</CardTitle>
               </CardHeader>
-              <CardContent><div className="text-2xl font-bold">{todaySchedule.length}</div></CardContent>
+              <CardContent><div className="text-2xl font-bold">{todayScheduleByGroup.length}</div></CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
@@ -578,7 +596,7 @@ export default function TeacherTrackingPage() {
                 <div>
                   <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5" /> Pase de Lista ({DAY_LABELS[TODAY_DAY]})</CardTitle>
                   <CardDescription>
-                    Basado en el horario oficial. Si falta configuración, corrígela en la pestaña Horario Escolar.
+                    Selecciona grupo para ver únicamente sus bloques del día, ordenados por horario.
                   </CardDescription>
                 </div>
                 <Button onClick={() => openIncidentDialog()}>
@@ -587,16 +605,28 @@ export default function TeacherTrackingPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
+              <div className="space-y-2 md:max-w-sm">
+                <Label>Grupo</Label>
+                <Select value={selectedPaseGroupId} onValueChange={setSelectedPaseGroupId}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los grupos</SelectItem>
+                    {syncedGroups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>{group.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               {isLoading ? (
                 <div className="text-sm text-muted-foreground">Cargando horarios...</div>
-              ) : todaySchedule.length === 0 ? (
+              ) : todayScheduleByGroup.length === 0 ? (
                 <div className="rounded-md border border-dashed p-6 text-center">
                   <AlertCircle className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm font-medium">No hay bloques configurados para hoy.</p>
-                  <p className="text-xs text-muted-foreground">Ve a Horario Escolar para registrar o corregir bloques.</p>
+                  <p className="text-sm font-medium">No hay bloques configurados para el filtro actual.</p>
+                  <p className="text-xs text-muted-foreground">Selecciona otro grupo o corrige horarios en Horario Escolar.</p>
                 </div>
               ) : (
-                todaySchedule.map((block) => (
+                todayScheduleByGroup.map((block) => (
                   <div key={block.id} className="rounded-md border p-3 flex items-center justify-between gap-2">
                     <div>
                       <p className="font-semibold">{block.groupLabel} · {block.subject}</p>
@@ -614,9 +644,21 @@ export default function TeacherTrackingPage() {
           <Card>
             <CardHeader>
               <CardTitle>Filtros</CardTitle>
-              <CardDescription>Filtra por fecha o por texto libre.</CardDescription>
+              <CardDescription>Filtra por grupo, fecha o texto libre.</CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-[220px_1fr]">
+            <CardContent className="grid gap-4 md:grid-cols-[220px_220px_1fr]">
+              <div className="space-y-2">
+                <Label>Grupo</Label>
+                <Select value={selectedLogGroupId} onValueChange={setSelectedLogGroupId}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los grupos</SelectItem>
+                    {syncedGroups.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>{group.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>Fecha</Label>
                 <Input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
@@ -652,6 +694,7 @@ export default function TeacherTrackingPage() {
                           <UserRound className="h-4 w-4 text-muted-foreground" />
                           <p className="font-semibold">{log.teacherName}</p>
                           <Badge className={STATUS_BADGE_CLASSES[log.status]}>{STATUS_LABELS[log.status]}</Badge>
+                          {log.groupLabel && <Badge variant="outline">{log.groupLabel}</Badge>}
                         </div>
                         <p className="text-sm text-muted-foreground">{log.teacherEmail || 'Sin correo registrado'}</p>
                         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
