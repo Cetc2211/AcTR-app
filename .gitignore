@@ -1,7 +1,12 @@
 # Ignorar archivos generados por Next.js
 .next/
+out/
 node_modules/.evi
 node_modules
+
+# Ignorar artefactos de build/deploy de Firebase Hosting
+.firebase/
+Build/
 
 # Ignorar archivos de configuración local y variables de entorno
 .env.local
