@@ -76,6 +76,7 @@ export default function TeacherTrackingPage() {
     deleteLog,
     updateLog,
     addManualTeacher,
+    addManualTeachersBatch,
     addScheduleBlock,
     deleteScheduleBlock,
     updateScheduleBlock,
@@ -110,6 +111,8 @@ export default function TeacherTrackingPage() {
   const [manualTeacherEmail, setManualTeacherEmail] = useState('');
   const [manualTeacherGroupId, setManualTeacherGroupId] = useState('');
   const [manualTeacherSubject, setManualTeacherSubject] = useState('');
+  const [bulkTeacherLines, setBulkTeacherLines] = useState('');
+  const [bulkSubjectLines, setBulkSubjectLines] = useState('');
 
   const [teacherName, setTeacherName] = useState('');
   const [teacherEmail, setTeacherEmail] = useState('');
@@ -140,6 +143,24 @@ export default function TeacherTrackingPage() {
       return matchesDate && matchesSearch;
     });
   }, [logs, searchTerm, selectedDate]);
+
+  const teacherSubjectSuggestions = useMemo(() => {
+    if (!selectedTeacherId || teacherMode !== 'directory') {
+      return [] as string[];
+    }
+
+    const selectedTeacher = teacherDirectory.find((teacher) => teacher.id === selectedTeacherId);
+    if (!selectedTeacher) {
+      return [] as string[];
+    }
+
+    const subjects = selectedTeacher.assignments
+      .filter((assignment) => !scheduleGroupId || assignment.groupId === scheduleGroupId)
+      .map((assignment) => assignment.subject.trim())
+      .filter(Boolean);
+
+    return Array.from(new Set(subjects)).sort((a, b) => a.localeCompare(b));
+  }, [selectedTeacherId, teacherMode, teacherDirectory, scheduleGroupId]);
 
   const openScheduleDialog = (block?: TeacherScheduleBlock, presetGroupId?: string) => {
     if (block) {
@@ -324,6 +345,51 @@ export default function TeacherTrackingPage() {
     setManualTeacherSubject('');
   };
 
+  const handleManualTeacherBulkCreate = () => {
+    const group = syncedGroups.find((g) => g.id === manualTeacherGroupId);
+    if (!group) {
+      toast({ variant: 'destructive', title: 'Grupo requerido', description: 'Selecciona un grupo para la carga masiva.' });
+      return;
+    }
+
+    const teachers = bulkTeacherLines
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const subjects = bulkSubjectLines
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (teachers.length === 0 || subjects.length === 0) {
+      toast({ variant: 'destructive', title: 'Datos incompletos', description: 'Pega al menos una fila de docentes y asignaturas.' });
+      return;
+    }
+
+    if (teachers.length !== subjects.length) {
+      toast({
+        variant: 'destructive',
+        title: 'Filas no coinciden',
+        description: `Docentes: ${teachers.length} / Asignaturas: ${subjects.length}. Deben tener el mismo número de líneas.`,
+      });
+      return;
+    }
+
+    const rows = teachers.map((teacherName, index) => ({
+      teacherName,
+      groupId: group.id,
+      groupLabel: group.label,
+      subject: subjects[index],
+    }));
+
+    const savedCount = addManualTeachersBatch(rows);
+    toast({ title: 'Carga masiva completada', description: `Se procesaron ${savedCount} registros.` });
+
+    setBulkTeacherLines('');
+    setBulkSubjectLines('');
+  };
+
   if (loadingAdmin) {
     return <div className="p-6 text-sm text-muted-foreground">Cargando módulo de Seg. Docente...</div>;
   }
@@ -351,9 +417,24 @@ export default function TeacherTrackingPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5" /> Alta Manual de Docentes</CardTitle>
-                <CardDescription>Para docentes que no aparecen en plataforma.</CardDescription>
+                <CardDescription>Para docentes que no aparecen en plataforma. Incluye carga individual y carga masiva por pegado.</CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-2">
+              <CardContent className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>Grupo</Label>
+                    <Select value={manualTeacherGroupId} onValueChange={setManualTeacherGroupId}>
+                      <SelectTrigger><SelectValue placeholder="Selecciona grupo" /></SelectTrigger>
+                      <SelectContent>
+                        {syncedGroups.map((group) => (
+                          <SelectItem key={group.id} value={group.id}>{group.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Docente</Label>
                   <Input value={manualTeacherName} onChange={(e) => setManualTeacherName(e.target.value)} placeholder="Nombre completo" />
@@ -363,22 +444,40 @@ export default function TeacherTrackingPage() {
                   <Input value={manualTeacherEmail} onChange={(e) => setManualTeacherEmail(e.target.value)} placeholder="docente@institucion.edu" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Grupo</Label>
-                  <Select value={manualTeacherGroupId} onValueChange={setManualTeacherGroupId}>
-                    <SelectTrigger><SelectValue placeholder="Selecciona grupo" /></SelectTrigger>
-                    <SelectContent>
-                      {syncedGroups.map((group) => (
-                        <SelectItem key={group.id} value={group.id}>{group.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
                   <Label>Materia</Label>
                   <Input value={manualTeacherSubject} onChange={(e) => setManualTeacherSubject(e.target.value)} placeholder="Ej. Álgebra" />
                 </div>
                 <div className="md:col-span-2">
                   <Button onClick={handleManualTeacherCreate}>Guardar docente</Button>
+                </div>
+                </div>
+
+                <div className="rounded-md border p-4 space-y-4">
+                  <p className="text-sm font-medium">Carga masiva secuencial</p>
+                  <p className="text-xs text-muted-foreground">
+                    Pega una lista de docentes y otra de asignaturas, una por línea, en el mismo orden. Ejemplo: línea 1 docente ↔ línea 1 asignatura.
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Lista de docentes</Label>
+                      <Textarea
+                        value={bulkTeacherLines}
+                        onChange={(e) => setBulkTeacherLines(e.target.value)}
+                        rows={8}
+                        placeholder={'Docente 1\nDocente 2\nDocente 3'}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Lista de asignaturas</Label>
+                      <Textarea
+                        value={bulkSubjectLines}
+                        onChange={(e) => setBulkSubjectLines(e.target.value)}
+                        rows={8}
+                        placeholder={'Asignatura 1\nAsignatura 2\nAsignatura 3'}
+                      />
+                    </div>
+                  </div>
+                  <Button variant="outline" onClick={handleManualTeacherBulkCreate}>Guardar carga masiva</Button>
                 </div>
               </CardContent>
             </Card>
@@ -668,6 +767,27 @@ export default function TeacherTrackingPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                {teacherSubjectSuggestions.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <p className="text-xs text-muted-foreground">Asignaturas sugeridas para este docente en el grupo seleccionado:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {teacherSubjectSuggestions.map((subject) => (
+                        <Button
+                          key={subject}
+                          type="button"
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            setScheduleSubject('');
+                            setManualScheduleSubject(subject);
+                          }}
+                        >
+                          {subject}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">

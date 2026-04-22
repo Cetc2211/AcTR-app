@@ -87,6 +87,8 @@ export type CreateManualTeacherInput = {
   subject: string;
 };
 
+export type CreateManualTeacherBatchInput = CreateManualTeacherInput[];
+
 export type CreateScheduleBlockInput = {
   groupId: string;
   groupLabel: string;
@@ -367,6 +369,51 @@ export function useTeacherTracking(platformGroups: Group[] = [], officialGroups:
     return teacherId;
   }, [manualTeachers, persistManualTeachers]);
 
+  const addManualTeachersBatch = useCallback((inputs: CreateManualTeacherBatchInput) => {
+    if (inputs.length === 0) {
+      return 0;
+    }
+
+    const timestamp = new Date().toISOString();
+    let nextTeachers = [...manualTeachers];
+
+    inputs.forEach((input) => {
+      const teacherId = normalizeTeacherId(input.teacherName, input.teacherEmail);
+      const assignment: TeacherAssignment = {
+        groupId: input.groupId,
+        groupLabel: input.groupLabel,
+        subject: input.subject.trim(),
+      };
+
+      const existing = nextTeachers.find((teacher) => teacher.id === teacherId);
+      if (existing) {
+        nextTeachers = nextTeachers.map((teacher) => teacher.id === teacherId ? {
+          ...teacher,
+          name: input.teacherName.trim(),
+          email: (input.teacherEmail || '').trim().toLowerCase(),
+          assignments: mergeAssignments(teacher.assignments, [assignment]),
+          updatedAt: timestamp,
+        } : teacher);
+      } else {
+        nextTeachers = [
+          {
+            id: teacherId,
+            name: input.teacherName.trim(),
+            email: (input.teacherEmail || '').trim().toLowerCase(),
+            source: 'manual',
+            assignments: [assignment],
+            createdAt: timestamp,
+            updatedAt: timestamp,
+          },
+          ...nextTeachers,
+        ];
+      }
+    });
+
+    persistManualTeachers(nextTeachers);
+    return inputs.length;
+  }, [manualTeachers, persistManualTeachers]);
+
   const addScheduleBlock = useCallback((input: CreateScheduleBlockInput) => {
     const timestamp = new Date().toISOString();
     const nextBlock: TeacherScheduleBlock = {
@@ -446,6 +493,7 @@ export function useTeacherTracking(platformGroups: Group[] = [], officialGroups:
     deleteLog,
     updateLog,
     addManualTeacher,
+    addManualTeachersBatch,
     addScheduleBlock,
     deleteScheduleBlock,
     updateScheduleBlock,

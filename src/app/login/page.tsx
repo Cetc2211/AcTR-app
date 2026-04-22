@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSignInWithEmailAndPassword, useSendPasswordResetEmail } from 'react-firebase-hooks/auth';
+import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,69 +28,82 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { AuthError } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
   const [sendPasswordResetEmail, sending, resetError] = useSendPasswordResetEmail(auth);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const [resetEmail, setResetEmail] = useState('');
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
+  const getSignInErrorMessage = (code: string) => {
+    switch (code) {
+      case 'auth/user-not-found':
+        return 'Este correo electrónico no está registrado. Por favor, crea una cuenta.';
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'Correo o contraseña incorrectos. Verifica tus datos e inténtalo de nuevo.';
+      case 'auth/invalid-email':
+        return 'El formato del correo electrónico no es válido.';
+      case 'auth/user-disabled':
+        return 'Esta cuenta está deshabilitada. Contacta al administrador.';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos fallidos. Espera unos minutos o usa recuperar contraseña.';
+      case 'auth/network-request-failed':
+        return 'No hay conexión de red o el servicio de autenticación no responde.';
+      case 'auth/invalid-api-key':
+      case 'auth/app-not-authorized':
+        return 'Error de configuración del proyecto Firebase (API Key o dominio autorizado).';
+      default:
+        return 'No se pudo iniciar sesión. Inténtalo de nuevo en unos minutos.';
+    }
+  };
+
   const handleSignIn = async () => {
-    try {
-      const result = await signInWithEmailAndPassword(email, password);
-      if (result) {
-        toast({
-          title: 'Inicio de sesión exitoso',
-          description: 'Bienvenido de nuevo.',
-        });
-        router.push('/dashboard');
-      } else if (error) {
-        let errorMessage = 'Las credenciales proporcionadas no son válidas. Por favor, inténtalo de nuevo.';
-        // Check if the error object has a 'code' property, which is typical for Firebase Auth errors.
-        if (typeof error === 'object' && error !== null && 'code' in error) {
-          const authError = error as { code: string };
-          switch (authError.code) {
-            case 'auth/user-not-found':
-              errorMessage = 'Este correo electrónico no está registrado. Por favor, crea una cuenta.';
-              break;
-            case 'auth/wrong-password':
-            case 'auth/invalid-credential':
-               errorMessage = 'Contraseña incorrecta. Por favor, inténtalo de nuevo.';
-               break;
-            case 'auth/invalid-email':
-              errorMessage = 'El formato del correo electrónico no es válido.';
-              break;
-            default:
-              console.error('Firebase Auth Error:', error);
-          }
-        }
-         toast({
-          variant: 'destructive',
-          title: 'Error al iniciar sesión',
-          description: errorMessage,
-        });
-      }
-    } catch (e: any) {
-       toast({
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
+      toast({
         variant: 'destructive',
-        title: 'Error inesperado',
-        description: 'Ocurrió un error al intentar iniciar sesión. Por favor, revisa la consola para más detalles.',
+        title: 'Datos incompletos',
+        description: 'Ingresa correo y contraseña para continuar.',
       });
+      return;
+    }
+
+    setIsSigningIn(true);
+    try {
+      await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      toast({
+        title: 'Inicio de sesión exitoso',
+        description: 'Bienvenido de nuevo.',
+      });
+      router.push('/dashboard');
+    } catch (e: any) {
+      const code = typeof e?.code === 'string' ? e.code : 'unknown';
+      console.error('Firebase Auth Error:', code, e);
+      toast({
+        variant: 'destructive',
+        title: 'Error al iniciar sesión',
+        description: getSignInErrorMessage(code),
+      });
+    } finally {
+      setIsSigningIn(false);
     }
   };
   
   const handlePasswordReset = async () => {
-    if (!resetEmail) {
+    const normalizedResetEmail = resetEmail.trim().toLowerCase();
+    if (!normalizedResetEmail) {
         toast({ variant: 'destructive', title: 'Correo requerido', description: 'Por favor, ingresa tu correo electrónico.' });
         return;
     }
     try {
-        const success = await sendPasswordResetEmail(resetEmail);
+        const success = await sendPasswordResetEmail(normalizedResetEmail);
         if (success) {
             toast({ title: 'Correo enviado', description: 'Revisa tu bandeja de entrada para restablecer tu contraseña.' });
             setIsResetDialogOpen(false);
@@ -184,8 +197,8 @@ export default function LoginPage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full" onClick={handleSignIn} disabled={loading}>
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
+          <Button className="w-full" onClick={handleSignIn} disabled={isSigningIn}>
+            {isSigningIn ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
             Iniciar Sesión
           </Button>
           <div className="text-center text-sm">
