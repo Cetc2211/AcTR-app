@@ -398,6 +398,21 @@ export function useTeacherTracking(platformGroups: Group[] = [], officialGroups:
     persistScheduleBlocks(scheduleBlocks.filter((block) => block.id !== blockId));
   }, [persistScheduleBlocks, scheduleBlocks]);
 
+  const updateScheduleBlock = useCallback((blockId: string, updates: Partial<Omit<TeacherScheduleBlock, 'id' | 'createdAt'>>) => {
+    const timestamp = new Date().toISOString();
+    const nextBlocks = scheduleBlocks.map((block) =>
+      block.id === blockId ? { ...block, ...updates, updatedAt: timestamp } : block,
+    ).sort((a, b) => (a.dayOfWeek - b.dayOfWeek) || a.startTime.localeCompare(b.startTime));
+    persistScheduleBlocks(nextBlocks);
+  }, [persistScheduleBlocks, scheduleBlocks]);
+
+  const updateLog = useCallback((logId: string, updates: Partial<Omit<TeacherTrackingLog, 'id' | 'createdAt'>>) => {
+    const timestamp = new Date().toISOString();
+    persistLogs(logs.map((log) =>
+      log.id === logId ? { ...log, ...updates, updatedAt: timestamp } : log,
+    ));
+  }, [logs, persistLogs]);
+
   const todayDayOfWeek = new Date().getDay();
 
   const todaySchedule = useMemo(() => {
@@ -429,9 +444,11 @@ export function useTeacherTracking(platformGroups: Group[] = [], officialGroups:
     groupsWithoutScheduleToday,
     addLog,
     deleteLog,
+    updateLog,
     addManualTeacher,
     addScheduleBlock,
     deleteScheduleBlock,
+    updateScheduleBlock,
     getSchedulesForGroup,
   };
 }
