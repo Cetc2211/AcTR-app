@@ -1,0 +1,14 @@
+{
+  "files.exclude": {
+    "**/.firebase": true,
+    "**/*firebase-adminsdk-*.json": true
+  },
+  "search.exclude": {
+    "**/.firebase": true,
+    "**/*firebase-adminsdk-*.json": true
+  },
+  "files.watcherExclude": {
+    "**/.firebase/**": true
+  },
+  "html.validate.scripts": false
+}
