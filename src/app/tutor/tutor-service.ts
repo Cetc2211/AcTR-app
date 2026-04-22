@@ -6,6 +6,8 @@ import { collection, query, where, getDocs, doc, getDoc, addDoc, orderBy, limit,
 export interface TutorStudentView extends Student {
   totalAbsences: number;
   absencePercentage: number;
+    completionRate: number;
+    failingSubjects: number;
   riskVariables: {
     dropoutRisk: boolean;
     failingRisk: boolean;
@@ -21,10 +23,11 @@ export class TutorService {
   // 1. Filtro de Grupos Asignados (Real)
   static async getTutorGroupsForEmail(tutorEmail: string): Promise<OfficialGroup[]> {
     try {
+                const normalizedEmail = tutorEmail.toLowerCase().trim();
         const groupsRef = collection(db, 'official_groups');
         // Buscamos grupos donde el tutorEmail coincida
         // Nota: Asegurarse de tener índice compuesto si es necesario, pero simple should work
-        const q = query(groupsRef, where('tutorEmail', '==', tutorEmail));
+                const q = query(groupsRef, where('tutorEmail', '==', normalizedEmail));
         const querySnapshot = await getDocs(q);
         
         const groups: OfficialGroup[] = [];
@@ -141,6 +144,8 @@ export class TutorService {
                 ...student,
                 totalAbsences,
                 absencePercentage,
+                completionRate: stats.completionRate,
+                failingSubjects: stats.failingSubjects,
                 riskVariables: {
                     dropoutRisk: isDropoutRisk,
                     failingRisk: isFailingRisk
@@ -193,37 +198,18 @@ export class TutorService {
       studentIds.forEach(id => stats[id] = { completionRate: 100, failingSubjects: 0 });
 
       try {
-        // LEEMOS DE LA COLECCIÓN PÚBLICA 'academic_compliance'
-        // Esta colección contiene documentos { studentId, groupId, completionRate, failingRisk }
-        // Necesitemos filtrar por los alumnos de interés.
-        // Como 'in' query tiene limite 10, mejor traemos todo lo reciente o filtramos en memoria si no es costoso.
-        // O hacemos batches.
-        // Opción: Query por studentId es ineficiente (N queries).
-        // Opción: Query por collectionGroup si guardamos officialGroupId en el documento.
-        // Requerimos que 'academic_compliance' tenga 'officialGroupId' o que filtremos por materias.
-        
-        // Paso 1: Obtener IDs de materias del grupo oficial
-        const groupsRef = collection(db, 'groups');
-        const qGroups = query(groupsRef, where('officialGroupId', '==', officialGroupId));
-        const groupsSnap = await getDocs(qGroups);
-        const subjectGroupIds = groupsSnap.docs.map(d => d.id);
-        
-        if (subjectGroupIds.length === 0) return stats;
-
-        // Paso 2: Leer compliance de esas materias
-        // Optimizacion: Leer toda la coleccion 'academic_compliance' donde groupId IN subjectGroupIds
-        // Firestore 'in' limit es 10. Si hay mas de 10 materias, dividir.
-        
+        // LEEMOS 'academic_compliance' por studentId (en chunks de 10 por limite Firestore).
+        // Esta estrategia funciona con el modelo actual, donde groupId es el id local del grupo.
+        // officialGroupId queda reservado para una futura normalizacion de esquema.
         const complianceRef = collection(db, 'academic_compliance');
-        // Dividir en chunks de 10
         const chunks = [];
-        for (let i = 0; i < subjectGroupIds.length; i += 10) {
-            chunks.push(subjectGroupIds.slice(i, i + 10));
+        for (let i = 0; i < studentIds.length; i += 10) {
+            chunks.push(studentIds.slice(i, i + 10));
         }
 
         const allDocs = [];
         for (const chunk of chunks) {
-            const q = query(complianceRef, where('groupId', 'in', chunk));
+            const q = query(complianceRef, where('studentId', 'in', chunk));
             const snap = await getDocs(q);
             allDocs.push(...snap.docs);
         }

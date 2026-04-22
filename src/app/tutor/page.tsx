@@ -228,9 +228,9 @@ function StudentCard({ student, onUpdate }: { student: TutorStudentView; onUpdat
                     Rendimiento
                 </div>
                 <span className="text-2xl font-bold text-foreground">
-                    -- {/* Placeholder para promedio */}
+                    {student.completionRate.toFixed(1)}%
                 </span>
-                <span className="text-[10px] text-muted-foreground">Promedio General</span>
+                <span className="text-[10px] text-muted-foreground">Cumplimiento Académico</span>
             </div>
         </div>
 
