@@ -854,37 +854,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     ? (value as (prevState: T) => T)(oldValue)
                     : value;
             
-            // Schema Validation Gatekeeper
+            // Schema Validation — warn only, never abort a save
             if (key === 'app_groups') {
                 const groups = newValue as Group[];
-                const invalidGroups = groups.filter(g => 
+                const invalidGroups = groups.filter(g =>
                     !g.groupName || g.groupName.trim() === '' ||
                     !g.subject || g.subject.trim() === '' ||
                     !g.semester || g.semester.trim() === ''
                 );
                 if (invalidGroups.length > 0) {
-                    console.warn('Schema validation failed for groups:', invalidGroups);
-                    // Attempt to consolidate local data before push
-                    try {
-                        const localPayload = await get(key);
-                        if (localPayload && typeof localPayload === 'object' && 'value' in localPayload) {
-                            const localGroups = localPayload.value as Group[];
-                            // Merge with local data to rescue valid groups
-                            const mergedGroups = [...groups];
-                            localGroups.forEach(localGroup => {
-                                if (!mergedGroups.some(g => g.id === localGroup.id)) {
-                                    mergedGroups.push(localGroup);
-                                }
-                            });
-                            setter(mergedGroups as T);
-                            return; // Do not push invalid data to cloud
-                        }
-                    } catch (e) {
-                        console.error('Error consolidating local data:', e);
-                    }
-                    // If consolidation fails, prevent push
-                    console.error('Preventing push of invalid group data to Firebase');
-                    return;
+                    console.warn('Schema validation warning for groups (saving anyway):', invalidGroups.map(g => g.id));
                 }
             }
             
@@ -1105,13 +1084,29 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log(`Adding ${students.length} students to group ${groupId}`);
         try {
             await setAllStudents(prev => [...prev, ...students.filter(s => !prev.some(ps => ps.id === s.id))]);
-            await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g));
+            const updatedGroups = await new Promise<Group[]>((resolve) => {
+                setGroups(prev => {
+                    const next = prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g);
+                    resolve(next);
+                    return next;
+                });
+            });
+
+            // Persist directly to Firestore and IDB as backup guarantee
+            if (user) {
+                const now = Date.now();
+                const payload = { value: updatedGroups, lastUpdated: now };
+                const docRef = doc(db, 'users', user.uid, 'userData', 'app_groups');
+                await setDoc(docRef, payload, { merge: true });
+                try { await set('app_groups', payload); } catch (_) { /* IDB best-effort */ }
+            }
+
             console.log('Students added successfully');
         } catch (error) {
             console.error('Error in addStudentsToGroup:', error);
             throw error;
         }
-    }, [setAllStudents, setGroups]);
+    }, [setAllStudents, setGroups, user]);
 
     const removeStudentFromGroup = useCallback(async (groupId: string, studentId: string) => {
         await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: g.students.filter(s => s.id !== studentId) } : g));
