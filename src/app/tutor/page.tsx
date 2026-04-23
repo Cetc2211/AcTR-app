@@ -50,22 +50,26 @@ export default function TutorDashboard() {
   }, [user, authLoading]);
 
   useEffect(() => {
-      async function fetchStudents() {
-          if (!selectedGroupId) return;
-          
-          setDataLoading(true);
-          try {
-            const studentsData = await TutorService.getStudentsWithAnalytics(selectedGroupId);
-            setStudents(studentsData);
-          } catch (e) {
-              console.error("Error fetching students analytics", e);
-              toast({ variant: "destructive", title: "Error", description: "No se pudieron cargar los datos del grupo." });
-          } finally {
-              setDataLoading(false);
-          }
-      }
-      
-      fetchStudents();
+            if (!selectedGroupId) {
+                    setStudents([]);
+                    return;
+            }
+
+            setDataLoading(true);
+            const unsubscribe = TutorService.subscribeStudentsWithAnalytics(
+                selectedGroupId,
+                (studentsData) => {
+                    setStudents(studentsData);
+                    setDataLoading(false);
+                },
+                (e) => {
+                    console.error("Error fetching students analytics", e);
+                    toast({ variant: "destructive", title: "Error", description: "No se pudieron cargar los datos del grupo." });
+                    setDataLoading(false);
+                },
+            );
+
+            return () => unsubscribe();
   }, [selectedGroupId, toast]);
 
   const activeGroup = availableGroups.find(g => g.id === selectedGroupId);

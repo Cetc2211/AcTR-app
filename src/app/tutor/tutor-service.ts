@@ -1,6 +1,6 @@
 import { Student, OfficialGroup, Group, StudentObservation, RiskFlag } from '@/lib/placeholder-data';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, doc, getDoc, addDoc, orderBy, limit, Timestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, orderBy, limit, Timestamp, onSnapshot } from 'firebase/firestore';
 
 // Definición extendida para incluir datos calculados para la vista del tutor
 export interface TutorStudentView extends Student {
@@ -23,17 +23,29 @@ export class TutorService {
   // 1. Filtro de Grupos Asignados (Real)
   static async getTutorGroupsForEmail(tutorEmail: string): Promise<OfficialGroup[]> {
     try {
-                const normalizedEmail = tutorEmail.toLowerCase().trim();
+        const normalizedEmail = tutorEmail.toLowerCase().trim();
         const groupsRef = collection(db, 'official_groups');
-        // Buscamos grupos donde el tutorEmail coincida
-        // Nota: Asegurarse de tener índice compuesto si es necesario, pero simple should work
-                const q = query(groupsRef, where('tutorEmail', '==', normalizedEmail));
+        // Primary path: normalized exact match
+        const q = query(groupsRef, where('tutorEmail', '==', normalizedEmail));
         const querySnapshot = await getDocs(q);
         
         const groups: OfficialGroup[] = [];
         querySnapshot.forEach((doc) => {
             groups.push({ id: doc.id, ...doc.data() } as OfficialGroup);
         });
+
+        // Fallback: legacy mixed-case emails in Firestore
+        if (groups.length === 0) {
+            const allSnap = await getDocs(groupsRef);
+            allSnap.forEach((doc) => {
+                const data = doc.data() as OfficialGroup;
+                const email = String((data as any).tutorEmail || '').trim().toLowerCase();
+                if (email && email === normalizedEmail) {
+                    groups.push({ id: doc.id, ...data } as OfficialGroup);
+                }
+            });
+        }
+
         return groups;
     } catch (error) {
         console.error("Error fetching tutor groups:", error);
@@ -169,19 +181,32 @@ export class TutorService {
       // Opción real: Query a collection group si las observaciones están anidadas, o collection root.
       // Asumiremos colección root 'observations'
       try {
-          // Nota: Firestore 'in' query supports up to 10 values. Si son más alumnos, hay que segmentar.
-          // Para MVP, traemos las últimas globales y filtramos.
-          const q = query(collection(db, 'observations'), orderBy('date', 'desc'), limit(50));
-          const snap = await getDocs(q);
           const map: {[id: string]: StudentObservation[]} = {};
-          
-          snap.forEach(doc => {
-              const data = doc.data() as StudentObservation; // Cast inseguro, validar en prod
-              if (studentIds.includes(data.studentId)) {
+
+          const chunks: string[][] = [];
+          for (let i = 0; i < studentIds.length; i += 10) {
+              chunks.push(studentIds.slice(i, i + 10));
+          }
+
+          for (const chunk of chunks) {
+              const q = query(collection(db, 'observations'), where('studentId', 'in', chunk));
+              const snap = await getDocs(q);
+              snap.forEach(doc => {
+                  const data = doc.data() as StudentObservation;
                   if (!map[data.studentId]) map[data.studentId] = [];
                   map[data.studentId].push({ ...data, id: doc.id });
-              }
+              });
+          }
+
+          // Keep recent logs first for UI consistency
+          Object.keys(map).forEach((studentId) => {
+              map[studentId].sort((a, b) => {
+                  const aDate = new Date(a.date || 0).getTime();
+                  const bDate = new Date(b.date || 0).getTime();
+                  return bDate - aDate;
+              });
           });
+
           return map;
       } catch (e) {
           console.log("No detailed logs found or collection missing");
@@ -251,21 +276,83 @@ export class TutorService {
       // Simplificado: Traemos todo y filtramos en memoria (MVP)
       try {
         const ref = collection(db, 'tutor_interventions');
-        const q = query(ref, orderBy('timestamp', 'desc'), limit(50)); // Últimas 50 acciones
-        const snap = await getDocs(q);
         const map: {[id: string]: any[]} = {};
-        
-        snap.forEach(doc => {
-            const data = doc.data();
-            if (studentIds.includes(data.studentId)) {
+
+        const chunks: string[][] = [];
+        for (let i = 0; i < studentIds.length; i += 10) {
+            chunks.push(studentIds.slice(i, i + 10));
+        }
+
+        for (const chunk of chunks) {
+            const q = query(ref, where('studentId', 'in', chunk));
+            const snap = await getDocs(q);
+            snap.forEach(doc => {
+                const data = doc.data() as any;
                 if (!map[data.studentId]) map[data.studentId] = [];
                 map[data.studentId].push({ id: doc.id, ...data });
-            }
+            });
+        }
+
+        Object.keys(map).forEach((studentId) => {
+            map[studentId].sort((a, b) => {
+                const aDate = new Date(a.date || 0).getTime();
+                const bDate = new Date(b.date || 0).getTime();
+                return bDate - aDate;
+            });
         });
+
         return map;
       } catch (e) {
           return {};
       }
+  }
+
+  static subscribeStudentsWithAnalytics(
+    officialGroupId: string,
+    onData: (students: TutorStudentView[]) => void,
+    onError?: (error: unknown) => void,
+  ): () => void {
+      let disposed = false;
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      let refreshing = false;
+
+      const refresh = async () => {
+          if (disposed || refreshing) return;
+          refreshing = true;
+          try {
+              const next = await this.getStudentsWithAnalytics(officialGroupId);
+              if (!disposed) onData(next);
+          } catch (e) {
+              if (!disposed && onError) onError(e);
+          } finally {
+              refreshing = false;
+          }
+      };
+
+      const scheduleRefresh = () => {
+          if (disposed) return;
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+              void refresh();
+          }, 250);
+      };
+
+      const unsubs = [
+          onSnapshot(query(collection(db, 'students'), where('official_group_id', '==', officialGroupId)), scheduleRefresh),
+          onSnapshot(query(collection(db, 'absences'), orderBy('timestamp', 'desc'), limit(200)), scheduleRefresh),
+          onSnapshot(query(collection(db, 'observations'), orderBy('date', 'desc'), limit(100)), scheduleRefresh),
+          onSnapshot(query(collection(db, 'academic_compliance'), orderBy('lastUpdated', 'desc'), limit(500)), scheduleRefresh),
+          onSnapshot(query(collection(db, 'tutor_interventions'), orderBy('timestamp', 'desc'), limit(200)), scheduleRefresh),
+      ];
+
+      // Initial load
+      void refresh();
+
+      return () => {
+          disposed = true;
+          if (timer) clearTimeout(timer);
+          unsubs.forEach((unsub) => unsub());
+      };
   }
 }
 
