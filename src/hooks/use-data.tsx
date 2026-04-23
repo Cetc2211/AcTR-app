@@ -848,7 +848,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         inMemoryState: T,
     ) => {
         return async (value: React.SetStateAction<T>) => {
-            const oldValue = inMemoryState;
+            // Prefer latest persisted value to avoid stale closures losing updates.
+            let oldValue = inMemoryState;
+            try {
+                const localPayload = await get(key);
+                if (localPayload && typeof localPayload === 'object' && 'value' in localPayload) {
+                    oldValue = localPayload.value as T;
+                }
+            } catch (e) {
+                console.warn(`Could not read latest ${key} from IDB, using in-memory snapshot.`, e);
+            }
+
             const newValue =
                 typeof value === 'function'
                     ? (value as (prevState: T) => T)(oldValue)

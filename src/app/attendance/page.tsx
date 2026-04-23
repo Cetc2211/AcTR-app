@@ -57,6 +57,8 @@ export default function AttendancePage() {
     const today = format(new Date(), 'yyyy-MM-dd');
 
     try {
+      // Ensure today's attendance exists before reporting absences.
+      await takeAttendanceForDate(activeGroup.id, today);
       await reportAbsencesForDate(activeGroup.id, today);
       toast({
         title: 'Inasistencias reportadas',
