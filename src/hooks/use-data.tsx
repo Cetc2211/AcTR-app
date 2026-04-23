@@ -1093,14 +1093,31 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const addStudentsToGroup = useCallback(async (groupId: string, students: Student[]) => {
         console.log(`Adding ${students.length} students to group ${groupId}`);
         try {
-            await setAllStudents(prev => [...prev, ...students.filter(s => !prev.some(ps => ps.id === s.id))]);
-            const updatedGroups = await new Promise<Group[]>((resolve) => {
-                setGroups(prev => {
-                    const next = prev.map(g => g.id === groupId ? { ...g, students: [...g.students, ...students] } : g);
-                    resolve(next);
-                    return next;
-                });
-            });
+            // Resolve latest groups snapshot from storage to avoid stale in-memory closures.
+            let baseGroups = groups;
+            try {
+                const localGroupsPayload = await get('app_groups');
+                if (localGroupsPayload && typeof localGroupsPayload === 'object' && 'value' in localGroupsPayload) {
+                    baseGroups = localGroupsPayload.value as Group[];
+                }
+            } catch (e) {
+                console.warn('Could not read app_groups from IDB, using in-memory groups.', e);
+            }
+
+            const group = baseGroups.find(g => g.id === groupId);
+            if (!group) {
+                throw new Error('No se encontró el grupo para agregar estudiantes.');
+            }
+
+            const dedupNewStudents = students.filter(s => !group.students.some(gs => gs.id === s.id));
+            const updatedGroups = baseGroups.map(g =>
+                g.id === groupId
+                    ? { ...g, students: [...g.students, ...dedupNewStudents] }
+                    : g,
+            );
+
+            await setAllStudents(prev => [...prev, ...dedupNewStudents.filter(s => !prev.some(ps => ps.id === s.id))]);
+            await setGroups(updatedGroups);
 
             // Persist directly to Firestore and IDB as backup guarantee
             if (user) {
@@ -1109,6 +1126,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const docRef = doc(db, 'users', user.uid, 'userData', 'app_groups');
                 await setDoc(docRef, payload, { merge: true });
                 try { await set('app_groups', payload); } catch (_) { /* IDB best-effort */ }
+
+                // If this group is linked to an official group, also persist students in public collection.
+                if (group.officialGroupId && dedupNewStudents.length > 0) {
+                    await Promise.all(dedupNewStudents.map((student) => {
+                        const studentRef = doc(db, 'students', student.id);
+                        return setDoc(studentRef, {
+                            ...student,
+                            official_group_id: group.officialGroupId,
+                            updatedAt: new Date().toISOString(),
+                        }, { merge: true });
+                    }));
+                }
             }
 
             console.log('Students added successfully');
@@ -1116,7 +1145,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error('Error in addStudentsToGroup:', error);
             throw error;
         }
-    }, [setAllStudents, setGroups, user]);
+    }, [setAllStudents, setGroups, user, groups]);
 
     const removeStudentFromGroup = useCallback(async (groupId: string, studentId: string) => {
         await setGroups(prev => prev.map(g => g.id === groupId ? { ...g, students: g.students.filter(s => s.id !== studentId) } : g));
@@ -1955,16 +1984,19 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
             snapshot.forEach((doc) => {
                 freshStudents.push({ ...doc.data(), id: doc.id } as Student);
             });
+
+            // Preserve manual/local-only students that are already in this group.
+            const freshIds = new Set(freshStudents.map(s => s.id));
+            const localOnlyStudents = activeGroup.students.filter(s => !freshIds.has(s.id));
+            const mergedStudents = [...freshStudents, ...localOnlyStudents];
+
+            const signature = (list: Student[]) => list
+                .map((s) => `${s.id}|${s.name}|${s.phone || ''}|${s.tutorName || ''}|${s.official_group_id || ''}`)
+                .sort()
+                .join('::');
             
             // Compare to avoid infinite loops if data is identical
-            // We use a simple length + ID check for efficiency
-            const currentIds = new Set(activeGroup.students.map(s => s.id));
-            const hasChanges = freshStudents.length !== activeGroup.students.length || 
-                               freshStudents.some(s => !currentIds.has(s.id)) ||
-                               freshStudents.some(s => { // Deep check for name updates
-                                   const curr = activeGroup.students.find(c => c.id === s.id);
-                                   return curr && (curr.name !== s.name || curr.phone !== s.phone);
-                               });
+            const hasChanges = signature(activeGroup.students) !== signature(mergedStudents);
 
             if (hasChanges) {
                 console.log("Real-time Sync: Updating students from official source...");
@@ -1972,7 +2004,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                 
                 setGroups(prev => prev.map(g => {
                     if (g.id === activeGroupId) {
-                        return { ...g, students: freshStudents };
+                        return { ...g, students: mergedStudents };
                     }
                     return g;
                 }));
