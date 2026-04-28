@@ -216,6 +216,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [user, authLoading] = useAuthState(auth);
+    const [allowOfflineHydration, setAllowOfflineHydration] = useState(false);
 
     const [groups, setGroupsState] = useState<Group[]>([]);
     const [allStudents, setAllStudentsState] = useState<Student[]>([]);
@@ -301,9 +302,28 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // If auth hook stays loading while offline, allow local hydration to proceed.
+    useEffect(() => {
+        if (!authLoading) {
+            setAllowOfflineHydration(false);
+            return;
+        }
+
+        if (typeof window === 'undefined' || navigator.onLine) {
+            return;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setAllowOfflineHydration(true);
+            console.warn('Offline auth timeout reached: enabling local hydration fallback.');
+        }, 1500);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [authLoading]);
+
     // --- ASYNC DATA HYDRATION ---
     useEffect(() => {
-        if (authLoading) return;
+        if (authLoading && !allowOfflineHydration) return;
 
         const hydrateData = async () => {
             setIsLoading(true);
@@ -512,7 +532,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         hydrateData();
-    }, [user, authLoading]);
+    }, [user, authLoading, allowOfflineHydration]);
 
     useEffect(() => {
         // Load cached official groups on mount

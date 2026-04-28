@@ -87,17 +87,39 @@ export default function MainLayoutClient({
   const { isAdmin } = useAdmin();
   const { toast } = useToast();
   const [isTrackingManager, setIsTrackingManager] = useState(false);
+  const [allowOfflineAuthFallback, setAllowOfflineAuthFallback] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading) {
+      setAllowOfflineAuthFallback(false);
+      return;
+    }
+
+    if (typeof window === 'undefined' || navigator.onLine) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setAllowOfflineAuthFallback(true);
+      console.warn('Offline auth timeout reached in layout.');
+    }, 1500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [authLoading]);
+
+  const resolvedUser = user || auth.currentUser;
+  const effectiveAuthLoading = authLoading && !allowOfflineAuthFallback && !resolvedUser;
   
   // Determine roles
-  const isTutor = useMemo(() => {
-      if (!user?.email || !officialGroups) return false;
-      const currentEmail = user.email.toLowerCase().trim();
+    const isTutor = useMemo(() => {
+      if (!resolvedUser?.email || !officialGroups) return false;
+      const currentEmail = resolvedUser.email.toLowerCase().trim();
       return officialGroups.some(g => (g.tutorEmail || '').toLowerCase().trim() === currentEmail);
-  }, [user, officialGroups]);
+    }, [resolvedUser, officialGroups]);
 
   useEffect(() => {
     const loadTrackingRole = async () => {
-      if (!user?.email) {
+      if (!resolvedUser?.email) {
         setIsTrackingManager(false);
         return;
       }
@@ -111,7 +133,7 @@ export default function MainLayoutClient({
 
         const data = rolesDoc.data() as { tracking_managers?: string[] };
         const managers = data.tracking_managers || [];
-        const currentEmail = user.email.toLowerCase().trim();
+        const currentEmail = resolvedUser.email.toLowerCase().trim();
         setIsTrackingManager(managers.some((email) => email.toLowerCase().trim() === currentEmail));
       } catch (error) {
         console.error('Error loading tracking manager role:', error);
@@ -120,7 +142,7 @@ export default function MainLayoutClient({
     };
 
     loadTrackingRole();
-  }, [user?.email]);
+  }, [resolvedUser?.email]);
 
   const mainNavItems = useMemo(() => [
       { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -146,7 +168,7 @@ export default function MainLayoutClient({
     document.body.className = theme;
   }, [settings?.theme]);
   
-  if (authLoading) {
+  if (effectiveAuthLoading) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
             <Loader2 className="mr-2 h-8 w-8 animate-spin" />
@@ -155,7 +177,7 @@ export default function MainLayoutClient({
     );
   }
 
-  if (!user) {
+  if (!resolvedUser) {
     if (pathname !== '/login') {
          router.replace('/login');
     }
