@@ -3,28 +3,13 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-const requiredFirebaseEnvVars = [
-    'NEXT_PUBLIC_FIREBASE_API_KEY',
-    'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-    'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-    'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
-    'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-    'NEXT_PUBLIC_FIREBASE_APP_ID',
-] as const;
-
-const missingFirebaseEnvVars = requiredFirebaseEnvVars.filter((envVar) => !process.env[envVar]);
-
-if (missingFirebaseEnvVars.length > 0) {
-    throw new Error(`Faltan variables de entorno de Firebase: ${missingFirebaseEnvVars.join(', ')}`);
-}
-
 const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET as string,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID as string,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID as string,
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBliGErw1WiGhY6lZeCSh6WU0Kg2ZK7oa0",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "academic-tracker-qeoxi.firebaseapp.com",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "academic-tracker-qeoxi",
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "academic-tracker-qeoxi.firebasestorage.app",
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "263108580734",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:263108580734:web:316c14f8e71c20aa038f2f",
 };
 
 // Initialize Firebase
