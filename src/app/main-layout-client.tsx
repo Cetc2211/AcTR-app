@@ -153,7 +153,7 @@ export default function MainLayoutClient({
       { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
       { href: '/participations', icon: PenSquare, label: 'Participaciones' },
       { href: '/bitacora', icon: BookText, label: 'Bitácora' },
-      { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
+      { href: '/semester-evaluation', icon: Presentation, label: 'Eval. Semestral' },
   ], []);
 
   const recordsNavItems = useMemo(() => [
@@ -164,11 +164,11 @@ export default function MainLayoutClient({
 
   const secondaryNavItems = useMemo(() => [
       { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-      { href: '/announcements', icon: Megaphone, label: 'Sala de Anuncios', badge: unreadAnnouncementsCount > 0 ? unreadAnnouncementsCount : undefined },
+      { href: '/announcements', icon: Megaphone, label: 'Anuncios', badge: unreadAnnouncementsCount > 0 ? unreadAnnouncementsCount : undefined },
       ...(isTutor ? [{ href: '/tutor', icon: GraduationCap, label: 'Tutoría' }] : []),
-      { href: '/teacher-tracking', icon: Shield, label: 'Seg. Docente' },
+      { href: '/teacher-tracking', icon: Shield, label: 'Seguimiento Docente' },
       ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
-      { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },
+      { href: '/contact', icon: Contact, label: 'Contacto' },
   ], [isTutor, isAdmin, isTrackingManager, unreadAnnouncementsCount]);
 
   const isDocentesSectionActive = useMemo(
@@ -364,7 +364,7 @@ export default function MainLayoutClient({
               isDocentesSectionActive,
             )}
             {renderCollapsibleMenu(
-              'Actas e Informes',
+              'Actas e informes',
               FileText,
               recordsNavItems,
               isRecordsOpen,
