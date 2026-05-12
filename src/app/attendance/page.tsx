@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -19,14 +19,18 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, CalendarIcon, Send } from 'lucide-react';
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 export default function AttendancePage() {
   const { activeGroup, partialData, setAttendance, takeAttendanceForDate, reportAbsencesForDate, justifications } = useData();
   const { toast } = useToast();
   const { attendance } = partialData;
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const justifiedAttendanceMap = useMemo(() => {
     const justified = new Set<string>();
@@ -45,24 +49,23 @@ export default function AttendancePage() {
   }, [attendance]);
 
 
-  const handleRegisterToday = () => {
+  const selectedDateKey = format(selectedDate, 'yyyy-MM-dd');
+
+  const handleRegisterForSelectedDate = () => {
     if (!activeGroup) return;
-    const today = format(new Date(), 'yyyy-MM-dd');
-    takeAttendanceForDate(activeGroup.id, today);
+    takeAttendanceForDate(activeGroup.id, selectedDateKey);
   };
 
   const handleReportAbsences = async () => {
     if (!activeGroup) return;
 
-    const today = format(new Date(), 'yyyy-MM-dd');
-
     try {
-      // Ensure today's attendance exists before reporting absences.
-      await takeAttendanceForDate(activeGroup.id, today);
-      await reportAbsencesForDate(activeGroup.id, today);
+      // Ensure selected attendance exists before reporting absences.
+      await takeAttendanceForDate(activeGroup.id, selectedDateKey);
+      await reportAbsencesForDate(activeGroup.id, selectedDateKey);
       toast({
         title: 'Inasistencias reportadas',
-        description: 'El reporte fue enviado a la sección de Seguimiento.',
+        description: `El reporte del ${format(selectedDate, 'PPP', { locale: es })} fue enviado a la sección de Seguimiento.`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'No se pudo enviar el reporte de inasistencias.';
@@ -119,11 +122,34 @@ export default function AttendancePage() {
           </div>
           {activeGroup && (
             <>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-[240px] justify-start text-left font-normal',
+                      !selectedDate && 'text-muted-foreground',
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {selectedDate ? format(selectedDate, 'PPP', { locale: es }) : <span>Selecciona fecha</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => date && setSelectedDate(date)}
+                    initialFocus
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
               <Button variant="outline" onClick={handleReportAbsences}>
                 <Send className="mr-2 h-4 w-4" />
                 Reportar Inasistencias
               </Button>
-              <Button onClick={handleRegisterToday}>Registrar Asistencia de Hoy</Button>
+              <Button onClick={handleRegisterForSelectedDate}>Registrar Asistencia</Button>
             </>
           )}
         </div>
