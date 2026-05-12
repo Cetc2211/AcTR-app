@@ -26,7 +26,7 @@ import {
   GraduationCap,
   ClipboardSignature,
   Shield,
-  Users as UsersIcon // Alias if needed, but Users is already imported
+  ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -39,10 +39,12 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  SidebarMenuBadge,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { useEffect, useMemo, useState } from 'react';
@@ -66,6 +68,7 @@ import { useSignOut, useAuthState } from 'react-firebase-hooks/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 const defaultSettings = {
     institutionName: "Academic Tracker",
@@ -144,24 +147,53 @@ export default function MainLayoutClient({
     loadTrackingRole();
   }, [resolvedUser?.email]);
 
-  const mainNavItems = useMemo(() => [
+  const docentesNavItems = useMemo(() => [
+      { href: '/groups', icon: BookCopy, label: 'Grupos' },
+      { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
+      { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
+      { href: '/participations', icon: PenSquare, label: 'Participaciones' },
+      { href: '/bitacora', icon: BookText, label: 'Bitácora' },
+      { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
+  ], []);
+
+  const recordsNavItems = useMemo(() => [
+      { href: '/records', icon: ClipboardSignature, label: 'Actas' },
+      { href: '/reports', icon: FileText, label: 'Informes' },
+      { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
+  ], []);
+
+  const secondaryNavItems = useMemo(() => [
       { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { href: '/announcements', icon: Megaphone, label: 'Sala de Anuncios', badge: unreadAnnouncementsCount > 0 ? unreadAnnouncementsCount : undefined },
       ...(isTutor ? [{ href: '/tutor', icon: GraduationCap, label: 'Tutoría' }] : []),
-      { href: '/groups', icon: BookCopy, label: 'Grupos' },
-      { href: '/bitacora', icon: BookText, label: 'Bitácora' },
-      { href: '/grades', icon: FilePen, label: 'Calificaciones' },
-      { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
       { href: '/teacher-tracking', icon: Shield, label: 'Seg. Docente' },
-      { href: '/participations', icon: PenSquare, label: 'Participaciones' },
-      { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
-      { href: '/semester-evaluation', icon: Presentation, label: 'Eva. Semestral' },
-      { href: '/records', icon: ClipboardSignature, label: 'Actas' },
-      { href: '/reports', icon: FileText, label: 'Informes' },
       ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
-      { href: '/statistics', icon: BarChart3, label: 'Estadísticas' },
       { href: '/contact', icon: Contact, label: 'Contacto y Soporte' },
   ], [isTutor, isAdmin, isTrackingManager, unreadAnnouncementsCount]);
+
+  const isDocentesSectionActive = useMemo(
+    () => docentesNavItems.some((item) => pathname.startsWith(item.href)),
+    [docentesNavItems, pathname],
+  );
+  const isRecordsSectionActive = useMemo(
+    () => recordsNavItems.some((item) => pathname.startsWith(item.href)),
+    [recordsNavItems, pathname],
+  );
+
+  const [isDocentesOpen, setIsDocentesOpen] = useState(false);
+  const [isRecordsOpen, setIsRecordsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isDocentesSectionActive) {
+      setIsDocentesOpen(true);
+    }
+  }, [isDocentesSectionActive]);
+
+  useEffect(() => {
+    if (isRecordsSectionActive) {
+      setIsRecordsOpen(true);
+    }
+  }, [isRecordsSectionActive]);
 
   useEffect(() => {
     const theme = settings?.theme || defaultSettings.theme;
@@ -241,6 +273,47 @@ export default function MainLayoutClient({
         </SidebarMenu>
   );
 
+  const renderCollapsibleMenu = (
+    title: string,
+    icon: any,
+    items: any[],
+    isOpen: boolean,
+    onOpenChange: (open: boolean) => void,
+    isActive: boolean,
+  ) => {
+    const GroupIcon = icon;
+
+    return (
+      <SidebarMenu>
+        <Collapsible open={isOpen} onOpenChange={onOpenChange}>
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton isActive={isActive}>
+                {GroupIcon ? <GroupIcon /> : null}
+                <span>{title}</span>
+                <ChevronDown className={cn('ml-auto transition-transform', isOpen && 'rotate-180')} />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                {items.map((item) => (
+                  <SidebarMenuSubItem key={item.href}>
+                    <SidebarMenuSubButton asChild isActive={pathname.startsWith(item.href)}>
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      </SidebarMenu>
+    );
+  };
+
   return (
     <>
       <SidebarProvider>
@@ -282,7 +355,24 @@ export default function MainLayoutClient({
                   </>
               ) : null
             }
-            {renderNavMenu(mainNavItems)}
+            {renderCollapsibleMenu(
+              'Docentes',
+              Users,
+              docentesNavItems,
+              isDocentesOpen,
+              setIsDocentesOpen,
+              isDocentesSectionActive,
+            )}
+            {renderCollapsibleMenu(
+              'Actas e Informes',
+              FileText,
+              recordsNavItems,
+              isRecordsOpen,
+              setIsRecordsOpen,
+              isRecordsSectionActive,
+            )}
+            <Separator className="my-2" />
+            {renderNavMenu(secondaryNavItems)}
             <Separator className="my-2" />
             <SidebarMenu>
                  <SidebarMenuItem>
