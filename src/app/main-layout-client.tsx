@@ -68,7 +68,7 @@ import { useSignOut, useAuthState } from 'react-firebase-hooks/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
 
 const defaultSettings = {
     institutionName: "Academic Tracker",
@@ -285,31 +285,27 @@ export default function MainLayoutClient({
 
     return (
       <SidebarMenu>
-        <Collapsible open={isOpen} onOpenChange={onOpenChange}>
-          <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuButton isActive={isActive}>
-                {GroupIcon ? <GroupIcon /> : null}
-                <span>{title}</span>
-                <ChevronDown className={cn('ml-auto transition-transform', isOpen && 'rotate-180')} />
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {items.map((item) => (
-                  <SidebarMenuSubItem key={item.href}>
-                    <SidebarMenuSubButton asChild isActive={pathname.startsWith(item.href)}>
-                      <Link href={item.href}>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </SidebarMenuItem>
-        </Collapsible>
+        <SidebarMenuItem>
+          <SidebarMenuButton isActive={isActive} onClick={() => onOpenChange(!isOpen)}>
+            {GroupIcon ? <GroupIcon /> : null}
+            <span>{title}</span>
+            <ChevronDown className={cn('ml-auto transition-transform', isOpen && 'rotate-180')} />
+          </SidebarMenuButton>
+          {isOpen && (
+            <SidebarMenuSub>
+              {items.map((item) => (
+                <SidebarMenuSubItem key={item.href}>
+                  <SidebarMenuSubButton asChild isActive={pathname.startsWith(item.href)}>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          )}
+        </SidebarMenuItem>
       </SidebarMenu>
     );
   };
