@@ -1008,6 +1008,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
                              setDoc(statsRef, {
                                  studentId: student.id,
                                  groupId: activeGroupId,
+                                 officialGroupId: group.officialGroupId || student.official_group_id || null,
                                  groupName: group.groupName || group.subject,
                                  subject: group.subject,
                                  completionRate: completionRate,
@@ -1538,6 +1539,7 @@ const checkAndInjectStrategies = async (studentId: string, addObs: Function) => 
                  setDoc(statsRef, {
                      studentId: student.id,
                      groupId: group.id,
+                     officialGroupId: group.officialGroupId || student.official_group_id || null,
                      groupName: group.groupName || group.subject,
                      subject: group.subject,
                      completionRate: completionRate,

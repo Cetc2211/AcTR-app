@@ -219,8 +219,8 @@ export class TutorService {
       // 1. Obtener todas las materias (groups) ligadas a este officialGroupId
       // 2. Iterar sus partialData para ver entregas.
       
-      const stats: {[id: string]: {completionRate: number, failingSubjects: number}} = {};
-      studentIds.forEach(id => stats[id] = { completionRate: 100, failingSubjects: 0 });
+    const stats: {[id: string]: {completionRate: number, failingSubjects: number}} = {};
+    studentIds.forEach(id => stats[id] = { completionRate: 100, failingSubjects: 0 });
 
       try {
         // LEEMOS 'academic_compliance' por studentId (en chunks de 10 por limite Firestore).
@@ -239,10 +239,27 @@ export class TutorService {
             allDocs.push(...snap.docs);
         }
 
-        // Paso 3: Agrupar por estudiante
+        // Paso 3: Filtrar por grupo oficial cuando el campo ya exista en academic_compliance.
+        // Si no existe (datos legacy), se conserva comportamiento anterior para no romper la vista.
+        const normalizedOfficialGroupId = String(officialGroupId || '').trim();
+        const docsWithOfficialGroup = allDocs.filter((docSnap) => {
+            const data = docSnap.data() as Record<string, unknown>;
+            const docOfficialGroupId = String(data.officialGroupId || data.official_group_id || '').trim();
+            return !!docOfficialGroupId;
+        });
+
+        const docsToAggregate = docsWithOfficialGroup.length > 0
+            ? docsWithOfficialGroup.filter((docSnap) => {
+                const data = docSnap.data() as Record<string, unknown>;
+                const docOfficialGroupId = String(data.officialGroupId || data.official_group_id || '').trim();
+                return docOfficialGroupId === normalizedOfficialGroupId;
+            })
+            : allDocs;
+
+        // Paso 4: Agrupar por estudiante
         const studentMap: {[id: string]: { totalRate: number, count: number, failed: number }} = {};
         
-        allDocs.forEach(doc => {
+        docsToAggregate.forEach(doc => {
             const data = doc.data();
             const sId = data.studentId;
             if (!studentMap[sId]) studentMap[sId] = { totalRate: 0, count: 0, failed: 0 };
@@ -252,7 +269,7 @@ export class TutorService {
             if (data.failingRisk) studentMap[sId].failed++;
         });
 
-        // Paso 4: Finalizar stats
+        // Paso 5: Finalizar stats
         studentIds.forEach(id => {
             const s = studentMap[id];
             if (s && s.count > 0) {
