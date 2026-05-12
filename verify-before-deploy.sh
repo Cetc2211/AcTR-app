@@ -3,6 +3,9 @@
 # Script de verificación rápida antes del despliegue
 # Uso: bash verify-before-deploy.sh
 
+PROJECT_ID="academic-tracker-qeoxi"
+SECRET_NAME="GOOGLE_AI_API_KEY"
+
 echo "🔍 Verificación Pre-Despliegue - AcTR IA Backend v2.3"
 echo "════════════════════════════════════════════════════════"
 
@@ -73,14 +76,15 @@ else
     echo "  ⚠️  Verificación de validación en endpoints"
 fi
 
-# 5. Variables de entorno
+# 5. Secret Manager
 echo ""
 echo "✓ Verificando configuración..."
-if [ -z "$GOOGLE_AI_API_KEY" ]; then
-    echo "  ⚠️  GOOGLE_AI_API_KEY no está en el entorno local"
-    echo "  (Se configurará en Cloud Run durante el despliegue)"
+if gcloud secrets describe "$SECRET_NAME" --project="$PROJECT_ID" >/dev/null 2>&1; then
+    echo "  ✅ Secreto $SECRET_NAME disponible en Secret Manager"
 else
-    echo "  ✅ GOOGLE_AI_API_KEY disponible (primeros 10 chars: ${GOOGLE_AI_API_KEY:0:10}...)"
+    echo "  ❌ No existe el secreto $SECRET_NAME en Secret Manager"
+    echo "  Ejecuta primero: ./setup-api-secret.sh"
+    exit 1
 fi
 
 echo ""
@@ -94,9 +98,10 @@ echo "    --source=cloud-run-ai-service-backed \\"
 echo "    --region=us-central1 \\"
 echo "    --platform=managed \\"
 echo "    --allow-unauthenticated \\"
-echo "    --set-env-vars=\"GOOGLE_AI_API_KEY=YOUR_API_KEY,GCP_PROJECT_ID=academic-tracker-qeoxi\" \\"
+echo "    --set-env-vars=\"GCP_PROJECT_ID=academic-tracker-qeoxi\" \\
+echo "    --set-secrets=\"GOOGLE_AI_API_KEY=GOOGLE_AI_API_KEY:latest\" \\
 echo "    --service-account=cloud-run-ai-invoker@academic-tracker-qeoxi.iam.gserviceaccount.com \\"
 echo "    --project=academic-tracker-qeoxi"
 echo ""
-echo "⚠️  No olvides reemplazar YOUR_API_KEY con tu clave real"
+echo "⚠️  Si el secreto no existe o está desactualizado, ejecútalo con ./setup-api-secret.sh"
 echo ""

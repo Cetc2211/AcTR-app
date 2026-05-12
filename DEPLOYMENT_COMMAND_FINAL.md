@@ -8,7 +8,7 @@
 
 ## ⚠️ IMPORTANTE: Antes de Ejecutar
 
-Necesitas reemplazar `YOUR_API_KEY` con tu clave real de Google AI en el comando.
+La API key ya no debe pasarse en el comando. Debe existir previamente en Google Cloud Secret Manager con el nombre `GOOGLE_AI_API_KEY`.
 
 ---
 
@@ -20,7 +20,8 @@ gcloud run deploy ai-report-service \
   --region=us-central1 \
   --platform=managed \
   --allow-unauthenticated \
-  --set-env-vars="GOOGLE_AI_API_KEY=YOUR_API_KEY,GCP_PROJECT_ID=academic-tracker-qeoxi" \
+  --set-env-vars="GCP_PROJECT_ID=academic-tracker-qeoxi" \
+  --set-secrets="GOOGLE_AI_API_KEY=GOOGLE_AI_API_KEY:latest" \
   --service-account=cloud-run-ai-invoker@academic-tracker-qeoxi.iam.gserviceaccount.com \
   --project=academic-tracker-qeoxi
 ```
