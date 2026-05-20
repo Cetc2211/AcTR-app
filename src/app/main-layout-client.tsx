@@ -149,9 +149,10 @@ export default function MainLayoutClient({
 
   const docentesNavItems = useMemo(() => [
       { href: '/groups', icon: BookCopy, label: 'Grupos' },
-      { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
+      { href: '/grades', icon: FilePen, label: 'Calificaciones' },
       { href: '/attendance', icon: CalendarCheck, label: 'Asistencia' },
       { href: '/participations', icon: PenSquare, label: 'Participaciones' },
+      { href: '/activities', icon: ClipboardCheck, label: 'Actividades' },
       { href: '/bitacora', icon: BookText, label: 'Bitácora' },
       { href: '/semester-evaluation', icon: Presentation, label: 'Eval. Semestral' },
   ], []);
