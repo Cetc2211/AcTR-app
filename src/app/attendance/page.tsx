@@ -19,7 +19,7 @@ import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
-import { ArrowLeft, CalendarIcon, Send } from 'lucide-react';
+import { ArrowLeft, CalendarIcon, Send, Trash2 } from 'lucide-react';
 import { useData } from '@/hooks/use-data';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -27,7 +27,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 
 export default function AttendancePage() {
-  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, reportAbsencesForDate, justifications } = useData();
+  const { activeGroup, partialData, setAttendance, takeAttendanceForDate, reportAbsencesForDate, deleteAttendanceDate, justifications } = useData();
   const { toast } = useToast();
   const { attendance } = partialData;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -50,10 +50,38 @@ export default function AttendancePage() {
 
 
   const selectedDateKey = format(selectedDate, 'yyyy-MM-dd');
+  const hasAttendanceForSelectedDate = !!attendance[selectedDateKey];
 
   const handleRegisterForSelectedDate = () => {
     if (!activeGroup) return;
     takeAttendanceForDate(activeGroup.id, selectedDateKey);
+  };
+
+  const handleDeleteSelectedDate = async () => {
+    if (!activeGroup) return;
+
+    if (!hasAttendanceForSelectedDate) {
+      toast({
+        variant: 'destructive',
+        title: 'Sin registro para eliminar',
+        description: `No existe asistencia registrada para el ${format(selectedDate, 'PPP', { locale: es })}.`,
+      });
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Se eliminará la asistencia y participaciones del ${format(selectedDate, 'PPP', { locale: es })}. Esta acción no se puede deshacer.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await deleteAttendanceDate(selectedDateKey);
+    toast({
+      title: 'Fecha eliminada',
+      description: `Se eliminó el registro del ${format(selectedDate, 'PPP', { locale: es })}.`,
+    });
   };
 
   const handleReportAbsences = async () => {
@@ -148,6 +176,14 @@ export default function AttendancePage() {
               <Button variant="outline" onClick={handleReportAbsences}>
                 <Send className="mr-2 h-4 w-4" />
                 Reportar Inasistencias
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteSelectedDate}
+                disabled={!hasAttendanceForSelectedDate}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Eliminar Fecha
               </Button>
               <Button onClick={handleRegisterForSelectedDate}>Registrar Asistencia</Button>
             </>
