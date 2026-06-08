@@ -1,0 +1,84 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─── Funciones auxiliares ──────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Obtiene el documento del usuario en ecosistema_usuarios.
+    // Usa la base de datos (default) de Firestore del mismo proyecto.
+    // Retorna null si el documento no existe o el usuario no está autenticado.
+    function getEcosistemaUserDoc() {
+      return isSignedIn()
+        ? firestore.get(/databases/(default)/documents/ecosistema_usuarios/$(request.auth.uid))
+        : null;
+    }
+
+    // ─── Reglas existentes del proyecto AcTR ───────────────────────────
+
+    match /impresiones/{allPaths=**} {
+      allow create: if request.resource != null
+        && request.resource.size < 20 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+      allow read: if true;
+      allow delete: if true;
+    }
+
+    match /Docentes/{allPaths=**} {
+      allow create: if request.resource != null
+        && request.resource.size < 20 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+      allow read: if true;
+      allow delete: if true;
+    }
+
+    match /productos/{allPaths=**} {
+      allow read, write: if true;
+    }
+
+    match /expedientes/{allPaths=**} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email == 'mpceciliotopetecruz@gmail.com';
+    }
+
+    // ─── LETRAS NECIAS / ECOSISTEMA CS
+
+    // /ecosistema/preview/{archivo}
+    //   Acceso de lectura para cualquier usuario autenticado.
+    //   Es el "gancho" gratuito: preview del capítulo 1.
+    //   Write: solo Admin SDK (backend).
+    match /ecosistema/preview/{archivo} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // /ecosistema/materiales/{nivel}/{archivo}
+    //   Acceso de lectura condicional: el campo accesos[nivel] del documento
+    //   ecosistema_usuarios del usuario debe ser true.
+    //
+    //   Mapeo de niveles ↔ accesos:
+    //     estacion_cs1  → accesos.estacion_cs1
+    //     estacion_cs2  → accesos.estacion_cs2
+    //     estacion_cs3  → accesos.estacion_cs3
+    //     articulacion  → accesos.articulacion
+    //
+    //   El wildcard {nivel} coincide directamente con la clave en el mapa
+    //   accesos, lo que hace la regla extensible sin cambios.
+    //
+    //   Write: solo Admin SDK (backend).
+    match /ecosistema/materiales/{nivel}/{archivo} {
+      allow read: if isSignedIn()
+        && getEcosistemaUserDoc() != null
+        && getEcosistemaUserDoc().data.accesos[nivel] == true;
+      allow write: if false;
+    }
+
+    // ─── Denegar todo lo demás ───────────────────────────────────────
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

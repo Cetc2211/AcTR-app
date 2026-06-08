@@ -119,6 +119,17 @@ service cloud.firestore {
       allow read, write: if isSignedIn();
     }
 
+    // ─── SECCIÓN 3: LETRAS NECIAS / ECOSISTEMA CS
+    // ecosistema_usuarios/{uid}  — perfil de lector del ecosistema
+    //   • Lectura:   solo el propio usuario autenticado puede leer su documento
+    //   • Creación:  solo el propio usuario autenticado puede crear su documento
+    //   • Update/Delete: denegado para clientes; solo Admin SDK (backend) puede modificar
+    match /ecosistema_usuarios/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

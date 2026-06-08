@@ -13,6 +13,36 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "ecosistema_materiales_cs1",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "orden",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ecosistema_materiales_cs2",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "orden",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ecosistema_materiales_cs3",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "orden",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []
