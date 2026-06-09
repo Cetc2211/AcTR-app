@@ -39,6 +39,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [resetEmail, setResetEmail] = useState('');
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const activeProjectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'desconocido';
 
   const getSignInErrorMessage = (code: string) => {
     switch (code) {
@@ -103,10 +104,18 @@ export default function LoginPage() {
       const code = typeof e?.code === 'string' ? e.code : 'unknown';
       console.error('Firebase Auth Error:', code, e);
       const baseMessage = getSignInErrorMessage(code);
+      const diagnosticSuffix =
+        code === 'auth/invalid-credential'
+          ? ` Verifica que tu cuenta exista en el proyecto Firebase activo: ${activeProjectId}.`
+          : '';
+
       toast({
         variant: 'destructive',
         title: 'Error al iniciar sesión',
-        description: code === 'unknown' ? baseMessage : `${baseMessage} (${code})`,
+        description:
+          code === 'unknown'
+            ? `${baseMessage}${diagnosticSuffix}`
+            : `${baseMessage} (${code}).${diagnosticSuffix}`,
       });
     } finally {
       setIsSigningIn(false);
