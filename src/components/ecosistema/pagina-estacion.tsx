@@ -62,28 +62,39 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
   const { tieneAcceso } = useEcosistema();
   const [materiales, setMateriales] = useState<MaterialItem[]>([]);
   const [cargando, setCargando] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     async function cargarMateriales() {
       try {
+        console.log('[PaginaEstacion] Iniciando carga de materiales');
+        console.log('[PaginaEstacion] Colección Firestore:', config.coleccionFirestore);
         const materialsQuery = query(
           collection(db, config.coleccionFirestore),
           orderBy('orden', 'asc')
         );
         const snapshot = await getDocs(materialsQuery);
+        console.log('[PaginaEstacion] Documentos recibidos de Firestore:', snapshot.size);
+        snapshot.docs.forEach((d) => {
+          console.log('[PaginaEstacion] Doc ID:', d.id, '| Datos:', JSON.stringify(d.data()));
+        });
         const items: MaterialItem[] = snapshot.docs.map((materialDoc) => ({
           id: materialDoc.id,
           ...(materialDoc.data() as Omit<MaterialItem, 'id'>),
         }));
+        console.log('[PaginaEstacion] Items mapeados:', items.length);
         setMateriales(items);
       } catch (error) {
         console.error('[PaginaEstacion] Error cargando materiales:', error);
+        const msg = error instanceof Error ? error.message : String(error);
+        setErrorMsg(msg);
       } finally {
         setCargando(false);
       }
     }
 
     setCargando(true);
+    setErrorMsg(null);
     void cargarMateriales();
   }, [config.coleccionFirestore]);
 
@@ -129,9 +140,27 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
             Cargando materiales...
           </p>
         ) : materiales.length === 0 ? (
-          <p style={{ fontFamily: 'var(--font-body)', color: '#999' }}>
-            No hay materiales disponibles en esta estacion.
-          </p>
+          <div style={{ fontFamily: 'var(--font-body)' }}>
+            {errorMsg ? (
+              <div style={{ background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: 8, padding: '1rem 1.25rem', color: '#a8071a' }}>
+                <p style={{ margin: '0 0 0.25rem', fontWeight: 700 }}>Error al cargar materiales</p>
+                <p style={{ margin: 0, fontSize: '0.85rem', fontFamily: 'monospace', wordBreak: 'break-all' }}>{errorMsg}</p>
+                <p style={{ margin: '0.75rem 0 0', fontSize: '0.8rem', color: '#595959' }}>
+                  Colección consultada: <code>{config.coleccionFirestore}</code>
+                </p>
+              </div>
+            ) : (
+              <div style={{ background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 8, padding: '1rem 1.25rem', color: '#614700' }}>
+                <p style={{ margin: '0 0 0.25rem', fontWeight: 700 }}>Sin materiales en Firestore</p>
+                <p style={{ margin: 0, fontSize: '0.85rem' }}>
+                  La colección <code>{config.coleccionFirestore}</code> no devolvió documentos.
+                </p>
+                <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem' }}>
+                  Posibles causas: los documentos no tienen el campo <code>orden</code> (requerido por la consulta), la colección tiene otro nombre, o las reglas de Firestore bloquean la lectura.
+                </p>
+              </div>
+            )}
+          </div>
         ) : (
           <div
             style={{
