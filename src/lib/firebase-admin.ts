@@ -8,20 +8,28 @@ type ServiceAccount = {
 };
 
 function getServiceAccount(): ServiceAccount {
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const raw =
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON_ECOSISTEMA ||
+    process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (!raw) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON no está configurada');
+    throw new Error(
+      'FIREBASE_SERVICE_ACCOUNT_JSON_ECOSISTEMA o FIREBASE_SERVICE_ACCOUNT_JSON no está configurada'
+    );
   }
 
   let parsed: ServiceAccount;
   try {
     parsed = JSON.parse(raw) as ServiceAccount;
   } catch {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON tiene formato JSON inválido');
+    throw new Error(
+      'FIREBASE_SERVICE_ACCOUNT_JSON_ECOSISTEMA o FIREBASE_SERVICE_ACCOUNT_JSON tiene formato JSON inválido'
+    );
   }
 
   if (!parsed.project_id || !parsed.client_email || !parsed.private_key) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON no contiene project_id, client_email o private_key');
+    throw new Error(
+      'FIREBASE_SERVICE_ACCOUNT_JSON_ECOSISTEMA o FIREBASE_SERVICE_ACCOUNT_JSON no contiene project_id, client_email o private_key'
+    );
   }
 
   return {

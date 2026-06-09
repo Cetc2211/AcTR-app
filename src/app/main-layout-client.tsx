@@ -83,6 +83,9 @@ export default function MainLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const currentPath =
+    pathname ||
+    (typeof window !== 'undefined' ? window.location.pathname : '');
   const router = useRouter();
   const { settings, activeGroup, activePartialId, isLoading: isDataLoading, error: dataError, unreadAnnouncementsCount, officialGroups } = useData();
   const [user, authLoading] = useAuthState(auth);
@@ -90,6 +93,7 @@ export default function MainLayoutClient({
   const { isAdmin } = useAdmin();
   const { toast } = useToast();
   const [isTrackingManager, setIsTrackingManager] = useState(false);
+  const [isTutorByConfig, setIsTutorByConfig] = useState(false);
   const [allowOfflineAuthFallback, setAllowOfflineAuthFallback] = useState(false);
 
   useEffect(() => {
@@ -124,6 +128,7 @@ export default function MainLayoutClient({
     const loadTrackingRole = async () => {
       if (!resolvedUser?.email) {
         setIsTrackingManager(false);
+        setIsTutorByConfig(false);
         return;
       }
 
@@ -136,16 +141,25 @@ export default function MainLayoutClient({
 
         const data = rolesDoc.data() as { tracking_managers?: string[] };
         const managers = data.tracking_managers || [];
+        const tutors = Array.isArray((rolesDoc.data() as any)?.tutors)
+          ? ((rolesDoc.data() as any).tutors as string[])
+          : [];
         const currentEmail = resolvedUser.email.toLowerCase().trim();
         setIsTrackingManager(managers.some((email) => email.toLowerCase().trim() === currentEmail));
+        setIsTutorByConfig(tutors.some((email) => email.toLowerCase().trim() === currentEmail));
       } catch (error) {
         console.error('Error loading tracking manager role:', error);
         setIsTrackingManager(false);
+        setIsTutorByConfig(false);
       }
     };
 
     loadTrackingRole();
   }, [resolvedUser?.email]);
+
+  const hasTutorAccess = useMemo(() => {
+    return isTutor || isTutorByConfig || isAdmin;
+  }, [isTutor, isTutorByConfig, isAdmin]);
 
   const docentesNavItems = useMemo(() => [
       { href: '/groups', icon: BookCopy, label: 'Grupos' },
@@ -166,11 +180,11 @@ export default function MainLayoutClient({
   const secondaryNavItems = useMemo(() => [
       { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { href: '/announcements', icon: Megaphone, label: 'Anuncios', badge: unreadAnnouncementsCount > 0 ? unreadAnnouncementsCount : undefined },
-      ...(isTutor ? [{ href: '/tutor', icon: GraduationCap, label: 'Tutoría' }] : []),
+      ...(hasTutorAccess ? [{ href: '/tutor', icon: GraduationCap, label: 'Tutoría' }] : []),
       { href: '/teacher-tracking', icon: Shield, label: 'Seguimiento Docente' },
       ...(isAdmin || isTrackingManager ? [{ href: '/admin/absences', icon: Users, label: 'Seguimiento' }] : []),
       { href: '/contact', icon: Contact, label: 'Contacto' },
-  ], [isTutor, isAdmin, isTrackingManager, unreadAnnouncementsCount]);
+    ], [hasTutorAccess, isAdmin, isTrackingManager, unreadAnnouncementsCount]);
 
   const isDocentesSectionActive = useMemo(
     () => docentesNavItems.some((item) => pathname.startsWith(item.href)),
@@ -200,6 +214,12 @@ export default function MainLayoutClient({
     const theme = settings?.theme || defaultSettings.theme;
     document.body.className = theme;
   }, [settings?.theme]);
+
+  // Defense-in-depth: if ecosistema routes are wrapped here momentarily,
+  // do not run docente redirects or shell logic.
+  if (currentPath === '/ecosistema' || currentPath.startsWith('/ecosistema/')) {
+    return <>{children}</>;
+  }
   
   if (effectiveAuthLoading) {
     return (
@@ -211,7 +231,7 @@ export default function MainLayoutClient({
   }
 
   if (!resolvedUser) {
-    if (pathname !== '/login') {
+    if (currentPath !== '/login') {
          router.replace('/login');
     }
     return (
@@ -222,16 +242,6 @@ export default function MainLayoutClient({
     );
   }
 
-  if (pathname === '/') {
-      router.replace('/dashboard');
-      return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
-            <span>Redirigiendo al Dashboard...</span>
-        </div>
-      );
-  }
-  
   if (isDataLoading) {
     return (
         <div className="flex h-screen w-full items-center justify-center">

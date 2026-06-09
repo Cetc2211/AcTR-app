@@ -1,8 +1,9 @@
-// src/lib/firebase.ts
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// Configuracion base de Firebase para modulos cliente.
+// Se priorizan variables de entorno y se mantienen fallbacks para no romper entornos existentes.
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBliGErw1WiGhY6lZeCSh6WU0Kg2ZK7oa0",
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "academic-tracker-qeoxi.firebaseapp.com",
@@ -12,9 +13,11 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:263108580734:web:316c14f8e71c20aa038f2f",
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Evita inicializacion duplicada durante hot-reload en desarrollo.
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export { app, auth, db };
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+export { app };
+export default app;

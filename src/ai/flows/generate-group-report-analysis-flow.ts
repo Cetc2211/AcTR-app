@@ -37,9 +37,15 @@ export async function generateGroupReportAnalysis(input: GroupReportInput): Prom
             totalStudents: flowInput.totalStudents,
             approvedCount: flowInput.approvedCount,
             failedCount: flowInput.failedCount,
-            groupAverage: flowInput.groupAverage.toFixed(1),
-            attendanceRate: flowInput.attendanceRate.toFixed(1),
-            atRiskStudentCount: flowInput.atRiskStudentCount
+            approvalRate: flowInput.totalStudents > 0
+              ? Number(((flowInput.approvedCount / flowInput.totalStudents) * 100).toFixed(1))
+              : 0,
+            groupAverage: Number(flowInput.groupAverage.toFixed(1)),
+            attendanceRate: Number(flowInput.attendanceRate.toFixed(1)),
+            atRiskStudentCount: flowInput.atRiskStudentCount,
+            atRiskPercentage: flowInput.totalStudents > 0
+              ? Number(((flowInput.atRiskStudentCount / flowInput.totalStudents) * 100).toFixed(1))
+              : 0
           }
         })
       });

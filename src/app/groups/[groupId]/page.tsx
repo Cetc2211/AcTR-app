@@ -721,7 +721,7 @@ export default function GroupDetailsPage() {
          </div>
       </div>
       
-      <Tabs defaultValue={activePartialId} onValueChange={(value) => setActivePartialId(value as PartialId)} className="w-full">
+    <Tabs value={activePartialId} onValueChange={(value) => setActivePartialId(value as PartialId)} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="p1">Primer Parcial</TabsTrigger>
             <TabsTrigger value="p2">Segundo Parcial</TabsTrigger>

@@ -118,6 +118,18 @@ def generate_group_report():
         group_name = data.get('group_name', 'Unknown Group')
         partial = data.get('partial', 'Unknown Partial')
         stats = data.get('stats', {})
+
+        total_students = stats.get('totalStudents', 0) or 0
+        approved_count = stats.get('approvedCount', 0) or 0
+        at_risk_count = stats.get('atRiskStudentCount', 0) or 0
+
+        approval_rate = stats.get('approvalRate')
+        if approval_rate is None:
+            approval_rate = (approved_count / total_students * 100) if total_students > 0 else 0
+
+        at_risk_percentage = stats.get('atRiskPercentage')
+        if at_risk_percentage is None:
+            at_risk_percentage = (at_risk_count / total_students * 100) if total_students > 0 else 0
         
         # Adjusted prompt to include the specific greeting requested by the user
         prompt = f'''Asume el rol de un Generador de Contenido Académico. Tu propósito es crear un **CUERPO DE TEXTO NARRATIVO continuo** para un informe formal.
@@ -125,11 +137,11 @@ def generate_group_report():
 DATOS ESTADÍSTICOS (REFERENCIA INTERNA):
 Grupo: {group_name} - Período: {partial}
 Total estudiantes: {stats.get('totalStudents', 0)}
-Aprobados: {stats.get('approvedCount', 0)} ({stats.get('approvalRate', 0)}%)
+Aprobados: {approved_count} ({approval_rate:.1f}%)
 Reprobados: {stats.get('failedCount', 0)}
 Promedio: {stats.get('groupAverage', 0)}
 Asistencia: {stats.get('attendanceRate', 0)}%
-En riesgo: {stats.get('atRiskStudentCount', 0)} ({stats.get('atRiskPercentage', 0)}%)
+En riesgo: {at_risk_count} ({at_risk_percentage:.1f}%)
 
 INSTRUCCIONES DE REDACCIÓN:
 

@@ -32,3 +32,4 @@ src/lib/pigec-simulation.ts
 # Evitar commits accidentales de iteraciones temporales de debug
 src/app/admin/debug/*.new.tsx
 src/app/admin/debug/*-fixed.tsx
+.ecosistema-sandbox/

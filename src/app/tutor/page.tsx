@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { TutorService, TutorStudentView } from './tutor-service';
+import { useEffect, useMemo, useState } from 'react';
+import { TutorPartialView, TutorService, TutorStudentView } from './tutor-service';
 import { TutorReportService } from './report-service';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,37 +16,51 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from "@/hooks/use-toast";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
+import { useData } from '@/hooks/use-data';
 
 export default function TutorDashboard() {
   const [availableGroups, setAvailableGroups] = useState<OfficialGroup[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+    const [selectedPartialView, setSelectedPartialView] = useState<TutorPartialView>('p1');
   const [students, setStudents] = useState<TutorStudentView[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const { toast } = useToast();
   const [user, authLoading] = useAuthState(auth);
+    const { activePartialId, setActivePartialId } = useData();
+
+    useEffect(() => {
+        setSelectedPartialView(activePartialId as TutorPartialView);
+    }, [activePartialId]);
 
   useEffect(() => {
-    async function fetchGroups() {
-      if (!user?.email) return;
-      
-      try {
-        const groups = await TutorService.getTutorGroupsForEmail(user.email);
-        setAvailableGroups(groups);
-        
-        if (groups.length > 0) {
-            setSelectedGroupId(groups[0].id);
-        } else {
+        if (authLoading) return;
+
+        if (!user?.email) {
+            setAvailableGroups([]);
+            setSelectedGroupId(null);
             setDataLoading(false);
+            return;
         }
-      } catch (error) {
-        console.error("Error fetching tutor groups", error);
-        setDataLoading(false);
-      }
-    }
-    
-    if (!authLoading) {
-        fetchGroups();
-    }
+
+        setDataLoading(true);
+        const unsubscribe = TutorService.subscribeTutorGroupsForEmail(
+            user.email,
+            (groups) => {
+                setAvailableGroups(groups);
+                setSelectedGroupId((prev) => {
+                    if (groups.length === 0) return null;
+                    if (prev && groups.some((group) => group.id === prev)) return prev;
+                    return groups[0].id;
+                });
+                setDataLoading(false);
+            },
+            (error) => {
+                console.error('Error subscribing tutor groups', error);
+                setDataLoading(false);
+            },
+        );
+
+        return () => unsubscribe();
   }, [user, authLoading]);
 
   useEffect(() => {
@@ -58,6 +72,7 @@ export default function TutorDashboard() {
             setDataLoading(true);
             const unsubscribe = TutorService.subscribeStudentsWithAnalytics(
                 selectedGroupId,
+                selectedPartialView,
                 (studentsData) => {
                     setStudents(studentsData);
                     setDataLoading(false);
@@ -70,9 +85,98 @@ export default function TutorDashboard() {
             );
 
             return () => unsubscribe();
-  }, [selectedGroupId, toast]);
+    }, [selectedGroupId, selectedPartialView, toast]);
 
   const activeGroup = availableGroups.find(g => g.id === selectedGroupId);
+
+    const subjectOverview = useMemo(() => {
+        const subjectMap = new Map<string, {
+            subject: string;
+            totalCompletion: number;
+            entries: number;
+            atRiskStudents: number;
+            touchedStudents: Set<string>;
+            criticalStudents: Array<{ id: string; name: string; completionRate: number; absencePercentage: number }>;
+            lastUpdatedMs: number;
+        }>();
+
+        students.forEach((student) => {
+            const snapshots = student.subjectSnapshots || [];
+            snapshots.forEach((snapshot) => {
+                const key = snapshot.subject.trim().toLowerCase();
+                if (!key) return;
+
+                if (!subjectMap.has(key)) {
+                    subjectMap.set(key, {
+                        subject: snapshot.subject,
+                        totalCompletion: 0,
+                        entries: 0,
+                        atRiskStudents: 0,
+                        touchedStudents: new Set<string>(),
+                        criticalStudents: [],
+                        lastUpdatedMs: 0,
+                    });
+                }
+
+                const current = subjectMap.get(key)!;
+                current.totalCompletion += snapshot.completionRate;
+                current.entries += 1;
+
+                if (!current.touchedStudents.has(student.id) && snapshot.failingRisk) {
+                    current.atRiskStudents += 1;
+                    current.touchedStudents.add(student.id);
+                }
+
+                if (snapshot.failingRisk || snapshot.completionRate < 70 || student.riskVariables.dropoutRisk) {
+                    current.criticalStudents.push({
+                        id: student.id,
+                        name: student.name,
+                        completionRate: snapshot.completionRate,
+                        absencePercentage: student.absencePercentage,
+                    });
+                }
+
+                const updatedMs = snapshot.lastUpdated ? new Date(snapshot.lastUpdated).getTime() : 0;
+                if (updatedMs > current.lastUpdatedMs) {
+                    current.lastUpdatedMs = updatedMs;
+                }
+            });
+        });
+
+        return Array.from(subjectMap.values())
+            .map((item) => {
+                const avgCompletion = item.entries > 0 ? item.totalCompletion / item.entries : 0;
+                const riskRate = students.length > 0 ? (item.atRiskStudents / students.length) * 100 : 0;
+
+                let level: 'alto' | 'medio' | 'bajo' = 'bajo';
+                if (riskRate >= 40 || avgCompletion < 60) level = 'alto';
+                else if (riskRate >= 20 || avgCompletion < 75) level = 'medio';
+
+                return {
+                    subject: item.subject,
+                    avgCompletion,
+                    atRiskStudents: item.atRiskStudents,
+                    riskRate,
+                    level,
+                    criticalStudents: item.criticalStudents
+                        .sort((a, b) => {
+                            if (a.completionRate !== b.completionRate) {
+                                return a.completionRate - b.completionRate;
+                            }
+                            return b.absencePercentage - a.absencePercentage;
+                        })
+                        .slice(0, 3),
+                    lastUpdatedMs: item.lastUpdatedMs,
+                };
+            })
+            .sort((a, b) => {
+                const severity = { alto: 3, medio: 2, bajo: 1 };
+                if (severity[b.level] !== severity[a.level]) {
+                    return severity[b.level] - severity[a.level];
+                }
+                return b.riskRate - a.riskRate;
+            });
+    }, [students]);
 
   const handleUpdateStudent = (updatedStudent: TutorStudentView) => {
       setStudents(prev => prev.map(s => s.id === updatedStudent.id ? updatedStudent : s));
@@ -135,6 +239,27 @@ export default function TutorDashboard() {
              ) : (
                 <span className="font-semibold text-foreground text-lg">{activeGroup?.name}</span>
              )}
+
+             <Select
+                 value={selectedPartialView}
+                 onValueChange={(value) => {
+                     const nextValue = value as TutorPartialView;
+                     setSelectedPartialView(nextValue);
+                     if (nextValue === 'p1' || nextValue === 'p2' || nextValue === 'p3') {
+                         void setActivePartialId(nextValue);
+                     }
+                 }}
+             >
+                 <SelectTrigger className="w-[220px]">
+                     <SelectValue placeholder="Selecciona parcial" />
+                 </SelectTrigger>
+                 <SelectContent>
+                     <SelectItem value="p1">Primer parcial</SelectItem>
+                     <SelectItem value="p2">Segundo parcial</SelectItem>
+                     <SelectItem value="p3">Tercer parcial</SelectItem>
+                     <SelectItem value="semester">Semestral (promedio)</SelectItem>
+                 </SelectContent>
+             </Select>
           </div>
         </div>
         <div className="flex gap-2">
@@ -150,6 +275,91 @@ export default function TutorDashboard() {
 
 
       {/* Grid de Alumnos */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <BookOpen className="h-5 w-5" />
+                        Riesgo Académico por Asignatura
+                    </CardTitle>
+                    <CardDescription>
+                        Monitoreo en tiempo real para priorizar intervención tutorial por materia.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {subjectOverview.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                            Aún no hay métricas por asignatura para este grupo. Captura actividades o calificaciones para habilitar el análisis.
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {subjectOverview.map((subject) => {
+                                const badgeStyle =
+                                    subject.level === 'alto'
+                                        ? 'bg-red-100 text-red-800 border-red-200'
+                                        : subject.level === 'medio'
+                                            ? 'bg-amber-100 text-amber-800 border-amber-200'
+                                            : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+
+                                return (
+                                    <div key={subject.subject} className="rounded-lg border p-4 space-y-3 bg-card/60">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <p className="font-semibold leading-tight">{subject.subject}</p>
+                                            <Badge variant="outline" className={badgeStyle}>
+                                                Riesgo {subject.level}
+                                            </Badge>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                                <span>Cumplimiento promedio</span>
+                                                <span>{subject.avgCompletion.toFixed(1)}%</span>
+                                            </div>
+                                            <div className="h-2 rounded-full bg-muted overflow-hidden">
+                                                <div
+                                                    className={`h-full ${subject.level === 'alto' ? 'bg-red-500' : subject.level === 'medio' ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                                                    style={{ width: `${Math.max(0, Math.min(100, subject.avgCompletion))}%` }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span className="text-muted-foreground">Alumnos en riesgo</span>
+                                            <span className="font-semibold">{subject.atRiskStudents} / {students.length}</span>
+                                        </div>
+
+                                        <div className="text-xs text-muted-foreground">
+                                            Tasa de riesgo: {subject.riskRate.toFixed(1)}%
+                                        </div>
+
+                                        {subject.criticalStudents.length > 0 && (
+                                            <div className="space-y-1">
+                                                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                                    Alumnos prioritarios
+                                                </p>
+                                                <ul className="space-y-1">
+                                                    {subject.criticalStudents.map((student) => (
+                                                        <li key={student.id} className="text-xs flex items-center justify-between gap-2">
+                                                            <span className="truncate">{student.name}</span>
+                                                            <span className="text-muted-foreground">{student.completionRate.toFixed(0)}% / {student.absencePercentage.toFixed(0)}%</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {subject.lastUpdatedMs > 0 && (
+                                            <div className="text-[11px] text-muted-foreground">
+                                                Actualizado: {new Date(subject.lastUpdatedMs).toLocaleString()}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {students.map((student) => (
           <StudentCard key={student.id} student={student} onUpdate={handleUpdateStudent} />

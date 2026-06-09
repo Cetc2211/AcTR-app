@@ -18,7 +18,13 @@ export default function LayoutProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const currentPath =
+    pathname ||
+    (typeof window !== 'undefined' ? window.location.pathname : '');
   const isAuthPage = pathname === '/login' || pathname === '/signup';
+  const isEntryPage = currentPath === '/';
+  const isEcosistemaRoute =
+    currentPath === '/ecosistema' || currentPath.startsWith('/ecosistema/');
 
   useEffect(() => {
     // Attempt to read theme from localStorage to prevent flicker on load
@@ -33,16 +39,21 @@ export default function LayoutProvider({
     }
   }, []);
 
+  if (isEcosistemaRoute || isEntryPage) {
+    return (
+      <body>
+        {children}
+        <Toaster />
+      </body>
+    );
+  }
+
   return (
     <body className={isAuthPage ? '' : 'theme-default'}>
-        <DataProvider>
-        {isAuthPage ? (
-            children
-        ) : (
-            <MainLayoutClient>{children}</MainLayoutClient>
-        )}
-        </DataProvider>
-        <Toaster />
+      <DataProvider>
+        {isAuthPage ? children : <MainLayoutClient>{children}</MainLayoutClient>}
+      </DataProvider>
+      <Toaster />
     </body>
   );
 }

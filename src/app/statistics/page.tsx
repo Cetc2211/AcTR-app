@@ -241,7 +241,7 @@ export default function StatisticsPage() {
           </p>
         </div>
       </div>
-       <Tabs defaultValue={activePartialId} onValueChange={(value) => setActivePartialId(value as any)} className="w-full">
+    <Tabs value={activePartialId} onValueChange={(value) => setActivePartialId(value as any)} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="p1">Primer Parcial</TabsTrigger>
             <TabsTrigger value="p2">Segundo Parcial</TabsTrigger>

@@ -1,0 +1,161 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import EcosistemaAuthGuard from '@/components/ecosistema/ecosistema-auth-guard';
+import EstacionCard from '@/components/ecosistema/estacion-card';
+import { useEcosistema } from '@/hooks/use-ecosistema';
+
+export interface ConfigEstacion {
+  id: string;
+  nombre: string;
+  color: string;
+  numeroRomano: string;
+  claveAcceso: string;
+  coleccionFirestore: string;
+  rutaBase: string;
+}
+
+export const CONFIG_CS1: ConfigEstacion = {
+  id: 'cs1',
+  nombre: 'Ciencias Sociales I',
+  color: '#4a2e10',
+  numeroRomano: 'I',
+  claveAcceso: 'estacion_cs1',
+  coleccionFirestore: 'ecosistema_materiales_cs1',
+  rutaBase: '/ecosistema/cs1',
+};
+
+export const CONFIG_CS2: ConfigEstacion = {
+  id: 'cs2',
+  nombre: 'Ciencias Sociales II',
+  color: '#1a1060',
+  numeroRomano: 'II',
+  claveAcceso: 'estacion_cs2',
+  coleccionFirestore: 'ecosistema_materiales_cs2',
+  rutaBase: '/ecosistema/cs2',
+};
+
+export const CONFIG_CS3: ConfigEstacion = {
+  id: 'cs3',
+  nombre: 'Ciencias Sociales III',
+  color: '#0a5040',
+  numeroRomano: 'III',
+  claveAcceso: 'estacion_cs3',
+  coleccionFirestore: 'ecosistema_materiales_cs3',
+  rutaBase: '/ecosistema/cs3',
+};
+
+type TipoMaterial = 'libro' | 'articulo' | 'ensayo' | 'curso';
+
+interface MaterialItem {
+  id: string;
+  titulo: string;
+  subtitulo?: string;
+  tipo: TipoMaterial;
+  orden: number;
+}
+
+export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
+  const { tieneAcceso } = useEcosistema();
+  const [materiales, setMateriales] = useState<MaterialItem[]>([]);
+  const [cargando, setCargando] = useState(true);
+
+  useEffect(() => {
+    async function cargarMateriales() {
+      try {
+        const materialsQuery = query(
+          collection(db, config.coleccionFirestore),
+          orderBy('orden', 'asc')
+        );
+        const snapshot = await getDocs(materialsQuery);
+        const items: MaterialItem[] = snapshot.docs.map((materialDoc) => ({
+          id: materialDoc.id,
+          ...(materialDoc.data() as Omit<MaterialItem, 'id'>),
+        }));
+        setMateriales(items);
+      } catch (error) {
+        console.error('[PaginaEstacion] Error cargando materiales:', error);
+      } finally {
+        setCargando(false);
+      }
+    }
+
+    setCargando(true);
+    void cargarMateriales();
+  }, [config.coleccionFirestore]);
+
+  return (
+    <EcosistemaAuthGuard accesoRequerido={config.claveAcceso}>
+      <div style={{ padding: '2rem 1.5rem', maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <Link
+            href="/ecosistema"
+            style={{
+              fontSize: '0.85rem',
+              color: config.color,
+              textDecoration: 'none',
+              fontFamily: 'var(--font-body)',
+            }}
+          >
+            &larr; Biblioteca
+          </Link>
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '2.2rem',
+              fontWeight: 700,
+              color: config.color,
+              margin: '0.5rem 0 0',
+            }}
+          >
+            {config.nombre}
+          </h1>
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              color: '#707070',
+              margin: '0.25rem 0 0',
+            }}
+          >
+            Estacion {config.numeroRomano}
+          </p>
+        </div>
+
+        {cargando ? (
+          <p style={{ fontFamily: 'var(--font-body)', color: '#999' }}>
+            Cargando materiales...
+          </p>
+        ) : materiales.length === 0 ? (
+          <p style={{ fontFamily: 'var(--font-body)', color: '#999' }}>
+            No hay materiales disponibles en esta estacion.
+          </p>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}
+          >
+            {materiales.map((material) => (
+              <EstacionCard
+                key={material.id}
+                titulo={material.titulo}
+                subtitulo={material.subtitulo}
+                tipo={material.tipo}
+                href={`${config.rutaBase}/${material.id}`}
+                claveCache={`${config.id}_${material.id}`}
+                tieneAcceso={tieneAcceso(config.claveAcceso)}
+                numero={material.orden}
+                colorEstacion={config.color}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </EcosistemaAuthGuard>
+  );
+}
