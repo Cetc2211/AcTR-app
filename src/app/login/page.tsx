@@ -64,9 +64,10 @@ export default function LoginPage() {
   };
 
   const handleSignIn = async () => {
-    const normalizedEmail = email.trim().toLowerCase();
+    const trimmedEmail = email.trim();
+    const normalizedEmail = trimmedEmail.toLowerCase();
 
-    if (!normalizedEmail || !password) {
+    if (!trimmedEmail || !password) {
       toast({
         variant: 'destructive',
         title: 'Datos incompletos',
@@ -77,7 +78,22 @@ export default function LoginPage() {
 
     setIsSigningIn(true);
     try {
-      await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      try {
+        await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      } catch (firstError: any) {
+        const firstCode = typeof firstError?.code === 'string' ? firstError.code : 'unknown';
+
+        // Fallback defensivo: algunos tenants/proveedores pueden conservar variaciones de case.
+        if (
+          normalizedEmail !== trimmedEmail &&
+          (firstCode === 'auth/invalid-credential' || firstCode === 'auth/user-not-found')
+        ) {
+          await signInWithEmailAndPassword(auth, trimmedEmail, password);
+        } else {
+          throw firstError;
+        }
+      }
+
       toast({
         title: 'Inicio de sesión exitoso',
         description: 'Bienvenido de nuevo.',
@@ -86,10 +102,11 @@ export default function LoginPage() {
     } catch (e: any) {
       const code = typeof e?.code === 'string' ? e.code : 'unknown';
       console.error('Firebase Auth Error:', code, e);
+      const baseMessage = getSignInErrorMessage(code);
       toast({
         variant: 'destructive',
         title: 'Error al iniciar sesión',
-        description: getSignInErrorMessage(code),
+        description: code === 'unknown' ? baseMessage : `${baseMessage} (${code})`,
       });
     } finally {
       setIsSigningIn(false);
