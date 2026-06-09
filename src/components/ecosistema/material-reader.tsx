@@ -16,6 +16,7 @@ interface MaterialReaderProps {
   titulo: string;
   claveMaterial: string;
   rutaFirestore: string;
+  archivoRemoto?: string;
   colorEstacion?: string;
   rutaRegreso?: string;
   nombreEstacion?: string;
@@ -37,6 +38,7 @@ export default function MaterialReader({
   titulo,
   claveMaterial,
   rutaFirestore,
+  archivoRemoto,
   colorEstacion,
   rutaRegreso,
   nombreEstacion,
@@ -76,15 +78,70 @@ export default function MaterialReader({
       setProgreso(70);
 
       if (!snapshot.exists()) {
-        if (!cacheDisponibleRef.current) {
-          setEstado('error');
+        if (!solicitarUrlDescarga) {
+          if (!cacheDisponibleRef.current) {
+            setEstado('error');
+          }
+          return;
         }
+
+        const url = await solicitarUrlDescarga(archivoRemoto || claveMaterial);
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`No se pudo descargar el material (${response.status})`);
+        }
+        const htmlRemoto = await response.text();
+        if (!htmlRemoto) {
+          if (!cacheDisponibleRef.current) {
+            setEstado('error');
+          }
+          return;
+        }
+
+        setHtml(htmlRemoto);
+        setEstado('listo');
+        await cacheMaterial(claveMaterial, htmlRemoto);
+        setCacheDisponible(true);
+        cacheDisponibleRef.current = true;
+        setProgreso(100);
         return;
       }
 
-      const data = snapshot.data() as { html?: string; contenido?: string };
+      const data = snapshot.data() as {
+        html?: string;
+        contenido?: string;
+        archivo?: string;
+        nombreArchivo?: string;
+        rutaArchivo?: string;
+        storageFile?: string;
+      };
       const htmlRemoto = data.html || data.contenido || '';
       if (!htmlRemoto) {
+        if (solicitarUrlDescarga) {
+          const archivoParaDescargar =
+            data.archivo || data.nombreArchivo || data.rutaArchivo || data.storageFile || archivoRemoto || claveMaterial;
+          const url = await solicitarUrlDescarga(archivoParaDescargar);
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`No se pudo descargar el material (${response.status})`);
+          }
+          const htmlDesdeStorage = await response.text();
+          if (!htmlDesdeStorage) {
+            if (!cacheDisponibleRef.current) {
+              setEstado('error');
+            }
+            return;
+          }
+
+          setHtml(htmlDesdeStorage);
+          setEstado('listo');
+          await cacheMaterial(claveMaterial, htmlDesdeStorage);
+          setCacheDisponible(true);
+          cacheDisponibleRef.current = true;
+          setProgreso(100);
+          return;
+        }
+
         if (!cacheDisponibleRef.current) {
           setEstado('error');
         }
@@ -103,7 +160,7 @@ export default function MaterialReader({
         setEstado('error');
       }
     }
-  }, [claveMaterial, rutaFirestore]);
+  }, [archivoRemoto, claveMaterial, rutaFirestore, solicitarUrlDescarga]);
 
   useEffect(() => {
     void cargarMaterial();

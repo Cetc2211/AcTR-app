@@ -67,17 +67,9 @@ export async function POST(request: Request) {
 
     const archivo = `${clave}.html`;
 
-    const functionsUrl = process.env.FIREBASE_FUNCTIONS_URL;
-    if (!functionsUrl) {
-      return NextResponse.json(
-        { error: 'FIREBASE_FUNCTIONS_URL no configurada' },
-        { status: 500 }
-      );
-    }
-
-    const baseUrl = functionsUrl.endsWith('/')
-      ? functionsUrl.slice(0, -1)
-      : functionsUrl;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'academic-tracker-qeoxi';
+    const functionsUrl = process.env.FIREBASE_FUNCTIONS_URL || `https://us-central1-${projectId}.cloudfunctions.net`;
+    const baseUrl = functionsUrl.endsWith('/') ? functionsUrl.slice(0, -1) : functionsUrl;
 
     const cfResp = await fetch(`${baseUrl}/solicitarDescarga`, {
       method: 'POST',

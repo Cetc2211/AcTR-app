@@ -33,3 +33,5 @@ src/lib/pigec-simulation.ts
 src/app/admin/debug/*.new.tsx
 src/app/admin/debug/*-fixed.tsx
 .ecosistema-sandbox/
+functions/lib/
+functions/node_modules/

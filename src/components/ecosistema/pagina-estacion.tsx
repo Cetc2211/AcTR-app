@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import EcosistemaAuthGuard from '@/components/ecosistema/ecosistema-auth-guard';
 import EstacionCard from '@/components/ecosistema/estacion-card';
@@ -55,7 +55,11 @@ interface MaterialItem {
   titulo: string;
   subtitulo?: string;
   tipo: TipoMaterial;
-  orden: number;
+  orden?: number;
+  archivo?: string;
+  nombreArchivo?: string;
+  rutaArchivo?: string;
+  storageFile?: string;
 }
 
 export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
@@ -69,19 +73,24 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
       try {
         console.log('[PaginaEstacion] Iniciando carga de materiales');
         console.log('[PaginaEstacion] Colección Firestore:', config.coleccionFirestore);
-        const materialsQuery = query(
-          collection(db, config.coleccionFirestore),
-          orderBy('orden', 'asc')
-        );
-        const snapshot = await getDocs(materialsQuery);
+        const snapshot = await getDocs(collection(db, config.coleccionFirestore));
         console.log('[PaginaEstacion] Documentos recibidos de Firestore:', snapshot.size);
         snapshot.docs.forEach((d) => {
           console.log('[PaginaEstacion] Doc ID:', d.id, '| Datos:', JSON.stringify(d.data()));
         });
-        const items: MaterialItem[] = snapshot.docs.map((materialDoc) => ({
-          id: materialDoc.id,
-          ...(materialDoc.data() as Omit<MaterialItem, 'id'>),
-        }));
+        const items: MaterialItem[] = snapshot.docs
+          .map((materialDoc) => ({
+            id: materialDoc.id,
+            ...(materialDoc.data() as Omit<MaterialItem, 'id'>),
+          }))
+          .sort((a, b) => {
+            const ordenA = typeof a.orden === 'number' ? a.orden : Number.MAX_SAFE_INTEGER;
+            const ordenB = typeof b.orden === 'number' ? b.orden : Number.MAX_SAFE_INTEGER;
+            if (ordenA !== ordenB) {
+              return ordenA - ordenB;
+            }
+            return a.titulo.localeCompare(b.titulo, 'es');
+          });
         console.log('[PaginaEstacion] Items mapeados:', items.length);
         setMateriales(items);
       } catch (error) {

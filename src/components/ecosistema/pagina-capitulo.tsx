@@ -120,6 +120,7 @@ export default function PaginaCapitulo({ config }: PaginaCapituloProps) {
           titulo={`${config.nombre} · Capitulo ${capitulo}`}
           claveMaterial={`${config.id}-${capitulo}`}
           rutaFirestore={`${config.coleccionFirestore}/${capitulo}`}
+          archivoRemoto={`${config.id}-${capitulo}`}
           colorEstacion={config.color}
           rutaRegreso={config.rutaBase}
           nombreEstacion={config.nombre}
