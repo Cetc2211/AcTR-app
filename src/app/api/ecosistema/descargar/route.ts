@@ -93,8 +93,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const cfData = (await cfResp.json()) as { result?: { url?: string } };
-    const url = cfData?.result?.url;
+    const cfData = (await cfResp.json()) as { url?: string; expira?: string };
+    const url = cfData?.url;
 
     if (!url) {
       console.error('[ecosistema/descargar] Cloud Function sin URL:', cfData);
