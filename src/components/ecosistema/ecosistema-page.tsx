@@ -113,14 +113,38 @@ export default function EcosistemaPage() {
           >
             Vista previa
           </h2>
-          <EstacionCard
-            titulo="Capitulo de muestra"
-            subtitulo="Acceso gratuito"
-            tipo="articulo"
-            href="/ecosistema/cs1/preview"
-            tieneAcceso={true}
-            colorEstacion="#8b1a1a"
-          />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '1.25rem',
+            }}
+          >
+            <EstacionCard
+              titulo="CS-I · Capítulo 1"
+              subtitulo="El Código del Ejido · Acceso gratuito"
+              tipo="articulo"
+              href="/ecosistema/cs1/cs1-cap1-novela"
+              tieneAcceso={true}
+              colorEstacion="#4a2e10"
+            />
+            <EstacionCard
+              titulo="CS-II · Capítulo 1"
+              subtitulo="La Cadena Rota · Acceso gratuito"
+              tipo="articulo"
+              href="/ecosistema/cs2/cs2-cap1-novela"
+              tieneAcceso={true}
+              colorEstacion="#1a1060"
+            />
+            <EstacionCard
+              titulo="CS-III · Capítulo 1"
+              subtitulo="Generación Raíz · Acceso gratuito"
+              tipo="articulo"
+              href="/ecosistema/cs3/cs3-cap1-novela"
+              tieneAcceso={true}
+              colorEstacion="#0a5040"
+            />
+          </div>
         </div>
       )}
 
@@ -135,11 +159,29 @@ export default function EcosistemaPage() {
               margin: '0 0 1rem',
             }}
           >
-            Articulacion
+            Articulación
           </h2>
-          <p style={{ color: '#707070', fontSize: '0.9rem' }}>
-            Contenido de articulacion disponible.
-          </p>
+          <a
+            href="https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.65rem 1.25rem',
+              background: '#3d2d1e',
+              color: '#fdf8f0',
+              borderRadius: 6,
+              textDecoration: 'none',
+              fontSize: '0.9rem',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 600,
+              transition: 'background 0.2s',
+            }}
+          >
+            ↓ Descargar Articulación Pedagógica
+          </a>
         </div>
       )}
 
