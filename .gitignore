@@ -35,3 +35,4 @@ src/app/admin/debug/*-fixed.tsx
 .ecosistema-sandbox/
 functions/lib/
 functions/node_modules/
+service-account.json
