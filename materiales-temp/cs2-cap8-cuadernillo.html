@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 8 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo · CS-II · Capítulo 8 · Raíz II</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff; color: #0e0a1e;
+  font-size: 10.5pt; line-height: 1.7;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 1.5rem 0 1rem; border-bottom: 3pt solid #1a1060; margin-bottom: 1rem;
+}
+.raiz-digital .col-label {
+  font-size: 7pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .8rem; line-height: 2; display: block;
+}
+.raiz-digital .port-titulo {
+  font-size: 24pt; font-weight: 900; color: #0e0a1e; line-height: 1.1;
+  margin-bottom: .2rem; display: block;
+}
+.raiz-digital .port-sub {
+  font-size: 10pt; color: #1a1060; margin-bottom: .3rem; font-weight: 700; display: block;
+}
+/* ÍNDIGO → BLANCO */
+.raiz-digital .proposito-strip {
+  background: #1a1060; color: #ffffff;
+  padding: .55rem .85rem; margin: .5rem 0; font-size: 8pt; line-height: 1.7;
+}
+.raiz-digital .proposito-strip .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #ffc090; display: block; margin-bottom: .2rem; font-weight: bold;
+}
+.raiz-digital .ficha-est {
+  border: 1.5pt solid #8080c0; padding: .6rem .8rem; margin: .8rem 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem;
+}
+.raiz-digital .campo { border-bottom: 1pt solid #6060a8; padding-bottom: .2rem; font-size: 8.5pt; }
+.raiz-digital .campo strong {
+  display: block; font-size: 7pt; letter-spacing: .1em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .1rem;
+}
+.raiz-digital h2 {
+  font-size: 13pt; font-weight: 900; color: #0e0a1e;
+  margin: 1.1rem 0 .3rem; padding-bottom: .2rem; border-bottom: 2pt solid #1a1060;
+}
+.raiz-digital h3 { font-size: 10pt; font-weight: 700; color: #1a1060; margin: .7rem 0 .25rem; }
+.raiz-digital h4 { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; margin: .45rem 0 .15rem; }
+.raiz-digital p { margin-bottom: .45em; line-height: 1.65; font-size: 10.5pt; color: #0e0a1e; }
+.raiz-digital .espacio-respuesta {
+  border: 1pt solid #8080c0; padding: .3rem .5rem; margin: .4rem 0; background: #f8f7fc;
+}
+.raiz-digital .esp-label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .2rem; font-weight: bold; display: block;
+}
+.raiz-digital .lineas { display: flex; flex-direction: column; gap: .6rem; }
+.raiz-digital .linea { border-bottom: 1pt solid #a0a0d8; height: .6rem; }
+/* tabla síntesis del año */
+.raiz-digital table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: .5rem 0; }
+.raiz-digital th {
+  background: #1a1060; color: #ffffff; padding: .28rem .4rem;
+  text-align: left; font-size: 7.5pt; font-weight: 700;
+}
+.raiz-digital td {
+  border: 1pt solid #8080c0; padding: .3rem .4rem;
+  vertical-align: top; line-height: 1.5; color: #0e0a1e;
+}
+.raiz-digital tr:nth-child(even) td { background: #f0eef8; }
+/* CARTA: espacio amplio */
+.raiz-digital .carta-espacio { border: 1pt solid #8080c0; margin: .6rem 0; background: #f8f7fc; overflow: hidden; }
+.raiz-digital .carta-cabecera {
+  background: #dcdaf8; padding: .35rem .6rem;
+  display: flex; gap: 1rem; font-size: 8.5pt; border-bottom: 1pt solid #8080c0;
+}
+.raiz-digital .carta-campo { flex: 1; border-bottom: 1pt solid #6060a8; padding-bottom: .1rem; }
+.raiz-digital .carta-campo strong {
+  display: block; font-size: 7pt; letter-spacing: .1em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .05rem;
+}
+.raiz-digital .carta-cuerpo { padding: .5rem .6rem; }
+.raiz-digital .carta-lineas { display: flex; flex-direction: column; gap: .75rem; }
+.raiz-digital .carta-linea { border-bottom: 1pt solid #b8a8e0; height: .75rem; }
+/* PIZARRÓN: índigo muy oscuro → azul cielo */
+.raiz-digital .pizarron-cs3 {
+  background: #080618; color: #c0d8ff; font-family: Georgia, serif;
+  font-size: 11pt; font-style: italic; padding: 1rem 1.2rem;
+  margin: 1rem 0; text-align: center; line-height: 1.85; display: block;
+}
+.raiz-digital .pizarron-cs3 .sub {
+  font-family: Arial, sans-serif; font-size: 7.5pt; font-style: normal;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: #90d8ff; display: block; margin-top: .6rem;
+}
+/* dos columnas */
+.raiz-digital .dos-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin: .4rem 0;
+}
+.raiz-digital .col-antes {
+  background: #eeeaf8; border: 1pt solid #8080c0; padding: .4rem .5rem;
+  font-size: 8.5pt; line-height: 1.55; color: #0e0a1e;
+}
+.raiz-digital .col-antes .label { font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; font-weight: bold; margin-bottom: .2rem; display: block; color: #1a1060; }
+.raiz-digital .col-despues {
+  background: #083840; color: #ffffff; padding: .4rem .5rem;
+  font-size: 8.5pt; line-height: 1.55;
+}
+.raiz-digital .col-despues .label { font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; font-weight: bold; margin-bottom: .2rem; display: block; color: #b0f0d8; }
+.raiz-digital .col-despues .linea { border-color: #2a6858; }
+/* CIERRE: verde oscuro → BLANCO */
+.raiz-digital .cierre-final {
+  background: #083840; color: #ffffff; padding: .8rem 1rem; margin: 1.2rem 0;
+}
+.raiz-digital .cierre-final .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #b0f0d8; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .cierre-final h3 { color: #ffffff; font-size: 11pt; margin: 0 0 .4rem; }
+.raiz-digital .cierre-final p  { font-size: 9pt; line-height: 1.7; color: #c0f0e0; }
+.raiz-digital .cierre-final .colofon-mini {
+  background: #1a5878; padding: .4rem .6rem; margin-top: .5rem;
+  font-size: 8.5pt; color: #90d0ff;
+}
+/* reflexión: ámbar → oscuro */
+.raiz-digital .reflexion {
+  border: 1.5pt solid #b09030; padding: .6rem .8rem; margin: 1rem 0; background: #fffbe8;
+}
+.raiz-digital .reflexion .label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #6b4000; font-weight: bold; display: block; margin-bottom: .3rem;
+}
+.raiz-digital .pie-pagina {
+  font-size: 8pt; color: #3a3070; border-top: 1pt solid #8080c0;
+  padding-top: .4rem; margin-top: .5rem; text-align: center;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="col-label">Ciencias Sociales II · Organización, relaciones económicas y sociales<br>MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital · La Cadena Rota</span>
+  <span class="port-titulo">Cuadernillo<br>del Estudiante</span>
+  <span class="port-sub">Capítulo 8 · "Raíz II" · Capítulo de cierre · Flex D</span>
+  <span style="font-size:8.5pt;color:#2a2050;font-style:italic;display:block;margin-top:.4rem;">Semanas 11–12 · Sin contenido nuevo · Solo reflexión y carta</span>
+
+  <div class="ficha-est">
+    <div class="campo"><strong>Nombre completo</strong></div>
+    <div class="campo"><strong>Grupo</strong></div>
+    <div class="campo"><strong>Fecha de la última sesión</strong></div>
+    <div class="campo"><strong>¿Tu propuesta del Reto Central sigue vigente?</strong></div>
+  </div>
+  <div class="proposito-strip">
+    <span class="label">Este cuadernillo no tiene actividades de evaluación</span>
+    El Capítulo 8 es el espacio de cierre de CS-II y del año escolar. Lo que escribas aquí es para ti. La carta al futuro yo no se califica: se guarda. El docente puede pedirte que la compartas voluntariamente, pero esa decisión es tuya.
+  </div>
+</div>
+
+
+<!-- DOS SEMANAS DESPUÉS -->
+<h2>Dos semanas después del día de la cadena</h2>
+<p style="font-size:9pt;">Los personajes de la novela hicieron cosas concretas después de las presentaciones. ¿Qué hiciste tú?</p>
+
+<div class="espacio-respuesta">
+  <span class="esp-label">¿Hiciste algo diferente en tu comunidad, familia o entorno a partir de lo que aprendiste? ¿Qué fue?</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+<div class="espacio-respuesta">
+  <span class="esp-label">¿Le contaste algo de lo que aprendiste a alguien fuera del salón? ¿Cómo lo explicaste?</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+
+
+<!-- LA CARTA DE CS-II REGRESA -->
+<h2>La carta de CS-II que te devuelve el docente</h2>
+
+<div class="espacio-respuesta">
+  <span class="esp-label">¿Qué escribiste en esa carta que resultó cierto?</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+<div class="espacio-respuesta">
+  <span class="esp-label">¿Qué encontraste que NO predijiste? ¿Qué te sorprendió del semestre?</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+
+
+<!-- SÍNTESIS DEL AÑO COMPLETO -->
+<h2>Síntesis del año · CS-I + CS-II como un arco</h2>
+<p style="font-size:9pt;">Ahora que terminaste los dos semestres puedes ver el arco completo. Llena la tabla con el vocabulario que aprendiste.</p>
+
+<table>
+  <thead><tr><th>En CS-I aprendí que...</th><th>En CS-II aprendí que...</th><th>Los dos juntos me dicen que...</th></tr></thead>
+  <tbody>
+    <tr><td style="height:2rem;">El Estado opera a través de...</td><td>El mercado opera a través de...</td><td></td></tr>
+    <tr><td style="height:2rem;">La desigualdad jurídica se reproduce porque...</td><td>La desigualdad económica se reproduce porque...</td><td></td></tr>
+    <tr><td style="height:2rem;">El canal de María es un problema de...</td><td>El canal de María es también un problema de...</td><td></td></tr>
+    <tr><td style="height:2rem;">La propuesta era una carta de acción afirmativa que...</td><td>La propuesta era un modelo de organización alternativa que...</td><td></td></tr>
+  </tbody>
+</table>
+
+<h4>Tu arco personal: completa la comparación</h4>
+<div class="dos-col">
+  <div class="col-antes">
+    <span class="label">Lo que pensaba en agosto (inicio de CS-I)</span>
+    <p style="font-size:8pt;color:#3a3070;margin-bottom:.3rem;">El Estado es... La economía es... La desigualdad se explica por...</p>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="col-despues">
+    <span class="label">Lo que pienso ahora (fin de CS-II)</span>
+    <div class="lineas" style="margin-top:.4rem;">
+      <div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- LAS PREGUNTAS DEL PIZARRÓN -->
+<h2>Las cinco preguntas que van a CS-III</h2>
+
+<div class="pizarron-cs3">
+  ¿Cuánto vale el trabajo de tu familia?<br>
+  ¿Quién decide ese valor?<br>
+  ¿Cómo se decide?<br>
+  ¿Cómo podría decidirse de otra manera?<br>
+  ¿Qué pasa cuando el territorio ya no puede sostener ninguna decisión?
+  <span class="sub">→ Ciencias Sociales III · Generación Raíz</span>
+</div>
+
+<div class="espacio-respuesta">
+  <span class="esp-label">Responde la quinta pregunta con lo que sabes ahora, antes de empezar CS-III. Es una hipótesis: no tiene que ser correcta.</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+<div class="espacio-respuesta">
+  <span class="esp-label">¿Qué conexión ves entre las cinco preguntas como arco? ¿Cómo se relacionan entre sí?</span>
+  <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+</div>
+
+
+<!-- LA CARTA AL FUTURO YO DE CS-III -->
+<h2>La carta al futuro yo de CS-III</h2>
+<p style="font-size:9pt;">Escríbele a quien serás al terminar el tercer semestre. No a quien eres ahora: a quien habrás aprendido a ser después de CS-III.</p>
+
+<div class="carta-espacio">
+  <div class="carta-cabecera">
+    <div class="carta-campo"><strong>Lugar</strong></div>
+    <div class="carta-campo"><strong>Fecha (hoy)</strong></div>
+    <div class="carta-campo" style="flex:2;"><strong>Destinatario</strong>[tu nombre] al final de CS-III</div>
+  </div>
+  <div class="carta-cuerpo">
+    <div class="carta-lineas">
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+      <div class="carta-linea"></div><div class="carta-linea"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REFLEXIÓN FINAL -->
+<div class="reflexion">
+  <span class="label">Reflexión de cierre · Para guardarte</span>
+  <div class="espacio-respuesta">
+    <span class="esp-label">Yesenia dijo: "En CS-I aprendí a hablar. En CS-II aprendí de qué hablar. En CS-III quiero aprender cómo hablar para que lo que digo cambie algo." ¿Qué aprendiste tú en cada semestre y qué quieres aprender en el tercero?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">Si pudieras decirle una sola cosa al estudiante que llegará a este salón en agosto, ¿qué le dirías?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">¿Qué te llevas de Miranda, de Yesenia, de Ulises, de María, de Doña Esperanza, del Profe Ramírez, que no venía en ningún propósito formativo?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+</div>
+
+
+<!-- CIERRE FINAL -->
+<div class="cierre-final">
+  <span class="label">Fin del Libro II · La Cadena Rota</span>
+  <h3>Ciencias Sociales II · Organización, relaciones económicas y sociales</h3>
+  <p>Terminaste el segundo semestre de la Trilogía Raíz Digital. Aprendiste que el mercado opera a través de cadenas de valor donde quien controla la información del precio final controla la distribución. Que las desigualdades tienen múltiples dimensiones que se refuerzan entre sí. Que las alternativas existen y tienen nombre. Y que cualquier propuesta económica tiene un límite que se llama territorio.</p>
+  <p>El próximo semestre aprenderás qué pasa cuando ese límite se vuelve urgente.</p>
+  <div class="colofon-mini">
+    Continúa en: Libro III · Generación Raíz · Ciencias Sociales III · Las dinámicas de la realidad actual
+  </div>
+</div>
+
+<p class="pie-pagina">
+  Cuadernillo del Estudiante · Capítulo 8 · "Raíz II" · CS-II · La Cadena Rota · MCCEMS 2025 · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 8 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

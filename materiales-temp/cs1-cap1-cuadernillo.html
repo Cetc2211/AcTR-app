@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 1 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo del Estudiante · Capítulo 1 · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+.raiz-cs1 {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  background: #fefefe;
+  color: #1a1410;
+  font-size: 10.5pt;
+  line-height: 1.7;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 1.2cm 1.8cm;
+}
+
+
+/* PORTADILLA */
+.raiz-cs1 .portadilla {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5cm 0;
+  border-bottom: 3pt solid #5c3a1e;
+  margin-bottom: 1.2cm;
+  page-break-after: always;
+}
+
+.raiz-cs1 .portadilla-top { }
+
+.raiz-cs1 .col-label {
+  font-size: 7pt;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #8b4513;
+  margin-bottom: 0.8cm;
+  line-height: 1.8;
+}
+
+.raiz-cs1 .port-titulo {
+  font-family: 'Arial', sans-serif;
+  font-size: 26pt;
+  font-weight: 900;
+  color: #1a1410;
+  line-height: 1.1;
+  margin-bottom: 0.2cm;
+}
+
+.raiz-cs1 .port-sub {
+  font-size: 11pt;
+  color: #5c3a1e;
+  margin-bottom: 0.5cm;
+}
+
+.raiz-cs1 .port-cap {
+  font-size: 9pt;
+  color: #8c7a60;
+  font-style: italic;
+}
+
+
+/* FICHA ESTUDIANTE */
+.raiz-cs1 .ficha-est {
+  border: 1pt solid #c8b898;
+  padding: 0.6cm 0.8cm;
+  margin: 0.8cm 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5cm 1cm;
+}
+
+.raiz-cs1 .campo {
+  border-bottom: 0.5pt solid #8c7a60;
+  padding-bottom: 0.2cm;
+  font-size: 8.5pt;
+  color: #6c5c48;
+}
+
+.raiz-cs1 .campo strong {
+  display: block;
+  font-size: 7pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b4513;
+  margin-bottom: 0.1cm;
+}
+
+
+/* PROPÓSITOS */
+.raiz-cs1 .proposito-strip {
+  background: #5c3a1e;
+  color: #faf8f3;
+  padding: 0.5cm 0.8cm;
+  margin: 0.5cm 0;
+  font-size: 8pt;
+  line-height: 1.6;
+}
+
+.raiz-cs1 .proposito-strip .label {
+  font-size: 6.5pt;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #d4a83a;
+  display: block;
+  margin-bottom: 0.2cm;
+}
+
+
+/* ENCABEZADOS */
+.raiz-cs1 h2 {
+  font-family: 'Arial', sans-serif;
+  font-size: 14pt;
+  font-weight: 900;
+  color: #1a1410;
+  margin: 1.2cm 0 0.3cm;
+  padding-bottom: 0.2cm;
+  border-bottom: 2pt solid #5c3a1e;
+}
+
+.raiz-cs1 h3 {
+  font-family: 'Arial', sans-serif;
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: #5c3a1e;
+  margin: 0.8cm 0 0.3cm;
+}
+
+.raiz-cs1 h4 {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: #1a1410;
+  margin: 0.5cm 0 0.2cm;
+}
+
+
+.raiz-cs1 p {
+  margin-bottom: 0.5em;
+  line-height: 1.65;
+}
+
+
+/* ACTIVIDADES */
+.raiz-cs1 .actividad {
+  border: 1pt solid #c8b898;
+  margin: 0.7cm 0;
+  overflow: hidden;
+}
+
+.raiz-cs1 .act-header {
+  background: #f0ebe0;
+  padding: 0.3cm 0.6cm;
+  display: flex;
+  align-items: center;
+  gap: 0.5cm;
+}
+
+.raiz-cs1 .act-num {
+  background: #5c3a1e;
+  color: #faf8f3;
+  width: 1.4cm;
+  height: 1.4cm;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 11pt;
+  flex-shrink: 0;
+}
+
+.raiz-cs1 .act-titulo {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: #1a1410;
+  line-height: 1.3;
+}
+
+.raiz-cs1 .act-tipo-badges {
+  display: flex;
+  gap: 0.3cm;
+  flex-wrap: wrap;
+  margin-left: auto;
+  align-items: center;
+}
+
+.raiz-cs1 .tipo-badge {
+  font-size: 6.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15cm 0.35cm;
+  font-weight: 700;
+  border: 1pt solid;
+}
+
+.raiz-cs1 .badge-analog { border-color: #5c3a1e; color: #5c3a1e; }
+
+.raiz-cs1 .badge-digital { border-color: #1a4a5c; color: #1a4a5c; }
+
+.raiz-cs1 .badge-colectivo { border-color: #2d5016; color: #2d5016; }
+
+.raiz-cs1 .badge-reflexion { border-color: #8b4513; color: #8b4513; }
+
+
+.raiz-cs1 .act-body { padding: 0.5cm 0.6cm; font-size: 9.5pt; }
+
+.raiz-cs1 .act-body p { margin-bottom: 0.4em; }
+
+
+/* ESPACIO DE RESPUESTA */
+.raiz-cs1 .espacio-respuesta {
+  border: 0.5pt solid #c8b898;
+  padding: 0.3cm 0.5cm;
+  margin: 0.4cm 0;
+  background: #fdfbf6;
+}
+
+.raiz-cs1 .esp-label {
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8b4513;
+  margin-bottom: 0.2cm;
+}
+
+.raiz-cs1 .lineas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6cm;
+}
+
+.raiz-cs1 .linea {
+  border-bottom: 0.5pt solid #d4c4a8;
+  height: 0.6cm;
+}
+
+
+/* ALTERNATIVA DIGITAL */
+.raiz-cs1 .alt-digital {
+  background: #eaf4f8;
+  border-left: 2pt solid #1a4a5c;
+  padding: 0.3cm 0.5cm;
+  margin: 0.3cm 0;
+  font-size: 8.5pt;
+  color: #1a3040;
+}
+
+.raiz-cs1 .alt-digital .label {
+  font-size: 6.5pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #1a4a5c;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.15cm;
+}
+
+
+/* RETO CENTRAL */
+.raiz-cs1 .reto-central {
+  background: #5c3a1e;
+  color: #faf8f3;
+  padding: 0.8cm 1cm;
+  margin: 1cm 0;
+}
+
+.raiz-cs1 .reto-central .label {
+  font-size: 6.5pt;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #d4a83a;
+  display: block;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .reto-central h3 {
+  color: #faf8f3;
+  font-size: 11pt;
+  margin: 0 0 0.3cm;
+}
+
+.raiz-cs1 .reto-central p { font-size: 9pt; line-height: 1.6; }
+
+
+/* TABLA */
+.raiz-cs1 table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+  margin: 0.5cm 0;
+}
+
+.raiz-cs1 th {
+  background: #5c3a1e;
+  color: #faf8f3;
+  padding: 0.25cm 0.4cm;
+  text-align: left;
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.raiz-cs1 td {
+  border: 0.5pt solid #c8b898;
+  padding: 0.3cm 0.4cm;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.raiz-cs1 tr:nth-child(even) td { background: #faf7f0; }
+
+
+/* CIERRE SEMANA */
+.raiz-cs1 .cierre-semana {
+  border: 1pt solid #d4a83a;
+  padding: 0.6cm 0.8cm;
+  margin: 1cm 0;
+  background: #fffbf0;
+}
+
+.raiz-cs1 .cierre-semana .label {
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8b4513;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .cierre-semana h4 { color: #5c3a1e; margin-bottom: 0.3cm; }
+
+
+/* NOTA DOCENTE (visible en el cuadernillo como orientación al estudiante) */
+.raiz-cs1 .nota-pie-cuadernillo {
+  font-size: 8pt;
+  color: #6c5c48;
+  border-top: 0.5pt solid #c8b898;
+  margin-top: 0.5cm;
+  padding-top: 0.3cm;
+  font-style: italic;
+}
+
+
+/* PRINT */
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div class="portadilla-top">
+    <div class="col-label">
+      Ciencias Sociales I · Estado, ciudadanía y relaciones de poder<br>
+      MCCEMS 2025 · Bachillerato Tecnológico Agropecuario y Científico · DGETAYCM<br>
+      Trilogía Raíz Digital · El Código del Ejido
+    </div>
+    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+    <div class="port-sub">Capítulo 1 · "El primer día que pregunté algo peligroso"</div>
+    <div class="port-cap" style="margin-top:0.4cm;">Sesiones 1 y 2 · Primer semestre</div>
+  </div>
+
+  <div>
+    <div class="ficha-est">
+      <div class="campo"><strong>Nombre completo</strong></div>
+      <div class="campo"><strong>Grupo</strong></div>
+      <div class="campo"><strong>Comunidad de origen</strong></div>
+      <div class="campo"><strong>Fecha de inicio</strong></div>
+    </div>
+
+    <div class="proposito-strip">
+      <span class="label">Propósitos formativos que trabajaremos en este capítulo</span>
+      PF-1 · Comprende la conformación e importancia del concepto de Estado, para repensar la construcción de una ciudadanía crítica y reflexiva.<br>
+      PF-2 · Analiza el devenir del concepto de ciudadanía, para la conformación de un Estado democrático e incluyente.
+    </div>
+
+    <p style="font-size:8.5pt; color:#6c5c48; font-style:italic;">Este cuadernillo puede usarse con o sin internet. Cada actividad indica su versión en papel y, cuando aplica, una alternativa digital opcional.</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════ PUNTO DE ENTRADA ════════════════════ -->
+<h2>Punto de Entrada · Antes de leer</h2>
+<p style="font-size:9pt; color:#5c3a1e;">Estas actividades se hacen <strong>antes de leer el capítulo</strong>. Sirven para que el docente —y tú mismo— conozcan lo que ya sabes.</p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">¿Qué entiendo por "Estado"?</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual</span>
+      <span class="tipo-badge badge-reflexion">Diagnóstico</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>Escribe lo que ya sabes, o crees saber, sobre el Estado mexicano. No busques en ningún lado: escribe lo que tú piensas. No hay respuesta mala.</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Para mí, el Estado es...</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+        <div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+    <p style="margin-top:0.4cm;">Ahora responde: ¿el gobierno te ha beneficiado o perjudicado en algo en los últimos tres meses? Describe una situación concreta.</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Situación concreta</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+    <div class="alt-digital">
+      <span class="label">Alternativa digital (opcional, si hay conectividad)</span>
+      Comparte tu respuesta en un foro grupal o en un documento compartido de Google Docs / Word Online. Si no hay internet, la actividad es exactamente igual en papel.
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ LECTURA ════════════════════ -->
+<h2>Durante la lectura · Capítulo 1</h2>
+
+<p style="font-size:9pt;">Lee el Capítulo 1 de <em>El Código del Ejido</em>. Puedes leerlo en el cuadernillo impreso, en un dispositivo digital, o escucharlo si el docente lo narra en voz alta. Mientras lees, subraya o anota en los márgenes lo que te llame la atención.</p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">El diario de campo · Lo que noté al leer</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual</span>
+      <span class="tipo-badge badge-analog">Papel</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>Mientras lees el capítulo, responde estas preguntas en tu cuaderno o en los espacios de abajo.</p>
+
+    <h4>a) ¿Con cuál de los tres personajes te identificas más? ¿Por qué?</h4>
+    <div class="espacio-respuesta">
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+
+    <h4>b) El Profe Ramírez escribe una pregunta en el pizarrón. Escríbela aquí con tus propias palabras y di qué piensas tú al respecto.</h4>
+    <div class="espacio-respuesta">
+      <div class="esp-label">La pregunta del Profe Ramírez, con mis palabras</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div>
+      </div>
+      <div class="esp-label" style="margin-top:0.3cm;">Lo que yo pienso</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+
+    <h4>c) ¿Qué situación parecida a la de María, Ulises o Miranda existe en tu comunidad o familia?</h4>
+    <div class="espacio-respuesta">
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ ESTACIÓN 1 ════════════════════ -->
+<h2>Estación 1 · El Estado en mi vida</h2>
+<p style="font-size:9pt; color:#5c3a1e;"><em>Propósito Formativo 1 · Contenidos: Concepto de Estado, El Estado como garante de derechos, Sistema jurídico mexicano</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">El triángulo Estado–Territorio–Población con ejemplos reales</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual</span>
+      <span class="tipo-badge badge-reflexion">Construcción</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>En el capítulo, el Profe Ramírez dibuja un triángulo con tres palabras: <strong>Estado · Territorio · Población</strong>. Fuera del triángulo escribe: <em>derechos</em>.</p>
+    <p>Reproduce ese triángulo en el espacio de abajo y coloca dentro de él tres ejemplos de tu propia comunidad: uno para cada vértice. Fuera del triángulo, escribe qué derechos debería garantizar el Estado a tu comunidad.</p>
+
+    <!-- Espacio para dibujar el triángulo -->
+    <div class="espacio-respuesta" style="min-height:6cm; position:relative;">
+      <div class="esp-label">Dibuja y completa el triángulo</div>
+      <!-- Triángulo sugerido -->
+      <div style="text-align:center; font-size:8.5pt; color:#8c7a60; margin-top:0.5cm; font-style:italic;">
+        [Espacio para dibujar. Si prefieres, escribe los tres elementos con un guion entre ellos.]
+      </div>
+      <div class="lineas" style="margin-top:3.5cm;">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+
+    <h4>¿Dónde aparecen los derechos en el ejemplo de María?</h4>
+    <div class="espacio-respuesta">
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+
+    <div class="alt-digital">
+      <span class="label">Alternativa digital (opcional)</span>
+      Crea el triángulo en Canva (canva.com, gratuito), en PowerPoint o en un documento de Word. Guárdalo y compártelo en la plataforma del grupo si tienen una.
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">La Constitución dice… pero en la práctica…</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual / Parejas</span>
+      <span class="tipo-badge badge-reflexion">Análisis</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>En el capítulo, Ulises comparte fragmentos impresos de la Ley Agraria y la Ley de Aguas Nacionales. Tu docente tiene copias impresas de los artículos más importantes. Lee los siguientes fragmentos y completa la tabla:</p>
+
+    <div style="background:#f0ebe0; border-left:2pt solid #5c3a1e; padding:0.4cm 0.6cm; margin:0.4cm 0; font-size:8.5pt;">
+      <strong>Artículo 4, Constitución Mexicana:</strong> "Toda persona tiene derecho a un medio ambiente sano para su desarrollo y bienestar... Toda persona tiene derecho al acceso, disposición y saneamiento de agua para consumo personal y doméstico..."<br><br>
+      <strong>Ley Agraria, Art. 9:</strong> "Los núcleos de población ejidales... son propietarios de las tierras que les han sido dotadas o de las que hubieren adquirido por cualquier otro título."
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Lo que dice la ley</th>
+          <th>Lo que ocurre en la comunidad de María</th>
+          <th>¿Hay brecha? ¿Por qué?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>El derecho al agua está reconocido</td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Los ejidatarios son propietarios</td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Tu ejemplo local:<br>(escríbelo)</td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="nota-pie-cuadernillo">Fuentes impresas disponibles en el aula: Constitución Política de los Estados Unidos Mexicanos (edición de bolsillo) · Ley Agraria (fragmentos) · Ley de Aguas Nacionales (fragmentos). Si hay internet: www.diputados.gob.mx</p>
+
+    <div class="alt-digital">
+      <span class="label">Alternativa digital (opcional)</span>
+      Busca el texto completo del Artículo 4 Constitucional en www.diputados.gob.mx o en la app "Constitución Mexicana" (disponible sin costo). Compara el texto completo con el fragmento de arriba: ¿hay algo importante que el fragmento no dice?
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ ESTACIÓN 2 ════════════════════ -->
+<h2>Estación 2 · ¿De qué ciudadanía me hablan?</h2>
+<p style="font-size:9pt; color:#5c3a1e;"><em>Propósito Formativo 2 · Contenidos: Estado y ciudadanía política, civil, económica, cultural. Democracia participativa. Justicia social. Políticas públicas.</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">5</div>
+    <div class="act-titulo">Cuatro tipos de ciudadanía: ¿cuál tengo, cuál me falta?</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual</span>
+      <span class="tipo-badge badge-analog">Papel</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>El programa de Ciencias Sociales I establece cuatro dimensiones de la ciudadanía. Léelas y después completa la tabla con ejemplos de tu propia vida.</p>
+
+    <div style="background:#f0ebe0; padding:0.4cm 0.6cm; margin:0.3cm 0; font-size:8.5pt; border:0.5pt solid #c8b898;">
+      <strong>Ciudadanía política:</strong> derecho a votar, participar en decisiones, elegir representantes.<br>
+      <strong>Ciudadanía civil:</strong> libertad de expresión, igualdad ante la ley, acceso a justicia.<br>
+      <strong>Ciudadanía económica:</strong> trabajo digno, acceso a recursos, no explotación.<br>
+      <strong>Ciudadanía cultural:</strong> derecho a preservar tu identidad, lengua, tradiciones.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de ciudadanía</th>
+          <th>Lo que la Constitución me garantiza</th>
+          <th>Lo que yo vivo en la práctica</th>
+          <th>¿Hay diferencia?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Política</strong></td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Civil</strong></td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Económica</strong></td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Cultural</strong></td>
+          <td style="height:1.5cm;"></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">6</div>
+    <div class="act-titulo">El debate del salón: ¿para qué existe el Estado?</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-colectivo">Grupal</span>
+      <span class="tipo-badge badge-reflexion">Debate</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>Retoma la pregunta del Profe Ramírez: <em>"¿El Estado mexicano existe para protegerte o para controlarte?"</em></p>
+    <p>El grupo se divide en dos equipos. Uno argumenta que el Estado protege. El otro argumenta que el Estado controla. Cada equipo tiene 5 minutos para preparar 3 argumentos basados en situaciones reales (no en opiniones abstractas).</p>
+
+    <div class="espacio-respuesta">
+      <div class="esp-label">Mis 3 argumentos para el debate (escríbelos antes de hablar)</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div>
+        <div class="linea"></div>
+      </div>
+    </div>
+
+    <h4>Después del debate, reflexiona individualmente:</h4>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Cambió tu opinión después de escuchar al otro equipo? ¿Por qué sí o por qué no?</div>
+      <div class="lineas">
+        <div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div>
+      </div>
+    </div>
+
+    <p class="nota-pie-cuadernillo">Esta actividad no tiene respuesta correcta. Lo importante es que los argumentos estén basados en hechos, no solo en opiniones.</p>
+  </div>
+</div>
+
+
+<!-- RETO CENTRAL INTRODUCCIÓN -->
+<div class="reto-central">
+  <span class="label">Reto Central del Semestre · Primera pieza</span>
+  <h3>«Mapa de Derechos de Mi Comunidad»</h3>
+  <p>A lo largo de este semestre, vas a construir un mapa —en papel o digital— que documente situaciones reales de tu comunidad donde los derechos ciudadanos se ejercen, se niegan o se desconocen. Este capítulo es la primera pieza de ese mapa.</p>
+  <p style="margin-top:0.3cm;"><strong>Tu primer registro:</strong> Describe brevemente la situación que identificaste en la Actividad 1. Esto se convierte en el primer punto de tu mapa.</p>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">7</div>
+    <div class="act-titulo">Primera entrada del Mapa de Derechos</div>
+    <div class="act-tipo-badges">
+      <span class="tipo-badge badge-analog">Individual</span>
+      <span class="tipo-badge badge-analog">Papel / Digital</span>
+    </div>
+  </div>
+  <div class="act-body">
+    <p>Completa la ficha de la primera situación que vas a incluir en tu mapa. Si no tienes una situación propia, puedes usar la de María (el canal) como ejemplo, pero intenta encontrar una de tu comunidad.</p>
+
+    <div class="espacio-respuesta">
+      <div class="esp-label">Nombre de la situación</div>
+      <div class="lineas"><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Dónde ocurrió? (comunidad, municipio)</div>
+      <div class="lineas"><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué derecho está involucrado? (agua, tierra, identidad, trabajo, otro)</div>
+      <div class="lineas"><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué papel jugó el Estado? (garantizó / violó / no existió)</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Hay alguna ley o norma relacionada? (si sabes cuál, escríbela; si no, investígalo)</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+
+    <div class="alt-digital">
+      <span class="label">Versión digital (opcional)</span>
+      Si tienes teléfono con datos o internet disponible, abre Google My Maps (mymaps.google.com) y crea un marcador en el lugar donde ocurrió la situación. Agrega la descripción como nota del marcador. Si no hay internet, traza el punto en el mapa de papel que entregará el docente o dibuja tu propio croquis.
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE DE SESIONES -->
+<div class="cierre-semana">
+  <span class="label">Cierre · Sesiones 1 y 2 · Reflexión final</span>
+  <h4>Tres cosas que me llevo de este capítulo</h4>
+  <div class="espacio-respuesta">
+    <div class="esp-label">Una cosa que aprendí</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">Una pregunta que sigo teniendo</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">Una situación real que voy a investigar antes de la próxima clase</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+  </div>
+</div>
+
+<p style="font-size:8pt; color:#8c7a60; border-top:0.5pt solid #c8b898; padding-top:0.4cm; margin-top:0.5cm; text-align:center;">
+  Cuadernillo del Estudiante · Capítulo 1 · Ciencias Sociales I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 1 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

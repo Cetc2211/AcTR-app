@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;
+&#9553;  &#169; 2025 Letras Necias &#183; Todos los derechos reservados               &#9553;
+&#9553;  www.letrasnecias.com &#183; contacto@letrasnecias.com                   &#9553;
+&#9553;  Trilog&#237;a Ra&#237;z Digital &#183; CS-III &#183; Gu&#237;a Docente &#183; Cap&#237;tulo 4         &#9553;
+&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;
+-->
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="&#169; 2025 Letras Necias. Todos los derechos reservados.">
+<title>Gu&#237;a Docente &#183; CS-III &#183; Cap. 4 &#183; La crisis que tiene nombre &#183; Letras Necias</title>
+</head>
+<body>
+<style>
+/*
+ * © 2025 Letras Necias · www.letrasnecias.com
+ * CS-III · Guía Docente · Capítulo 4 · Clase: .raiz-cs3
+ */
+.raiz-cs3{font-family:Arial,Helvetica,sans-serif;background:#ffffff;color:#0e1a14;font-size:10pt;line-height:1.7;max-width:min(960px,100%);margin:0 auto;padding:1.2rem 1.8rem;box-sizing:border-box;}
+.raiz-cs3 *,.raiz-cs3 *::before,.raiz-cs3 *::after{box-sizing:border-box;margin:0;padding:0;}
+.raiz-cs3 .portadilla{padding:1.5rem 0 1rem;border-bottom:3pt solid #0a5040;margin-bottom:1rem;}
+.raiz-cs3 .col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#0a5040;margin-bottom:.8rem;line-height:2;display:block;}
+.raiz-cs3 .port-titulo{font-size:22pt;font-weight:900;color:#0e1a14;line-height:1.1;margin-bottom:.2rem;display:block;}
+.raiz-cs3 .port-sub{font-size:10pt;color:#0a5040;margin-bottom:.3rem;font-weight:700;display:block;}
+.raiz-cs3 .aviso{background:#0a5040;color:#ffffff;padding:.55rem .85rem;font-size:8.5pt;line-height:1.65;margin:.8rem 0;}
+.raiz-cs3 .aviso strong{color:#a0f0d0;}
+.raiz-cs3 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.6rem 0;}
+.raiz-cs3 .info-cell{border:1pt solid #4a9070;padding:.35rem .5rem;font-size:8.5pt;}
+.raiz-cs3 .info-cell strong{display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#0a5040;margin-bottom:.1rem;}
+.raiz-cs3 h2{font-size:12pt;font-weight:900;color:#0e1a14;margin:1rem 0 .3rem;padding-bottom:.2rem;border-bottom:2pt solid #0a5040;}
+.raiz-cs3 h3{font-size:10pt;font-weight:700;color:#0a5040;margin:.7rem 0 .25rem;}
+.raiz-cs3 p{margin-bottom:.45em;font-size:10pt;color:#0e1a14;}
+.raiz-cs3 .prop-rows{display:flex;flex-direction:column;gap:.35rem;}
+.raiz-cs3 .prop-row{display:grid;grid-template-columns:3rem 1fr 1fr;border:1pt solid #4a9070;overflow:hidden;font-size:8.5pt;}
+.raiz-cs3 .pf-num{background:#1a2830;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:900;min-height:3rem;min-width:3rem;flex-shrink:0;}
+.raiz-cs3 .pf-desc{padding:.35rem .5rem;border-right:1pt solid #4a9070;line-height:1.5;}
+.raiz-cs3 .pf-cont{padding:.35rem .5rem;font-size:8pt;color:#0a2818;line-height:1.5;}
+.raiz-cs3 .sesion{border:1pt solid #4a9070;margin:.6rem 0;overflow:hidden;}
+.raiz-cs3 .ses-header{background:#c8e8d0;padding:.3rem .6rem;display:flex;align-items:center;gap:.5rem;}
+.raiz-cs3 .ses-num{background:#0a5040;color:#ffffff;min-width:2rem;min-height:2rem;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+.raiz-cs3 .ses-info{flex:1;}
+.raiz-cs3 .ses-titulo{font-size:9.5pt;font-weight:700;color:#082818;}
+.raiz-cs3 .ses-meta{font-size:7.5pt;color:#0a2818;}
+.raiz-cs3 .ses-tiempo{font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#082818;font-weight:700;white-space:nowrap;}
+.raiz-cs3 .ses-body{padding:.45rem .6rem;font-size:8.5pt;}
+.raiz-cs3 .t-ses{width:100%;border-collapse:collapse;font-size:8pt;margin:.3rem 0;}
+.raiz-cs3 .t-ses th{background:#4a9070;color:#0a1808;padding:.2rem .4rem;text-align:left;font-size:7pt;font-weight:700;}
+.raiz-cs3 .t-ses td{border:.5pt solid #4a9070;padding:.22rem .4rem;vertical-align:top;line-height:1.5;}
+.raiz-cs3 .tc{width:1.5rem;color:#0a5040;font-weight:700;text-align:center;}
+.raiz-cs3 .orientacion{background:#e8f4ec;border:1pt solid #4a9070;border-left:3pt solid #0a5040;padding:.4rem .6rem;margin:.4rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .orientacion .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#0a5040;font-weight:700;display:block;margin-bottom:.2rem;}
+.raiz-cs3 .advertencia{background:#fff8e8;border:1pt solid #c07820;border-left:3pt solid #c03010;padding:.4rem .6rem;margin:.4rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .advertencia .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#c03010;font-weight:700;display:block;margin-bottom:.2rem;}
+.raiz-cs3 .ev-item{display:grid;grid-template-columns:3.5rem 1fr 2.5rem;border:1pt solid #4a9070;margin-bottom:.25rem;font-size:8pt;overflow:hidden;}
+.raiz-cs3 .ev-tipo{background:#c8e8d0;padding:.25rem .4rem;font-weight:700;color:#082818;font-size:7.5pt;display:flex;align-items:center;border-right:1pt solid #4a9070;}
+.raiz-cs3 .ev-desc{padding:.25rem .4rem;border-right:1pt solid #4a9070;line-height:1.5;}
+.raiz-cs3 .ev-act{padding:.25rem .4rem;font-size:7.5pt;color:#0a2818;font-style:italic;}
+.raiz-cs3 .t-transv{width:100%;border-collapse:collapse;font-size:8pt;margin:.4rem 0;}
+.raiz-cs3 .t-transv th{background:#0a5040;color:#ffffff;padding:.22rem .4rem;font-size:7pt;font-weight:700;text-align:left;}
+.raiz-cs3 .t-transv td{border:1pt solid #4a9070;padding:.22rem .4rem;vertical-align:top;line-height:1.5;}
+.raiz-cs3 .t-transv tr:nth-child(even) td{background:#eef7f2;}
+.raiz-cs3 .puente{background:#1a2830;color:#ffffff;padding:.65rem .85rem;margin:.8rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .puente .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.3rem;font-weight:bold;}
+/* CUADRO DE COMPETENCIAS DE CIERRE */
+.raiz-cs3 .cierre-competencias{border:2pt solid #0a5040;padding:.8rem 1rem;margin:.8rem 0;}
+.raiz-cs3 .cierre-competencias .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#0a5040;font-weight:bold;display:block;margin-bottom:.5rem;}
+.raiz-cs3 .competencia-item{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.4rem;font-size:8.5pt;}
+.raiz-cs3 .comp-check{color:#0a5040;font-weight:900;flex-shrink:0;font-size:10pt;}
+.raiz-cs3 .ln-firma{margin-top:2.5rem;padding:1rem 0 .5rem;border-top:2pt solid #1a2830;font-family:Arial,sans-serif;font-size:8pt;color:#1a2830;text-align:center;line-height:2;}
+.raiz-cs3 .ln-logotipo{line-height:1.05;margin-bottom:.55rem;}
+.raiz-cs3 .ln-letras{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#3d2d1e;letter-spacing:.01em;}
+.raiz-cs3 .ln-necias{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#7a1818;letter-spacing:.01em;}
+.raiz-cs3 .ln-contacto{font-size:8.5pt;color:#3d2d1e;margin-bottom:.35rem;line-height:1.8;}
+.raiz-cs3 .ln-contacto a{color:#7a1818;text-decoration:none;font-weight:700;}
+.raiz-cs3 .ln-derechos{font-size:7pt;color:#5a4030;line-height:1.65;max-width:560px;margin:0 auto;display:block;}
+</style>
+
+<div class="raiz-cs3">
+
+<div class="portadilla">
+  <span class="col-label">Gu&#237;a Docente &#183; Ciencias Sociales III &#183; MCCEMS 2025 &#183; DGETAYCM &#183; Letras Necias</span>
+  <span class="port-titulo">Gu&#237;a Docente<br>y Academia</span>
+  <span class="port-sub">Cap&#237;tulo 4 &#183; "La crisis que tiene nombre" &#183; PF-1 + PF-2 integraci&#243;n &#183; &#218;ltima Ficha antes del Flex C</span>
+  <div class="aviso">
+    <strong>El cap&#237;tulo de s&#237;ntesis del semestre:</strong> El Cap. 4 integra todo el vocabulario de CS-III y lo aplica simult&#225;neamente a una crisis concreta. Es el momento de cierre del PF-1 y PF-2 antes del Flex C del Cap. 5. La Escena IV de la narrativa (Yesenia aplica los tres idiomas a su crisis en voz alta) es el modelo pedag&#243;gico central del cap&#237;tulo: si el docente logra que el grupo replique ese ejercicio con sus propias crisis, el semestre ha cumplido su prop&#243;sito principal.
+  </div>
+  <div class="info-grid">
+    <div class="info-cell"><strong>Sesiones / Semana</strong>7 y 8 &#183; Semana 4</div>
+    <div class="info-cell"><strong>Prop&#243;sitos</strong>PF-1 + PF-2 integraci&#243;n &#183; Impactos multidimensionales &#183; Los tres idiomas juntos</div>
+    <div class="info-cell"><strong>Insumo de apertura</strong>Tarea Cap. 3: crisis que empeor&#243; en 5 a&#241;os. Tabular antes de la sesi&#243;n 7.</div>
+    <div class="info-cell"><strong>Producto clave</strong>Ficha 4 del Caleidoscopio &#8212; la &#250;ltima antes del Flex C. Debe quedar completa.</div>
+    <div class="info-cell"><strong>Cierre de prop&#243;sitos</strong>PF-1 y PF-2 se cierran en este cap&#237;tulo. El Cap. 5 (Flex C) es taller. El PF-3 abre en el Cap. 6.</div>
+    <div class="info-cell"><strong>Atenci&#243;n especial</strong>La presentaci&#243;n de Yesenia (Escena IV) necesita espacio y silencio. Ver orientaciones Secci&#243;n 3.</div>
+  </div>
+</div>
+
+
+<h2>1. Prop&#243;sitos Formativos &#183; Cap&#237;tulo 4 &#183; Integraci&#243;n</h2>
+
+<div class="prop-rows">
+  <div class="prop-row">
+    <div class="pf-num">1</div>
+    <div class="pf-desc"><strong>PF-1 (cierre):</strong> Analiza las pol&#237;ticas p&#250;blicas para explicar las desigualdades y contradicciones en la satisfacci&#243;n de necesidades. Aplicaci&#243;n al caso propio con el vocabulario completo del semestre.</div>
+    <div class="pf-cont"><strong>Cap. 4 &#183; PF-1:</strong><br>&#183; Impactos multidimensionales en 5 dimensiones<br>&#183; Pol&#237;ticas que atienden una dimensi&#243;n pero no las otras<br>&#183; La omisi&#243;n como pol&#237;tica (retoma Yesenia Cap. 2)<br>&#183; S&#237;ntesis de contradicciones en el caso propio</div>
+  </div>
+  <div class="prop-row">
+    <div class="pf-num">2</div>
+    <div class="pf-desc"><strong>PF-2 (cierre):</strong> Problematiza el papel de los actores sociales para explicar, contrastar e interpretar din&#225;micas recientes. Los actores del Cap. 3 se aplican ahora al an&#225;lisis de la crisis propia.</div>
+    <div class="pf-cont"><strong>Cap. 4 &#183; PF-2:</strong><br>&#183; Actor que mantiene la crisis del equipo<br>&#183; Asimetr&#237;a de poder aplicada a la crisis propia<br>&#183; Los movimientos sociales que ya act&#250;an<br>&#183; Las juventudes como actores &#8212; anticipo PF-3</div>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">La doble funci&#243;n del Cap. 4 &#183; Cierre y preparaci&#243;n</span>
+  <p>El Cap. 4 es simult&#225;neamente el cierre del an&#225;lisis (PF-1 + PF-2 terminan aqu&#237;) y la preparaci&#243;n para el taller (la Ficha 4 completa es el insumo que cada equipo necesita para el Flex C del Cap. 5). El docente debe gestionar esa doble funci&#243;n en el tiempo de las dos sesiones: no sacrificar la profundidad del an&#225;lisis por el apuro de completar la ficha, pero asegurarse de que la ficha quede completa antes de terminar la sesi&#243;n 8.</p>
+</div>
+
+
+<h2>2. Planeaci&#243;n Did&#225;ctica &#183; Sesiones 7 y 8</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">7</div>
+    <div class="ses-info">
+      <div class="ses-titulo">S&#233;ptima sesi&#243;n &#183; Crisis recientes + impactos multidimensionales + tres idiomas colectivos</div>
+      <div class="ses-meta">PF-1 + PF-2 &#183; Acts. 1, 2 y 3 del cuadernillo</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">15 min</td><td><strong>Tarea compartida</strong></td><td>El docente anota en el pizarr&#243;n las crisis que el grupo trajo. Pregunta: "&#191;Ven conexiones entre ellas?" Act. 1: el grupo completa la tabla mientras comparten. Dejar que el grupo llegue solo a la observaci&#243;n de que son facetas de la misma crisis.</td><td>Pizarr&#243;n &#183; cuadernillo Act. 1</td></tr>
+        <tr><td class="tc">20 min</td><td><strong>Impacto multidimensional</strong></td><td>El docente introduce el marco de las 5 dimensiones. Act. 2: el grupo aplica el marco a la crisis colectiva (la sequ&#237;a u otra que el docente elija por ser relevante para la mayor&#237;a). El objetivo es mostrar c&#243;mo una sola crisis afecta 5 dimensiones simult&#225;neamente.</td><td>Cuadernillo Act. 2 &#183; tabla multidimensional</td></tr>
+        <tr><td class="tc">20 min</td><td><strong>Los tres idiomas</strong></td><td>Act. 3: los tres idiomas aplicados a la misma crisis colectiva. El docente puede hacer esto en plenaria con el grupo respondiendo, o en equipos. La clave es que el grupo note qu&#233; agrega cada idioma que los otros no ven.</td><td>Cuadernillo Act. 3 &#183; tres idiomas</td></tr>
+        <tr><td class="tc">5 min</td><td><strong>Puente sesi&#243;n 8</strong></td><td>Anunciar: "En la sesi&#243;n siguiente van a hacer lo mismo pero con su propia crisis, como lo hizo Yesenia en la narrativa." Dar tiempo de releer la Escena IV del Cap. 4 si el grupo no la ha le&#237;do.</td><td>Narrativa Cap. 4 &#183; Escena IV</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">8</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Octava sesi&#243;n &#183; Modelo Yesenia + Ficha 4 + s&#237;ntesis del semestre</div>
+      <div class="ses-meta">PF-1 + PF-2 cierre &#183; Acts. 4 y Ficha 4 del cuadernillo</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">5 min</td><td><strong>El modelo</strong></td><td>El docente recuerda la presentaci&#243;n de Yesenia de la narrativa: tres idiomas aplicados a su crisis en voz alta. Pide al grupo que haga lo mismo por escrito. "Nadie tiene que hablar si no quiere, pero s&#237; escribir."</td><td>Oral &#183; referencia narrativa</td></tr>
+        <tr><td class="tc">20 min</td><td><strong>Los tres idiomas sobre mi crisis</strong></td><td>Act. 4: trabajo individual con los tres idiomas aplicados a la crisis propia del Caleidoscopio. El docente circula y hace preguntas orientadoras: "&#191;Qu&#233; dice la ley sobre esto?" "&#191;Qui&#233;n absorbe el costo?" "&#191;Qu&#233; actor lo mantiene?"</td><td>Cuadernillo Act. 4</td></tr>
+        <tr><td class="tc">25 min</td><td><strong>Ficha 4 del Caleidoscopio</strong></td><td>El docente da tiempo de equipo para completar la Ficha 4. Esta debe quedar terminada antes de la sesi&#243;n 9 (Flex C). El docente revisa por equipos y da retroalimentaci&#243;n espec&#237;fica: &#191;la propuesta de transformaci&#243;n es espec&#237;fica y protagonizada por j&#243;venes?</td><td>Cuadernillo Ficha 4</td></tr>
+        <tr><td class="tc">10 min</td><td><strong>S&#237;ntesis del semestre</strong></td><td>Ejercicio de cierre: cada quien completa en su cuadernillo "En el Cap. 1 dije que la crisis era... En el Cap. 4 s&#233; que la crisis es..." Voluntariamente compartir. Es el diagn&#243;stico de salida del PF-1 y PF-2.</td><td>Cuadernillo sintesis-box &#183; oral</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<h2>3. Orientaciones Pedag&#243;gicas &#183; Cap&#237;tulo 4</h2>
+
+<div class="orientacion">
+  <span class="label">La presentaci&#243;n de Yesenia &#183; C&#243;mo gestionarla</span>
+  <p>La Escena IV de la narrativa (Yesenia aplica los tres idiomas a su crisis en voz alta) es el momento pedag&#243;gico m&#225;s poderoso del semestre. El docente tiene dos opciones: (a) pedir a Yesenia &#8212;o a quien haya identificado una crisis personal similar&#8212; que la presente en voz alta al grupo, o (b) usar la narrativa como modelo y pedirle a todo el grupo que haga el ejercicio por escrito individualmente. La primera opci&#243;n tiene m&#225;s impacto pero requiere que el estudiante quiera hacerlo sin presi&#243;n. La segunda es m&#225;s segura pero menos memorable. En ambos casos, despu&#233;s de la presentaci&#243;n o del ejercicio, el docente debe dar espacio de silencio antes de continuar.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Qu&#233; hacer con el ejercicio de s&#237;ntesis final</span>
+  <p>El ejercicio "En el Cap. 1 dije que la crisis era / En el Cap. 4 s&#233; que la crisis es" es tambi&#233;n el diagn&#243;stico de salida del PF-1 y PF-2. El docente debe leer esas respuestas (puede pedirlas por escrito en una hoja aparte) para evaluar si el grupo logr&#243; la comprensi&#243;n de fondo que el semestre busca: no solo m&#225;s vocabulario, sino una forma m&#225;s compleja y m&#225;s &#250;til de leer la realidad. Si la formulaci&#243;n del Cap. 4 es significativamente m&#225;s precisa que la del Cap. 1, el prop&#243;sito formativo se alcanz&#243;.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre la Ficha 4 y la propuesta de transformaci&#243;n</span>
+  <p>El campo m&#225;s dif&#237;cil de completar en la Ficha 4 es la propuesta de transformaci&#243;n protagonizada por j&#243;venes. Muchos equipos querr&#225;n poner soluciones del tipo "que el gobierno haga X". El docente debe redirigir: "&#191;Qu&#233; pueden hacer ustedes, como j&#243;venes, con lo que ya saben y tienen?" La propuesta no tiene que ser grande ni perfecta: tiene que ser espec&#237;fica, realista y protagonizada por el grupo. Una propuesta peque&#241;a y real vale m&#225;s que una propuesta grandiosa y vaga. El Cap. 5 (Flex C) les dar&#225; tiempo para refinarla.</p>
+</div>
+
+
+<h2>4. Competencias de Cierre &#183; PF-1 y PF-2</h2>
+
+<div class="cierre-competencias">
+  <span class="label">Lo que el grupo debe poder hacer al terminar el Cap&#237;tulo 4</span>
+  <div class="competencia-item"><span class="comp-check">&#10003;</span><span>Identificar los impactos de una crisis en al menos tres dimensiones simult&#225;neas (econ&#243;mica, social, ambiental, jur&#237;dica, subjetiva).</span></div>
+  <div class="competencia-item"><span class="comp-check">&#10003;</span><span>Aplicar los tres idiomas (jur&#237;dico, econ&#243;mico, socioambiental) a una crisis concreta de su territorio, produciendo un an&#225;lisis diferenciado en cada uno.</span></div>
+  <div class="competencia-item"><span class="comp-check">&#10003;</span><span>Identificar el actor principal que mantiene su crisis y el recurso de poder que lo sostiene.</span></div>
+  <div class="competencia-item"><span class="comp-check">&#10003;</span><span>Nombrar al menos una contradicci&#243;n o brecha entre la pol&#237;tica existente y lo que la crisis requiere.</span></div>
+  <div class="competencia-item"><span class="comp-check">&#10003;</span><span>Formular una idea inicial de propuesta de transformaci&#243;n protagonizada por j&#243;venes, aunque sea parcial.</span></div>
+</div>
+
+
+<h2>5. Evaluaci&#243;n Formativa &#183; Cap&#237;tulo 4</h2>
+
+<div class="ev-item">
+  <div class="ev-tipo">Multidimensional</div>
+  <div class="ev-desc">&#191;El estudiante puede identificar m&#225;s de tres dimensiones de impacto en la crisis colectiva? &#191;Puede se&#241;alar cu&#225;l dimensi&#243;n tiene menos cobertura de pol&#237;tica p&#250;blica?</div>
+  <div class="ev-act">Act. 2</div>
+</div>
+<div class="ev-item">
+  <div class="ev-tipo">Tres idiomas</div>
+  <div class="ev-desc">&#191;El an&#225;lisis en cada idioma es cualitativamente diferente al de los otros dos? &#191;El estudiante ve qu&#233; agrega cada idioma que los otros no ven?</div>
+  <div class="ev-act">Acts. 3 y 4</div>
+</div>
+<div class="ev-item">
+  <div class="ev-tipo">Ficha 4</div>
+  <div class="ev-desc">&#191;La formulaci&#243;n de la crisis en la Ficha 4 es m&#225;s precisa que en la Ficha 1? &#191;La propuesta de transformaci&#243;n es espec&#237;fica y protagonizada por j&#243;venes?</div>
+  <div class="ev-act">Ficha 4</div>
+</div>
+<div class="ev-item">
+  <div class="ev-tipo">S&#237;ntesis</div>
+  <div class="ev-desc">&#191;La formulaci&#243;n "En el Cap. 4 s&#233; que la crisis es..." muestra mayor complejidad anal&#237;tica que la del Cap. 1? &#191;Aparecen en ella conceptos de los tres semestres?</div>
+  <div class="ev-act">S&#237;ntesis box</div>
+</div>
+
+
+<h2>6. Articulaci&#243;n Curricular &#183; Cap&#237;tulo 4</h2>
+
+<table class="t-transv">
+  <thead><tr><th>Conexi&#243;n</th><th>Vinculaci&#243;n con Cap. 4</th><th>Propuesta colegiada</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>CS-I y CS-II (cierre del arco)</strong></td>
+      <td>El ejercicio "En el Cap. 1 dije / En el Cap. 4 s&#233;" conecta expl&#237;citamente el inicio del semestre con el cierre. El docente puede tambi&#233;n pedir que el grupo compare su an&#225;lisis actual con el Mapa de Derechos de CS-I y el diagn&#243;stico de cadena de CS-II para ver la progresi&#243;n.</td>
+      <td>Si el equipo colegiado puede reunirse antes del Flex C, revisar juntos las Fichas 4 de los equipos para verificar que la propuesta de transformaci&#243;n es pedag&#243;gicamente viable.</td>
+    </tr>
+    <tr>
+      <td><strong>Lengua y Comunicaci&#243;n III</strong></td>
+      <td>El ejercicio del modelo Yesenia (Act. 4) es tambi&#233;n un texto argumentativo con estructura clara: planteamiento + tres an&#225;lisis + conclusi&#243;n. Puede conectar con el tipo textual de argumentaci&#243;n que trabaja Lengua III.</td>
+      <td>Coordinar con Lengua III para que el texto producido en la Act. 4 (los tres idiomas sobre la crisis propia) sea revisado y pulido en esa materia como texto de postura con evidencia.</td>
+    </tr>
+    <tr>
+      <td><strong>Orientaci&#243;n Educativa</strong></td>
+      <td>El ejercicio de s&#237;ntesis "En el Cap. 1 dije / En el Cap. 4 s&#233;" es un indicador de crecimiento anal&#237;tico que puede integrarse al portafolio de orientaci&#243;n como muestra de desarrollo de pensamiento cr&#237;tico.</td>
+      <td>Compartir las s&#237;ntesis del grupo con orientaci&#243;n. Pueden ser insumo para conversaciones sobre proyecto de vida y capacidades que los estudiantes han desarrollado en el semestre.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<div class="puente">
+  <span class="label">Puente &#8594; Cap&#237;tulo 5 &#183; Flex C &#183; "&#191;Y si el territorio pudiera decidir?" &#183; Semana 5</span>
+  El Cap&#237;tulo 5 es el Flex C: el taller donde cada equipo construye su presentaci&#243;n del Caleidoscopio de Transformaci&#243;n con las cuatro fichas completas. El docente debe llegar a la sesi&#243;n 9 habiendo revisado las Fichas 4 de todos los equipos y con retroalimentaci&#243;n espec&#237;fica para cada uno sobre su propuesta de transformaci&#243;n. La sesi&#243;n 9 comienza devolviendo esa retroalimentaci&#243;n y la sesi&#243;n 10 es tiempo de construcci&#243;n y ensayo de la presentaci&#243;n.
+</div>
+
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;&#183;&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    &#169; 2025 Letras Necias. Todos los derechos reservados.<br>
+    Gu&#237;a Docente &#183; Cap&#237;tulo 4 &#183; CS-III &#183; Trilog&#237;a Ra&#237;z Digital &#183; MCCEMS 2025 &#183; SEP &#183; DGETAYCM.<br>
+    Prohibida la reproducci&#243;n total o parcial sin autorizaci&#243;n expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+
+</div>
+</body>
+</html>

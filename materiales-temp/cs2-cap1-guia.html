@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 1 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · CS-II · Capítulo 1</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{color-scheme:light;}
+body{font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#0e0a1e;font-size:10pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+.portadilla{min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #083840;margin-bottom:1cm;page-break-after:always;}
+.col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#083840;margin-bottom:.8cm;line-height:2;}
+.port-titulo{font-size:22pt;font-weight:900;color:#0e0a1e;line-height:1.1;margin-bottom:.2cm;}
+.port-sub{font-size:10pt;color:#083840;margin-bottom:.3cm;font-weight:700;}
+.port-cap{font-size:8.5pt;color:#1a3838;font-style:italic;}
+/* TEAL OSCURO → BLANCO */
+.aviso-offline{background:#083840;color:#ffffff;padding:.55cm .85cm;font-size:8.5pt;line-height:1.65;margin:.8cm 0;}
+.aviso-offline strong{color:#b0f0d8;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.6cm 0;}
+.info-cell{border:1pt solid #50a090;padding:.35cm .5cm;font-size:8.5pt;color:#0e0a1e;}
+.info-cell strong{display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#083840;margin-bottom:.1cm;}
+
+h2{font-size:12pt;font-weight:900;color:#0e0a1e;margin:1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #083840;page-break-after:avoid;}
+h3{font-size:10pt;font-weight:700;color:#083840;margin:.7cm 0 .25cm;}
+h4{font-size:9.5pt;font-weight:700;color:#0e0a1e;margin:.4cm 0 .15cm;}
+p{margin-bottom:.45em;}
+
+/* PROPÓSITOS: ÍNDIGO → BLANCO */
+.proposito-row{display:grid;grid-template-columns:2.5cm 1fr 1fr;gap:0;border:1pt solid #50a090;margin-bottom:.35cm;overflow:hidden;font-size:8.5pt;}
+.pf-num-cell{background:#1a1060;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:900;min-height:2cm;flex-shrink:0;}
+.pf-desc{padding:.35cm .5cm;border-right:1pt solid #50a090;line-height:1.5;color:#0e0a1e;}
+.pf-contenidos{padding:.35cm .5cm;font-size:8pt;color:#0a2828;line-height:1.5;}
+
+/* SESIONES */
+.sesion{border:1pt solid #50a090;margin:.6cm 0;overflow:hidden;page-break-inside:avoid;}
+/* encabezado sesión: teal claro → texto muy oscuro */
+.ses-header{background:#b8e8d8;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+/* número: TEAL OSCURO → BLANCO */
+.ses-num{background:#083840;color:#ffffff;width:1.2cm;height:1.2cm;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+.ses-info{flex:1;}
+.ses-titulo{font-size:9.5pt;font-weight:700;color:#041a18;}
+.ses-meta{font-size:7.5pt;color:#0a2828;}
+.ses-tiempo{font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#041a18;font-weight:700;white-space:nowrap;}
+.ses-body{padding:.45cm .6cm;font-size:8.5pt;}
+
+/* tabla sesión: teal medio → texto muy oscuro */
+.tabla-sesion{width:100%;border-collapse:collapse;font-size:8pt;margin:.3cm 0;}
+.tabla-sesion th{background:#50a090;color:#041818;padding:.2cm .4cm;text-align:left;font-size:7pt;font-weight:700;}
+.tabla-sesion td{border:.5pt solid #60b8a8;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#0e0a1e;}
+.tiempo-col{width:1.5cm;color:#083840;font-weight:700;text-align:center;}
+
+/* ALTERNATIVAS */
+.alt-bloque{display:grid;grid-template-columns:1fr 1fr;gap:.3cm;margin:.3cm 0;}
+.alt-col{padding:.3cm .4cm;font-size:8pt;line-height:1.5;}
+/* análogo: ÍNDIGO OSCURO → BLANCO */
+.alt-analog{background:#1a1060;color:#ffffff;border-left:3pt solid #b85010;}
+.alt-analog .label{color:#ffc090;}
+/* digital: TEAL OSCURO → BLANCO */
+.alt-digital{background:#083840;color:#ffffff;border-left:3pt solid #50c0a0;}
+.alt-digital .label{color:#b0f0d8;}
+.alt-col .label{font-size:6.5pt;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:.15cm;display:block;}
+
+/* ORIENTACIONES: teal pálido → oscuro */
+.orientacion{background:#e8f8f4;border:1pt solid #50a090;border-left:3pt solid #083840;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;line-height:1.65;color:#0e0a1e;}
+.orientacion .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#083840;font-weight:700;display:block;margin-bottom:.2cm;}
+
+/* ADVERTENCIA: ámbar pálido → oscuro */
+.advertencia{background:#fff4e0;border:1pt solid #d08020;border-left:3pt solid #b85010;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;color:#0e0a1e;line-height:1.65;}
+.advertencia .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#b85010;font-weight:700;display:block;margin-bottom:.2cm;}
+
+/* EVALUACIÓN */
+.eval-item{display:grid;grid-template-columns:3cm 1fr 2.5cm;gap:0;border:1pt solid #50a090;margin-bottom:.25cm;font-size:8pt;overflow:hidden;}
+.ev-tipo{background:#b8e8d8;padding:.25cm .4cm;font-weight:700;color:#041a18;font-size:7.5pt;display:flex;align-items:center;border-right:1pt solid #50a090;}
+.ev-desc{padding:.25cm .4cm;border-right:1pt solid #50a090;line-height:1.5;color:#0e0a1e;}
+.ev-act{padding:.25cm .4cm;font-size:7.5pt;color:#0a2828;font-style:italic;}
+
+/* TRANSVERSALIDAD: TEAL → BLANCO */
+table.transv{width:100%;border-collapse:collapse;font-size:8pt;margin:.4cm 0;}
+table.transv th{background:#083840;color:#ffffff;padding:.22cm .4cm;font-size:7pt;font-weight:700;text-align:left;}
+table.transv td{border:1pt solid #50a090;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#0e0a1e;}
+table.transv tr:nth-child(even) td{background:#e8f8f4;}
+
+/* PUENTE: ÍNDIGO → BLANCO */
+.puente-cap{background:#1a1060;color:#ffffff;padding:.65cm .85cm;margin:.8cm 0;font-size:8.5pt;line-height:1.65;}
+.puente-cap .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffc090;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+@media print{body{font-size:9.5pt;padding:0;}.portadilla{min-height:100vh;}}
+@page{size:letter;margin:2cm 1.8cm 2.5cm;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Guía Docente y Articulación Curricular · Ciencias Sociales II<br>Organización, relaciones económicas y sociales · MCCEMS 2025 · DGETAYCM</div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 1 · "Las preguntas del pizarrón" · Apertura CS-II</div>
+    <div class="port-cap">Trilogía Raíz Digital · La Cadena Rota · Sesiones 1 y 2 · Semana 1</div>
+    <div class="aviso-offline">
+      <strong>Offline-First:</strong> El único material físico externo de este capítulo es la carta al futuro yo que cada estudiante escribió al final de CS-I (el docente las entrega en sobre cerrado). El fragmento de Max-Neef y los datos del aguacate están en el cuadernillo impreso. Ninguna actividad requiere internet.
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><strong>Semestre / Semana</strong>Segundo · CS-II · Semana 1</div>
+      <div class="info-cell"><strong>Sesiones</strong>1 y 2</div>
+      <div class="info-cell"><strong>Propósito activo</strong>PF-1 · Necesidades y satisfactores · Desigualdad</div>
+      <div class="info-cell"><strong>Contenidos nuevos</strong>Max-Neef (necesidades / satisfactores) · Estrategia pluriactiva · Primera revisión de la cadena del aguacate</div>
+      <div class="info-cell"><strong>Producto del capítulo</strong>Ficha 1 del Diagnóstico Económico (Reto Central CS-II)</div>
+      <div class="info-cell"><strong>Acción previa del docente</strong>Guardar las cartas al futuro yo de CS-I en sobres cerrados y escribir el nombre de cada estudiante en el exterior</div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt;color:#1a3838;border-top:.5pt solid #50a090;padding-top:.3cm;font-style:italic;">El Capítulo 1 de CS-II es el primero del semestre pero no el primero del año: el grupo viene de CS-I con método, vocabulario y disposición ya formados. El docente puede usar eso a su favor: no empezar desde cero sino desde donde el grupo terminó.</p>
+</div>
+
+
+<!-- PROPÓSITOS -->
+<h2>1. Propósito Formativo · Capítulo 1 · CS-II</h2>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">1</div>
+  <div class="pf-desc"><strong>PF-1:</strong> Identifica sus necesidades y satisfactores materiales, personales, familiares y los de su comunidad, para debatir sobre las formas en que se organiza la sociedad.</div>
+  <div class="pf-contenidos">
+    <strong>Contenidos activos cap. 1:</strong><br>
+    · Bienestar social desde el enfoque de los derechos<br>
+    · Necesidades vitales y las diferentes formas de satisfacerlas<br>
+    · Dimensiones de los procesos de desigualdad<br>
+    · Estrategia de vida pluriactiva<br>
+    <span style="color:#083840;font-weight:700;">→ Vínculo: carta al futuro yo / cadena del aguacate / diagnóstico familiar</span>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">Diferencia entre CS-I y CS-II: el mismo método, distinto terreno</span>
+  <p>En CS-I el grupo aprendió a leer exclusiones en el sistema jurídico. En CS-II aprende a leer exclusiones en el sistema económico. La conexión explícita —las preguntas del pizarrón que siguen escritas, las cartas al futuro yo que regresan— no es solo un recurso narrativo: es una decisión curricular deliberada. El grupo que siente continuidad aprende con más profundidad que el que siente que cada semestre empieza de cero. El docente debe nombrar esa continuidad en la primera sesión.</p>
+</div>
+
+
+<!-- PLANEACIÓN -->
+<h2>2. Planeación Didáctica · Sesiones 1 y 2</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">1</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Primera sesión · Cartas + preguntas del pizarrón + necesidades/satisfactores</div>
+      <div class="ses-meta">PF-1 · Recuperación de CS-I · Marco conceptual Max-Neef · Acts. 1, 2 y 3</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tiempo-col">10 min</td><td><strong>Cartas</strong></td><td>El docente entrega los sobres. Cinco minutos de lectura silenciosa. Después pregunta: "¿Alguien quiere compartir una cosa que escribió y que resultó cierta?" Escucha sin corregir. Act. 1 del cuadernillo.</td><td>Sobres con cartas · cuadernillo Act. 1</td></tr>
+        <tr><td class="tiempo-col">5 min</td><td><strong>Continuidad</strong></td><td>El docente señala las preguntas del pizarrón (que deben seguir escritas con plumón permanente) y añade debajo: "CS-I preguntó: ¿quién tiene el papel? CS-II pregunta: ¿quién tiene el dinero?" No explica todavía: deja la diferencia en el aire.</td><td>Pizarrón · plumón</td></tr>
+        <tr><td class="tiempo-col">15 min</td><td><strong>Lista de necesidades</strong></td><td>Act. 2, paso 1: lista individual 2 min. Paso 2: el docente construye la lista colectiva en el pizarrón sin filtrar. Paso 3: el grupo propone cómo clasificarlas. El docente introduce el esquema de Max-Neef como una clasificación posible, no como la única.</td><td>Cuadernillo Act. 2 · pizarrón</td></tr>
+        <tr><td class="tiempo-col">25 min</td><td><strong>Necesidades vs. satisfactores</strong></td><td>Act. 3: lectura del fragmento de Max-Neef (ya en el cuadernillo). Trabajo en parejas: columna izquierda (satisfactor propio) vs. columna derecha (satisfactor alternativo con más recursos). Plenaria breve: 3–4 ejemplos en voz alta.</td><td>Cuadernillo Act. 3</td></tr>
+        <tr><td class="tiempo-col">5 min</td><td><strong>Cierre sesión 1</strong></td><td>Pregunta puente: "¿Conocen alguna actividad económica de su comunidad donde la gente trabaja mucho y gana poco?" Anotar en pizarrón para la sesión 2.</td><td>Pizarrón</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">2</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Segunda sesión · Cadena del aguacate + pluriactividad + Reto Central</div>
+      <div class="ses-meta">PF-1 · Desigualdad en la distribución · Diagnóstico familiar · Acts. 4, 5 y 6</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tiempo-col">20 min</td><td><strong>La cadena del aguacate</strong></td><td>El docente invita a quien tenga datos del sector productivo de su comunidad a presentarlos. Si no, usa el caso de Ulises del capítulo. Act. 4: análisis de la tabla de la cadena. Énfasis en la columna "¿qué arriesga / qué aporta?" — es la que más debate genera.</td><td>Cuadernillo Act. 4 · pizarrón</td></tr>
+        <tr><td class="tiempo-col">15 min</td><td><strong>Pluriactividad</strong></td><td>Act. 5: el docente explica el concepto de estrategia pluriactiva y pide que el grupo llene la tabla con las fuentes de ingreso familiares. Si hay resistencia a compartir datos personales, el docente puede pedir solo el número de fuentes (sin montos ni detalles) y tabular cuántas familias tienen 1, 2, 3+ fuentes.</td><td>Cuadernillo Act. 5</td></tr>
+        <tr><td class="tiempo-col">15 min</td><td><strong>Presentación del Reto Central</strong></td><td>El docente explica el Reto Central del semestre (Diagnóstico de Cadena de Valor + Propuesta de Distribución Justa). Conecta con el Mapa de Derechos de CS-I: misma lógica, distinto territorio. Act. 6: Ficha 1 del Diagnóstico Económico — el estudiante elige el producto o actividad que va a mapear.</td><td>Cuadernillo reto + Act. 6</td></tr>
+        <tr><td class="tiempo-col">10 min</td><td><strong>Cierre y tarea</strong></td><td>Cierre del cuadernillo. Tarea: fuentes de ingreso familiar + si alguien participa en organización colectiva. El docente anuncia que en los próximos capítulos se profundizará en cada eslabón de la cadena y que habrá una visita especial (Doña Esperanza, cap. 5).</td><td>Cuadernillo cierre</td></tr>
+      </tbody>
+    </table>
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Si el grupo no tiene datos del aguacate</span>
+        El caso de Ulises del capítulo narrativo funciona perfectamente. El docente puede dictar la tabla de precios o escribirla en el pizarrón. Lo importante es que el grupo aplique el análisis, no que los datos sean suyos. A partir del capítulo 2, cada equipo trabajará con los datos de su propia comunidad.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Con conectividad</span>
+        El dato de la Canasta Básica Rural del INEGI (www.inegi.org.mx) es altamente impactante cuando se contrasta en tiempo real con el ingreso del productor. El docente puede proyectarlo si hay pantalla disponible, o imprimirlo con anticipación para la sesión 2.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EVALUACIÓN -->
+<h2>3. Criterios de Evaluación Formativa · Capítulo 1</h2>
+
+<div class="eval-item"><div class="ev-tipo">Necesidades / satisfactores</div><div class="ev-desc">¿El estudiante puede distinguir entre la necesidad (universal) y el satisfactor (específico, social, desigual)? ¿Puede dar un ejemplo propio que no sea el del capítulo?</div><div class="ev-act">Acts. 2 y 3</div></div>
+<div class="eval-item"><div class="ev-tipo">Análisis de la cadena</div><div class="ev-desc">¿El estudiante puede identificar en la tabla de la cadena quién aporta trabajo real, quién arriesga y quién captura el mayor margen? ¿Conecta eso con el concepto de desigualdad estructural de CS-I?</div><div class="ev-act">Act. 4</div></div>
+<div class="eval-item"><div class="ev-tipo">Diagnóstico familiar</div><div class="ev-desc">¿El estudiante puede nombrar con precisión las fuentes de ingreso de su familia y relacionarlas con el concepto de pluriactividad? ¿Identifica cuál necesidad cubre cada fuente?</div><div class="ev-act">Act. 5</div></div>
+<div class="eval-item"><div class="ev-tipo">Ficha 1 del Reto Central</div><div class="ev-desc">¿La elección del producto a mapear está justificada? ¿La hipótesis sobre la distribución del valor es específica (no solo "es injusto") y se basa en algo observable?</div><div class="ev-act">Act. 6</div></div>
+
+
+<!-- ORIENTACIONES PEDAGÓGICAS -->
+<h2>4. Orientaciones Pedagógicas · Capítulo 1 CS-II</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre la devolución de las cartas al futuro yo</span>
+  <p>Este gesto pedagógico tiene dos funciones. La primera es de bienvenida: demuestra que el docente guardó algo de los estudiantes, que lo que escribieron importó. La segunda es de puente curricular: las respuestas a las preguntas del pizarrón que cada estudiante escribió en CS-I son el diagnóstico de entrada de CS-II. Si el docente de CS-II es diferente al de CS-I, conviene coordinar la entrega de las cartas con anticipación.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la sensibilidad del diagnóstico familiar de pluriactividad</span>
+  <p>La Activity 5 pide información sobre las fuentes de ingreso familiar. Algunos estudiantes pueden sentirse incómodos compartiendo esa información, especialmente si la situación económica de su familia es muy precaria o si hay actividades informales o irregulares. El docente debe ser explícito desde el inicio: "No tienen que dar montos ni detalles. Solo el número de fuentes y de qué tipo." Si alguien prefiere no compartir, la tabla puede completarse de forma privada y solo el docente la revisará. La información personal no es material de debate grupal sin el consentimiento del estudiante.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la introducción del Reto Central desde el primer capítulo</span>
+  <p>A diferencia de CS-I, donde el Mapa de Derechos se fue construyendo implícitamente desde el primer capítulo, en CS-II el Reto Central se anuncia explícitamente desde la sesión 2. Esto permite que los estudiantes vayan recolectando datos desde el inicio del semestre, no solo en las semanas del taller. El docente puede recordar en cada capítulo qué datos del Reto Central se pueden ir llenando con lo que se está aprendiendo.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre el caso del aguacate y la generalización</span>
+  <p>El caso de Ulises (aguacate, Valle de Nopalera) es el hilo narrativo de CS-II, pero no todas las comunidades del plantel producen aguacate. El docente debe dejar claro desde el Capítulo 1 que el análisis de la cadena del aguacate es el modelo —no el único caso— y que cada equipo usará el Reto Central para mapear el producto o actividad de su propia comunidad. El nopal, el maguey, el maíz criollo, la artesanía, el trabajo de cuidados, la construcción informal: todos son cadenas válidas para analizar con el mismo método.</p>
+</div>
+
+
+<!-- TRANSVERSALIDAD -->
+<h2>5. Articulación Curricular · Capítulo 1 CS-II</h2>
+
+<table class="transv">
+  <thead><tr><th>Eje / Asignatura</th><th>Conexión con el Capítulo 1</th><th>Propuesta de trabajo colegiado</th></tr></thead>
+  <tbody>
+    <tr><td><strong>CS-I (puente de entrada)</strong></td><td>El vocabulario de CS-I (desigualdad estructural, exclusión, ciudadanía real, normas en tensión) es el punto de partida de CS-II. El docente puede hacer referencia explícita a los mapas de derechos del semestre anterior como antecedente del diagnóstico económico.</td><td>Si es diferente docente, solicitar los portafolios completos de CS-I al inicio del semestre. La Ficha 4 (síntesis integradora) es la entrada más útil.</td></tr>
+    <tr><td><strong>Pensamiento Matemático</strong></td><td>El análisis de la cadena del aguacate (porcentajes, márgenes, ingresos) es aplicación directa de aritmética y porcentajes en contexto real. La canasta básica vs. ingreso del productor es una comparación matemática significativa.</td><td>Coordinar con Pensamiento Matemático para que el análisis de la cadena se use también en ejercicios de proporciones y porcentajes. El dato de los 32 pesos / 198 pesos es pedagógicamente muy potente.</td></tr>
+    <tr><td><strong>Módulos Agropecuarios</strong></td><td>El sistema de producción, los costos de insumos, el riesgo climático y el sistema de comercialización que describe el caso del aguacate son contenidos propios de los módulos productivos del CBTA.</td><td>Preguntar a los docentes de módulo qué cultivos o actividades trabaja el plantel este ciclo. CS-II puede usar esos datos reales como caso de análisis del Reto Central en lugar del caso del aguacate, si es más pertinente para el contexto del plantel.</td></tr>
+    <tr><td><strong>Cultura Digital II</strong></td><td>El MCCEMS propone explícitamente transversalizar CS-II con Cultura Digital II a partir de las necesidades y satisfactores: herramientas digitales para la indagación, construcción y presentación del diagnóstico económico.</td><td>Coordinar con Cultura Digital II para que los estudiantes usen herramientas digitales en la recolección y presentación de datos del Reto Central. Esto no elimina el enfoque offline-first: los datos se recolectan en papel, las herramientas digitales son para la presentación final si hay acceso.</td></tr>
+  </tbody>
+</table>
+
+
+<!-- MATERIALES -->
+<h2>6. Materiales · Capítulo 1 CS-II</h2>
+<table class="transv">
+  <thead><tr><th>Material</th><th>Especificación</th><th>Fuente / Preparación</th></tr></thead>
+  <tbody>
+    <tr><td>Cartas al futuro yo (CS-I)</td><td>1 sobre por estudiante con nombre</td><td>Guardadas por el docente de CS-I desde el final del semestre anterior. Acción clave: no perderlas.</td></tr>
+    <tr><td>Capítulo 1 novela</td><td>1 por estudiante o pareja</td><td>Imprimir / fotocopiar antes de la semana 1</td></tr>
+    <tr><td>Cuadernillo CS-II Cap. 1</td><td>1 por estudiante</td><td>Incluye el fragmento de Max-Neef y la tabla de la cadena del aguacate. Fotocopiar.</td></tr>
+    <tr><td>Plumón permanente</td><td>1</td><td>Para añadir "CS-II pregunta: ¿quién tiene el dinero?" debajo de las preguntas ya escritas en el pizarrón de CS-I. Si se borró durante el receso, rescribirlas.</td></tr>
+    <tr><td>Canasta Básica Rural INEGI (opcional)</td><td>1 hoja impresa si disponible</td><td>Descargar de www.inegi.org.mx con anticipación. El dato más relevante: valor por persona por mes en zona rural de la entidad.</td></tr>
+  </tbody>
+</table>
+
+
+<!-- PUENTE -->
+<div class="puente-cap">
+  <span class="label">Puente → Capítulo 2 · "Lo que necesitamos para vivir" · Semana 2</span>
+  El Capítulo 2 profundiza en el PF-1: clasifica las necesidades con más detalle, introduce el concepto de bienestar social desde los derechos (no solo desde el ingreso), y trabaja el caso de Miranda —su conflicto trabajo/educación— como ilustración de necesidades en tensión. Los datos de pluriactividad familiar que los estudiantes traigan como tarea del Cap. 1 son el insumo principal de la apertura del Cap. 2. El docente de la sesión Flex B (semana 3) puede usarla para que los equipos profundicen en las Fichas 1 y 2 de su Reto Central.
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 1 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+
+<p style="font-size:7.5pt;color:#1a3838;border-top:.5pt solid #50a090;padding-top:.4cm;margin-top:.8cm;text-align:center;">
+  Guía Docente y Academia · Capítulo 1 · Ciencias Sociales II · La Cadena Rota<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+</body>
+</html>

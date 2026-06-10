@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;
+&#9553;  &#169; 2025 Letras Necias &#183; Todos los derechos reservados               &#9553;
+&#9553;  www.letrasnecias.com &#183; contacto@letrasnecias.com                   &#9553;
+&#9553;  Trilog&#237;a Ra&#237;z Digital &#183; CS-III &#183; Cuadernillo &#183; Cap&#237;tulo 3          &#9553;
+&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;
+-->
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="&#169; 2025 Letras Necias. Todos los derechos reservados.">
+<title>Cuadernillo &#183; CS-III &#183; Cap. 3 &#183; El mundo en el valle &#183; Letras Necias</title>
+</head>
+<body>
+<style>
+/*
+ * © 2025 Letras Necias · www.letrasnecias.com
+ * CS-III · Cuadernillo Capítulo 3 · Clase: .raiz-cs3
+ */
+.raiz-cs3{font-family:Arial,Helvetica,sans-serif;background:#ffffff;color:#0e1a14;font-size:10.5pt;line-height:1.7;max-width:min(960px,100%);margin:0 auto;padding:1.2rem 1.8rem;box-sizing:border-box;}
+.raiz-cs3 *,.raiz-cs3 *::before,.raiz-cs3 *::after{box-sizing:border-box;margin:0;padding:0;}
+.raiz-cs3 .portadilla{padding:1.5rem 0 1rem;border-bottom:3pt solid #1a2830;margin-bottom:1rem;}
+.raiz-cs3 .col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#1a2830;margin-bottom:.8rem;line-height:2;display:block;}
+.raiz-cs3 .port-titulo{font-size:24pt;font-weight:900;color:#0e1a14;line-height:1.1;margin-bottom:.2rem;display:block;}
+.raiz-cs3 .port-sub{font-size:10pt;color:#1a2830;margin-bottom:.3rem;font-weight:700;display:block;}
+.raiz-cs3 .proposito-strip{background:#1a2830;color:#ffffff;padding:.55rem .85rem;margin:.5rem 0;font-size:8pt;line-height:1.7;}
+.raiz-cs3 .proposito-strip .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.2rem;font-weight:bold;}
+.raiz-cs3 .ficha-est{border:1.5pt solid #4a9070;padding:.6rem .8rem;margin:.8rem 0;display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1rem;}
+.raiz-cs3 .campo{border-bottom:1pt solid #4a7060;padding-bottom:.2rem;font-size:8.5pt;}
+.raiz-cs3 .campo strong{display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#0a5040;margin-bottom:.1rem;}
+.raiz-cs3 h2{font-size:13pt;font-weight:900;color:#0e1a14;margin:1.1rem 0 .3rem;padding-bottom:.2rem;border-bottom:2pt solid #1a2830;}
+.raiz-cs3 h3{font-size:10pt;font-weight:700;color:#0a5040;margin:.7rem 0 .25rem;}
+.raiz-cs3 p{margin-bottom:.45em;line-height:1.65;font-size:10.5pt;color:#0e1a14;}
+.raiz-cs3 .actividad{border:1.5pt solid #4a9070;margin:.7rem 0;overflow:hidden;}
+.raiz-cs3 .act-header{background:#d0ede0;padding:.3rem .6rem;display:flex;align-items:center;gap:.5rem;}
+.raiz-cs3 .act-num{background:#1a2830;color:#ffffff;min-width:2rem;min-height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11pt;flex-shrink:0;}
+.raiz-cs3 .act-titulo{font-size:9.5pt;font-weight:700;color:#0e1a14;line-height:1.3;flex:1;}
+.raiz-cs3 .act-tipo-badges{display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;}
+.raiz-cs3 .tipo-badge{font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .38rem;font-weight:700;border:1.5pt solid;}
+.raiz-cs3 .badge-ind{border-color:#1a2830;color:#1a2830;}
+.raiz-cs3 .badge-col{border-color:#0a5040;color:#0a5040;}
+.raiz-cs3 .badge-refl{border-color:#c03010;color:#c03010;}
+.raiz-cs3 .badge-prod{border-color:#5a10a0;color:#5a10a0;}
+.raiz-cs3 .act-body{padding:.5rem .6rem;font-size:9.5pt;}
+.raiz-cs3 .act-body p{margin-bottom:.4em;}
+.raiz-cs3 .espacio-respuesta{border:1pt solid #4a9070;padding:.3rem .5rem;margin:.4rem 0;background:#f2faf5;}
+.raiz-cs3 .esp-label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#0a5040;margin-bottom:.2rem;font-weight:bold;display:block;}
+.raiz-cs3 .lineas{display:flex;flex-direction:column;gap:.6rem;}
+.raiz-cs3 .linea{border-bottom:1pt solid #70b890;height:.6rem;}
+.raiz-cs3 table{width:100%;border-collapse:collapse;font-size:9pt;margin:.5rem 0;}
+.raiz-cs3 th{background:#1a2830;color:#ffffff;padding:.28rem .4rem;text-align:left;font-size:7.5pt;font-weight:700;}
+.raiz-cs3 td{border:1pt solid #4a9070;padding:.3rem .4rem;vertical-align:top;line-height:1.5;color:#0e1a14;}
+.raiz-cs3 tr:nth-child(even) td{background:#eef7f2;}
+.raiz-cs3 .fragmento{background:#e8f4ec;border:1pt solid #4a9070;border-left:4pt solid #0a5040;padding:.55rem .75rem;margin:.4rem 0;font-size:8.5pt;line-height:1.7;color:#0e1a14;}
+.raiz-cs3 .fragmento .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#0a5040;font-weight:bold;display:block;margin-bottom:.25rem;}
+.raiz-cs3 .fragmento p{text-indent:0!important;margin-bottom:.3em;}
+.raiz-cs3 .fragmento .nota-pie{font-size:7.5pt;color:#2a5040;border-top:.5pt solid #4a9070;margin-top:.3rem;padding-top:.2rem;}
+.raiz-cs3 .ficha-reto{background:#1a2830;color:#ffffff;padding:.8rem 1rem;margin:.8rem 0;border-left:4pt solid #0a5040;}
+.raiz-cs3 .ficha-reto .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.4rem;font-weight:bold;}
+.raiz-cs3 .ficha-reto h3{color:#ffffff;font-size:10.5pt;margin:0 0 .5rem;font-family:Arial,sans-serif;}
+.raiz-cs3 .campo-reto{border:1pt solid rgba(255,255,255,.15);padding:.4rem .6rem;margin:.4rem 0;background:rgba(255,255,255,.04);}
+.raiz-cs3 .campo-reto .clabel{font-size:6.5pt;letter-spacing:.15em;text-transform:uppercase;color:#60c8a0;display:block;margin-bottom:.3rem;}
+.raiz-cs3 .linea-reto{border-bottom:1pt solid rgba(255,255,255,.2);height:.7rem;margin:.3rem 0;}
+.raiz-cs3 .cierre-semana{border:1.5pt solid #c07820;padding:.6rem .8rem;margin:1rem 0;background:#fffbe8;}
+.raiz-cs3 .cierre-semana .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b4000;font-weight:bold;display:block;margin-bottom:.3rem;}
+.raiz-cs3 .ln-firma{margin-top:2.5rem;padding:1rem 0 .5rem;border-top:2pt solid #1a2830;font-family:Arial,sans-serif;font-size:8pt;color:#1a2830;text-align:center;line-height:2;}
+.raiz-cs3 .ln-logotipo{line-height:1.05;margin-bottom:.55rem;}
+.raiz-cs3 .ln-letras{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#3d2d1e;letter-spacing:.01em;}
+.raiz-cs3 .ln-necias{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#7a1818;letter-spacing:.01em;}
+.raiz-cs3 .ln-contacto{font-size:8.5pt;color:#3d2d1e;margin-bottom:.35rem;line-height:1.8;}
+.raiz-cs3 .ln-contacto a{color:#7a1818;text-decoration:none;font-weight:700;}
+.raiz-cs3 .ln-derechos{font-size:7pt;color:#5a4030;line-height:1.65;max-width:560px;margin:0 auto;display:block;}
+</style>
+
+<div class="raiz-cs3">
+
+<div class="portadilla">
+  <span class="col-label">Ciencias Sociales III &#183; Las din&#225;micas de la realidad actual &#183; MCCEMS 2025 &#183; DGETAYCM<br>
+  Trilog&#237;a Ra&#237;z Digital &#183; Libro III: Generaci&#243;n Ra&#237;z &#183; Cap&#237;tulo 3</span>
+  <span class="port-titulo">Cuadernillo<br>del Estudiante</span>
+  <span class="port-sub">Cap&#237;tulo 3 &#183; "El mundo en el valle" &#183; PF-2 &#183; Actores sociales y din&#225;micas recientes</span>
+  <span style="font-size:8.5pt;color:#1e3228;font-style:italic;display:block;margin-top:.4rem;">Sesiones 5 y 6 &#183; Semana 3 &#183; Ficha 3 del Caleidoscopio de Transformaci&#243;n</span>
+  <div class="ficha-est">
+    <div class="campo"><strong>Nombre completo</strong></div>
+    <div class="campo"><strong>Grupo</strong></div>
+    <div class="campo"><strong>Fecha</strong></div>
+    <div class="campo"><strong>Crisis que analizas</strong></div>
+  </div>
+  <div class="proposito-strip">
+    <span class="label">Prop&#243;sito Formativo 2 &#183; Cap&#237;tulo 3 &#183; Apertura</span>
+    Problematiza el papel de los diferentes actores sociales para explicar, contrastar e interpretar din&#225;micas y sucesos recientes.<br>
+    Contenidos: Tipolog&#237;a de actores &#183; Empresas transnacionales &#183; Organismos internacionales &#183; Movimientos sociales &#183; Asimetr&#237;a de poder &#183; Soberan&#237;a alimentaria &#183; Crimen organizado como actor f&#225;ctico
+  </div>
+</div>
+
+
+<h2>Apertura &#183; El mapa de hilos del Valle de Nopalera</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">La tarea compartida: lo local que tiene hilo global</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-col">Grupal</span><span class="tipo-badge badge-refl">S&#237;ntesis</span></div>
+  </div>
+  <div class="act-body">
+    <p>El docente tabula en el pizarr&#243;n los ejemplos que el grupo trajo. Registra aqu&#237; los que se compartieron y a&#241;ade el tuyo si no lo has presentado.</p>
+    <table>
+      <thead><tr><th>Producto / situaci&#243;n / decisi&#243;n local</th><th>Actor externo involucrado</th><th>&#191;D&#243;nde est&#225; ese actor?</th><th>&#191;Qu&#233; decide ese actor que afecta lo local?</th></tr></thead>
+      <tbody>
+        <tr><td style="height:1.5cm;"></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:1.5cm;"></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:1.5cm;"></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:1.5cm;"></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Qu&#233; te llama m&#225;s la atenci&#243;n del mapa que construyeron entre todos?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Estaci&#243;n 1 &#183; Los actores y su poder</h2>
+<p style="font-size:9pt;color:#1a2830;font-weight:700;"><em>PF-2 &#183; Tipolog&#237;a de actores &#183; Asimetr&#237;a de poder</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">Clasificar los actores del Valle de Nopalera</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-col">Equipos</span><span class="tipo-badge badge-refl">An&#225;lisis</span></div>
+  </div>
+  <div class="act-body">
+    <div class="fragmento">
+      <span class="label">Tipolog&#237;a de actores sociales &#183; PF-2</span>
+      <p><strong>Estado:</strong> gobierno federal, estatal y municipal. Poder de coacci&#243;n leg&#237;tima y elaboraci&#243;n de pol&#237;ticas.</p>
+      <p><strong>Empresas transnacionales:</strong> operan en m&#225;s de un pa&#237;s. Lealtad principal con accionistas, no con territorios.</p>
+      <p><strong>Organismos internacionales:</strong> ONU, FAO, OIT, PNUD, FMI. Influencia pol&#237;tica y financiera sin poder coercitivo directo sobre los Estados.</p>
+      <p><strong>Sociedad civil organizada:</strong> ONG, cooperativas, sindicatos, asociaciones de productores. Actores no gubernamentales y no empresariales.</p>
+      <p><strong>Movimientos sociales:</strong> actores colectivos movilizados por una demanda. Su poder viene de la organizaci&#243;n y movilizaci&#243;n.</p>
+      <p><strong>Medios y plataformas digitales:</strong> configuran qu&#233; se sabe, qu&#233; se ignora y c&#243;mo se narra lo que pasa.</p>
+    </div>
+    <p>Clasifica los actores que identificaron en el mapa de hilos (Act. 1) y agrega los que falten:</p>
+    <table>
+      <thead><tr><th>Nombre del actor</th><th>Tipo de actor</th><th>Recurso principal de poder</th><th>&#191;Qu&#233; puede cambiar en el Valle de Nopalera?</th></tr></thead>
+      <tbody>
+        <tr><td>Gobierno municipal</td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+        <tr><td>Empresa agroexportadora (caso Mar&#237;a)</td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+        <tr><td>FAO / OIT</td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+        <tr><td>Uni&#243;n de Ejidos de la Huasteca</td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+        <tr><td>Colectivo de mujeres (caso Sof&#237;a)</td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+        <tr><td></td><td></td><td></td><td style="height:1.3cm;"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">La asimetr&#237;a de poder entre actores</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">An&#225;lisis</span></div>
+  </div>
+  <div class="act-body">
+    <p>Mar&#237;a dijo: "Cambia qui&#233;n tiene m&#225;s recursos para litigar. Cambia qui&#233;n tiene abogados. Cambia cu&#225;nto tiempo puede esperar."</p>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Qu&#233; significa asimetr&#237;a de poder entre actores? &#191;Por qu&#233; dos actores con el mismo derecho formal ante la ley pueden tener capacidades completamente distintas para ejercerlo?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">Compara la empresa agroexportadora y la Uni&#243;n de Ejidos: &#191;qu&#233; recursos tiene cada uno? &#191;Cu&#225;l de los dos tiene m&#225;s poder para sostener una disputa legal durante a&#241;os?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Estaci&#243;n 2 &#183; Organismos internacionales: conocimiento sin poder</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">Lo que los organismos internacionales pueden y no pueden hacer</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-col">Debate</span></div>
+  </div>
+  <div class="act-body">
+    <p>Lucas resumi&#243;: "Los organismos internacionales tienen conocimiento y moral pero no poder. Y los que tienen poder no siempre tienen ni lo uno ni lo otro."</p>
+    <table>
+      <thead><tr><th>Organismo</th><th>&#191;Qu&#233; puede hacer?</th><th>&#191;Qu&#233; no puede hacer?</th><th>&#191;Tiene relevancia para la crisis que analizas?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>FAO</strong></td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td><strong>OIT</strong></td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td><strong>PNUD</strong></td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Est&#225;s de acuerdo con el resumen de Lucas? &#191;Qu&#233; le agregar&#237;as o quitar&#237;as?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Estaci&#243;n 3 &#183; Los que act&#250;an desde abajo</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">5</div>
+    <div class="act-titulo">Movimientos sociales y organizaciones de base</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">Conexi&#243;n territorial</span></div>
+  </div>
+  <div class="act-body">
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Conoces alguna organizaci&#243;n de la sociedad civil, movimiento social o colectivo que opere en tu municipio o comunidad? Descr&#237;belo: qu&#233; hace, qui&#233;nes participan, qu&#233; poder tiene.</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">Yesenia pregunt&#243;: "&#191;Qui&#233;n cuida a los que cuidan?" &#191;Ves en tu comunidad grupos o personas que hacen un trabajo importante pero que ning&#250;n actor formal reconoce ni protege?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;En qu&#233; se diferencia el poder de un movimiento social del poder de una empresa transnacional? &#191;Cu&#225;ndo ha sido suficiente el poder de un movimiento para cambiar algo?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Ficha 3 del Caleidoscopio de Transformaci&#243;n</h2>
+
+<div class="ficha-reto">
+  <span class="label">Reto Central CS-III &#183; Caleidoscopio de Transformaci&#243;n &#183; Ficha 3 de 4</span>
+  <h3>&#191;Qui&#233;nes son los actores de tu crisis?</h3>
+
+  <div class="campo-reto">
+    <span class="clabel">Crisis que est&#225;s analizando</span>
+    <div class="linea-reto"></div>
+  </div>
+
+  <div class="campo-reto">
+    <span class="clabel">Actor que mantiene o perpet&#250;a la crisis (puede ser m&#225;s de uno)</span>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+  </div>
+
+  <div class="campo-reto">
+    <span class="clabel">Tipo de actor y recurso de poder que lo sostiene</span>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+  </div>
+
+  <div class="campo-reto">
+    <span class="clabel">Actor que podr&#237;a cambiar la crisis &#183; &#191;por qu&#233; no lo ha hecho?</span>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+  </div>
+
+  <div class="campo-reto">
+    <span class="clabel">&#191;Existe un movimiento social o colectivo que ya est&#233; actuando sobre esta crisis? &#191;Qu&#233; ha logrado?</span>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+  </div>
+
+  <div class="campo-reto">
+    <span class="clabel">&#191;Las juventudes son o podr&#237;an ser actores en esta crisis? &#191;C&#243;mo?</span>
+    <div class="linea-reto"></div>
+    <div class="linea-reto"></div>
+  </div>
+</div>
+
+
+<div class="cierre-semana">
+  <span class="label">Cierre &#183; Sesiones 5 y 6 &#183; Semana 3</span>
+  <div class="espacio-respuesta">
+    <span class="esp-label">De todos los actores que analizaron esta semana, &#191;cu&#225;l te parece el m&#225;s dif&#237;cil de confrontar y por qu&#233;?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">&#191;Eres un actor social? &#191;Qu&#233; poder tienes t&#250; como joven estudiante del BTA para influir en alguna de las crisis que analizaron?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <p style="font-size:8.5pt;color:#3a2010;margin-top:.5rem;"><strong>Para el Cap&#237;tulo 4:</strong> Trae un ejemplo de una crisis que haya empeorado en los &#250;ltimos cinco a&#241;os en tu regi&#243;n. Puede ser algo que leas en las noticias, que tu familia mencione o que veas en tu comunidad.</p>
+</div>
+
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;&#183;&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    &#169; 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante &#183; Cap&#237;tulo 3 &#183; CS-III &#183; Trilog&#237;a Ra&#237;z Digital &#183; MCCEMS 2025 &#183; SEP &#183; DGETAYCM.<br>
+    Prohibida la reproducci&#243;n total o parcial sin autorizaci&#243;n expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+
+</div>
+</body>
+</html>

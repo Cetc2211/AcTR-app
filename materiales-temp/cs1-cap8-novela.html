@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 8 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>El Código del Ejido · Capítulo 8 · Raíz · Cierre CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Georgia','Times New Roman',serif;background:#faf8f2;color:#1a1208;font-size:11pt;line-height:1.85;max-width:min(960px, 100%);margin:0 auto;padding:1.5cm 1.8cm;}
+
+.raiz-cs1 .portadilla {min-height:96vh;display:flex;flex-direction:column;justify-content:center;padding:2cm 0 1.5cm;border-bottom:2.5pt solid #6b2e00;margin-bottom:1.5cm;page-break-after:always;}
+
+.raiz-cs1 .serie-label {font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.28em;text-transform:uppercase;color:#6b2e00;margin-bottom:2cm;line-height:2;}
+
+.raiz-cs1 .libro-num {font-family:'Georgia',serif;font-size:64pt;font-weight:bold;color:#b07800;line-height:1;margin-bottom:.3cm;}
+
+.raiz-cs1 .libro-titulo {font-family:'Georgia',serif;font-size:28pt;font-style:italic;font-weight:bold;color:#1a1208;line-height:1.2;margin-bottom:.4cm;}
+
+.raiz-cs1 .libro-subtitulo {font-size:9pt;font-family:'Arial',sans-serif;color:#3d1a00;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5cm;}
+
+/* FICHA: OSCURO → BLANCO */
+.raiz-cs1 .cap-ficha {background:#4a1e00;color:#ffffff;border-left:4pt solid #e09000;padding:.65cm .9cm;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.9;margin-bottom:1.2cm;}
+
+.raiz-cs1 .cap-ficha strong {color:#ffd070;}
+
+.raiz-cs1 .portadilla-meta {font-family:'Arial',sans-serif;font-size:8pt;color:#2e1600;line-height:2;border-top:.5pt solid #a07840;padding-top:.6cm;margin-top:auto;}
+
+.raiz-cs1 .capitulo-header {page-break-before:always;text-align:center;margin-bottom:1.5cm;padding-bottom:.8cm;border-bottom:1pt solid #a07840;}
+
+.raiz-cs1 .cap-num {font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.35em;text-transform:uppercase;color:#6b2e00;margin-bottom:.4cm;}
+
+.raiz-cs1 .cap-titulo {font-family:'Georgia',serif;font-size:22pt;font-style:italic;font-weight:bold;color:#1a1208;line-height:1.25;margin-bottom:.3cm;}
+
+.raiz-cs1 .cap-sub {font-family:'Arial Narrow','Arial',sans-serif;font-size:9pt;letter-spacing:.15em;text-transform:uppercase;color:#6b2e00;margin-bottom:.3cm;}
+
+.raiz-cs1 .cap-epigrafe {font-size:9pt;font-style:italic;color:#382010;max-width:12cm;margin:.6cm auto 0;line-height:1.6;}
+
+.raiz-cs1 .cap-epigrafe cite {display:block;font-style:normal;font-size:8pt;color:#5a3820;margin-top:.3cm;letter-spacing:.06em;}
+
+.raiz-cs1 .escena-titulo {font-family:'Arial Narrow','Arial',sans-serif;font-size:7pt;letter-spacing:.3em;text-transform:uppercase;color:#6b2e00;margin:1.5cm 0 .5cm;padding-bottom:.3cm;border-bottom:.5pt solid #c09860;}
+
+.raiz-cs1 p {margin-bottom:.7em;text-align:justify;hyphens:auto;}
+
+.raiz-cs1 p+p {text-indent:1.2em;}
+
+.raiz-cs1 .escena-titulo+p, .raiz-cs1 .capitulo-header+p, .raiz-cs1 .dialogo-bloque+p, .raiz-cs1 .carta-maria+p, .raiz-cs1 .recuadro+p, .raiz-cs1 .pizarron-final+p {text-indent:0;}
+
+.raiz-cs1 .dialogo-bloque {margin:.8em 0;padding-left:.9cm;border-left:3pt solid #c08800;}
+
+.raiz-cs1 .hablante {font-family:'Arial',sans-serif;font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#5a2800;margin-bottom:.1cm;font-weight:bold;}
+
+.raiz-cs1 .dialogo-bloque p {font-style:italic;margin-bottom:.3em;text-indent:0!important;color:#1a1208;}
+
+.raiz-cs1 .pensamiento {font-style:italic;color:#2e2010;}
+
+.raiz-cs1 .separador {text-align:center;color:#a07840;font-size:14pt;letter-spacing:.5em;margin:1.2cm 0;}
+
+
+/* CARTA DE MARÍA: oscuro cálido → BLANCO */
+.raiz-cs1 .carta-maria {background:#2a1000;color:#ffffff;padding:1cm 1.2cm;margin:1.2cm 0;font-family:'Georgia',serif;font-size:10.5pt;line-height:1.9;border-left:4pt solid #e09000;}
+
+.raiz-cs1 .carta-maria .carta-label {font-family:'Arial',sans-serif;font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.5cm;font-weight:bold;}
+
+.raiz-cs1 .carta-maria p {text-indent:0!important;margin-bottom:.65em;color:#f0e8d8;}
+
+.raiz-cs1 .carta-maria p+p {text-indent:1.5em;}
+
+.raiz-cs1 .carta-maria .firma {color:#ffd070;font-style:normal;margin-top:.6cm;display:block;font-size:9.5pt;}
+
+
+/* PIZARRÓN FINAL: verde muy oscuro → BLANCO con énfasis */
+.raiz-cs1 .pizarron-final {background:#0c1a08;color:#ffffff;font-family:'Georgia',serif;font-size:11.5pt;font-style:italic;padding:1cm 1.2cm;margin:1.2cm 0;text-align:center;line-height:1.85;border-left:4pt solid #a0f060;}
+
+
+/* RECUADRO CREMA → negro */
+.raiz-cs1 .recuadro {background:#f0e8d0;border:1pt solid #9a7040;border-left:4pt solid #4a1e00;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;color:#1a1208;}
+
+.raiz-cs1 .recuadro .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#4a1e00;margin-bottom:.35cm;display:block;font-weight:bold;}
+
+.raiz-cs1 .recuadro p {text-indent:0!important;margin-bottom:.35em;}
+
+
+/* NOTA NARRATIVA: amarillo → negro */
+.raiz-cs1 .nota-narrativa {background:#fff8d8;border:1pt dashed #b08800;border-left:3pt solid #6b4000;padding:.55cm .85cm;margin:1.2cm 0 0;font-family:'Arial',sans-serif;font-size:8pt;color:#1a1208;line-height:1.65;}
+
+.raiz-cs1 .nota-narrativa .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#6b4000;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+
+/* COLOFÓN FINAL */
+.raiz-cs1 .colofon {margin-top:2.5cm;padding-top:1.2cm;border-top:2pt solid #6b2e00;font-family:'Arial',sans-serif;font-size:8pt;color:#3e2810;text-align:center;line-height:2.2;}
+
+.raiz-cs1 .colofon .titulo-libro {font-family:'Georgia',serif;font-size:13pt;font-style:italic;font-weight:bold;color:#1a1208;display:block;margin:.4cm 0;}
+
+.raiz-cs1 .colofon .continuacion {background:#4a1e00;color:#ffffff;display:inline-block;padding:.3cm .8cm;font-size:8.5pt;margin:.6cm 0;letter-spacing:.08em;}
+
+.raiz-cs1 .colofon strong {color:#6b2e00;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div class="serie-label">
+    Ciencias Sociales I · NEM 2025 · DGETAYCM · Bachillerato Tecnológico Agropecuario<br>
+    Trilogía Raíz Digital · El Código del Ejido · Capítulo Final
+  </div>
+  <div class="libro-num">I</div>
+  <div class="libro-titulo">El Código<br>del Ejido</div>
+  <div class="libro-subtitulo">Estado, ciudadanía y relaciones de poder</div>
+  <div class="cap-ficha">
+    <strong>Capítulo 8 · "Raíz" · Capítulo de cierre</strong><br>
+    Sesión: <strong>Flex D</strong> · Semanas 11–12 · Sin contenido nuevo · Solo reflexión<br>
+    Propósito: Síntesis integradora personal · Carta al futuro yo · Puente hacia CS-II<br>
+    La pregunta que viaja: <em>¿Cuánto vale el trabajo de tu familia? ¿Quién decide ese valor?</em>
+  </div>
+  <div class="portadilla-meta">
+    <strong>El último capítulo del primer libro.</strong> No hay conceptos nuevos. Solo espacio para mirar hacia atrás,
+    mirar hacia adelante, y decidir qué se lleva cada quien de lo que pasó en este salón durante dieciséis semanas.
+  </div>
+</div>
+
+
+<!-- CAPÍTULO 8 -->
+<div class="capitulo-header">
+  <div class="cap-num">Capítulo Ocho · Cierre</div>
+  <div class="cap-titulo">"Raíz"</div>
+  <div class="cap-sub">El último capítulo del Libro I</div>
+  <div class="cap-epigrafe">
+    "Una planta no elige sus raíces.<br>
+    Pero sí puede elegir en qué dirección crecer."
+    <cite>— Profe Ramírez, última clase del semestre</cite>
+  </div>
+</div>
+
+
+<div class="escena-titulo">Escena I · Dos semanas después</div>
+
+<p>Dos semanas después del día de las presentaciones, los mapas siguen en la pared norte del salón 4-C. Alguien les añadió una nota adhesiva verde bajo el título del mapa de Rodrigo: <em>"¿Ya mandaron la cartelera?"</em> La letra no era de ningún estudiante del grupo. Era de alguien del turno vespertino que pasó y leyó.</p>
+
+<p>María recibió el acuse de recibo de la Procuraduría Agraria por correo electrónico, con quince días de retraso, un folio y la indicación de que el documento había sido turnado al área jurídica de la delegación de Hidalgo. No era una respuesta. Era la evidencia de que la carta existía en el sistema, que tenía número y que alguien, en algún momento, tendría que leerla. Eso era más de lo que existía antes de que la escribiera.</p>
+
+<p>Ulises le mostró a su papá el análisis de la cadena del aguacate que había construido en el taller. Su papá lo leyó dos veces sentado en la mecedora del corredor, sin decir nada. Después preguntó:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">El papá de Ulises</div>
+  <p>—¿Y cómo se llama lo que hiciste aquí?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Análisis de cadena de valor. Aunque todavía no sé bien lo que significa: eso es lo que voy a aprender el próximo semestre.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">El papá de Ulises</div>
+  <p>—A mí me interesa lo que sigue.</p>
+</div>
+
+<p>Eso era lo más cercano al orgullo que Ulises había escuchado de su papá en mucho tiempo. No dijo nada. Solo cerró el cuaderno negro y lo guardó.</p>
+
+<p>Yesenia habló con el orientador del plantel sobre el espacio de escucha estudiantil. El orientador dijo que lo llevaría al consejo técnico. Yesenia lo anotó en su agenda con fecha y le dijo al orientador que lo seguiría preguntando. El orientador la miró con una mezcla de sorpresa y algo que se parecía al alivio: la sensación de que alguien ya no necesitaba que le dijeran que tenía voz.</p>
+
+<p>Miranda encontró en el portal del Registro Nacional de Población el formulario para iniciar el proceso de acta de nacimiento extemporánea para su abuela. El proceso requería cuatro documentos, uno de los cuales necesitaba apostilla. La apostilla costaba dinero que Miranda no tenía todavía. Anotó el monto, el plazo y los pasos pendientes en un cuaderno separado. No era desesperación: era administración del tiempo.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda (a sí misma, en el cuaderno verde)</div>
+  <p>—Los problemas que tienen solución no necesitan drama. Solo necesitan pasos.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena II · La última clase</div>
+
+<p>El Profe Ramírez llegó a la última sesión del semestre sin la bolsa de tela, sin el cuaderno de espiral, sin ningún material en las manos. Solo él, el salón, y los mapas en la pared que ya nadie pensaba retirar.</p>
+
+<p>Se sentó en una de las sillas del semicírculo, en el mismo nivel que todos. No en el escritorio. No de pie frente al pizarrón.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Hoy no hay clase. Hoy hay conversación. Pueden hablar de lo que quieran. Si no quieren hablar, pueden escribir. Si no quieren escribir, pueden estar aquí en silencio. No hay respuesta correcta para lo que venga. La única regla es que lo que se diga sea verdad.</p>
+</div>
+
+<p>Hubo un silencio inicial que en agosto habría durado mucho y se habría llenado de incomodidad. Este duró veinte segundos y se llenó de algo que ya no era exactamente silencio.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena III · Lo que el salón se lleva</div>
+
+<p>Las respuestas llegaron lentas, sin que nadie las pidiera. El mismo patrón que había tardado semanas en aparecer al principio del semestre ahora ocurría de forma natural, como respirar.</p>
+
+<p>Rodrigo dijo que se llevaba haber entendido que el municipio no es un actor neutral: tiene intereses propios igual que cualquier otro actor político. Que eso le cambiaba la forma de leer el periódico, que era lo mismo que cambiarle la forma de leer el mundo.</p>
+
+<p>Fernanda dijo que se llevaba saber que las normas no escritas son tan reales, y a veces más poderosas, que las escritas. Y que eso le explicaba cosas de su propia familia que antes solo le producían confusión y algo parecido a la rabia.</p>
+
+<p>Diego dijo algo que nadie esperaba. Dijo que se llevaba haber descubierto que su papá tenía derechos que no conocía. Que le había explicado el contrato de renuncia a indemnización. Que su papá lo había leído dos veces y luego había preguntado qué podían hacer. Que todavía no sabían qué, pero que ya no era un silencio resignado: era una pregunta abierta.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Diego</div>
+  <p>—No sé si eso cambia algo para mi papá. Pero para mí ya cambió.</p>
+</div>
+
+<p>Yesenia dijo que se llevaba su propia voz. Lo dijo simplemente, sin el peso dramático del día de las presentaciones. Como si ya fuera un hecho, no una declaración.</p>
+
+<p>Ulises dijo que se llevaba la pregunta del pizarrón. Que todavía no tenía respuesta pero que el próximo semestre la iba a buscar. Y que ya se la había preguntado a su papá, y que eso solo ya valía el semestre.</p>
+
+<p>Miranda dijo que se llevaba un método. No un tema, no una fecha, no una lista de artículos de ley. Un método para leer un territorio, una norma, un sistema: buscando siempre quién queda fuera y por qué. Que ese método era transferible. Que lo iba a usar en CS-II, y después, y después.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—En California aprendí inglés. Aquí aprendí juridiqués. El próximo semestre voy a aprender el idioma de la economía. Eso, combinado, es lo que me hace ciudadana de algún lado.</p>
+</div>
+
+<p>María fue la última en hablar. No porque hubiera planeado serlo: simplemente esperó a que los demás terminaran y cuando el espacio quedó abierto, entró.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—Me llevo el idioma de los papeles. Todavía no lo hablo perfectamente. Pero ya no me da miedo. Y eso es suficiente para empezar.</p>
+</div>
+
+<p>El Profe Ramírez no dijo nada durante un momento que se sintió más largo de lo que fue. Después dijo:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso que describieron no es lo que estaba en el programa de estudios. El programa dice "propósitos formativos" y "contenidos" y "competencias". Lo que describieron es otra cosa. Es lo que pasa cuando el aprendizaje se vuelve irreversible: cuando ya no puedes desaprender. Eso es lo que vale.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena IV · La carta</div>
+
+<p>El Profe Ramírez les pidió que escribieran una carta. No a una institución: a ellos mismos. Al yo que serían al final del siguiente semestre, cuando terminaran CS-II y hubieran aprendido el idioma de la economía.</p>
+
+<p>Escribieron. No todos tardaron lo mismo. Algunos terminaron rápido y releían lo que habían escrito con la expresión de quien no esperaba lo que apareció en el papel. Otros tardaron y tacharon y volvieron a empezar. Yesenia llenó dos hojas.</p>
+
+<p>María escribió la suya sin borrar. Con la misma pluma con la que había tomado notas desde el primer día. Una sola página. Cuando terminó, la dobló en tres partes, como a las cartas que ya saben el camino.</p>
+
+<div class="carta-maria">
+  <span class="carta-label">Carta de María Tlaloc a su futuro yo · Cierre de CS-I · Semestre I</span>
+
+  <p>Cuando leas esto habrás terminado el segundo semestre de Ciencias Sociales. Espero que todavía recuerdes la hoja rosada que firmó mi mamá sin leer. Espero que recuerdes a Ulises y el precio del aguacate. A Miranda y sus dos países. A Yesenia y la primera vez que habló en voz alta sobre su propio silencio.</p>
+
+  <p>Lo que aprendiste este semestre es que el Estado no es una idea abstracta: es una red de textos, normas e instituciones que tiene efectos concretos en el territorio donde vivimos. Y que esos efectos no son iguales para todos, no porque las leyes digan que las personas son desiguales, sino porque el acceso al conocimiento de esas leyes es desigual. Esa es la trampa. Y esa es también la salida.</p>
+
+  <p>Llegaste en agosto creyendo que los derechos se tenían o no se tenían, como la lluvia. Ahora sabes que los derechos se conocen, se entienden y se ejercen. Y que la distancia entre esas tres cosas es exactamente el espacio donde vive la desigualdad estructural.</p>
+
+  <p>Enviaste una carta a la Procuraduría Agraria. Tienes el folio de acuse. No sabes todavía si va a cambiar algo para el canal de la parcela de tu mamá. Pero sabes que existe una diferencia entre el mundo donde esa carta no existía y el mundo donde existe. Esa diferencia, aunque sea pequeña, es tuya.</p>
+
+  <p>El próximo semestre vas a aprender cómo funciona la economía. Quién produce, quién distribuye, quién se queda con la diferencia entre los 32 pesos del productor y los 178 del supermercado. Va a ser la misma pregunta con otro idioma: ¿quién controla el texto? ¿Quién diseña las reglas? ¿Quién queda fuera?</p>
+
+  <p>Lleva el método. Lleva la pregunta. Lleva el mapa aunque ya no esté en el papel kraft.</p>
+
+  <p>Y cuando alguien te dé algo para firmar sin explicarte qué dice: léelo.</p>
+
+  <span class="firma">— María Tlaloc · San Martín Tecuatitla, Hidalgo · Primer semestre, 2025</span>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena V · Lo que el Profe Ramírez dejó en el pizarrón</div>
+
+<p>Cuando todos guardaron sus cartas, el Profe Ramírez fue al pizarrón. Lo hizo de espaldas al grupo, sin decir lo que iba a escribir, y escribió despacio, con letras más grandes que de costumbre.</p>
+
+<div class="pizarron-final">
+  ¿Cuánto vale el trabajo de tu familia?<br><br>
+  ¿Quién decide ese valor?<br><br>
+  ¿Cómo se decide?<br><br>
+  <span style="font-size:8.5pt;letter-spacing:.2em;font-style:normal;color:#a0f060;">→ Ciencias Sociales II · La Cadena Rota</span>
+</div>
+
+<p>No dijo nada más. Recogió su bolsa de tela —que en realidad sí había traído, solo la había dejado detrás del escritorio donde nadie la veía— y salió. Dejó el pizarrón escrito, los mapas en la pared y el salón.</p>
+
+<p>Los estudiantes se quedaron un momento sin moverse. Después alguien leyó las preguntas en voz alta, como quien lee una señal en un camino que todavía no conoce pero que ya tiene el sentido general correcto.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VI · El autobús y el valle</div>
+
+<p>En el autobús de las dos de la tarde que vuelve a San Martín Tecuatitla, María lleva la misma mochila azul con el bordado de maíz que trajo el primer día. Dentro: cuatro fichas del Mapa de Derechos, un cuadernillo lleno hasta la última línea, el cuaderno cuadriculado con doscientas páginas de notas, y la carta doblada en tres partes que acaba de escribirle a su futuro yo.</p>
+
+<p>Ulises va dos filas atrás. Tiene el cuaderno negro abierto en las rodillas. Escribe algo. María no puede ver qué, pero lo imagina: números del aguacate, nombres de los eslabones de la cadena, una pregunta nueva que todavía no tiene la forma definitiva.</p>
+
+<p>En la parada de San Marcos, Miranda se baja. Antes de bajar se asoma hacia donde está María y dice, sin preámbulo:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Voy a buscar trabajo el próximo semestre. Necesito el dinero para los documentos de mi abuela. Pero también quiero seguir en clase. Voy a tener que resolver ese conflicto entre el trabajo necesario y el derecho a la educación.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda (antes de bajar, casi de pasada)</div>
+  <p>—Ya estamos en CS-II.</p>
+</div>
+
+<p>Se baja. El autobús arranca. Ulises levanta la vista del cuaderno y mira a María. Los dos sonríen sin decir nada, de la manera específica en que se sonríe cuando algo que alguien dijo es exactamente correcto.</p>
+
+<p>Fuera de la ventana, el Valle de Nopalera se despliega en el ángulo de la tarde: los magueyes en los linderos, los sembradíos en distintos tonos de verde y ocre según la temporada, el camino de terracería que lleva al ejido, el arroyo de temporada que en este tiempo del año es solo una franja de tierra más seca entre dos orillas. Ahí está el canal que el municipio dice que es suyo. Ahí está la parcela de su mamá. Ahí están las historias de las que está hecho este territorio, la mayoría de las cuales nunca aparecerán en ningún mapa del INEGI.</p>
+
+<p>Pero sí aparecen en el mapa de papel kraft que está pegado en la pared norte del salón 4-C.</p>
+
+<p>Por ahora, eso es suficiente.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VII · La raíz</div>
+
+<p>Una raíz no se ve. Eso no significa que no exista. Significa que trabaja hacia abajo, en lo oscuro, buscando agua y sustento por caminos que nadie trazó de antemano.</p>
+
+<p>María Tlaloc llegó al CBTA en agosto sin saber que el Estado operaba a través de textos. Sin saber que existía la Procuraduría Agraria. Sin saber que el Convenio 169 de la OIT reconocía el derecho consuetudinario de los pueblos indígenas. Sin saber que la firma de su mamá en una hoja rosada tenía consecuencias que alguien más conocía y ella no.</p>
+
+<p>Ahora sabe esas cosas. No las sabe perfectamente, no las sabe todas, no las sabe de la manera en que las sabe alguien que estudió derecho durante cinco años. Pero las sabe de la manera en que las sabe quien las necesitó para resolver un problema real en un territorio real con personas reales.</p>
+
+<p>Eso es el conocimiento que echa raíz: el que se conecta con algo que importa.</p>
+
+<p>El autobús dobla en la curva del cerro y San Martín Tecuatitla aparece en el bajo, con su iglesia de piedra y sus calles sin pavimentar y sus casas de diferentes épocas mezcladas sin orden aparente. María recoge su mochila. Revisa que la carta esté dentro. Lo está.</p>
+
+<p>Baja del autobús. Camina hacia su casa. El sol de las tres de la tarde alarga las sombras de los magueyes sobre el camino de tierra. Su mamá estará en la cocina a esta hora. Le va a contar lo que dijo el Profe Ramírez. Le va a mostrar el folio de acuse de la Procuraduría.</p>
+
+<p>Y después le va a preguntar si quiere que le lea la carta.</p>
+
+<p style="text-align:center;font-style:italic;color:#6b2e00;font-size:10.5pt;margin-top:1.5cm;letter-spacing:.04em;">Fin del Capítulo 8 · Fin del Libro I</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Sobre este capítulo y el cierre del semestre</span>
+  <p>El Capítulo 8 no tiene actividades de evaluación ni contenidos nuevos. Es deliberadamente abierto y silencioso: un espacio para que el aprendizaje del semestre repose antes de que empiece el siguiente. La carta al futuro yo es el único producto de este capítulo, y es personal: el docente puede pedirla o no, según el clima del grupo. Si la pide, conviene aclarar que no será calificada. Si no la pide, el cuadernillo provee el espacio para escribirla de todas formas. La pregunta del pizarrón —¿cuánto vale el trabajo de tu familia?— es la apertura de CS-II y debe quedar escrita en el pizarrón real del salón, con plumón permanente si es posible, para que esté visible el primer día del segundo semestre.</p>
+</div>
+
+
+<!-- COLOFÓN -->
+<div class="colofon">
+  <strong>FIN DEL LIBRO I · EL CÓDIGO DEL EJIDO</strong>
+  <span class="titulo-libro">Ciencias Sociales I · Estado, ciudadanía y relaciones de poder</span>
+  Trilogía Raíz Digital · María Tlaloc · Ulises Solano · Miranda Ríos · Yesenia · Profe Ramírez<br>
+  Marco Curricular Común de la Educación Media Superior · MCCEMS 2025<br>
+  Secretaría de Educación Pública · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico<br><br>
+  <span class="continuacion">Continúa en: Libro II · La Cadena Rota · Ciencias Sociales II</span><br><br>
+  <em>Organización, relaciones económicas y sociales</em><br>
+  <em>María, Ulises y Miranda frente a la cadena de valor, la desigualdad económica</em><br>
+  <em>y la pregunta de quién decide cuánto vale el trabajo de una familia.</em>
+</div>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 8 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

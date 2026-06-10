@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 4 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>El Código del Ejido · Capítulo 4 · Ciencias Sociales I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   REGLA MAESTRA DE CONTRASTE:
+   Fondo oscuro  → texto BLANCO  #ffffff
+   Fondo claro   → texto NEGRO   #1a1208
+   Sin términos medios.
+═══════════════════════════════════════════ */
+
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+   /* impide inversión en modo oscuro del SO */
+
+.raiz-cs1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #faf8f2;
+  color: #1a1208;        /* negro cálido – máximo contraste sobre blanco */
+  font-size: 11pt;
+  line-height: 1.85;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 1.5cm 1.8cm;
+}
+
+
+/* ── PORTADILLA ────────────────────────────── */
+.raiz-cs1 .portadilla {
+  min-height: 96vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2cm 0 1.5cm;
+  border-bottom: 2.5pt solid #6b2e00;
+  margin-bottom: 1.5cm;
+  page-break-after: always;
+}
+
+/* texto sobre blanco: marrón muy oscuro */
+.raiz-cs1 .serie-label {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #6b2e00;
+  margin-bottom: 2.5cm;
+  line-height: 2;
+}
+
+.raiz-cs1 .libro-num {
+  font-family: 'Georgia', serif;
+  font-size: 64pt;
+  font-weight: bold;
+  color: #b07800;        /* dorado oscuro, legible sobre blanco */
+  line-height: 1;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .libro-titulo {
+  font-family: 'Georgia', serif;
+  font-size: 28pt;
+  font-style: italic;
+  font-weight: bold;
+  color: #1a1208;
+  line-height: 1.2;
+  margin-bottom: 0.4cm;
+}
+
+.raiz-cs1 .libro-subtitulo {
+  font-size: 9pt;
+  font-family: 'Arial', sans-serif;
+  color: #3d1a00;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5cm;
+}
+
+
+/* FICHA oscura → texto BLANCO */
+.raiz-cs1 .cap-ficha {
+  background: #4a1e00;    /* marrón muy oscuro */
+  color: #ffffff;          /* BLANCO */
+  border-left: 4pt solid #e09000;
+  padding: 0.65cm 0.9cm;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.9;
+  margin-bottom: 1.5cm;
+}
+
+.raiz-cs1 .cap-ficha strong { color: #ffd070; }
+  /* dorado claro → contraste sobre marrón oscuro */
+
+.raiz-cs1 .portadilla-meta {
+  font-family: 'Arial', sans-serif;
+  font-size: 8pt;
+  color: #2e1600;          /* muy oscuro sobre blanco */
+  line-height: 2;
+  border-top: 0.5pt solid #a07840;
+  padding-top: 0.6cm;
+  margin-top: auto;
+}
+
+
+/* ── CAPÍTULO ── */
+.raiz-cs1 .capitulo-header {
+  page-break-before: always;
+  text-align: center;
+  margin-bottom: 1.5cm;
+  padding-bottom: 0.8cm;
+  border-bottom: 1pt solid #a07840;
+}
+
+.raiz-cs1 .cap-num {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #6b2e00;
+  margin-bottom: 0.4cm;
+}
+
+.raiz-cs1 .cap-titulo {
+  font-family: 'Georgia', serif;
+  font-size: 20pt;
+  font-style: italic;
+  font-weight: bold;
+  color: #1a1208;
+  line-height: 1.3;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .cap-epigrafe {
+  font-size: 9pt;
+  font-style: italic;
+  color: #382010;          /* oscuro sobre blanco */
+  max-width: 12cm;
+  margin: 0.6cm auto 0;
+  line-height: 1.6;
+}
+
+.raiz-cs1 .cap-epigrafe cite {
+  display: block;
+  font-style: normal;
+  font-size: 8pt;
+  color: #5a3820;
+  margin-top: 0.3cm;
+  letter-spacing: 0.06em;
+}
+
+
+/* ── ESCENAS ── */
+.raiz-cs1 .escena-titulo {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #6b2e00;
+  margin: 1.5cm 0 0.5cm;
+  padding-bottom: 0.3cm;
+  border-bottom: 0.5pt solid #c09860;
+}
+
+
+.raiz-cs1 p {
+  margin-bottom: 0.7em;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.raiz-cs1 p + p { text-indent: 1.2em; }
+
+.raiz-cs1 .escena-titulo + p, .raiz-cs1 .capitulo-header + p, .raiz-cs1 .dialogo-bloque + p, .raiz-cs1 .recuadro + p, .raiz-cs1 .recuadro-oscuro + p { text-indent: 0; }
+
+
+/* ── DIÁLOGO ── */
+.raiz-cs1 .dialogo-bloque {
+  margin: 0.8em 0;
+  padding-left: 0.9cm;
+  border-left: 3pt solid #c08800;
+}
+
+/* HABLANTE: texto oscuro sobre fondo blanco */
+.raiz-cs1 .hablante {
+  font-family: 'Arial', sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #5a2800;
+  margin-bottom: 0.1cm;
+  font-weight: bold;
+}
+
+.raiz-cs1 .dialogo-bloque p {
+  font-style: italic;
+  margin-bottom: 0.3em;
+  text-indent: 0 !important;
+  color: #1a1208;
+}
+
+
+.raiz-cs1 .pensamiento { font-style: italic; color: #2e2010; }
+
+
+.raiz-cs1 .separador {
+  text-align: center;
+  color: #a07840;
+  font-size: 14pt;
+  letter-spacing: 0.5em;
+  margin: 1.2cm 0;
+}
+
+
+/* ── RECUADRO CLARO (crema) ──
+   fondo: #f0e8d0   texto: #1a1208 (negro) */
+.raiz-cs1 .recuadro {
+  background: #f0e8d0;
+  border: 1pt solid #9a7040;
+  border-left: 4pt solid #4a1e00;
+  padding: 0.65cm 0.85cm;
+  margin: 1cm 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.7;
+  color: #1a1208;          /* NEGRO sobre crema */
+}
+
+.raiz-cs1 .recuadro .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #4a1e00;          /* muy oscuro, legible sobre crema */
+  margin-bottom: 0.35cm;
+  display: block;
+  font-weight: bold;
+}
+
+.raiz-cs1 .recuadro p { text-indent: 0 !important; margin-bottom: 0.35em; }
+
+.raiz-cs1 .recuadro .nota-pie {
+  font-size: 7.5pt;
+  color: #3e2810;
+  border-top: 0.5pt solid #9a7040;
+  margin-top: 0.4cm;
+  padding-top: 0.25cm;
+}
+
+
+/* ── RECUADRO OSCURO ──
+   fondo: #2a1000   texto: #ffffff (BLANCO) */
+.raiz-cs1 .recuadro-oscuro {
+  background: #2a1000;
+  color: #ffffff;           /* BLANCO sobre marrón muy oscuro */
+  border-left: 4pt solid #e09000;
+  padding: 0.65cm 0.85cm;
+  margin: 1cm 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.7;
+}
+
+.raiz-cs1 .recuadro-oscuro .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffd070;           /* dorado claro sobre fondo muy oscuro */
+  margin-bottom: 0.3cm;
+  display: block;
+  font-weight: bold;
+}
+
+.raiz-cs1 .recuadro-oscuro p { text-indent: 0 !important; margin-bottom: 0.3em; }
+
+.raiz-cs1 .recuadro-oscuro .nota-pie {
+  font-size: 7.5pt;
+  color: #c8b090;           /* beige claro → legible sobre oscuro */
+  border-top: 0.5pt solid #604030;
+  margin-top: 0.35cm;
+  padding-top: 0.2cm;
+}
+
+
+/* ── PIZARRÓN oscuro ──
+   fondo: #101808   texto: #d0f0a0 (verde muy claro) */
+.raiz-cs1 .pizarron {
+  background: #101808;
+  color: #d0f0a0;           /* verde claro sobre negro verdoso */
+  font-family: 'Georgia', serif;
+  font-size: 10.5pt;
+  font-style: italic;
+  padding: 0.8cm 1cm;
+  margin: 0.8cm 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+
+/* ── NOTA NARRATIVA (para docente) ──
+   fondo: #fff8d8   texto: #1a1208 */
+.raiz-cs1 .nota-narrativa {
+  background: #fff8d8;
+  border: 1pt dashed #b08800;
+  border-left: 3pt solid #6b4000;
+  padding: 0.55cm 0.85cm;
+  margin: 1.2cm 0 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8pt;
+  color: #1a1208;           /* negro sobre amarillo claro */
+  line-height: 1.65;
+}
+
+.raiz-cs1 .nota-narrativa .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6b4000;
+  display: block;
+  margin-bottom: 0.3cm;
+  font-weight: bold;
+}
+
+
+.raiz-cs1 .cierre-capitulo {
+  margin-top: 1.5cm;
+  padding-top: 0.8cm;
+  border-top: 1pt solid #a07840;
+  font-family: 'Arial', sans-serif;
+  font-size: 7.5pt;
+  color: #3e2810;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div class="serie-label">
+    Ciencias Sociales I · NEM 2025 · DGETAYCM<br>
+    Bachillerato Tecnológico Agropecuario y Científico<br>
+    Trilogía Raíz Digital · El Código del Ejido · Capítulo 4
+  </div>
+  <div class="libro-num">I</div>
+  <div class="libro-titulo">El Código<br>del Ejido</div>
+  <div class="libro-subtitulo">Estado, ciudadanía y relaciones de poder</div>
+
+  <div class="cap-ficha">
+    <strong>Capítulo 4 · "La diversidad que molesta"</strong><br>
+    Propósito formativo activo: <strong>PF-4</strong> · Discute y reconoce que la diversidad forma parte del espacio democrático<br>
+    Contenidos: Inclusión e igualdad, adelantos y pendientes · Acciones afirmativas · La edad como clave de discriminación (edadismo) · ¿Derechos para todas las personas? Accesos diferenciados y claves de exclusión social<br>
+    Sesiones: 7 y 8 · Semana 5
+  </div>
+
+  <div class="portadilla-meta">
+    <strong>Continuación del Capítulo 3.</strong> El grupo tiene tres fichas del Mapa de Derechos
+    y un patrón con nombre: desigualdad estructural. Este capítulo los obliga a mirarse
+    a sí mismos: ¿quién falta en la conversación del salón?
+  </div>
+</div>
+
+
+<!-- CAPÍTULO 4 -->
+<div class="capitulo-header">
+  <div class="cap-num">Capítulo Cuatro</div>
+  <div class="cap-titulo">"La diversidad que molesta"</div>
+  <div class="cap-epigrafe">
+    "La diversidad que no incomoda a nadie probablemente no es diversidad real:
+    es decoración. La diversidad real cambia quién habla, quién decide,
+    y quién define lo que es normal."
+    <cite>— Miranda Ríos, cuaderno verde, semana 5</cite>
+  </div>
+</div>
+
+
+<!-- ESCENA I -->
+<div class="escena-titulo">Escena I · Las historias de casa</div>
+
+<p>El Profe Ramírez había pedido que trajeran relatos familiares de documentos firmados sin entender. Lo que llegó al martes fue más de lo que esperaba.</p>
+
+<p>Rodrigo trajo que su papá firmó el contrato de la tienda Coppel sin leer las letras pequeñas: compró una estufa a "doce meses sin intereses" que resultaron ser veinticuatro meses con el 65% de interés anual escondido en el reverso. La chica de San Andrés —que se llamaba Fernanda y que por fin todos comenzaban a conocer por su nombre— trajo que su abuela firmó la cesión de un pedazo de terreno porque el delegado le dijo que era "solo para el registro" y resultó ser una venta. Un chico silencioso que se llamaba Diego contó que su papá firmó un contrato de trabajo de campo en el que cedía su derecho a indemnización en caso de accidente, sin que nadie le explicara qué significaba esa cláusula.</p>
+
+<p>María escuchaba y tomaba notas. Tres historias distintas, el mismo mecanismo: alguien con poder sobre el texto y alguien sin acceso al significado del texto.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Qué tienen en común estas tres situaciones además de lo que ya vimos la semana pasada?</p>
+</div>
+
+<p>Silencio de trabajo. Después, despacio:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—En los tres casos, la persona que no leyó pertenece a un grupo que históricamente no ha sido el que escribe los contratos. Los contratos los escriben los que tienen abogados. Los que firman sin leer son los que no los tienen.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—O sea que no es que esas personas sean menos inteligentes. Es que el sistema está diseñado para que ciertos grupos tengan menos herramientas para leer ciertos idiomas.</p>
+</div>
+
+<p>El Profe Ramírez no dijo nada. Solo escribió en el pizarrón la palabra que el grupo había estado bordeando sin nombrar desde el Capítulo 1:</p>
+
+<div class="pizarron">EXCLUSIÓN SOCIAL</div>
+
+<p>Y debajo, más pequeño: <em>No es un accidente. Es una estructura.</em></p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA II -->
+<div class="escena-titulo">Escena II · ¿Quién falta en esta conversación?</div>
+
+<p>Fue Miranda quien lo señaló, y lo hizo con esa precisión incómoda que la caracterizaba.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Llevamos cuatro semanas hablando de exclusión. Pero, ¿alguien ha notado quién habla más en este salón y quién habla menos?</p>
+</div>
+
+<p>El salón quedó en silencio. Un silencio distinto: el de quien de repente se da cuenta de que estaba mirando algo sin verlo.</p>
+
+<p>Era cierto. En las cuatro semanas, las voces dominantes habían sido: María, Ulises, Miranda, Rodrigo, Fernanda. Los otros dieciséis estudiantes habían hablado poco o nada. Y de los que habían hablado, la mayoría eran hombres, excepto María, Miranda y Fernanda.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Miranda acaba de hacer lo que se llama un análisis de quién ocupa el espacio. No es una acusación: es una observación. ¿Por qué creen que ocurre eso?</p>
+</div>
+
+<p>Las respuestas que siguieron fueron lentas y cuidadosas, porque tocaban algo que la gente generalmente prefiere no ver en voz alta. Algunos dijeron que les daba pena equivocarse. Otros que no sabían si lo que pensaban era "suficientemente importante". Una chica al fondo —Yesenia, que en cuatro semanas había dicho exactamente tres palabras— dijo en voz muy baja:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—En mi casa las mujeres no interrumpen cuando hablan los hombres. Aquí sigo haciendo lo mismo aunque no quiera.</p>
+</div>
+
+<p>El salón absorbió eso en silencio.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda (despacio)</div>
+  <p>—Eso que describes, Yesenia, es una norma no escrita. La trajiste del hogar al salón sin que nadie te lo pidiera. Y mientras siga operando aquí, el contrato social de este grupo no incluye a todos por igual. Aunque en el papel todos somos iguales.</p>
+</div>
+
+<p>El Profe Ramírez miró a Miranda con la misma expresión de las primeras semanas: la alegría de quien escucha una pregunta que no tiene respuesta cómoda.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA III -->
+<div class="escena-titulo">Escena III · Lo que significa incluir</div>
+
+<p>El Profe Ramírez repartió una hoja. Era corta, con tres columnas: <em>Grupo históricamente excluido / Avance concreto / Pendiente concreto.</em> Pidió que en equipos de tres llenaran al menos dos filas.</p>
+
+<p>Lo que produjo el grupo en quince minutos fue esto:</p>
+
+<div class="recuadro">
+  <span class="label">Construcción colectiva del salón · Semana 5</span>
+  <p><strong>Mujeres en cargos de decisión:</strong> Avance — la paridad de género en el Congreso (50.8% mujeres en 2024). Pendiente — en las asambleas ejidales del estado de Hidalgo, menos del 20% de los cargos directivos los ocupan mujeres.</p>
+  <p><strong>Pueblos indígenas:</strong> Avance — el Convenio 169 de la OIT y el reconocimiento constitucional del pluralismo jurídico. Pendiente — el 70% de los municipios con mayoría indígena en México tienen índices de pobreza superiores al promedio nacional.</p>
+  <p><strong>Jóvenes rurales:</strong> Avance — becas Bienestar y acceso extendido a bachillerato. Pendiente — la tasa de abandono escolar en el nivel medio superior en zonas rurales duplica la de zonas urbanas.</p>
+  <p><strong>Personas con discapacidad:</strong> Avance — la Ley General para la Inclusión de las Personas con Discapacidad (2011). Pendiente — menos del 5% de los edificios gubernamentales en municipios rurales son accesibles.</p>
+  <p class="nota-pie">Fuentes: INEGI, CDI, Cámara de Diputados. El docente puede ampliar o actualizar con datos locales. Todos disponibles para descarga previa sin necesidad de internet durante la clase.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Qué notan en la columna de "avances" comparada con la de "pendientes"?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Fernanda</div>
+  <p>—Los avances son leyes y reformas. Los pendientes son la realidad concreta.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Y eso nos regresa al problema de las tres condiciones que vimos la semana pasada. Conocer un derecho no es suficiente. ¿Qué falta entre la ley que reconoce la inclusión y la realidad que la niega?</p>
+</div>
+
+<p>Voluntad política, dijo alguien. Presupuesto, dijo otro. Vigilancia ciudadana, dijo Ulises. Y Yesenia, por primera vez sin que nadie la llamara, añadió:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—Que la gente excluida tenga voz para exigir. No solo que la ley diga que puede tenerla.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA IV -->
+<div class="escena-titulo">Escena IV · El avance de María</div>
+
+<p>En el receso, María recibió un mensaje de su tío Cipriano. Lo leyó dos veces antes de entender lo que decía.</p>
+
+<p>La licenciada Guerrero había confirmado: el acta de la asamblea ejidal de 1992 —en la que los comuneros acordaron colectivamente el uso del canal de riego— sí estaba registrada en el Registro Agrario Nacional. Existía. Tenía folio. Tenía fecha. Tenía las firmas de veintidós ejidatarios, incluyendo la del abuelo de María.</p>
+
+<p>Eso significaba que cuando el municipio dijo que el canal era suyo "según el catastro de 2021", estaba pasando por alto un acuerdo comunitario con veintinueve años de anterioridad y respaldo en el Registro Agrario Nacional.</p>
+
+<p>María salió al patio, buscó a Ulises y le mostró el mensaje en silencio.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises (después de leerlo)</div>
+  <p>—O sea que el papel sí existía. Solo que ellos contaron con que nadie lo buscaría.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—Contaron con que mi mamá no sabía que podía buscarlo.</p>
+</div>
+
+<p>Se quedaron callados un momento. No era exactamente alegría lo que sentían. Era algo más complicado: la certeza de que tenían razón mezclada con la rabia de que haber tenido razón requirió semanas de búsqueda y la ayuda de personas con herramientas que no todo el mundo tiene.</p>
+
+<p>Miranda se acercó sin que nadie la llamara, como tenía por costumbre.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—¿Van a contarlo en clase?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—Sí. Porque no es solo mi caso. Es el mismo mecanismo de siempre: los que saben dónde están los papeles ganan sobre los que no saben que los papeles existen.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA V -->
+<div class="escena-titulo">Escena V · ¿Qué es la diversidad real?</div>
+
+<p>En la segunda hora, el Profe Ramírez hizo una pregunta que nadie esperaba.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Este salón es diverso?</p>
+</div>
+
+<p>La respuesta instintiva de varios fue sí. Pero el Profe Ramírez esperó, y en esa espera algunos comenzaron a dudar.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Depende de qué significa diverso. Si significa que hay personas de distintas comunidades, distintas situaciones económicas y distintas experiencias, sí. Si significa que todas esas diferencias tienen el mismo peso en las decisiones del grupo, no.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Cuál es la diferencia entre esas dos definiciones?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—La primera es diversidad decorativa. La segunda es diversidad real. La decorativa dice: hay mujeres en el Congreso. La real pregunta: ¿las mujeres del Congreso pueden proponer y aprobar leyes sin que los hombres voten en bloque para bloquearlas?</p>
+</div>
+
+<p>El Profe Ramírez asintió y escribió en el pizarrón:</p>
+
+<div class="pizarron">Diversidad decorativa: hay personas distintas.<br>
+Diversidad real: las personas distintas cambian las decisiones.</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Pensando en el contrato social que construyeron la semana dos, ¿fue diversidad real o diversidad decorativa?</p>
+</div>
+
+<p>La respuesta fue lenta, honesta y un poco incómoda: fue más real de lo que suele ser en muchos espacios, pero no completamente real. Yesenia no había hablado. Tres estudiantes con discapacidad visual leve no habían podido leer el texto del pizarrón sin pedir ayuda y no la pidieron. El proceso tuvo sesgos que nadie diseñó deliberadamente pero que operaron de todas formas.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso es exactamente lo que ocurre en las democracias reales. Ninguna es perfecta. La pregunta no es si tiene sesgos, sino si existe un mecanismo para identificarlos y corregirlos. ¿El nuestro los tiene?</p>
+</div>
+
+<p>El grupo miró el contrato pegado en la pared. La última norma —<em>especialmente a quien menos suele ser escuchado</em>— estaba ahí. Pero nadie la había aplicado de manera sistemática.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—¿Podemos modificar el contrato?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso también es una decisión democrática. Vótenlo.</p>
+</div>
+
+<p>Diecinueve a favor, tres abstenciones. El contrato se modificaría.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA VI -->
+<div class="escena-titulo">Escena VI · El primer borrador</div>
+
+<p>Al final de la sesión, el Profe Ramírez anunció que la siguiente semana comenzarían las presentaciones del Reto Central: el Mapa de Derechos de Mi Comunidad.</p>
+
+<p>Pero antes de terminar, pidió algo más.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Quiero que cada quien escriba hoy, antes de irse, una sola oración que responda a esto: ¿qué acción afirmativa concreta propondrías en tu comunidad o escuela para reducir una de las exclusiones que identificaste en tu mapa?</p>
+</div>
+
+<p>Escribieron. No todos tardaron lo mismo, pero todos escribieron. María escribió:</p>
+
+<div class="recuadro-oscuro">
+  <span class="label">Propuesta de María · Acción afirmativa</span>
+  <p>"Que la Procuraduría Agraria instale una jornada de información gratuita en cada cabecera ejidal una vez por semestre, en español y en lengua indígena local, para que los ejidatarios sepan qué instituciones existen y cómo acceder a ellas sin tener que ir a Actopan."</p>
+</div>
+
+<p>Ulises escribió que el precio mínimo garantizado para productores de aguacate debería renegociarse con representación directa de los productores, no solo de los intermediarios. Yesenia escribió que el reglamento del CBTA debería leerse en voz alta al inicio de cada ciclo escolar, para que quienes tienen dificultades de lectura no queden fuera de sus propios derechos. Miranda escribió que el certificado de repatriación debería ser suficiente para acceder a cualquier trámite de identidad en México, sin exigir apostillas que cuestan dinero y tiempo que los deportados no tienen.</p>
+
+<p>El Profe Ramírez recogió los papeles. Los leyó mientras los estudiantes recogían sus cosas. Cuando María pasó junto a él, dijo sin levantar la vista:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Esto es ciudadanía. No la credencial. Esto.</p>
+</div>
+
+<p>María salió al patio. El valle seguía igual. Los magueyes. Los sembradíos. El camino de terracería. Pero ella era diferente a la que bajó del autobús cinco semanas antes. Tenía el mismo nombre, el mismo uniforme, la misma mochila azul con el bordado de maíz. Pero ahora sabía tres cosas que antes no sabía: que el Estado tiene forma de texto, que los textos tienen idioma, y que aprender ese idioma es la forma más silenciosa y más duradera de cambiar algo.</p>
+
+<p style="text-align:center; font-style:italic; color:#6b2e00; font-size:10pt; margin-top:1cm;">Fin del Capítulo 4</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Cierre de los cuatro propósitos formativos</span>
+  <p>El Capítulo 4 cierra el ciclo de los cuatro propósitos formativos de CS-I. El <strong>PF-4</strong> se desarrolla en tres capas: (1) la observación de Miranda sobre quién ocupa el espacio en el salón activa la reflexión sobre diversidad real vs. decorativa; (2) la tabla de avances y pendientes de los grupos excluidos ancora el concepto de inclusión en datos concretos; (3) las propuestas individuales de acción afirmativa son el producto de síntesis que integra los PF-1 al PF-4 en un ejercicio de ciudadanía activa. El avance del caso de María (el acta del Registro Agrario) cierra su arco narrativo inicial y lo deja listo para la presentación del Reto Central en el Capítulo 5. La intervención de Yesenia —que al final del capítulo tiene voz— es el arco secundario más importante de este capítulo: muestra que la diversidad real se construye, no se declara.</p>
+</div>
+
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 4<br>
+  "La diversidad que molesta"<br><br>
+  Ciencias Sociales I · El Código del Ejido · Trilogía Raíz Digital<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM
+</div>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 4 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

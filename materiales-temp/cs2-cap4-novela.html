@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 4 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>La Cadena Rota · Capítulo 4 · Ciencias Sociales II</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{color-scheme:light;}
+body{font-family:'Georgia','Times New Roman',serif;background:#f8f7fc;color:#0e0a1e;font-size:11pt;line-height:1.85;max-width:min(960px, 100%);margin:0 auto;padding:1.5cm 1.8cm;}
+.portadilla{min-height:96vh;display:flex;flex-direction:column;justify-content:center;padding:2cm 0 1.5cm;border-bottom:2.5pt solid #1a1060;margin-bottom:1.5cm;page-break-after:always;}
+.serie-label{font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.28em;text-transform:uppercase;color:#1a1060;margin-bottom:2.5cm;line-height:2;}
+.libro-num{font-family:'Georgia',serif;font-size:64pt;font-weight:bold;color:#b85010;line-height:1;margin-bottom:.3cm;}
+.libro-titulo{font-family:'Georgia',serif;font-size:28pt;font-style:italic;font-weight:bold;color:#0e0a1e;line-height:1.2;margin-bottom:.4cm;}
+.libro-subtitulo{font-size:9pt;font-family:'Arial',sans-serif;color:#1a1060;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5cm;}
+.cap-ficha{background:#1a1060;color:#ffffff;border-left:4pt solid #b85010;padding:.65cm .9cm;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.9;margin-bottom:1.5cm;}
+.cap-ficha strong{color:#ffc090;}
+.portadilla-meta{font-family:'Arial',sans-serif;font-size:8pt;color:#2a1e50;line-height:2;border-top:.5pt solid #8080c0;padding-top:.6cm;margin-top:auto;}
+.capitulo-header{page-break-before:always;text-align:center;margin-bottom:1.5cm;padding-bottom:.8cm;border-bottom:1pt solid #9090c8;}
+.cap-num{font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.35em;text-transform:uppercase;color:#1a1060;margin-bottom:.4cm;}
+.cap-titulo{font-family:'Georgia',serif;font-size:20pt;font-style:italic;font-weight:bold;color:#0e0a1e;line-height:1.3;margin-bottom:.3cm;}
+.cap-epigrafe{font-size:9pt;font-style:italic;color:#2a2050;max-width:12cm;margin:.6cm auto 0;line-height:1.6;}
+.cap-epigrafe cite{display:block;font-style:normal;font-size:8pt;color:#5050a0;margin-top:.3cm;letter-spacing:.06em;}
+.escena-titulo{font-family:'Arial Narrow','Arial',sans-serif;font-size:7pt;letter-spacing:.3em;text-transform:uppercase;color:#1a1060;margin:1.5cm 0 .5cm;padding-bottom:.3cm;border-bottom:.5pt solid #b0a8e0;}
+p{margin-bottom:.7em;text-align:justify;hyphens:auto;}
+p+p{text-indent:1.2em;}
+.escena-titulo+p,.capitulo-header+p,.dialogo-bloque+p,.recuadro+p,.recuadro-oscuro+p,.recuadro-teal+p,.recuadro-cobre+p,.pizarron+p{text-indent:0;}
+.dialogo-bloque{margin:.8em 0;padding-left:.9cm;border-left:3pt solid #b85010;}
+.hablante{font-family:'Arial',sans-serif;font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a1060;margin-bottom:.1cm;font-weight:bold;}
+.dialogo-bloque p{font-style:italic;margin-bottom:.3em;text-indent:0!important;color:#0e0a1e;}
+.pensamiento{font-style:italic;color:#2a2050;}
+.separador{text-align:center;color:#8080c0;font-size:14pt;letter-spacing:.5em;margin:1.2cm 0;}
+/* RECUADRO LAVANDA → negro */
+.recuadro{background:#eeeaf8;border:1pt solid #9090c8;border-left:4pt solid #1a1060;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;color:#0e0a1e;}
+.recuadro .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#1a1060;margin-bottom:.35cm;display:block;font-weight:bold;}
+.recuadro p{text-indent:0!important;margin-bottom:.35em;}
+.recuadro .nota-pie{font-size:7.5pt;color:#3a3070;border-top:.5pt solid #9090c8;margin-top:.4cm;padding-top:.25cm;}
+/* RECUADRO ÍNDIGO → BLANCO */
+.recuadro-oscuro{background:#1a1060;color:#ffffff;border-left:4pt solid #b85010;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.recuadro-oscuro .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffc090;margin-bottom:.3cm;display:block;font-weight:bold;}
+.recuadro-oscuro p{text-indent:0!important;margin-bottom:.3em;}
+.recuadro-oscuro .nota-pie{font-size:7.5pt;color:#c0b8f0;border-top:.5pt solid #4040a0;margin-top:.35cm;padding-top:.2cm;}
+/* RECUADRO TEAL → BLANCO */
+.recuadro-teal{background:#083840;color:#ffffff;border-left:4pt solid #50c0a0;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.recuadro-teal .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#b0f0d8;margin-bottom:.3cm;display:block;font-weight:bold;}
+.recuadro-teal p{text-indent:0!important;margin-bottom:.3em;}
+.recuadro-teal .nota-pie{font-size:7.5pt;color:#90d8c0;border-top:.5pt solid #2a6858;margin-top:.35cm;padding-top:.2cm;}
+/* RECUADRO COBRE/ÁMBAR: fondo ámbar oscuro → BLANCO */
+.recuadro-cobre{background:#5a2000;color:#ffffff;border-left:4pt solid #e08040;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.recuadro-cobre .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffc890;margin-bottom:.3cm;display:block;font-weight:bold;}
+.recuadro-cobre p{text-indent:0!important;margin-bottom:.3em;}
+.recuadro-cobre .nota-pie{font-size:7.5pt;color:#e0b090;border-top:.5pt solid #8a5030;margin-top:.35cm;padding-top:.2cm;}
+/* PIZARRÓN: índigo muy oscuro → azul cielo */
+.pizarron{background:#080618;color:#c0d8ff;font-family:'Georgia',serif;font-size:10.5pt;font-style:italic;padding:.8cm 1cm;margin:.8cm 0;text-align:center;line-height:1.65;}
+.nota-narrativa{background:#fff4e0;border:1pt dashed #d08020;border-left:3pt solid #b85010;padding:.55cm .85cm;margin:1.2cm 0 0;font-family:'Arial',sans-serif;font-size:8pt;color:#0e0a1e;line-height:1.65;}
+.nota-narrativa .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#b85010;display:block;margin-bottom:.3cm;font-weight:bold;}
+.cierre-capitulo{margin-top:1.5cm;padding-top:.8cm;border-top:1pt solid #9090c8;font-family:'Arial',sans-serif;font-size:7.5pt;color:#3a3070;text-align:center;letter-spacing:.08em;}
+@media print{body{font-size:10.5pt;padding:0;max-width:100%;}.portadilla{min-height:100vh;}}
+@page{size:letter;margin:2.2cm 2cm 2.5cm;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="portadilla">
+  <div class="serie-label">Ciencias Sociales II · NEM 2025 · DGETAYCM<br>Bachillerato Tecnológico Agropecuario · Trilogía Raíz Digital · La Cadena Rota · Capítulo 4</div>
+  <div class="libro-num">II</div>
+  <div class="libro-titulo">La Cadena<br>Rota</div>
+  <div class="libro-subtitulo">Organización, relaciones económicas y sociales</div>
+  <div class="cap-ficha">
+    <strong>Capítulo 4 · "Lo que cuesta lo invisible"</strong><br>
+    Propósitos activos: <strong>PF-3</strong> (continuación) · <strong>PF-4</strong> (activación central)<br>
+    Contenidos: Modos de producción incluyendo trabajo del hogar y cuidados · Instituciones y roles sociales · Hegemonía, consensos y negociación · Interseccionalidad: clase, género, raza, etnia · Relación sociedad-naturaleza y degradación ambiental<br>
+    Sesiones: 7 y 8 · Semana 5
+  </div>
+  <div class="portadilla-meta"><strong>El capítulo más políticamente denso del semestre.</strong> El grupo ya sabe cómo funciona la cadena. Ahora verá que la cadena tiene un costo que nadie paga: el trabajo que no se cuenta, el agua que no se repone y el orden social que nadie eligió pero que todos sostienen.</div>
+</div>
+
+<div class="capitulo-header">
+  <div class="cap-num">Capítulo Cuatro</div>
+  <div class="cap-titulo">"Lo que cuesta lo invisible"</div>
+  <div class="cap-epigrafe">
+    "El precio de un aguacate no incluye el agua que consumió. No incluye el trabajo no remunerado que sostuvo al productor. No incluye el suelo que degradó. Si lo incluyera todo, el precio sería otro. Y quizá el mercado funcionaría diferente."
+    <cite>— Miranda Ríos, cuaderno verde, semana 5</cite>
+  </div>
+</div>
+
+
+<div class="escena-titulo">Escena I · La cadena del maíz de María</div>
+
+<p>María llegó al martes de la semana cinco con algo que no había traído antes: datos. No de la Procuraduría ni del ejido. De la señora del molino y de la dueña de la tortillería del pueblo.</p>
+
+<p>Había pasado el fin de semana preguntando. Primero a su mamá: ¿cuánto le pagan por el maíz en el tianguis? Ocho pesos el kilo, dijo Dolores, si la temporada es buena y hay mucho, a veces seis. Después fue a la señora del molino de metate eléctrico: ¿cuánto cobra por moler un kilo de maíz? Dos pesos el kilo de masa, dijo la señora. Y a la dueña de la tortillería en el centro de San Martín: ¿cuánto vale el kilo de tortillas? Veintidós pesos, dijo la dueña, aunque si el maíz sube ella también sube el precio.</p>
+
+<p>Cuando María presentó la cadena, el diagrama era sencillo pero el impacto no lo era:</p>
+
+<div class="recuadro-oscuro">
+  <span class="label">La cadena del maíz · Valle de Nopalera · Investigación de María Tlaloc</span>
+  <p><strong>Productora (mamá de María):</strong> cultiva, cosecha, selecciona. Precio al tianguis: <strong>$6–8/kg</strong>. Trabajo: ciclo de 6 meses más transporte al tianguis. Riesgo: climático completo.</p>
+  <p><strong>Señora del molino:</strong> convierte el grano en masa lista. Cobra: <strong>$2/kg de masa</strong>. Insumo: el maíz ya pagado por quien va a moler. Trabajo: operación de máquina.</p>
+  <p><strong>Tortillería:</strong> procesa la masa en tortillas, las vende. Precio: <strong>$22/kg</strong>. Margen sobre el maíz original: $14–16 pesos por kilo.</p>
+  <p>El consumidor paga 22 pesos por lo que la productora vendió a 6–8 pesos. Diferencia: 14–16 pesos. La productora recibe entre el 27% y 36% del precio final.</p>
+  <p class="nota-pie">Datos recabados por María Tlaloc en el mercado de San Martín Tecuatitla, semana 5 del segundo semestre. No son datos estadísticos oficiales: son datos reales de una cadena real en una comunidad real.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Es la misma estructura que el aguacate. El que produce más recibe menos.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—Y lo que me llama la atención es que la señora del molino y la dueña de la tortillería también son mujeres. Y ninguna está enriqueciendo: el molino cobra dos pesos, que es para pagar la luz y el mantenimiento. La tortillería tiene márgenes más altos pero también tiene local, empleadas, electricidad. La cadena entera opera con márgenes ajustados. Excepto para el productor original, que además de margen ajustado tiene el riesgo de perder todo.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Y esas tres mujeres además hacen el trabajo de cuidados de sus casas cuando no están trabajando en la cadena.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena II · El agua que el aguacate se lleva</div>
+
+<p>El Profe Ramírez esperó a que la presentación de María terminara. Después hizo una pregunta que nadie esperaba.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Cuánta agua se necesita para producir un kilo de aguacate?</p>
+</div>
+
+<p>Ulises lo sabía porque lo había leído en algún lugar del cuaderno negro. Dudó antes de decirlo porque el número parecía imposible.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Aproximadamente mil litros.</p>
+</div>
+
+<p>El salón procesó eso. Un kilo de aguacate. Mil litros de agua. El canal de riego que su mamá y el municipio están en disputa desde que empezó el semestre anterior.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María (despacio)</div>
+  <p>—O sea que por cada kilo de aguacate que se exporta a Estados Unidos, se van mil litros de agua del Valle de Nopalera.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Así es. Y ese agua no regresa. La llevan en el aguacate. Se llama agua virtual: el volumen de agua que contiene de forma invisible un producto cuando lo transportas a otro lugar. México exporta aguacate y también exporta, sin nombre y sin precio, el agua que necesitó para producirlo.</p>
+</div>
+
+<div class="recuadro-teal">
+  <span class="label">Dato · Agua virtual en la producción de aguacate · Para análisis en clase</span>
+  <p>Producir un kilo de aguacate requiere en promedio entre 850 y 1,200 litros de agua, dependiendo del método de cultivo y la región. México exportó en 2023 aproximadamente 1.3 millones de toneladas de aguacate, equivalentes a entre 1.1 y 1.5 billones de litros de agua exportados de forma invisible en ese año.</p>
+  <p>El estado de Michoacán —principal productor de aguacate de exportación— enfrenta una crisis hídrica creciente, con acuíferos sobreexplotados y conflictos por el acceso al agua entre comunidades indígenas y productores de aguacate.</p>
+  <p>El precio de mercado del aguacate no incluye el costo de reposición del agua utilizada. Ese costo —que pagarán las generaciones futuras en forma de menor disponibilidad de agua— se llama externalidad ambiental negativa.</p>
+  <p class="nota-pie">Fuentes: CONAGUA (2023) · WWF México · Instituto Mexicano de Tecnología del Agua. Datos disponibles en portales de acceso abierto. El docente puede imprimir el informe de CONAGUA sobre acuíferos de Michoacán.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—El canal que el municipio quiere controlar sirve para regar la parcela de mi mamá. Pero también sirve para regar las huertas de aguacate que van al mercado de exportación. Si se exporta el agua en el aguacate y el canal se seca, ¿quién pierde primero? El maíz de mi mamá, que es autoconsumo, o el aguacate de exportación, que tiene valor comercial.</p>
+</div>
+
+<p>El Profe Ramírez dejó la pregunta en el aire. No era retórica.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena III · Interseccionalidad: quien pierde siempre</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—En los tres capítulos anteriores identificamos que hay personas que sistemáticamente están del lado de la cadena que menos recibe. ¿Qué tienen en común esas personas?</p>
+</div>
+
+<p>La respuesta llegó con más rapidez que antes porque llevaban semanas construyendo el análisis.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Fernanda</div>
+  <p>—Son mujeres, en su mayoría. Como la señora del molino, la tortillera, la mamá de María, la abuela de Ulises que cuida a los niños.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Rodrigo</div>
+  <p>—Son rurales. Viven lejos del mercado de destino. Tienen menos acceso a información y a organizaciones que los representen.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Son indígenas o de origen indígena en muchos casos. La abuela de María habla náhuatl. La comunicación con las instituciones del Estado casi siempre es en español y en lenguaje técnico.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso que están describiendo se llama interseccionalidad. No es una sola forma de desigualdad la que opera: es la combinación de varias al mismo tiempo. Ser mujer más ser rural más ser indígena más ser productora sin organización colectiva no produce una desventaja que sea la suma de cada una por separado. Produce una desventaja multiplicada, porque cada dimensión refuerza a las otras. El mercado no ve a la mamá de María como "mujer pobre rural indígena productora sin poder de negociación": ve simplemente un precio al que puede comprar el maíz. Pero ese precio es el resultado de todas esas dimensiones operando simultáneamente.</p>
+</div>
+
+<p>Yesenia, que había estado escuchando, dijo algo en voz muy baja:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—Yo también soy todo eso. Y además tengo dieciséis años. La intersección de Yesenia tiene cuatro capas.</p>
+</div>
+
+<p>El salón absorbió eso en silencio. No era queja. Era análisis.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena IV · Los roles que nadie eligió pero todos sostienen</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Por qué el trabajo de cuidados lo hacen mayoritariamente las mujeres? ¿Alguien en este salón decidió eso conscientemente?</p>
+</div>
+
+<p>Nadie levantó la mano.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Y entonces por qué ocurre? Si nadie lo decidió conscientemente, ¿cómo se reproduce?</p>
+</div>
+
+<p>Las respuestas surgieron lentas pero consistentes. La costumbre. Lo que enseñaron en casa. Lo que se ve en la televisión. Lo que se espera. Lo que resulta más fácil no cuestionar porque cuestionar tiene costos sociales.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Lo que están describiendo es lo que el filósofo italiano Antonio Gramsci llamó hegemonía: el conjunto de ideas, valores y prácticas que un grupo dominante logra que la sociedad acepte como naturales, normales o inevitables, aunque sirvan a los intereses de ese grupo. No se impone por la fuerza directamente. Se reproduce a través de la familia, la escuela, los medios, la iglesia. Y lo que resulta de eso no son decisiones individuales: son estructuras que se mantienen solas porque quienes más las necesitan cuestionarlas son quienes tienen menos recursos para hacerlo.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Y el trabajo de cuidados no remunerado es parte de esa hegemonía. No es natural que las mujeres lo hagan: es histórico. Y es funcional al sistema económico porque reduce los costos de reproducción de la fuerza de trabajo que el mercado necesita. En términos simples: si las madres y abuelas no cuidaran a los hijos, alguien tendría que pagar por ese cuidado. El mercado no lo paga porque hay mujeres que lo hacen gratis. Y eso no es coincidencia.</p>
+</div>
+
+<p>Un estudiante al fondo —Diego, que rara vez hablaba de temas que no fueran su parcela— dijo despacio:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Diego</div>
+  <p>—Mi papá dice que las mujeres cuidan porque les nace. Que es natural.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—¿Y tu papá dice que los hombres trabajan en el campo porque les nace también?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Diego</div>
+  <p>—Sí.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Entonces los dos roles son naturales. ¿Y cómo explicas que en algunos países del norte de Europa son los hombres quienes toman la licencia de paternidad con más frecuencia que las mujeres la licencia de maternidad? ¿También es natural eso?</p>
+</div>
+
+<p>Diego no respondió de inmediato. Pero tampoco rechazó la pregunta. Eso también era un tipo de aprendizaje.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena V · Lo que el precio no incluye</div>
+
+<p>En la segunda hora, el Profe Ramírez hizo el ejercicio que más impacto tendría en el Reto Central de todos.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—El precio del aguacate en el supermercado es de 178 pesos. ¿Qué incluye ese precio y qué no incluye?</p>
+</div>
+
+<p>El grupo construyó las listas en el pizarrón:</p>
+
+<div class="recuadro">
+  <span class="label">Lo que el precio SÍ incluye vs. lo que NO incluye · Construcción colectiva del salón 4-C</span>
+  <p><strong>Sí incluye:</strong> el precio de compra al productor ($32) · los costos de transporte en la cadena · los márgenes de cada intermediario · los costos de almacenamiento · el margen del supermercado.</p>
+  <p><strong>No incluye:</strong> el trabajo de cuidados que permitió al productor llegar a la parcela cada día · el agua utilizada (1,000 litros/kg) sin costo de reposición · el riesgo climático que asume el productor (si pierde la cosecha, él absorbe la pérdida, no el precio del supermercado) · el agotamiento del suelo por monocultivo intensivo · el impacto en las comunidades que pierden acceso al agua por la expansión aguacatera · el trabajo invisible de Yesenia que permite a su mamá ir al mercado.</p>
+  <p>Si el precio incluyera todos esos costos, el aguacate en el supermercado costaría significativamente más. Pero esos costos no desaparecen: simplemente los pagan otros. Los pagan las mujeres que trabajan sin remuneración. Los paga el acuífero que se agota. Los pagan las comunidades que pierden agua. Los pagarán las generaciones futuras.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Lo que acaban de describir son las externalidades: los costos que una actividad económica genera pero que no paga quien la realiza y quien se beneficia de ella. Las externalidades son la forma en que el mercado transfiere costos reales a quienes tienen menos poder para rechazarlos: las comunidades rurales, el medio ambiente, las generaciones futuras, las mujeres que trabajan sin remuneración.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—¿Y si hubiera un precio que incluyera todo eso?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso es exactamente lo que algunos movimientos de economía alternativa están proponiendo. El comercio justo. La economía solidaria. Las cooperativas que intentan incluir esos costos en el precio. Doña Esperanza tiene algo que decir sobre eso. La próxima sesión.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VI · La pregunta de Ulises en el camino a casa</div>
+
+<p>En el autobús de la tarde, Ulises iba callado. María lo conocía lo suficiente para saber que ese silencio no era vacío: era trabajo.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—¿Qué estás pensando?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Que mi papá lleva veinte años produciendo aguacate. Que en esos veinte años el acuífero de la región bajó ocho metros. Que el arroyo que antes tenía agua todo el año ahora solo tiene en temporada de lluvias. Que mi papá no tomó esa decisión solo: el sistema de incentivos lo llevó ahí. Le dijeron: planta aguacate, hay mercado, hay precio. No le dijeron: el agua no es infinita y cuando se acabe ya no vas a poder plantar nada.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—Y el municipio quiere el agua del canal ahora precisamente porque hay más demanda para riego de aguacate.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—El problema jurídico del canal y el problema ambiental del agua son el mismo problema visto desde dos ángulos. Están conectados.</p>
+</div>
+
+<p>María lo anotó en su cuaderno cuadriculado. No porque fuera a olvidarlo. Sino porque cuando algo se vuelve preciso en palabras, es más difícil que se pierda.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VII · El cuarto encargo</div>
+
+<p>Al final de la sesión 8, el Profe Ramírez dio el encargo que conectaría los capítulos anteriores con la visita de Doña Esperanza.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Para el siguiente capítulo quiero que cada equipo tenga respondida una pregunta sobre su cadena: ¿quién paga los costos que el precio no incluye? El trabajo invisible, el impacto ambiental, el riesgo que no se remunera. No es necesario que lo cuantifiquen: solo que lo nombren. Y que identifiquen qué dimensiones de la interseccionalidad aparecen en su cadena: ¿quién tiene menos poder de negociación y por qué?</p>
+</div>
+
+<p>Yesenia levantó la mano.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—¿Y si hay cosas que el precio no incluye que no tienen nombre en el programa?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Entonces les ponemos un nombre. Eso también es parte del trabajo.</p>
+</div>
+
+<p>Yesenia asintió y escribió en su cuaderno, con la letra cuidadosa que le había visto desde el principio: <em>Cosas que el precio no incluye y que no tienen nombre todavía. Lista en progreso.</em></p>
+
+<p>Era la primera vez que alguien en una clase de Yesenia le pedía que nombrara lo que no tiene nombre. Y eso, pensó ella mientras guardaba el cuaderno, también era un tipo de bienestar que Nussbaum no habría sabido poner en la lista pero que ella reconocía claramente.</p>
+
+<p style="text-align:center;font-style:italic;color:#1a1060;font-size:10pt;margin-top:1cm;">Fin del Capítulo 4</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Nexo narrativa – PF-3 y PF-4</span>
+  <p>El Capítulo 4 activa el <strong>PF-4</strong> a través de tres conceptos encadenados. La interseccionalidad (Escena III) muestra que las desigualdades en la cadena no son de una sola dimensión sino de varias operando simultáneamente: género + clase + etnia + territorio. La hegemonía de Gramsci (Escena IV) explica por qué esas desigualdades se reproducen sin necesidad de coerción directa: porque los roles se naturalizan. Y las externalidades (Escena V) conectan los costos invisibles de la cadena —trabajo de cuidados, agua, suelo, riesgo— con la pregunta de quién los paga y por qué siempre son los mismos. La conexión narrativa del canal de María con el consumo de agua del aguacate (Escena II) une el caso jurídico de CS-I con el análisis ambiental de CS-II, anticipando el eje de CS-III. La pregunta de Yesenia al final —"¿y si hay cosas que el precio no incluye que no tienen nombre?"— siembra el espacio epistemológico que Doña Esperanza llenará en el Capítulo 5 con el modelo cooperativo.</p>
+</div>
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 4 · "Lo que cuesta lo invisible"<br>
+  Ciencias Sociales II · La Cadena Rota · Trilogía Raíz Digital · MCCEMS 2025
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 4 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

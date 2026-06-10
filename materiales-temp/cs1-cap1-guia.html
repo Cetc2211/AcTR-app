@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 1 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · Capítulo 1 · Ciencias Sociales I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+.raiz-cs1 {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  background: #fefefe;
+  color: #1a1410;
+  font-size: 10pt;
+  line-height: 1.7;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 1.2cm 1.8cm;
+}
+
+
+/* PORTADILLA */
+.raiz-cs1 .portadilla {
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5cm 0 1cm;
+  border-bottom: 3pt solid #2d5016;
+  margin-bottom: 1cm;
+  page-break-after: always;
+}
+
+.raiz-cs1 .col-label {
+  font-size: 7pt;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #2d5016;
+  margin-bottom: 0.8cm;
+  line-height: 2;
+}
+
+.raiz-cs1 .port-titulo {
+  font-size: 24pt;
+  font-weight: 900;
+  color: #1a1410;
+  line-height: 1.1;
+  margin-bottom: 0.2cm;
+}
+
+.raiz-cs1 .port-sub { font-size: 10pt; color: #2d5016; margin-bottom: 0.3cm; }
+
+.raiz-cs1 .port-cap { font-size: 8.5pt; color: #6c7c60; font-style: italic; }
+
+
+.raiz-cs1 .aviso-offline {
+  background: #2d5016;
+  color: #faf8f3;
+  padding: 0.5cm 0.8cm;
+  font-size: 8.5pt;
+  line-height: 1.6;
+  margin: 0.8cm 0;
+}
+
+.raiz-cs1 .aviso-offline strong { color: #a8d060; }
+
+
+/* ENCABEZADOS */
+.raiz-cs1 h2 {
+  font-size: 12pt;
+  font-weight: 900;
+  color: #1a1410;
+  margin: 1cm 0 0.3cm;
+  padding-bottom: 0.2cm;
+  border-bottom: 2pt solid #2d5016;
+  page-break-after: avoid;
+}
+
+.raiz-cs1 h3 {
+  font-size: 10pt;
+  font-weight: 700;
+  color: #2d5016;
+  margin: 0.7cm 0 0.25cm;
+}
+
+.raiz-cs1 h4 {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: #1a1410;
+  margin: 0.4cm 0 0.15cm;
+}
+
+
+.raiz-cs1 p { margin-bottom: 0.45em; }
+
+
+/* INFOCUADRO */
+.raiz-cs1 .info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4cm;
+  margin: 0.6cm 0;
+}
+
+.raiz-cs1 .info-cell {
+  border: 0.5pt solid #a8c090;
+  padding: 0.35cm 0.5cm;
+  font-size: 8.5pt;
+}
+
+.raiz-cs1 .info-cell strong {
+  display: block;
+  font-size: 7pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #2d5016;
+  margin-bottom: 0.1cm;
+}
+
+
+/* PROPÓSITOS */
+.raiz-cs1 .proposito-row {
+  display: grid;
+  grid-template-columns: 2.5cm 1fr 1fr;
+  gap: 0;
+  border: 0.5pt solid #a8c090;
+  margin-bottom: 0.3cm;
+  overflow: hidden;
+  font-size: 8.5pt;
+}
+
+.raiz-cs1 .pf-num-cell {
+  background: #2d5016;
+  color: #faf8f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14pt;
+  font-weight: 900;
+  min-height: 2cm;
+  flex-shrink: 0;
+}
+
+.raiz-cs1 .pf-desc {
+  padding: 0.35cm 0.5cm;
+  border-right: 0.5pt solid #a8c090;
+  vertical-align: top;
+  color: #1a1410;
+  line-height: 1.5;
+}
+
+.raiz-cs1 .pf-contenidos {
+  padding: 0.35cm 0.5cm;
+  font-size: 8pt;
+  color: #4c5c40;
+  line-height: 1.5;
+}
+
+
+/* ESTRUCTURA SEMESTRAL */
+.raiz-cs1 .sem-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  margin: 0.4cm 0;
+}
+
+.raiz-cs1 .sem-table th {
+  background: #2d5016;
+  color: #faf8f3;
+  padding: 0.25cm 0.4cm;
+  text-align: left;
+  font-size: 7pt;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.raiz-cs1 .sem-table td {
+  border: 0.5pt solid #a8c090;
+  padding: 0.25cm 0.4cm;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.raiz-cs1 .sem-table tr:nth-child(even) td { background: #f4f8f0; }
+
+.raiz-cs1 .sem-table .flex-row td { background: #fff8e8; font-style: italic; color: #6c5c30; }
+
+.raiz-cs1 .sem-table .cap-row td:first-child { font-weight: 700; color: #2d5016; }
+
+
+/* SESIÓN */
+.raiz-cs1 .sesion {
+  border: 1pt solid #a8c090;
+  margin: 0.6cm 0;
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+
+.raiz-cs1 .ses-header {
+  background: #e8f2e0;
+  padding: 0.3cm 0.6cm;
+  display: flex;
+  align-items: center;
+  gap: 0.5cm;
+}
+
+.raiz-cs1 .ses-num {
+  background: #2d5016;
+  color: #faf8f3;
+  width: 1.2cm;
+  height: 1.2cm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 10pt;
+  flex-shrink: 0;
+}
+
+.raiz-cs1 .ses-info {
+  flex: 1;
+}
+
+.raiz-cs1 .ses-titulo { font-size: 9.5pt; font-weight: 700; color: #1a1410; }
+
+.raiz-cs1 .ses-meta { font-size: 7.5pt; color: #4c5c40; }
+
+.raiz-cs1 .ses-tiempo {
+  font-size: 7pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2d5016;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.raiz-cs1 .ses-body { padding: 0.45cm 0.6cm; font-size: 8.5pt; }
+
+.raiz-cs1 .ses-body p { margin-bottom: 0.35em; }
+
+
+/* MOMENTO DIDÁCTICO */
+.raiz-cs1 .momento {
+  margin: 0.4cm 0;
+  border-left: 2pt solid #a8c090;
+  padding-left: 0.5cm;
+}
+
+.raiz-cs1 .momento .m-label {
+  font-size: 6.5pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2d5016;
+  font-weight: 700;
+  margin-bottom: 0.1cm;
+}
+
+.raiz-cs1 .momento p { font-size: 8.5pt; color: #1a2810; margin-bottom: 0.25em; }
+
+
+/* TABLA MOMENTO */
+.raiz-cs1 .tabla-sesion {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  margin: 0.3cm 0;
+}
+
+.raiz-cs1 .tabla-sesion th {
+  background: #a8c090;
+  color: #1a2810;
+  padding: 0.2cm 0.4cm;
+  text-align: left;
+  font-size: 7pt;
+  font-weight: 700;
+}
+
+.raiz-cs1 .tabla-sesion td {
+  border: 0.5pt solid #c8d8b8;
+  padding: 0.2cm 0.4cm;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.raiz-cs1 .tabla-sesion .tiempo-col { width: 1.5cm; color: #2d5016; font-weight: 700; text-align: center; }
+
+
+/* ALTERNATIVAS */
+.raiz-cs1 .alt-bloque {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3cm;
+  margin: 0.3cm 0;
+}
+
+.raiz-cs1 .alt-col {
+  padding: 0.3cm 0.4cm;
+  font-size: 8pt;
+  line-height: 1.5;
+}
+
+.raiz-cs1 .alt-analog {
+  background: #f0ebe0;
+  border-left: 2pt solid #5c3a1e;
+}
+
+.raiz-cs1 .alt-digital {
+  background: #eaf4f8;
+  border-left: 2pt solid #1a4a5c;
+}
+
+.raiz-cs1 .alt-col .label {
+  font-size: 6.5pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 0.15cm;
+  display: block;
+}
+
+.raiz-cs1 .alt-analog .label { color: #5c3a1e; }
+
+.raiz-cs1 .alt-digital .label { color: #1a4a5c; }
+
+
+/* EVALUACIÓN */
+.raiz-cs1 .eval-item {
+  display: grid;
+  grid-template-columns: 3cm 1fr 2.5cm;
+  gap: 0;
+  border: 0.5pt solid #a8c090;
+  margin-bottom: 0.25cm;
+  font-size: 8pt;
+  overflow: hidden;
+}
+
+.raiz-cs1 .eval-item .ev-tipo {
+  background: #e8f2e0;
+  padding: 0.25cm 0.4cm;
+  font-weight: 700;
+  color: #2d5016;
+  font-size: 7.5pt;
+  display: flex;
+  align-items: center;
+  border-right: 0.5pt solid #a8c090;
+}
+
+.raiz-cs1 .eval-item .ev-desc {
+  padding: 0.25cm 0.4cm;
+  border-right: 0.5pt solid #a8c090;
+  line-height: 1.5;
+  color: #1a2810;
+}
+
+.raiz-cs1 .eval-item .ev-act {
+  padding: 0.25cm 0.4cm;
+  font-size: 7.5pt;
+  color: #4c5c40;
+  font-style: italic;
+}
+
+
+/* ORIENTACIONES */
+.raiz-cs1 .orientacion {
+  background: #f4f8f0;
+  border: 0.5pt solid #a8c090;
+  border-left: 2pt solid #2d5016;
+  padding: 0.4cm 0.6cm;
+  margin: 0.4cm 0;
+  font-size: 8.5pt;
+  line-height: 1.6;
+}
+
+.raiz-cs1 .orientacion .label {
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2d5016;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.2cm;
+}
+
+
+/* MATRIZ TRANSV */
+.raiz-cs1 table.transv {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  margin: 0.4cm 0;
+}
+
+.raiz-cs1 table.transv th {
+  background: #2d5016;
+  color: #faf8f3;
+  padding: 0.2cm 0.4cm;
+  font-size: 7pt;
+  font-weight: 700;
+  text-align: left;
+}
+
+.raiz-cs1 table.transv td {
+  border: 0.5pt solid #a8c090;
+  padding: 0.2cm 0.4cm;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.raiz-cs1 table.transv tr:nth-child(even) td { background: #f4f8f0; }
+
+
+/* PRINT */
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">
+      Guía Docente y Articulación Curricular · Ciencias Sociales I<br>
+      Estado, ciudadanía y relaciones de poder · MCCEMS 2025<br>
+      Bachillerato Tecnológico Agropecuario y Científico · DGETAYCM
+    </div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 1 · "El primer día que pregunté algo peligroso"</div>
+    <div class="port-cap">Trilogía Raíz Digital · El Código del Ejido · Sesiones 1 y 2</div>
+
+    <div class="aviso-offline">
+      <strong>Diseño Offline-First:</strong> Todos los materiales de este ecosistema pedagógico funcionan sin conexión a internet. Las actividades digitales son extensiones opcionales que enriquecen el trabajo cuando hay conectividad, pero <strong>ninguna es requisito</strong> para alcanzar los propósitos formativos. El docente puede adaptar libremente.
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell"><strong>Semestre</strong>Primero · CS-I</div>
+      <div class="info-cell"><strong>Sesiones que cubre</strong>1 y 2 (Capítulo 1)</div>
+      <div class="info-cell"><strong>Horas/semana</strong>2 horas semanales</div>
+      <div class="info-cell"><strong>Duración total del semestre</strong>~12 sesiones de trabajo + 4 de holgura</div>
+      <div class="info-cell"><strong>Propósitos formativos activos</strong>PF-1 y PF-2 de CS-I</div>
+      <div class="info-cell"><strong>Meta educativa</strong>Problematice la ciudadanía y el Estado</div>
+    </div>
+  </div>
+
+  <p style="font-size:7.5pt; color:#6c7c60; border-top:0.5pt solid #a8c090; padding-top:0.3cm; font-style:italic;">
+    Este documento acompaña al Capítulo 1 de la novela y al Cuadernillo del Estudiante correspondiente. Los tres componentes deben leerse en conjunto para garantizar la coherencia entre la narrativa, las actividades y la evaluación formativa.
+  </p>
+</div>
+
+
+<!-- ════════════════════ ESTRUCTURA SEMESTRAL ════════════════════ -->
+<h2>1. Estructura Semestral Flexible · CS-I</h2>
+
+<div class="orientacion">
+  <span class="label">Nota sobre la planificación</span>
+  La asignatura dispone de 2 horas por semana. En un semestre de 16 semanas, el máximo posible son 32 horas. Sin embargo, el contexto del Bachillerato Tecnológico Agropecuario contempla interrupciones por Consejos Técnicos Académicos, condiciones ambientales, actividades de campo y situaciones comunitarias. Por eso se planifica con <strong>12 sesiones de trabajo efectivo (24 horas)</strong> y se dejan <strong>4 sesiones de holgura</strong>, que el docente puede usar para recuperación, profundización o ajuste. No es un programa rígido: es una propuesta con margen de maniobra.
+</div>
+
+<table class="sem-table">
+  <thead>
+    <tr>
+      <th>Semana</th>
+      <th>Sesión</th>
+      <th>Componente</th>
+      <th>Propósitos activos</th>
+      <th>Observaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="cap-row">
+      <td>1</td>
+      <td>1 y 2</td>
+      <td><strong>Capítulo 1</strong> · El primer día que pregunté algo peligroso</td>
+      <td>PF-1, PF-2</td>
+      <td>Diagnóstico + lectura + actividades del cuadernillo</td>
+    </tr>
+    <tr class="cap-row">
+      <td>2</td>
+      <td>3 y 4</td>
+      <td><strong>Capítulo 2</strong> · El idioma de los papeles</td>
+      <td>PF-1, PF-3</td>
+      <td>Normas sociales y sistema jurídico</td>
+    </tr>
+    <tr class="flex-row">
+      <td>3</td>
+      <td>Flex A</td>
+      <td>Sesión de holgura / recuperación</td>
+      <td>—</td>
+      <td>Usar si hubo interrupción o para profundizar cap. 1-2</td>
+    </tr>
+    <tr class="cap-row">
+      <td>4</td>
+      <td>5 y 6</td>
+      <td><strong>Capítulo 3</strong> · Lo que firma el que no lee</td>
+      <td>PF-2, PF-3</td>
+      <td>Democracia deliberativa y contrato social</td>
+    </tr>
+    <tr class="cap-row">
+      <td>5</td>
+      <td>7 y 8</td>
+      <td><strong>Capítulo 4</strong> · La diversidad que molesta</td>
+      <td>PF-4</td>
+      <td>Inclusión, diversidad y espacio democrático</td>
+    </tr>
+    <tr class="flex-row">
+      <td>6</td>
+      <td>Flex B</td>
+      <td>Sesión de holgura / profundización</td>
+      <td>—</td>
+      <td>Investigación comunitaria para el reto central</td>
+    </tr>
+    <tr class="cap-row">
+      <td>7</td>
+      <td>9 y 10</td>
+      <td><strong>Capítulo 5</strong> · El mapa tiene un nombre</td>
+      <td>PF-1 a PF-4</td>
+      <td>Integración · Avance del Mapa de Derechos</td>
+    </tr>
+    <tr class="flex-row">
+      <td>8</td>
+      <td>Flex C</td>
+      <td>Sesión de holgura / trabajo en reto</td>
+      <td>—</td>
+      <td>Equipos trabajan en el mapa y la carta de acción afirmativa</td>
+    </tr>
+    <tr class="cap-row">
+      <td>9</td>
+      <td>11 y 12</td>
+      <td><strong>Capítulo 6</strong> · Lo que el Estado ve y lo que no</td>
+      <td>PF-2, PF-4</td>
+      <td>Políticas públicas, ciudadanía digital, edadismo</td>
+    </tr>
+    <tr class="cap-row">
+      <td>10</td>
+      <td>13 y 14</td>
+      <td><strong>Presentaciones del Reto Central</strong></td>
+      <td>PF-1 a PF-4 (integración)</td>
+      <td>Mapa de Derechos · Presentación oral argumentada</td>
+    </tr>
+    <tr class="flex-row">
+      <td>11–12</td>
+      <td>Flex D + cierre</td>
+      <td>Sesión de holgura / retroalimentación / cierre semestral</td>
+      <td>—</td>
+      <td>Reflexión colectiva. Puente hacia CS-II.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:8pt; color:#6c7c60; font-style:italic;">Esta tabla es orientativa. El docente tiene autonomía para reordenar los capítulos, combinar sesiones o ampliar el tiempo en temas que el grupo requiera profundizar.</p>
+
+
+<!-- ════════════════════ PROPÓSITOS CAPÍTULO 1 ════════════════════ -->
+<h2>2. Propósitos Formativos Activos · Capítulo 1</h2>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">1</div>
+  <div class="pf-desc">
+    <strong>PF-1:</strong> Comprende la conformación e importancia del concepto de Estado, para repensar la construcción de una ciudadanía crítica y reflexiva.
+  </div>
+  <div class="pf-contenidos">
+    <strong>Contenidos activos:</strong><br>
+    · Concepto de Estado<br>
+    · El Estado como garante de derechos y la perspectiva de DDHH<br>
+    · Sistema jurídico mexicano<br>
+    <span style="color:#2d5016;">→ Vínculo narrativo: conflicto del canal de María, triángulo Estado-Territorio-Población</span>
+  </div>
+</div>
+<div class="proposito-row">
+  <div class="pf-num-cell">2</div>
+  <div class="pf-desc">
+    <strong>PF-2:</strong> Analiza el devenir del concepto de ciudadanía, para la conformación de un Estado democrático e incluyente.
+  </div>
+  <div class="pf-contenidos">
+    <strong>Contenidos activos:</strong><br>
+    · Estado y ciudadanía: política, civil, económica, cultural<br>
+    · Concepto de ciudadanía, democracia participativa<br>
+    · Concepto de justicia social<br>
+    <span style="color:#2d5016;">→ Vínculo narrativo: situación migratoria de Miranda, precio del aguacate de Ulises, debate del salón</span>
+  </div>
+</div>
+
+
+<!-- ════════════════════ PLANEACIÓN SESIONES ════════════════════ -->
+<h2>3. Planeación Didáctica · Sesiones 1 y 2</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">1</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Primera hora · Apertura y lectura del Capítulo 1</div>
+      <div class="ses-meta">PF-1 · Diagnóstico + presentación de personajes + pregunta detonadora</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+
+    <table class="tabla-sesion">
+      <thead>
+        <tr>
+          <th class="tiempo-col">Tiempo</th>
+          <th>Momento didáctico</th>
+          <th>Actividad</th>
+          <th>Recursos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Diagnóstico</strong></td>
+          <td>Actividad 1 del cuadernillo: ¿Qué entiendo por Estado? Escritura individual, sin búsqueda.</td>
+          <td>Cuadernillo impreso o cuaderno personal</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Presentación</strong></td>
+          <td>El docente describe brevemente el proyecto de la novela y los personajes. No spoilers del contenido: solo quiénes son María, Ulises y Miranda y de dónde vienen.</td>
+          <td>Ninguno (oral)</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">25 min</td>
+          <td><strong>Lectura</strong></td>
+          <td>Lectura del Capítulo 1. Puede hacerse: a) individualmente en silencio, b) en voz alta por el docente, c) por turnos entre estudiantes. Mientras leen, completan márgenes o notas.</td>
+          <td>Capítulo impreso / dispositivo / lectura oral</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">15 min</td>
+          <td><strong>Reacción inmediata</strong></td>
+          <td>Actividad 2 del cuadernillo: respuestas individuales de reacción a la lectura. No socializar todavía.</td>
+          <td>Cuadernillo</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Cierre hora 1</strong></td>
+          <td>El docente escribe en el pizarrón la pregunta del Profe Ramírez del capítulo: "¿El Estado existe para protegerte o para controlarte?" y la deja sin responder hasta la siguiente hora.</td>
+          <td>Pizarrón, marcador</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Sin internet</span>
+        Lectura en copias impresas. Si no hay acceso a fotocopiadora, el docente puede narrar el capítulo en voz alta apoyándose en el texto. Los personajes funcionan igual en formato oral.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Con internet (opcional)</span>
+        Compartir el PDF del capítulo por WhatsApp o correo para que quienes tengan dispositivo lean en pantalla. No modifica las actividades.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">2</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Segunda hora · Análisis, construcción conceptual y reto</div>
+      <div class="ses-meta">PF-1 y PF-2 · Triángulo Estado · Debate · Primera entrada del Mapa de Derechos</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+
+    <table class="tabla-sesion">
+      <thead>
+        <tr>
+          <th class="tiempo-col">Tiempo</th>
+          <th>Momento didáctico</th>
+          <th>Actividad</th>
+          <th>Recursos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">15 min</td>
+          <td><strong>Construcción</strong></td>
+          <td>Actividades 3 y 4: El triángulo Estado-Territorio-Población con ejemplos locales. Reparto de fragmentos jurídicos impresos (Ley Agraria, Art. 4 Const.). Análisis en parejas.</td>
+          <td>Cuadernillo + fragmentos jurídicos impresos (anexo)</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Conceptualización</strong></td>
+          <td>El docente retoma el triángulo del pizarrón y sistematiza las ideas del grupo. Define brevemente: Estado, ciudadanía, derechos. Usa las situaciones del grupo como ejemplos.</td>
+          <td>Pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Debate</strong></td>
+          <td>Actividad 6: debate "¿el Estado protege o controla?". Dos equipos, 3 argumentos cada uno basados en hechos reales. El docente modera sin resolver.</td>
+          <td>Cuadernillo (preparación escrita previa)</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Reto</strong></td>
+          <td>Actividad 7: primera entrada del Mapa de Derechos. Llenado individual de la ficha de situación. Explicación breve de cómo se irá construyendo el mapa a lo largo del semestre.</td>
+          <td>Cuadernillo + croquis/mapa de papel (si disponible)</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Cierre</strong></td>
+          <td>Reflexión final: las tres preguntas del cierre del cuadernillo (aprendí / sigo preguntando / voy a investigar). Tarea: traer para la siguiente sesión una situación real de la comunidad relacionada con el Estado.</td>
+          <td>Cuadernillo</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Mapa sin internet</span>
+        Usar un croquis del municipio dibujado a mano o un mapa impreso básico. Los estudiantes señalan con una marca (X, punto, símbolo) el lugar donde ocurrió la situación. Un mural colectivo en papel bond también funciona perfectamente.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Mapa con internet (opcional)</span>
+        Google My Maps (mymaps.google.com) permite crear mapas colaborativos gratuitos. Si hay conectividad, un estudiante puede crear el mapa compartido y los demás agregan sus puntos. Se puede trabajar offline si se descarga previamente.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ EVALUACIÓN ════════════════════ -->
+<h2>4. Criterios de Evaluación Formativa · Capítulo 1</h2>
+
+<p style="font-size:8.5pt;">La evaluación es formativa: orienta el proceso, no califica el resultado. El docente observa y registra; la retroalimentación es inmediata y descriptiva (no numérica en esta fase).</p>
+
+<h3>4.1 Evaluación Diagnóstica</h3>
+<div class="eval-item">
+  <div class="ev-tipo">¿Qué observar?</div>
+  <div class="ev-desc">¿El estudiante puede conectar el concepto abstracto de "Estado" con una experiencia concreta de su vida o comunidad?</div>
+  <div class="ev-act">Actividad 1</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">¿Qué observar?</div>
+  <div class="ev-desc">¿Tiene alguna noción previa de derechos, ciudadanía o leyes? ¿Es positiva, negativa o neutral?</div>
+  <div class="ev-act">Actividad 1</div>
+</div>
+
+<h3>4.2 Evidencias de Aprendizaje Formativo</h3>
+<div class="eval-item">
+  <div class="ev-tipo">Triángulo conceptual</div>
+  <div class="ev-desc">¿El estudiante puede identificar los tres elementos del Estado (Territorio, Población, Poder) con ejemplos de su propio contexto, no solo con la definición del libro?</div>
+  <div class="ev-act">Actividad 3</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Análisis jurídico básico</div>
+  <div class="ev-desc">¿El estudiante identifica la brecha entre lo que dice la ley y lo que ocurre en la práctica? ¿Puede describirla sin que el docente le dé la respuesta?</div>
+  <div class="ev-act">Actividad 4</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Debate argumentado</div>
+  <div class="ev-desc">¿El estudiante formula argumentos basados en hechos (no solo en opiniones)? ¿Puede escuchar la posición contraria y modificar o sostener la propia con razones?</div>
+  <div class="ev-act">Actividad 6</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Primera entrada del reto</div>
+  <div class="ev-desc">¿El estudiante identifica una situación real vinculada a derechos y al Estado? ¿Puede describir el papel que jugó el Estado (presencia, ausencia, contradicción)?</div>
+  <div class="ev-act">Actividad 7</div>
+</div>
+
+<div class="orientacion" style="margin-top:0.5cm;">
+  <span class="label">Lo que NO es una evidencia válida en este punto</span>
+  No se evalúa que el estudiante memorice la definición correcta de Estado ni que cite artículos constitucionales de memoria. Lo que importa en esta fase es que empiece a ver el Estado como una categoría que opera en su vida cotidiana, no como un concepto abstracto del libro.
+</div>
+
+
+<!-- ════════════════════ TRANSVERSALIDAD ════════════════════ -->
+<h2>5. Transversalidad y Articulación Curricular · Capítulo 1</h2>
+
+<table class="transv">
+  <thead>
+    <tr>
+      <th>Eje / Asignatura</th>
+      <th>Conexión con el Capítulo 1</th>
+      <th>Actividad articulada</th>
+      <th>Nota para la Academia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cultura Digital</strong><br>(MCCEMS)</td>
+      <td>Miranda señala la falta de WiFi como acto del Estado. Uso de herramientas digitales con criterio crítico (no buscar en Google cualquier cosa y copiar).</td>
+      <td>Actividades 4 (fuentes jurídicas) y 7 (mapa digital/papel)</td>
+      <td>Coordinar con el área de Cultura Digital para identificar qué herramientas tienen acceso los estudiantes sin internet.</td>
+    </tr>
+    <tr>
+      <td><strong>Lengua y Comunicación</strong></td>
+      <td>La novela activa la lectura de textos con intención: literario (capítulo) y jurídico (fragmentos de ley). Ambos requieren estrategias de lectura distintas.</td>
+      <td>Actividades 2, 3 y 4</td>
+      <td>Compartir el capítulo con el área de Lengua para trabajo conjunto de comprensión lectora.</td>
+    </tr>
+    <tr>
+      <td><strong>Módulos Agropecuarios</strong><br>(CBTA)</td>
+      <td>La huerta de Ulises y el ejido de María son contextos productivos reales. El canal de agua no es solo un problema jurídico: es un sistema de producción.</td>
+      <td>Actividad 7 (ubicar la situación en el territorio productivo)</td>
+      <td>Invitar a docente de módulo técnico a comentar brevemente la sesión desde la perspectiva de producción.</td>
+    </tr>
+    <tr>
+      <td><strong>Ética / Humanidades</strong></td>
+      <td>La pregunta "¿el Estado existe para protegerte o controlarte?" es también una pregunta ética sobre la legitimidad del poder.</td>
+      <td>Actividad 6 (debate)</td>
+      <td>El debate puede prepararse en Ética y ejecutarse en CS-I como trabajo colegiado.</td>
+    </tr>
+    <tr>
+      <td><strong>CS-II (semestre siguiente)</strong></td>
+      <td>La primera entrada del Mapa de Derechos (canal, precio del aguacate) será el punto de partida del análisis económico en CS-II.</td>
+      <td>Actividad 7</td>
+      <td>Guardar las fichas del Mapa de Derechos. Son el puente curricular hacia CS-II.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- ════════════════════ ORIENTACIONES PEDAGÓGICAS ════════════════════ -->
+<h2>6. Orientaciones Pedagógicas · Para el Docente y la Academia</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre la autonomía curricular</span>
+  El programa del MCCEMS 2025 establece explícitamente que "será decisión de los cuerpos docentes valorar las posibilidades y particularidades para llevar a cabo trabajos colegiados y colaborativos, así como para seleccionar los contenidos formativos, actividades y estrategias didácticas". Este material es una propuesta articulada, no una prescripción. El docente puede adaptar secuencias, tiempos, actividades y recursos sin perder los propósitos formativos como norte.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre el uso de la novela con grupos que no tienen hábito lector</span>
+  Si el grupo tiene dificultades con la lectura en silencio, el capítulo puede narrarse oralmente por el docente con dramatización de los diálogos. La novela está escrita para funcionar también como relato oral. Lo importante no es el soporte sino que los estudiantes conozcan la situación de los personajes y puedan identificarse con alguno de ellos.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la pregunta del debate (¿proteger o controlar?)</span>
+  Esta pregunta no tiene respuesta correcta y eso es intencional. El docente no debe resolver el debate: debe moderar que los argumentos se basen en hechos y no en generalizaciones. Si el grupo llega a una respuesta demasiado rápido y unánime en cualquier dirección, introduzca el contraejemplo: "¿Y si les cuento que el programa Sembrando Vida llegó a esta comunidad el año pasado? ¿Cambia algo?" La tensión productiva es pedagógicamente necesaria.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre situaciones sensibles en el grupo</span>
+  Es posible que al compartir situaciones reales de sus comunidades, algunos estudiantes mencionen conflictos de tierras, problemas migratorios, violencia o precariedad. El docente debe crear un clima de escucha sin juzgar y sin minimizar. Si una situación es muy delicada, puede agradecerse la confianza y sugerirse trabajarla de manera individual fuera del debate grupal. El aula como laboratorio social no significa exponer situaciones vulnerables sin cuidado.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la articulación con CS-II y CS-III</span>
+  Las fichas del Mapa de Derechos que los estudiantes construyan en CS-I no son "productos de unidad" que se entregan y se olvidan. Son el material base del análisis económico de CS-II y del proyecto de transformación de CS-III. Guárdalas. Son el hilo conductor de los tres semestres.
+</div>
+
+
+<!-- MATERIALES NECESARIOS -->
+<h2>7. Materiales Necesarios · Sin Internet</h2>
+
+<table class="transv">
+  <thead>
+    <tr>
+      <th>Material</th>
+      <th>Cantidad sugerida</th>
+      <th>Fuente / Cómo obtenerlo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capítulo 1 impreso (este documento)</td>
+      <td>1 por estudiante o 1 por banca de 2</td>
+      <td>Imprimir en escuela o fotocopiar</td>
+    </tr>
+    <tr>
+      <td>Cuadernillo del Estudiante (Capítulo 1)</td>
+      <td>1 por estudiante</td>
+      <td>Imprimir en escuela o fotocopiar</td>
+    </tr>
+    <tr>
+      <td>Fragmentos de Ley Agraria (Art. 9, 73) y Art. 4 Constitucional</td>
+      <td>1 por pareja</td>
+      <td>Descargar de www.diputados.gob.mx (con anticipación) e imprimir. Incluido como Anexo en este documento.</td>
+    </tr>
+    <tr>
+      <td>Croquis o mapa básico del municipio</td>
+      <td>1 por equipo de 4-5</td>
+      <td>Descargar del INEGI (www.inegi.org.mx) o dibujar en papel bond</td>
+    </tr>
+    <tr>
+      <td>Pizarrón y marcadores</td>
+      <td>Disponibles en aula</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Papel bond (opcional)</td>
+      <td>1-2 hojas por grupo</td>
+      <td>Para mapa mural colectivo</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:8pt; color:#6c7c60; font-style:italic; margin-top:0.3cm;">Ningún material requiere internet en el momento de la clase. Todo puede prepararse con anticipación cuando hay conectividad esporádica.</p>
+
+
+<p style="font-size:7.5pt; color:#6c7c60; border-top:0.5pt solid #a8c090; padding-top:0.4cm; margin-top:0.8cm; text-align:center;">
+  Guía Docente y Academia · Capítulo 1 · Ciencias Sociales I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 1 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

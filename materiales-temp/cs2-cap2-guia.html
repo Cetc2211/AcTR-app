@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 2 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · CS-II · Capítulo 2</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{color-scheme:light;}
+body{font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#0e0a1e;font-size:10pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+.portadilla{min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #083840;margin-bottom:1cm;page-break-after:always;}
+.col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#083840;margin-bottom:.8cm;line-height:2;}
+.port-titulo{font-size:22pt;font-weight:900;color:#0e0a1e;line-height:1.1;margin-bottom:.2cm;}
+.port-sub{font-size:10pt;color:#083840;margin-bottom:.3cm;font-weight:700;}
+.port-cap{font-size:8.5pt;color:#1a3838;font-style:italic;}
+/* TEAL → BLANCO */
+.aviso-offline{background:#083840;color:#ffffff;padding:.55cm .85cm;font-size:8.5pt;line-height:1.65;margin:.8cm 0;}
+.aviso-offline strong{color:#b0f0d8;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.6cm 0;}
+.info-cell{border:1pt solid #50a090;padding:.35cm .5cm;font-size:8.5pt;color:#0e0a1e;}
+.info-cell strong{display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#083840;margin-bottom:.1cm;}
+h2{font-size:12pt;font-weight:900;color:#0e0a1e;margin:1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #083840;page-break-after:avoid;}
+h3{font-size:10pt;font-weight:700;color:#083840;margin:.7cm 0 .25cm;}
+h4{font-size:9.5pt;font-weight:700;color:#0e0a1e;margin:.4cm 0 .15cm;}
+p{margin-bottom:.45em;}
+/* PROPÓSITOS: ÍNDIGO → BLANCO */
+.proposito-row{display:grid;grid-template-columns:2.5cm 1fr 1fr;gap:0;border:1pt solid #50a090;margin-bottom:.35cm;overflow:hidden;font-size:8.5pt;}
+.pf-num-cell{background:#1a1060;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:900;min-height:2cm;flex-shrink:0;}
+.pf-desc{padding:.35cm .5cm;border-right:1pt solid #50a090;line-height:1.5;color:#0e0a1e;}
+.pf-contenidos{padding:.35cm .5cm;font-size:8pt;color:#0a2828;line-height:1.5;}
+/* SESIONES */
+.sesion{border:1pt solid #50a090;margin:.6cm 0;overflow:hidden;page-break-inside:avoid;}
+/* teal claro → negro muy oscuro */
+.ses-header{background:#b8e8d8;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+/* NÚMERO: TEAL → BLANCO */
+.ses-num{background:#083840;color:#ffffff;width:1.2cm;height:1.2cm;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+.ses-info{flex:1;}
+.ses-titulo{font-size:9.5pt;font-weight:700;color:#041a18;}
+.ses-meta{font-size:7.5pt;color:#0a2828;}
+.ses-tiempo{font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#041a18;font-weight:700;white-space:nowrap;}
+.ses-body{padding:.45cm .6cm;font-size:8.5pt;}
+/* tabla sesión: teal medio → negro */
+.tabla-sesion{width:100%;border-collapse:collapse;font-size:8pt;margin:.3cm 0;}
+.tabla-sesion th{background:#50a090;color:#041818;padding:.2cm .4cm;text-align:left;font-size:7pt;font-weight:700;}
+.tabla-sesion td{border:.5pt solid #60b8a8;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#0e0a1e;}
+.tiempo-col{width:1.5cm;color:#083840;font-weight:700;text-align:center;}
+/* ALTERNATIVAS: OSCURO → BLANCO */
+.alt-bloque{display:grid;grid-template-columns:1fr 1fr;gap:.3cm;margin:.3cm 0;}
+.alt-col{padding:.3cm .4cm;font-size:8pt;line-height:1.5;}
+.alt-analog{background:#1a1060;color:#ffffff;border-left:3pt solid #b85010;}
+.alt-analog .label{color:#ffc090;}
+.alt-digital{background:#083840;color:#ffffff;border-left:3pt solid #50c0a0;}
+.alt-digital .label{color:#b0f0d8;}
+.alt-col .label{font-size:6.5pt;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:.15cm;display:block;}
+/* ORIENTACIONES: teal pálido → oscuro */
+.orientacion{background:#e8f8f4;border:1pt solid #50a090;border-left:3pt solid #083840;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;line-height:1.65;color:#0e0a1e;}
+.orientacion .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#083840;font-weight:700;display:block;margin-bottom:.2cm;}
+/* ADVERTENCIA: ámbar → oscuro */
+.advertencia{background:#fff4e0;border:1pt solid #d08020;border-left:3pt solid #b85010;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;color:#0e0a1e;line-height:1.65;}
+.advertencia .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#b85010;font-weight:700;display:block;margin-bottom:.2cm;}
+/* EVALUACIÓN */
+.eval-item{display:grid;grid-template-columns:3cm 1fr 2.5cm;gap:0;border:1pt solid #50a090;margin-bottom:.25cm;font-size:8pt;overflow:hidden;}
+.ev-tipo{background:#b8e8d8;padding:.25cm .4cm;font-weight:700;color:#041a18;font-size:7.5pt;display:flex;align-items:center;border-right:1pt solid #50a090;}
+.ev-desc{padding:.25cm .4cm;border-right:1pt solid #50a090;line-height:1.5;color:#0e0a1e;}
+.ev-act{padding:.25cm .4cm;font-size:7.5pt;color:#0a2828;font-style:italic;}
+/* TRANSVERSALIDAD: TEAL → BLANCO */
+table.transv{width:100%;border-collapse:collapse;font-size:8pt;margin:.4cm 0;}
+table.transv th{background:#083840;color:#ffffff;padding:.22cm .4cm;font-size:7pt;font-weight:700;text-align:left;}
+table.transv td{border:1pt solid #50a090;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#0e0a1e;}
+table.transv tr:nth-child(even) td{background:#e8f8f4;}
+/* PUENTE: ÍNDIGO → BLANCO */
+.puente-cap{background:#1a1060;color:#ffffff;padding:.65cm .85cm;margin:.8cm 0;font-size:8.5pt;line-height:1.65;}
+.puente-cap .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffc090;display:block;margin-bottom:.3cm;font-weight:bold;}
+@media print{body{font-size:9.5pt;padding:0;}.portadilla{min-height:100vh;}}
+@page{size:letter;margin:2cm 1.8cm 2.5cm;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="portadilla">
+  <div>
+    <div class="col-label">Guía Docente y Articulación Curricular · CS-II · MCCEMS 2025 · DGETAYCM</div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 2 · "Lo que necesitamos para vivir" · Bienestar, trabajo invisible y capacidades</div>
+    <div class="port-cap">Trilogía Raíz Digital · La Cadena Rota · Sesiones 3 y 4 · Semana 2</div>
+    <div class="aviso-offline">
+      <strong>Offline-First:</strong> Todos los datos centrales del capítulo (tamales de la Sra. Solano, círculos de la economía, fragmento de Sen/Nussbaum) están en el cuadernillo impreso. El cálculo del trabajo no remunerado se hace en clase con papel. La ENUT del INEGI es referencia opcional para quien tenga conectividad.
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><strong>Sesiones / Semana</strong>3 y 4 · Semana 2</div>
+      <div class="info-cell"><strong>Propósitos activos</strong>PF-1 (central) + PF-2 (introducción)</div>
+      <div class="info-cell"><strong>Concepto clave nuevo</strong>Economía invisible · Trabajo de cuidados · Enfoque de capacidades (Sen/Nussbaum)</div>
+      <div class="info-cell"><strong>Producto del capítulo</strong>Ficha 2 del Diagnóstico Económico (trabajo invisible en la cadena del estudiante)</div>
+      <div class="info-cell"><strong>Acción previa del docente</strong>Preparar el diagrama de los dos círculos en papel bond (o dibujarlo en el pizarrón al inicio)</div>
+      <div class="info-cell"><strong>Sensibilidad especial</strong>El cálculo del trabajo doméstico puede activar emociones en quienes identifican a sus madres o abuelas. Ver orientaciones §4.</div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt;color:#1a3838;border-top:.5pt solid #50a090;padding-top:.3cm;font-style:italic;">El Capítulo 2 es el más conceptualmente denso del semestre. Si el grupo lo absorbe bien, el resto del semestre tendrá base sólida. Si se queda en la superficie, el Reto Central carecerá de profundidad analítica. Vale la pena ir más despacio aquí que apresurar.</p>
+</div>
+
+
+<h2>1. Propósitos Formativos · Capítulo 2</h2>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">1</div>
+  <div class="pf-desc"><strong>PF-1 (central):</strong> Identifica necesidades y satisfactores, para debatir sobre las formas en que se organiza la sociedad.</div>
+  <div class="pf-contenidos">
+    <strong>Cap. 2:</strong><br>
+    · Economía invisible vs. economía de mercado<br>
+    · Trabajo de cuidados: cuantificación y reconocimiento<br>
+    · Satisfactores que el Estado garantiza (o no) en contexto rural<br>
+    <span style="color:#083840;font-weight:700;">→ Caso: tamales de la Sra. Solano + cálculo en pesos del trabajo no remunerado</span>
+  </div>
+</div>
+<div class="proposito-row">
+  <div class="pf-num-cell">2</div>
+  <div class="pf-desc"><strong>PF-2 (introducción):</strong> Analiza formas de organización social para comparar y explicar relaciones entre personas, grupos, comunidades e instituciones.</div>
+  <div class="pf-contenidos">
+    <strong>Cap. 2 (embrionario):</strong><br>
+    · La distribución desigual del trabajo invisible (por género, edad, posición familiar)<br>
+    · El caso de Miranda como forma de organización social que no resuelve el conflicto trabajo/educación<br>
+    <span style="color:#083840;font-weight:700;">→ Se profundiza en Caps. 4 y 6</span>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">El diagrama de los dos círculos: herramienta pedagógica central del capítulo</span>
+  <p>El diagrama de círculos concéntricos (economía de mercado / economía total) es la metáfora visual más importante de este capítulo. Vale la pena construirlo en papel bond grande, pegarlo en la pared y dejarlo visible todo el semestre. Cada vez que aparezca una nueva actividad económica invisible, el grupo puede ir añadiéndola al círculo exterior. Al final del semestre, la diferencia entre los dos círculos habrá crecido considerablemente y se convierte en evidencia visual del Reto Central.</p>
+</div>
+
+
+<h2>2. Planeación Didáctica · Sesiones 3 y 4</h2>
+
+<div class="sesion">
+  <div class="ses-header"><div class="ses-num">3</div><div class="ses-info"><div class="ses-titulo">Primera sesión · La tarea + economía invisible + el trabajo de cuidados en números</div><div class="ses-meta">PF-1 · Acts. 1, 2 y 3</div></div><div class="ses-tiempo">60 min</div></div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tiempo-col">10 min</td><td><strong>Tarea</strong></td><td>Recolección de datos de pluriactividad familiar. El docente tabula en el pizarrón. Pregunta clave: "¿Hubo algo que no sabían si contaba como ingreso?" Act. 1 del cuadernillo.</td><td>Cuadernillo Act. 1 · pizarrón</td></tr>
+        <tr><td class="tiempo-col">15 min</td><td><strong>Los dos círculos</strong></td><td>El docente dibuja el diagrama en papel bond o pizarrón. Pide al grupo que llene el círculo exterior con ejemplos de su propia experiencia. Act. 2 del cuadernillo. Énfasis: el PIB solo mide el círculo interior.</td><td>Papel bond / pizarrón · cuadernillo Act. 2</td></tr>
+        <tr><td class="tiempo-col">30 min</td><td><strong>El caso de la Sra. Solano</strong></td><td>El docente presenta el caso (o pide a Ulises/un estudiante que lo narre si lo conoce). Act. 3: cálculo del trabajo no remunerado. Individual primero (10 min), después en voz alta 2–3 casos. Énfasis en quién hace ese trabajo (patrón de género). No resolver: dejar la pregunta abierta.</td><td>Cuadernillo Act. 3 · pizarrón para el cálculo</td></tr>
+        <tr><td class="tiempo-col">5 min</td><td><strong>Cierre sesión 3</strong></td><td>Pregunta puente: "¿Por qué a alguien le conviene que ese trabajo siga siendo invisible?" Dejar sin responder.</td><td>Oral</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header"><div class="ses-num">4</div><div class="ses-info"><div class="ses-titulo">Segunda sesión · Bienestar y capacidades + el caso de Miranda + Ficha 2</div><div class="ses-meta">PF-1 + PF-2 intro · Acts. 4, 5 y 6</div></div><div class="ses-tiempo">60 min</div></div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tiempo-col">5 min</td><td><strong>Retomar</strong></td><td>El docente retoma la pregunta de la sesión anterior: "¿A quién le conviene que el trabajo de cuidados sea invisible?" Escucha 2–3 respuestas. No cierra todavía.</td><td>Oral</td></tr>
+        <tr><td class="tiempo-col">20 min</td><td><strong>Enfoque de capacidades</strong></td><td>Lectura del fragmento de Sen/Nussbaum (en cuadernillo). Act. 4: análisis individual + aplicación al caso de Miranda. El docente introduce el caso pidiendo permiso como hace el Profe Ramírez en la novela.</td><td>Cuadernillo Act. 4</td></tr>
+        <tr><td class="tiempo-col">20 min</td><td><strong>Satisfactores del Estado</strong></td><td>Act. 5 en equipos de 3: tabla de satisfactores garantizados vs. realidad local. Plenaria: ¿qué satisfactor que el Estado debería garantizar no llega a su comunidad? Conexión explícita con CS-I: ciudadanía formal vs. real.</td><td>Cuadernillo Act. 5</td></tr>
+        <tr><td class="tiempo-col">15 min</td><td><strong>Ficha 2 del Reto Central</strong></td><td>Act. 6: individual. El docente circula y hace preguntas a quien vea que la descripción es muy general. Pregunta orientadora: "¿Qué pasa exactamente si esa persona deja de hacer ese trabajo invisible?"</td><td>Cuadernillo Act. 6</td></tr>
+      </tbody>
+    </table>
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Cálculo sin calculadora</span>
+        El cálculo del trabajo no remunerado puede hacerse a mano. Datos clave en el pizarrón: salario mínimo diario 2025 = $248 / salario mínimo por hora ≈ $31. Horas de trabajo invisible × $31 × 4 semanas = valor mensual aproximado.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Con conectividad</span>
+        La ENUT (Encuesta Nacional de Uso del Tiempo) del INEGI muestra cuántas horas semanales dedican hombres y mujeres al trabajo doméstico y de cuidados. El contraste por género es el dato más impactante. URL: www.inegi.org.mx/programas/enut/
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h2>3. Criterios de Evaluación Formativa · Capítulo 2</h2>
+
+<div class="eval-item"><div class="ev-tipo">Economía invisible</div><div class="ev-desc">¿El estudiante puede distinguir con ejemplos propios lo que entra al círculo interior (mercado) de lo que queda en el exterior (trabajo invisible)? ¿Puede estimar el valor monetario del trabajo no remunerado en su familia?</div><div class="ev-act">Acts. 2 y 3</div></div>
+<div class="eval-item"><div class="ev-tipo">Enfoque de capacidades</div><div class="ev-desc">¿El estudiante puede aplicar el enfoque de Sen/Nussbaum a una situación concreta (Miranda, alguien de su familia) sin reducirlo al ingreso? ¿Puede nombrar qué capacidades están limitadas y por qué causa estructural?</div><div class="ev-act">Act. 4</div></div>
+<div class="eval-item"><div class="ev-tipo">Satisfactores del Estado</div><div class="ev-desc">¿El estudiante identifica la brecha entre lo que el Estado debería garantizar (norma) y lo que efectivamente llega (práctica) en su comunidad? ¿Conecta esto con el análisis de CS-I?</div><div class="ev-act">Act. 5</div></div>
+<div class="eval-item"><div class="ev-tipo">Ficha 2 del Reto Central</div><div class="ev-desc">¿La descripción del trabajo invisible en la cadena del estudiante es específica (nombre de quién, qué hace, cuánto tiempo)? ¿Identifica un patrón de género, edad u otro eje de desigualdad?</div><div class="ev-act">Act. 6</div></div>
+
+
+<h2>4. Orientaciones Pedagógicas · Capítulo 2</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre el cálculo del trabajo no remunerado</span>
+  <p>Cuando el grupo calcula que el trabajo doméstico de una madre equivale a 4,000–7,000 pesos mensuales que "se producen" pero no se pagan, la reacción más común es una mezcla de reconocimiento emocional y rabia. El docente debe acompañar esa reacción sin amplificarla dramáticamente ni cortarla prematuramente. La pregunta que mejor la canaliza hacia el análisis: <em>"¿Es un problema de la familia o un problema de cómo está organizada la economía?"</em> La respuesta correcta es lo segundo: el trabajo de cuidados no es invisible porque las familias son malas, sino porque el sistema económico que mide el valor no lo incluye.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre el uso del caso de Miranda</span>
+  <p>El Profe Ramírez pide permiso antes de usar el caso de Miranda. El docente debe hacer lo mismo en clase si va a usar una situación personal de un estudiante como caso de análisis. La regla es: la persona decide qué comparte, cuánto comparte y cómo. El docente facilita pero no extrae. Si el estudiante prefiere que su caso se presente de forma anónima ("una persona del grupo enfrenta esta situación"), eso es igualmente válido y pedagógicamente equivalente.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre la pregunta de género en el trabajo invisible</span>
+  <p>La pregunta "¿quién hace la mayor parte del trabajo invisible en tu familia?" tiene una respuesta estadísticamente abrumadora (las mujeres) que puede generar incomodidad, especialmente en estudiantes cuyos padres o hermanos podrían sentirse señalados. El docente debe mantener el análisis en el nivel estructural: no "los hombres de tu familia son irresponsables" sino "la organización económica y cultural asigna ese trabajo mayoritariamente a las mujeres, y eso tiene consecuencias específicas para sus capacidades." La ENUT del INEGI respalda esta afirmación con datos verificables.</p>
+</div>
+
+
+<h2>5. Articulación Curricular · Capítulo 2</h2>
+
+<table class="transv">
+  <thead><tr><th>Eje / Asignatura</th><th>Conexión</th><th>Propuesta colegiada</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Pensamiento Matemático</strong></td><td>El cálculo del valor del trabajo no remunerado (horas × salario/hora × semanas) es aplicación directa de aritmética con significado real. El contraste entre el dato calculado y el dato registrado (cero) tiene impacto pedagógico que ningún ejercicio abstracto puede replicar.</td><td>Coordinar con Pensamiento Matemático para que el cálculo del trabajo invisible se use también como ejercicio de proporciones, tasas y valores absolutos vs. relativos.</td></tr>
+    <tr><td><strong>Género y Ética (transversal)</strong></td><td>La distribución desigual del trabajo de cuidados por género es un tema que cruza múltiples asignaturas. Este capítulo lo aborda desde la economía; Orientación Educativa puede abordarlo desde la convivencia; Lengua desde el análisis de discurso.</td><td>Compartir los resultados de la Act. 3 (quién hace el trabajo invisible en el grupo) con el orientador como insumo para el diagnóstico de convivencia y equidad de género del plantel.</td></tr>
+    <tr><td><strong>CS-I (continuidad)</strong></td><td>La tabla de satisfactores del Estado (Act. 5) es la versión económica de la tabla de ciudadanías del Cap. 3 de CS-I. El docente puede hacer la conexión explícita: misma lógica (formal vs. real), distinto terreno (económico vs. jurídico).</td><td>Si los estudiantes tienen sus cuadernillos de CS-I, pueden comparar directamente la tabla del Cap. 3 de CS-I con la tabla del Act. 5 de este capítulo.</td></tr>
+    <tr><td><strong>Módulos Agropecuarios</strong></td><td>El trabajo invisible en las cadenas productivas agropecuarias (mantenimiento de infraestructura de riego, cuidado de animales fuera de la jornada formal, gestión de la asamblea ejidal) es directamente relevante para los módulos del CBTA.</td><td>Preguntar a los docentes de módulo si identifican trabajo invisible en las actividades del plantel. Las prácticas de campo, los cuidados de los módulos productivos, la organización de ferias y ventas: ¿quién los hace y cuánto tiempo invierte?</td></tr>
+  </tbody>
+</table>
+
+
+<h2>6. Materiales · Capítulo 2</h2>
+<table class="transv">
+  <thead><tr><th>Material</th><th>Especificación</th><th>Fuente</th></tr></thead>
+  <tbody>
+    <tr><td>Capítulo 2 novela</td><td>1 por estudiante o pareja</td><td>Imprimir antes de la semana 2</td></tr>
+    <tr><td>Cuadernillo CS-II Cap. 2</td><td>1 por estudiante</td><td>Incluye fragmento Sen/Nussbaum y tabla de cálculo. Fotocopiar.</td></tr>
+    <tr><td>Papel bond grande (o pizarrón)</td><td>Para el diagrama de los dos círculos</td><td>Conviene hacerlo en papel bond y pegarlo en la pared para que permanezca el semestre completo.</td></tr>
+    <tr><td>Salario mínimo 2025 (dato)</td><td>$248/día · ~$31/hora</td><td>El docente lo escribe en el pizarrón al inicio de la Act. 3. Actualizable si el salario mínimo cambia.</td></tr>
+    <tr><td>ENUT INEGI (opcional)</td><td>Hoja impresa con datos de horas de trabajo doméstico por género</td><td>Descargar de www.inegi.org.mx/programas/enut/ con anticipación si hay conectividad.</td></tr>
+  </tbody>
+</table>
+
+
+<div class="puente-cap">
+  <span class="label">Puente → Capítulo 3 · "La cadena tiene nombre" · Semana 4</span>
+  El Capítulo 3 entra directamente en el análisis de la cadena de valor: quién produce, quién distribuye, quién se queda con qué margen y por qué. Los conceptos de trabajo visible/invisible del Cap. 2 son el trasfondo: en la cadena del aguacate (o la que cada equipo haya elegido), hay trabajo invisible en cada eslabón que no aparece en los precios. La tarea —traer el caso de una persona cuyo trabajo es invisible— es el insumo de apertura del Cap. 3 y conecta directamente con el PF-3. La sesión Flex B (semana 3) puede usarse para que los equipos profundicen en sus Fichas 1 y 2 del Reto Central.
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 2 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+
+<p style="font-size:7.5pt;color:#1a3838;border-top:.5pt solid #50a090;padding-top:.4cm;margin-top:.8cm;text-align:center;">
+  Guía Docente y Academia · Capítulo 2 · Ciencias Sociales II · La Cadena Rota<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 3 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>La Cadena Rota · Capítulo 3 · Ciencias Sociales II</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{color-scheme:light;}
+body{font-family:'Georgia','Times New Roman',serif;background:#f8f7fc;color:#0e0a1e;font-size:11pt;line-height:1.85;max-width:min(960px, 100%);margin:0 auto;padding:1.5cm 1.8cm;}
+.portadilla{min-height:96vh;display:flex;flex-direction:column;justify-content:center;padding:2cm 0 1.5cm;border-bottom:2.5pt solid #1a1060;margin-bottom:1.5cm;page-break-after:always;}
+.serie-label{font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.28em;text-transform:uppercase;color:#1a1060;margin-bottom:2.5cm;line-height:2;}
+.libro-num{font-family:'Georgia',serif;font-size:64pt;font-weight:bold;color:#b85010;line-height:1;margin-bottom:.3cm;}
+.libro-titulo{font-family:'Georgia',serif;font-size:28pt;font-style:italic;font-weight:bold;color:#0e0a1e;line-height:1.2;margin-bottom:.4cm;}
+.libro-subtitulo{font-size:9pt;font-family:'Arial',sans-serif;color:#1a1060;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5cm;}
+.cap-ficha{background:#1a1060;color:#ffffff;border-left:4pt solid #b85010;padding:.65cm .9cm;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.9;margin-bottom:1.5cm;}
+.cap-ficha strong{color:#ffc090;}
+.portadilla-meta{font-family:'Arial',sans-serif;font-size:8pt;color:#2a1e50;line-height:2;border-top:.5pt solid #8080c0;padding-top:.6cm;margin-top:auto;}
+.capitulo-header{page-break-before:always;text-align:center;margin-bottom:1.5cm;padding-bottom:.8cm;border-bottom:1pt solid #9090c8;}
+.cap-num{font-family:'Arial Narrow','Arial',sans-serif;font-size:7.5pt;letter-spacing:.35em;text-transform:uppercase;color:#1a1060;margin-bottom:.4cm;}
+.cap-titulo{font-family:'Georgia',serif;font-size:20pt;font-style:italic;font-weight:bold;color:#0e0a1e;line-height:1.3;margin-bottom:.3cm;}
+.cap-epigrafe{font-size:9pt;font-style:italic;color:#2a2050;max-width:12cm;margin:.6cm auto 0;line-height:1.6;}
+.cap-epigrafe cite{display:block;font-style:normal;font-size:8pt;color:#5050a0;margin-top:.3cm;letter-spacing:.06em;}
+.escena-titulo{font-family:'Arial Narrow','Arial',sans-serif;font-size:7pt;letter-spacing:.3em;text-transform:uppercase;color:#1a1060;margin:1.5cm 0 .5cm;padding-bottom:.3cm;border-bottom:.5pt solid #b0a8e0;}
+p{margin-bottom:.7em;text-align:justify;hyphens:auto;}
+p+p{text-indent:1.2em;}
+.escena-titulo+p,.capitulo-header+p,.dialogo-bloque+p,.recuadro+p,.recuadro-oscuro+p,.recuadro-teal+p,.pizarron+p{text-indent:0;}
+.dialogo-bloque{margin:.8em 0;padding-left:.9cm;border-left:3pt solid #b85010;}
+.hablante{font-family:'Arial',sans-serif;font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a1060;margin-bottom:.1cm;font-weight:bold;}
+.dialogo-bloque p{font-style:italic;margin-bottom:.3em;text-indent:0!important;color:#0e0a1e;}
+.pensamiento{font-style:italic;color:#2a2050;}
+.separador{text-align:center;color:#8080c0;font-size:14pt;letter-spacing:.5em;margin:1.2cm 0;}
+.recuadro{background:#eeeaf8;border:1pt solid #9090c8;border-left:4pt solid #1a1060;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;color:#0e0a1e;}
+.recuadro .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#1a1060;margin-bottom:.35cm;display:block;font-weight:bold;}
+.recuadro p{text-indent:0!important;margin-bottom:.35em;}
+.recuadro .nota-pie{font-size:7.5pt;color:#3a3070;border-top:.5pt solid #9090c8;margin-top:.4cm;padding-top:.25cm;}
+.recuadro-oscuro{background:#1a1060;color:#ffffff;border-left:4pt solid #b85010;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.recuadro-oscuro .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#ffc090;margin-bottom:.3cm;display:block;font-weight:bold;}
+.recuadro-oscuro p{text-indent:0!important;margin-bottom:.3em;}
+.recuadro-oscuro .nota-pie{font-size:7.5pt;color:#c0b8f0;border-top:.5pt solid #4040a0;margin-top:.35cm;padding-top:.2cm;}
+.recuadro-teal{background:#083840;color:#ffffff;border-left:4pt solid #50c0a0;padding:.65cm .85cm;margin:1cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.recuadro-teal .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#b0f0d8;margin-bottom:.3cm;display:block;font-weight:bold;}
+.recuadro-teal p{text-indent:0!important;margin-bottom:.3em;}
+.recuadro-teal .nota-pie{font-size:7.5pt;color:#90d8c0;border-top:.5pt solid #2a6858;margin-top:.35cm;padding-top:.2cm;}
+.pizarron{background:#080618;color:#c0d8ff;font-family:'Georgia',serif;font-size:10.5pt;font-style:italic;padding:.8cm 1cm;margin:.8cm 0;text-align:center;line-height:1.65;}
+.nota-narrativa{background:#fff4e0;border:1pt dashed #d08020;border-left:3pt solid #b85010;padding:.55cm .85cm;margin:1.2cm 0 0;font-family:'Arial',sans-serif;font-size:8pt;color:#0e0a1e;line-height:1.65;}
+.nota-narrativa .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#b85010;display:block;margin-bottom:.3cm;font-weight:bold;}
+.cierre-capitulo{margin-top:1.5cm;padding-top:.8cm;border-top:1pt solid #9090c8;font-family:'Arial',sans-serif;font-size:7.5pt;color:#3a3070;text-align:center;letter-spacing:.08em;}
+@media print{body{font-size:10.5pt;padding:0;max-width:100%;}.portadilla{min-height:100vh;}}
+@page{size:letter;margin:2.2cm 2cm 2.5cm;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="portadilla">
+  <div class="serie-label">Ciencias Sociales II · NEM 2025 · DGETAYCM<br>Bachillerato Tecnológico Agropecuario · Trilogía Raíz Digital · La Cadena Rota · Capítulo 3</div>
+  <div class="libro-num">II</div>
+  <div class="libro-titulo">La Cadena<br>Rota</div>
+  <div class="libro-subtitulo">Organización, relaciones económicas y sociales</div>
+  <div class="cap-ficha">
+    <strong>Capítulo 3 · "La cadena tiene nombre"</strong><br>
+    Propósito formativo central: <strong>PF-3</strong> · Relaciona los procesos y factores de producción para explicar las formas de distribución desigual de los bienes en la sociedad<br>
+    Contenidos: Factores de producción (tierra, trabajo, capital, organización, tiempo) · Cadena de valor · Contextos locales, nacionales y globales: intercambios desiguales · Diferencias regionales urbano-rural<br>
+    Sesiones: 5 y 6 · Semana 4
+  </div>
+  <div class="portadilla-meta"><strong>Continuación del Capítulo 2.</strong> El grupo trajo los casos de trabajo invisible. Ahora el análisis se mueve: de quién trabaja sin que se vea, a cómo se organiza la producción y cómo esa organización decide quién gana y quién pierde en la cadena.</div>
+</div>
+
+<div class="capitulo-header">
+  <div class="cap-num">Capítulo Tres</div>
+  <div class="cap-titulo">"La cadena tiene nombre"</div>
+  <div class="cap-epigrafe">"El precio no es un número neutral. Es el resultado de una negociación entre actores con poder muy desigual. Y quien tiene menos poder —casi siempre el que más trabaja— es quien acepta el precio que le ofrecen."<cite>— Ulises Solano, cuaderno negro, semana 4</cite></div>
+</div>
+
+
+<div class="escena-titulo">Escena I · Las personas invisibles que trajo la tarea</div>
+
+<p>Llegaron con historias. El Profe Ramírez los había pedido que trajeran una persona cuyo trabajo es esencial pero no aparece en ningún registro oficial. Lo que llegó fue un inventario inesperado del Valle de Nopalera.</p>
+
+<p>Rodrigo trajo a don Abundio, de setenta y tres años, que desde hace décadas revisa cada año el estado de la compuerta del canal de riego principal antes de la temporada de lluvias y la repara con lo que encuentra. Sin él, el canal se habría desbordado o secado en distintos momentos. Nadie le paga. Nadie lo registra. Dice que lo hace porque si no lo hace nadie lo hace.</p>
+
+<p>Fernanda trajo a su tía Soledad, que organiza las tandas de las mujeres del barrio —un sistema de ahorro rotativo donde cada semana alguien recibe la suma acumulada— y lleva el registro de quién pagó, quién debe y cuándo le toca a cada quien. Lleva dieciséis años haciéndolo. Treinta familias dependen de ese sistema para poder hacer pagos grandes que ninguna podría hacer sola. El banco no existe en su comunidad. La tía Soledad sí.</p>
+
+<p>Yesenia, por primera vez, trajo un caso que era de ella misma: cada tarde, cuando llega de la escuela, cuida a sus dos hermanos menores mientras su mamá va a vender verdura al mercado. Cuatro horas diarias, cinco días a la semana. Sin ese cuidado, su mamá no puede trabajar.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Cuántos años tienes, Yesenia?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—Dieciséis.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Y cuántos llevas haciendo ese trabajo?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Yesenia</div>
+  <p>—Desde que tengo doce. Cuando empecé la secundaria.</p>
+</div>
+
+<p>El Profe Ramírez lo escribió en el pizarrón sin comentar. Cuatro años. Veinte horas semanales. Mil cuarenta horas al año. Cuatro mil ciento sesenta horas desde que tenía doce años. Trabajo que no aparece en ningún registro, que no le genera derecho a nada, y que sostiene el trabajo remunerado de su mamá.</p>
+
+<p>Nadie habló durante un momento. Después el Profe Ramírez dijo:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Todas estas personas son parte de una cadena económica. No la cadena que aparece en los libros de texto, que tiene productor, distribuidor y consumidor. La cadena real, que incluye todo lo que sostiene a esa cadena sin aparecer en ella. Hoy vamos a aprender a nombrar esa cadena completa.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena II · Los cinco factores que producen todo</div>
+
+<p>El Profe Ramírez escribió en el pizarrón cinco palabras:</p>
+
+<div class="pizarron">TIERRA · TRABAJO · CAPITAL · ORGANIZACIÓN · TIEMPO</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Estos son los factores de producción. Todo lo que se produce en cualquier economía —un aguacate, un tamal, una sentencia judicial, una clase de Ciencias Sociales— requiere alguna combinación de estos cinco. La pregunta no es si están todos: siempre están todos. La pregunta es quién los aporta, quién los controla y quién se queda con el valor que generan.</p>
+</div>
+
+<p>Después aplicó los cinco factores a la cadena del aguacate de Ulises:</p>
+
+<div class="recuadro">
+  <span class="label">Los cinco factores de producción · Aplicación al caso del aguacate</span>
+  <p><strong>Tierra:</strong> la parcela de la familia Solano. 1.8 hectáreas con riego. El acceso al agua (el canal disputado de María) es parte de este factor: sin agua, la tierra no produce.</p>
+  <p><strong>Trabajo:</strong> el papá de Ulises + mano de obra contratada en cosecha + trabajo invisible de la familia (abuela que cuida a los niños, mamá que prepara comida para los jornaleros). La distinción entre trabajo remunerado y no remunerado aparece dentro de este único factor.</p>
+  <p><strong>Capital:</strong> las plantas de aguacate (inversión de 3–5 años antes de la primera cosecha), el sistema de riego, las herramientas, el transporte hasta el acopiador. El capital inicial lo puso la familia: no hay crédito bancario accesible en San Pedro Aguacate.</p>
+  <p><strong>Organización:</strong> quién decide qué plantar, cuándo cosechar, a quién vender. En la parcela de Ulises, esa decisión la toma el papá solo, sin acceso a información de mercado en tiempo real ni a ninguna organización de productores.</p>
+  <p><strong>Tiempo:</strong> 8 meses de ciclo productivo. El riesgo climático (helada, sequía, plaga) se distribuye completamente sobre el productor: si el aguacate se pierde, pierde él.</p>
+  <p class="nota-pie">Este esquema es adaptación del marco clásico de factores de producción (tierra, trabajo, capital) ampliado con organización y tiempo para incluir las dimensiones de poder y riesgo que la versión clásica invisibiliza.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—El factor tierra en el caso de mi ejido incluye el agua del canal. Si el municipio se queda con el agua, el factor tierra ya no puede producir. Eso significa que controlar el agua es controlar el primer factor de la cadena.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Exactamente. El control de los factores de producción es el control de la economía. No solo de la empresa: de la economía entera de una comunidad.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena III · ¿Qué es una cadena de valor?</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Una cadena de valor es la secuencia de actividades que convierte una materia prima en un producto que llega al consumidor final. Cada eslabón añade valor: algo que hace que el producto valga más al final que al principio. La pregunta crítica no es cuánto valor añade cada eslabón: es cuánto del valor total se queda en cada eslabón y bajo qué condiciones.</p>
+</div>
+
+<p>Ulises fue al pizarrón. Usó la tabla que había construido en el cuaderno negro durante el receso y que desde el Capítulo 1 era el caso de referencia del semestre. Pero esta vez añadió columnas nuevas: no solo precio de compra y precio de venta, sino también qué aporta cada actor, qué riesgo corre y qué poder tiene en la negociación.</p>
+
+<div class="recuadro-oscuro">
+  <span class="label">Cadena de valor del aguacate · Análisis ampliado · Investigación de Ulises Solano</span>
+  <p><strong>Productor (papá de Ulises):</strong> aporta tierra, 8 meses de trabajo, capital propio, riesgo climático total. Precio que recibe: 32 pesos/kg. Poder de negociación: bajo. No tiene información del precio del mercado en tiempo real. Si no acepta el precio del acopiador, el aguacate se echa a perder.</p>
+  <p><strong>Acopiador local (don Germán):</strong> aporta transporte, almacenamiento temporal (2–3 días), contacto con el distribuidor. Precio: compra a 32, vende a 68. Margen: 36 pesos. Riesgo: bajo. Si el aguacate no se vende, negocia precio más bajo con el productor. Poder de negociación: medio-alto (es el único comprador en el pueblo).</p>
+  <p><strong>Distribuidor regional (Tula):</strong> aporta transporte refrigerado, selección por calidad, contacto con mayoristas. Precio: compra a 68, vende a 120. Margen: 52 pesos. Riesgo: medio. Poder de negociación: alto (compra a varios acopiadores, puede elegir).</p>
+  <p><strong>Mayorista (mercado Actopan):</strong> aporta volumen, almacenamiento, acceso al consumidor final o al supermercado. Precio: 120 a 155–178. Margen: 35–58 pesos. Poder: muy alto.</p>
+  <p><strong>Supermercado / tienda:</strong> aporta local, presencia de marca, garantía de calidad. Precio al consumidor: 178–198 pesos. Poder: máximo (establece los estándares de calidad y puede rechazar el lote completo).</p>
+  <p class="nota-pie">El productor —quien aporta el trabajo más largo, el mayor riesgo y la mayor cantidad de factores de producción— recibe el menor margen (16–17% del precio final) y tiene el menor poder de negociación.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena IV · El intermediario no es el villano</div>
+
+<p>Rodrigo levantó la mano.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Rodrigo</div>
+  <p>—Entonces don Germán, el acopiador, es el malo de la película. Se queda con 36 pesos sin trabajar casi nada.</p>
+</div>
+
+<p>El Profe Ramírez esperó. Sabía que Ulises iba a responder antes que él, y esperaba que así fuera.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Don Germán no es el malo. Yo lo conozco desde que era chico. Tiene una camioneta que le costó más de lo que mi papá gana en cinco años. Tiene que pagar el combustible, el mantenimiento, el seguro. Tiene que manejar de madrugada. Y si el aguacate se pone malo en el camino, pierde él también. Su margen de 36 pesos no es ganancia pura: tiene costos.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—¿Y entonces quién es el malo?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—No hay malo. Hay una estructura. Don Germán tampoco tiene información perfecta del mercado: él también acepta lo que le ofrece el distribuidor porque es el único que llega a comprarte. La cadena entera opera con información asimétrica: cada actor sabe el precio del eslabón siguiente pero no del final. El que sí sabe el precio final es el supermercado. Y por eso tiene el poder.</p>
+</div>
+
+<p>El Profe Ramírez no añadió nada. Era exactamente lo que quería que el grupo llegara solo.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez (después de un momento)</div>
+  <p>—Lo que describió Ulises se llama asimetría de información. Y es uno de los mecanismos centrales por los que la distribución del valor en las cadenas productivas tiende a concentrarse en los eslabones que tienen más acceso a información: los que están más cerca del mercado final. No es maldad: es estructura. Y las estructuras, a diferencia de las personas, se pueden analizar y se pueden cambiar.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena V · Lo local y lo global</div>
+
+<p>Miranda había estado callada desde el inicio de la segunda hora. Cuando habló, lo hizo con ese tono de quien ha estado pensando algo y finalmente decide que vale la pena decirlo.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—¿Saben a cuánto se vende el aguacate mexicano en Estados Unidos?</p>
+</div>
+
+<p>Nadie respondió. Miranda sacó su cuaderno y lo leyó:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—En el supermercado de Riverside, California, donde yo vivía, el aguacate Hass —que es el mismo que produce el papá de Ulises— costaba el año pasado entre 1.50 y 2.50 dólares por pieza. Un aguacate pesa en promedio 180 gramos. A 2 dólares la pieza son unos 37 pesos por 180 gramos. O sea 206 pesos el kilo. Más caro que en el súper de Actopan.</p>
+</div>
+
+<p>El número tomó un momento en asentarse.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—¿Y cuánto recibe el productor en México de ese precio?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Nada diferente. El precio de exportación en campo es entre 25 y 40 pesos el kilo, similar al mercado nacional. La diferencia del precio internacional se queda en la cadena de exportación: la empacadora, el agente aduanal, el distribuidor en Estados Unidos, el supermercado americano.</p>
+</div>
+
+<div class="recuadro-teal">
+  <span class="label">Contexto global · La cadena de exportación del aguacate mexicano</span>
+  <p>México produce el 32% del aguacate que consume el mundo y exporta el 80% de su producción principalmente a Estados Unidos (80% de las exportaciones). La cadena de exportación añade actores adicionales: empacadora (certificada para exportar), agente aduanal, transportista internacional, distribuidor en el país de destino, cadena de retail.</p>
+  <p>El precio al productor en México es prácticamente el mismo si el aguacate va al mercado nacional o al de exportación. El valor diferencial de la exportación (mayor precio en destino) se distribuye entre los eslabones de la cadena de exportación, ninguno de los cuales está en el Valle de Nopalera.</p>
+  <p class="nota-pie">Fuente: SAGARPA / SADER · Anuario Estadístico de la Producción Agrícola · Comité Nacional del Sistema Producto Aguacate · Datos verificables en www.gob.mx/siap</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—O sea que el precio del aguacate en California afecta la economía de San Pedro Aguacate, pero nadie en San Pedro Aguacate tiene ningún control sobre ese precio.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Eso se llama intercambio desigual en el mercado global. Y es exactamente la diferencia urbano-rural que menciona el programa: las comunidades rurales producen los bienes que el mercado global demanda, pero no tienen ningún poder para fijar los términos del intercambio. El precio lo determina quien controla el acceso al mercado de destino, que siempre está lejos de donde se produce.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VI · Doña Esperanza confirma su visita</div>
+
+<p>Al final de la primera hora, el Profe Ramírez leyó un mensaje en su teléfono y anunció algo que el grupo esperaba desde el Capítulo 1.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Doña Esperanza Vásquez confirma su visita para el Capítulo 5. Vendrá a contarles cómo funciona la Cooperativa Raíz Común de San Marcos. Ella produce aguacate igual que el papá de Ulises. Pero en los últimos tres años pasó de recibir 30 pesos el kilo a recibir 78 pesos el kilo con la misma fruta. Sin intermediario. La pregunta que quiero que traigan preparada para ese día: ¿cómo es posible eso?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—¿78 pesos? ¿El doble que mi papá?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—78 pesos. En la Cooperativa Raíz Común. Todavía les faltan dos capítulos para entender por qué. Pero ya pueden empezar a pensar en la respuesta.</p>
+</div>
+
+<p>Ulises anotó: <em>78 pesos. ¿Cómo?</em> En el cuaderno negro, subrayado dos veces.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<div class="escena-titulo">Escena VII · El encargo: mapear tu propia cadena</div>
+
+<p>El Profe Ramírez cerró la sesión con el encargo central de la semana. Era más trabajo que los anteriores, pero también era el corazón del Reto Central.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Para el siguiente capítulo, cada equipo va a tener el primer mapa de la cadena de valor del producto que eligió. No tiene que ser perfecto. Tiene que tener: los actores de la cadena, los precios en cada eslabón si los pueden conseguir, quién aporta qué factor de producción y quién tiene mayor poder de negociación en cada punto. Consigan la información con sus familias, con personas de la comunidad, en el mercado. Los datos que traigan son los datos que existen: no los inventen.</p>
+</div>
+
+<p>Mientras el grupo recogía sus cosas, María se quedó mirando el pizarrón donde seguía escrito el diagrama de los factores del aguacate. Pensó en el canal. En el agua que su mamá usaba para regar el maíz. El maíz que parte se vendía y parte era autoconsumo. El precio al que lo vendía en el tianguis: 8 pesos el kilo. En la tortillería del pueblo, la misma tortilla —masa de maíz procesado— costaba 22 pesos el kilo.</p>
+
+<p>Cuánto valor añadía el molino. Cuánto añadía la tortillería. Y cuánto recibía su mamá por el kilo de maíz en el tianguis.</p>
+
+<p class="pensamiento">Hay una cadena ahí, pensó. Y yo ni siquiera la había visto hasta hoy.</p>
+
+<p>Sacó el cuaderno cuadriculado y empezó a escribir los actores que conocía: su mamá, la señora del molino, la dueña de la tortillería. Tres eslabones. Tres precios. Tres márgenes que todavía no sabía calcular pero que iba a calcular.</p>
+
+<p style="text-align:center;font-style:italic;color:#1a1060;font-size:10pt;margin-top:1cm;">Fin del Capítulo 3</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Nexo narrativa – PF-3</span>
+  <p>El Capítulo 3 activa el <strong>PF-3</strong> a través de tres movimientos conceptuales encadenados. Primero, la introducción de los cinco factores de producción aplicados al caso concreto del aguacate —con la ampliación de organización y tiempo al esquema clásico— permite al grupo ver que la desigualdad no ocurre en la distribución de las ganancias sino en el control diferencial de los factores desde el inicio. Segundo, el análisis de la cadena con la columna de "poder de negociación" introduce la asimetría de información como mecanismo estructural —no moral— de concentración del valor: el intermediario no es un villano, es un actor que también opera con información limitada, pero los nodos de mayor información concentran el mayor margen. Tercero, el dato de Miranda sobre el precio en California amplía el análisis al contexto global: las comunidades rurales producen para mercados globales sin tener ningún poder sobre las condiciones de ese intercambio. La confirmación de la visita de Doña Esperanza siembra la pregunta que organiza los siguientes capítulos: ¿cómo pasó de 30 a 78 pesos? La respuesta —cooperativismo, venta directa, organización colectiva— es el contenido de los Capítulos 4 y 5.</p>
+</div>
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 3 · "La cadena tiene nombre"<br>
+  Ciencias Sociales II · La Cadena Rota · Trilogía Raíz Digital · MCCEMS 2025
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 3 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

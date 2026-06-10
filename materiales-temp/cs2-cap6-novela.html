@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 6 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>La Cadena Rota · Capítulo 6 · La tierra que nos cuesta</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #f8f7fc;
+  color: #0e0a1e;
+  font-size: 11pt;
+  line-height: 1.85;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 2rem 0 1.5rem;
+  border-bottom: 2.5pt solid #1a1060;
+  margin-bottom: 1.5rem;
+}
+.raiz-digital .serie-label {
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  font-size: 7.5pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: 2rem; line-height: 2; display: block;
+}
+.raiz-digital .libro-num {
+  font-family: Georgia, serif; font-size: 64pt; font-weight: bold;
+  color: #b85010; line-height: 1; margin-bottom: .3rem; display: block;
+}
+.raiz-digital .libro-titulo {
+  font-family: Georgia, serif; font-size: 28pt; font-style: italic;
+  font-weight: bold; color: #0e0a1e; line-height: 1.2; margin-bottom: .4rem; display: block;
+}
+.raiz-digital .libro-subtitulo {
+  font-size: 9pt; font-family: Arial, sans-serif; color: #1a1060;
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1.2rem; display: block;
+}
+.raiz-digital .cap-ficha {
+  background: #1a1060; color: #ffffff;
+  border-left: 4pt solid #b85010; padding: .65rem .9rem;
+  font-family: Arial, sans-serif; font-size: 8.5pt; line-height: 1.9; margin-bottom: 1.2rem;
+}
+.raiz-digital .cap-ficha strong { color: #ffc090; }
+.raiz-digital .portadilla-meta {
+  font-family: Arial, sans-serif; font-size: 8pt; color: #2a1e50;
+  line-height: 2; border-top: .5pt solid #8080c0; padding-top: .6rem;
+}
+.raiz-digital .capitulo-header {
+  text-align: center; margin: 2rem 0 1.5rem;
+  padding-bottom: .8rem; border-bottom: 1pt solid #9090c8;
+}
+.raiz-digital .cap-num {
+  font-family: 'Arial Narrow', Arial, sans-serif; font-size: 7.5pt;
+  letter-spacing: .35em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .4rem; display: block;
+}
+.raiz-digital .cap-titulo {
+  font-family: Georgia, serif; font-size: 20pt; font-style: italic;
+  font-weight: bold; color: #0e0a1e; line-height: 1.3; margin-bottom: .3rem; display: block;
+}
+.raiz-digital .cap-epigrafe {
+  font-size: 9pt; font-style: italic; color: #2a2050;
+  max-width: 12rem; margin: .6rem auto 0; line-height: 1.6;
+}
+.raiz-digital .cap-epigrafe cite {
+  display: block; font-style: normal; font-size: 8pt;
+  color: #5050a0; margin-top: .3rem; letter-spacing: .06em;
+}
+.raiz-digital .escena-titulo {
+  font-family: 'Arial Narrow', Arial, sans-serif; font-size: 7pt;
+  letter-spacing: .3em; text-transform: uppercase; color: #1a1060;
+  margin: 1.5rem 0 .5rem; padding-bottom: .3rem;
+  border-bottom: .5pt solid #b0a8e0; display: block;
+}
+.raiz-digital p {
+  margin-bottom: .7em; text-align: justify; hyphens: auto;
+  font-size: 11pt; line-height: 1.85; color: #0e0a1e;
+}
+.raiz-digital p + p { text-indent: 1.2em; }
+.raiz-digital .escena-titulo + p,
+.raiz-digital .capitulo-header + p,
+.raiz-digital .dialogo-bloque + p,
+.raiz-digital .recuadro + p,
+.raiz-digital .recuadro-oscuro + p,
+.raiz-digital .recuadro-teal + p,
+.raiz-digital .pizarron + p { text-indent: 0; }
+.raiz-digital .dialogo-bloque {
+  margin: .8em 0; padding-left: .9rem; border-left: 3pt solid #b85010;
+}
+.raiz-digital .hablante {
+  font-family: Arial, sans-serif; font-size: 7pt; letter-spacing: .15em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .1rem;
+  font-weight: bold; display: block;
+}
+.raiz-digital .dialogo-bloque p {
+  font-style: italic; margin-bottom: .3em; text-indent: 0 !important; color: #0e0a1e;
+}
+.raiz-digital .pensamiento { font-style: italic; color: #2a2050; }
+.raiz-digital .separador {
+  text-align: center; color: #8080c0; font-size: 14pt;
+  letter-spacing: .5em; margin: 1.2rem 0; display: block;
+}
+/* RECUADRO LAVANDA */
+.raiz-digital .recuadro {
+  background: #eeeaf8; border: 1pt solid #9090c8;
+  border-left: 4pt solid #1a1060; padding: .65rem .85rem;
+  margin: 1rem 0; font-family: Arial, sans-serif; font-size: 8.5pt;
+  line-height: 1.7; color: #0e0a1e;
+}
+.raiz-digital .recuadro .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .35rem; display: block; font-weight: bold;
+}
+.raiz-digital .recuadro p { text-indent: 0 !important; margin-bottom: .35em; }
+.raiz-digital .recuadro .nota-pie {
+  font-size: 7.5pt; color: #3a3070; border-top: .5pt solid #9090c8;
+  margin-top: .4rem; padding-top: .25rem;
+}
+/* RECUADRO ÍNDIGO → BLANCO */
+.raiz-digital .recuadro-oscuro {
+  background: #1a1060; color: #ffffff;
+  border-left: 4pt solid #b85010; padding: .65rem .85rem;
+  margin: 1rem 0; font-family: Arial, sans-serif; font-size: 8.5pt; line-height: 1.7;
+}
+.raiz-digital .recuadro-oscuro .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #ffc090; margin-bottom: .3rem; display: block; font-weight: bold;
+}
+.raiz-digital .recuadro-oscuro p { text-indent: 0 !important; margin-bottom: .3em; }
+.raiz-digital .recuadro-oscuro .nota-pie {
+  font-size: 7.5pt; color: #c0b8f0; border-top: .5pt solid #4040a0;
+  margin-top: .35rem; padding-top: .2rem;
+}
+/* RECUADRO TEAL → BLANCO */
+.raiz-digital .recuadro-teal {
+  background: #083840; color: #ffffff;
+  border-left: 4pt solid #50c0a0; padding: .65rem .85rem;
+  margin: 1rem 0; font-family: Arial, sans-serif; font-size: 8.5pt; line-height: 1.7;
+}
+.raiz-digital .recuadro-teal .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #b0f0d8; margin-bottom: .3rem; display: block; font-weight: bold;
+}
+.raiz-digital .recuadro-teal p { text-indent: 0 !important; margin-bottom: .3em; }
+.raiz-digital .recuadro-teal .nota-pie {
+  font-size: 7.5pt; color: #90d8c0; border-top: .5pt solid #2a6858;
+  margin-top: .35rem; padding-top: .2rem;
+}
+/* PIZARRÓN */
+.raiz-digital .pizarron {
+  background: #080618; color: #c0d8ff; font-family: Georgia, serif;
+  font-size: 10.5pt; font-style: italic; padding: .8rem 1rem;
+  margin: .8rem 0; text-align: center; line-height: 1.65; display: block;
+}
+/* NOTA NARRATIVA */
+.raiz-digital .nota-narrativa {
+  background: #fff4e0; border: 1pt dashed #d08020;
+  border-left: 3pt solid #b85010; padding: .55rem .85rem;
+  margin: 1.2rem 0 0; font-family: Arial, sans-serif;
+  font-size: 8pt; color: #0e0a1e; line-height: 1.65;
+}
+.raiz-digital .nota-narrativa .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #b85010; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .cierre-capitulo {
+  margin-top: 1.5rem; padding-top: .8rem; border-top: 1pt solid #9090c8;
+  font-family: Arial, sans-serif; font-size: 7.5pt;
+  color: #3a3070; text-align: center; letter-spacing: .08em;
+}
+.raiz-digital .fin-capitulo {
+  text-align: center; font-style: italic; color: #1a1060;
+  font-size: 10pt; margin-top: 1rem;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="serie-label">Ciencias Sociales II · NEM 2025 · DGETAYCM<br>
+  Bachillerato Tecnológico Agropecuario · Trilogía Raíz Digital · La Cadena Rota · Capítulo 6</span>
+  <span class="libro-num">II</span>
+  <span class="libro-titulo">La Cadena<br>Rota</span>
+  <span class="libro-subtitulo">Organización, relaciones económicas y sociales</span>
+  <div class="cap-ficha">
+    <strong>Capítulo 6 · "La tierra que nos cuesta"</strong><br>
+    Propósito central: <strong>PF-4</strong> · Reconoce y problematiza las relaciones de poder para explicar su función dentro de la diversidad en el funcionamiento de la organización social<br>
+    Contenidos: Relación sociedad-naturaleza y degradación ambiental · Desafíos demográficos y su impacto económico, social y político · Interseccionalidad territorial · Hegemonía y consensos · Semilla CS-III<br>
+    Sesiones: 11 y 12 · Semana 9
+  </div>
+  <div class="portadilla-meta">
+    <strong>El último capítulo de contenido nuevo.</strong> Antes de las presentaciones del Capítulo 7, el grupo necesita ver la cadena desde su ángulo más difícil: si la tierra se degrada, si el agua se agota y si los jóvenes se van, ¿quién sostiene cualquier propuesta alternativa en veinte años?
+  </div>
+</div>
+
+
+<div class="capitulo-header">
+  <span class="cap-num">Capítulo Seis</span>
+  <span class="cap-titulo">"La tierra que nos cuesta"</span>
+  <div class="cap-epigrafe">
+    "El territorio no es solo donde vivimos. Es lo que produce lo que comemos, lo que sostiene lo que vendemos y lo que heredamos a quien venga después. Cuando el territorio se degrada, la cadena entera se rompe, aunque el precio del aguacate siga siendo el mismo."
+    <cite>— María Tlaloc, cuaderno cuadriculado, semana 9</cite>
+  </div>
+</div>
+
+
+<span class="escena-titulo">Escena I · El canal tiene noticias</span>
+
+<p>El martes de la semana nueve, María llegó al salón con algo que no había traído antes: la respuesta. No era una victoria ni una derrota: era el tipo de resultado que solo existe en los procesos jurídicos largos, donde lo que avanza no es la solución sino la claridad sobre la distancia que falta.</p>
+
+<p>La Procuraduría Agraria había emitido un dictamen técnico. El canal de riego que atraviesa el ejido de San Martín Tecuatitla es, según el Artículo 9 de la Ley Agraria, patrimonio del núcleo ejidal. El municipio tiene derecho a regular el uso del agua de cuencas concesionadas por la Comisión Nacional del Agua, pero no tiene jurisdicción sobre la infraestructura de riego interna del ejido. El expediente continuaba en proceso de notificación formal a ambas partes.</p>
+
+<p>No era el final. Era la primera vez que el Estado reconocía, en papel con folio, que el ejido tenía razón.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—¿Ganaron?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">María</span>
+  <p>—No todavía. Pero ahora el municipio tiene que responder con argumentos jurídicos, no solo con presencia. Y mi mamá sabe que puede seguir regando mientras el proceso avanza. Eso ya cambia algo.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—¿Y qué tiene que ver eso con el semestre de CS-II?</p>
+</div>
+
+<p>La pregunta no era retórica. María tardó un momento antes de responder, pero cuando lo hizo, el grupo entendió que llevaba semanas pensándolo.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">María</span>
+  <p>—Que el agua del canal no es solo un derecho jurídico. Es el primer factor de producción de la cadena. Sin el canal, no hay riego. Sin riego, no hay maíz. Sin maíz, no hay tortillas. Y sin tortillas, la señora del molino y la tortillera tampoco tienen cadena. El problema del canal en CS-I parecía solo un problema de papeles. En CS-II entiendo que también es un problema de economía, de territorio y de quién controla el agua que sostiene a todos.</p>
+</div>
+
+<p>El Profe Ramírez escribió en el pizarrón, con la letra compacta de los días importantes:</p>
+
+<div class="pizarron">
+  El mismo problema · tres idiomas:<br>
+  CS-I: ¿quién tiene el papel? (sistema jurídico)<br>
+  CS-II: ¿quién controla el factor de producción? (sistema económico)<br>
+  CS-III: ¿qué pasa cuando el recurso se agota? (sistema socioambiental)
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena II · La cooperativa y el territorio</span>
+
+<p>Ulises hizo la pregunta que llevaba dos semanas incubando desde la visita de Doña Esperanza.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—Si la cooperativa de Doña Esperanza funciona bien y crece, y más productores se suman, ¿eso significa que producen más aguacate? ¿Y si producen más aguacate, usan más agua?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—La pregunta correcta. ¿Qué piensan?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—Si la cooperativa resuelve el precio pero no cambia el modelo de producción, el impacto ambiental es el mismo o mayor. Más productores a 78 pesos siguen usando mil litros de agua por kilo. El precio justo no es automáticamente el precio sostenible.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Rodrigo</span>
+  <p>—Pero si el precio es justo y el productor tiene más ingresos, tal vez puede invertir en técnicas que usen menos agua.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—¿O tal vez el mercado le va a pedir más volumen porque ahora el canal funciona mejor y la cooperativa tiene más capacidad? El mercado siempre pide más.</p>
+</div>
+
+<p>El Profe Ramírez dejó el debate abierto. No porque no tuviera opinión, sino porque la tensión entre el precio justo y la sostenibilidad ambiental no tenía una respuesta académicamente limpia y era mejor que el grupo lo supiera.</p>
+
+<div class="recuadro">
+  <span class="label">La tensión no resuelta · Precio justo vs. producción sostenible</span>
+  <p>El movimiento de comercio justo ha demostrado mejorar los ingresos de los productores rurales. Pero distintas investigaciones muestran que el aumento de ingresos no se traduce automáticamente en reducción del impacto ambiental: en algunos casos, el mayor ingreso permite mayor inversión en sistemas de riego más eficientes; en otros, estimula el aumento del volumen producido y por tanto del consumo de agua y del área deforestada.</p>
+  <p>La sostenibilidad ambiental requiere regulación, no solo precios justos. Y la regulación requiere que quienes regulan —Estado, comunidades, organizaciones— tengan poder suficiente para hacerla cumplir frente a las presiones del mercado global.</p>
+  <p class="nota-pie">Referencia: Ruben, R. et al. (2018). "Fairtrade's impact on smallholders." <em>World Development</em> · IPBES (2019). Global Assessment Report on Biodiversity and Ecosystem Services. Disponibles en acceso abierto.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena III · Los que se van</span>
+
+<p>El Profe Ramírez introdujo el segundo eje del capítulo con una pregunta directa al grupo.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—¿Cuántos de ustedes tienen un hermano, un primo, un familiar cercano que ya no vive en el municipio donde nació?</p>
+</div>
+
+<p>Dieciséis de veintidós manos se levantaron.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—¿Y cuántos de ustedes están pensando en irse a vivir a otro lugar cuando terminen el bachillerato?</p>
+</div>
+
+<p>Nueve manos. Algunas vacilantes. Algunas muy firmes.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—No les pregunto para juzgar. Les pregunto porque eso es un dato económico, demográfico y político. Se llama migración rural-urbana y es uno de los procesos que más afecta la viabilidad de cualquier proyecto económico en el campo mexicano. Si los jóvenes se van, ¿quién produce?</p>
+</div>
+
+<p>Ulises respondió sin que le preguntaran directamente.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—Mi hermano mayor se fue hace tres años. Trabaja en un call center en Querétaro. Mi papá dice que cuando él ya no pueda trabajar la huerta, no hay nadie. Yo soy el menor. Y yo estoy aquí estudiando para no quedarme solo trabajando la huerta toda la vida.</p>
+</div>
+
+<p>El salón absorbió eso sin incomodidad. Varios asentaron. Era una contradicción que varios vivían: estudiar para salir, quedarse para que la comunidad sobreviviera, salir para que la familia pudiera comer.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—Yo también me voy a ir. No porque no quiera quedarme: sino porque aquí no hay trabajo que pague lo suficiente para la apostilla de mi abuela, para los gastos de ella cuando envejezca más, para tener una vida que incluya algo más que sobrevivir. Eso no es traición al territorio: es una decisión económica racional dada la estructura que existe.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Yesenia</span>
+  <p>—Y si nos vamos los que más años de educación tenemos, los que se quedan son los que tienen menos herramientas para cambiar la estructura. Entonces la estructura se mantiene.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena IV · Interseccionalidad territorial</span>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Lo que acaban de describir se llama trampa demográfica en zonas rurales: la migración de jóvenes qualificados debilita la capacidad de las comunidades para mejorar sus condiciones, lo que genera más migración. El territorio se convierte en una dimensión adicional de la interseccionalidad. No es solo ser mujer, ser indígena, ser joven, ser productora sin poder de negociación: es ser todo eso en una zona rural que pierde población activa cada año y que recibe menos inversión pública que las zonas urbanas precisamente porque tiene menos población.</p>
+</div>
+
+<div class="recuadro-oscuro">
+  <span class="label">Datos · Migración rural-urbana y envejecimiento en el campo mexicano</span>
+  <p>Entre 2010 y 2020, la población rural en México decreció del 23% al 20% del total nacional. En municipios con alta migración, el porcentaje de adultos mayores como proporción de la población rural llegó al 18%, frente al 10% en zonas urbanas.</p>
+  <p>La edad promedio del productor agrícola en México en 2022 era de 52 años, frente a los 44 años en 2007. En quince años, el campo mexicano envejeció ocho años.</p>
+  <p>Las remesas —dinero enviado por migrantes a sus familias en comunidades de origen— representaron en 2023 más del 4% del PIB mexicano: $63,313 millones de dólares. En muchas comunidades rurales, las remesas son el ingreso más importante y estable de la familia, más que cualquier actividad productiva local.</p>
+  <p class="nota-pie">Fuente: INEGI · Censo de Población y Vivienda 2020 · CONAPO · Encuesta Nacional de Uso del Tiempo · Banco de México · Remesas 2023.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Fernanda</span>
+  <p>—Entonces el modelo de Doña Esperanza tiene otro límite: funciona si hay productoras jóvenes que quieran quedarse a trabajar la huerta. Si las jóvenes se van, ¿quién sostiene la cooperativa en diez años?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Esa pregunta no tiene respuesta fácil. Lo que sí tiene es nombre: se llama sostenibilidad social de los modelos económicos alternativos. No basta con que el modelo sea más justo económicamente: tiene que ser lo suficientemente atractivo para que la gente decida quedarse o regresar a él. Y eso depende de condiciones que van mucho más allá del precio del aguacate.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena V · Lo que la tierra paga</span>
+
+<p>En la segunda hora, el Profe Ramírez regresó al territorio desde el ángulo que faltaba: no el territorio como lugar de vida sino el territorio como sistema que produce y que tiene límites.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—El suelo de una parcela de aguacate que ha producido de forma intensiva durante quince años no es el mismo suelo que era antes. La materia orgánica disminuye, la estructura del suelo cambia, la biodiversidad del suelo —los microorganismos que hacen posible que las plantas absorban nutrientes— se reduce. Ese proceso se llama degradación del suelo y es, como el agua virtual, un costo que el precio del aguacate no incluye.</p>
+</div>
+
+<div class="recuadro-teal">
+  <span class="label">Degradación ambiental en la cadena del aguacate · Para análisis en clase</span>
+  <p><strong>Agua:</strong> 850–1,200 litros de agua virtual por kilo. Los acuíferos de las principales zonas productoras presentan sobreexplotación creciente.</p>
+  <p><strong>Suelo:</strong> el monocultivo intensivo de aguacate reduce progresivamente la materia orgánica del suelo. Algunos estudios en Michoacán reportan disminución de hasta el 30% en materia orgánica después de 10 años de monocultivo aguacatero sin rotación de cultivos.</p>
+  <p><strong>Biodiversidad:</strong> la expansión del aguacate en zonas boscosas ha implicado, en algunas regiones, deforestación de bosques templados que son hábitat de especies endémicas, incluyendo el monarca.</p>
+  <p><strong>Comunidades locales:</strong> en varios municipios productores, los conflictos por el agua entre comunidades indígenas y productores de aguacate han generado tensiones sociales documentadas. El caso del Valle de Nopalera en esta narrativa es ficticio pero refleja patrones reales.</p>
+  <p class="nota-pie">Fuentes: SEMARNAT · CONABIO · WWF México · Comisión Nacional para el Conocimiento y Uso de la Biodiversidad. Datos disponibles en portales de acceso público.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">María</span>
+  <p>—O sea que en el precio del aguacate no está el agua que se va, no está la degradación del suelo, no está el trabajo de cuidados que sostiene al productor, y no está el riesgo de que en veinte años no haya quien produzca porque los jóvenes se fueron. Si sumaramos todo eso, ¿cuánto costaría realmente un kilo de aguacate?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Ese cálculo se llama precio verdadero o precio completo. Algunos economistas lo han intentado para distintos productos. El resultado siempre es el mismo: el precio de mercado cubre una fracción del costo real. La diferencia la paga el planeta, la pagan las comunidades y la pagarán las generaciones que vengan después.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena VI · ¿Quién va a plantar en veinte años?</span>
+
+<p>La pregunta llegó de Yesenia, que la había estado construyendo durante toda la sesión en su cuaderno antes de decirla en voz alta.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Yesenia</span>
+  <p>—Si el agua se acaba, el suelo se degrada, los jóvenes se van y las instituciones no resuelven los problemas de distribución, ¿qué queda? No es una pregunta retórica: es una pregunta real. ¿Qué modelo económico es posible en ese escenario?</p>
+</div>
+
+<p>El Profe Ramírez no respondió de inmediato. Miró el pizarrón donde seguían las tres preguntas del primer día del semestre más la cuarta que añadió después de la visita de Doña Esperanza. Tomó el marcador y escribió una quinta.</p>
+
+<div class="pizarron">
+  ¿Cuánto vale el trabajo de tu familia?<br>
+  ¿Quién decide ese valor?<br>
+  ¿Cómo se decide?<br>
+  ¿Cómo podría decidirse de otra manera?<br>
+  <span style="color:#90e0ff;">¿Qué pasa cuando el territorio ya no puede sostener ninguna decisión?</span>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Esa quinta pregunta es el territorio de CS-III. Este semestre nos alcanzó para mapear la cadena, analizar su distribución y proponer una alternativa. La pregunta de qué pasa cuando los límites del planeta ponen un techo a cualquier propuesta económica humana: eso es lo que sigue. No es el final del análisis. Es el siguiente nivel.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—¿Hay respuesta?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Hay propuestas. Economía circular. Agroecología. Soberanía alimentaria. Territorios bioculturales. Ninguna está completamente probada a escala. Pero existen, y algunas ya están operando en comunidades parecidas a las de este valle. Eso lo estudian en CS-III.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena VII · El último encargo antes de las presentaciones</span>
+
+<p>El Profe Ramírez cerró la sesión con lo que sería el último encargo de contenido antes del Capítulo 7.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Para el día de las presentaciones cada equipo llega con: las cuatro fichas del Diagnóstico Económico, la Ficha Final con la propuesta de distribución justa, y una respuesta preparada a esta pregunta: ¿qué costaría que su propuesta funcionara durante veinte años? No en dinero necesariamente. En agua, en suelo, en personas que elijan quedarse, en instituciones que funcionen. Si su propuesta no tiene respuesta a esa pregunta, no es una propuesta completa: es el inicio de una.</p>
+</div>
+
+<p>El grupo recogió sus cosas en silencio. Era el silencio de quien tiene trabajo pendiente y ya sabe exactamente cuál es.</p>
+
+<p>María cerró su carpeta —la misma que había pedido prestada a su mamá, que para ese momento ya tenía páginas dobladas y notas en los márgenes— y pensó en el canal. En el dictamen técnico. En el agua que el aguacate se lleva. En su mamá sembrando maíz con el agua de un canal que alguien quería quitarle.</p>
+
+<p>Pensó: hay una cadena que empieza con esa agua y termina con una tortilla en la mesa. Y en esa cadena hay trabajo de doce personas que no aparecen en ningún precio. Hay agua que no volverá. Hay suelo que se gasta.</p>
+
+<p>Y hay, también, una propuesta. Imperfecta, incompleta, con más preguntas que respuestas. Pero concreta, específica y basada en datos reales de un territorio real donde viven personas reales.</p>
+
+<p>Eso era suficiente para el Capítulo 7.</p>
+
+<p class="fin-capitulo">Fin del Capítulo 6</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Sobre este capítulo y el puente a CS-III</span>
+  <p>El Capítulo 6 cumple tres funciones simultáneas. Primero, integra los análisis jurídico (CS-I), económico (CS-II, Caps. 1–5) y ambiental en un único marco que el grupo puede reconocer como el mismo problema visto desde tres ángulos distintos. Segundo, introduce los desafíos demográficos —migración rural, envejecimiento del campo, trampa demográfica— como dimensión adicional de la interseccionalidad que ningún modelo económico alternativo puede ignorar. Tercero, siembra explícitamente las preguntas que CS-III desarrollará: ¿qué pasa cuando los límites del planeta ponen un techo a cualquier propuesta humana? La quinta pregunta en el pizarrón no es el final del semestre: es la apertura del siguiente. El docente debe nombrar esa continuidad explícitamente: CS-III no empieza de cero, empieza donde CS-II terminó.</p>
+</div>
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 6 · "La tierra que nos cuesta"<br>
+  Ciencias Sociales II · La Cadena Rota · Trilogía Raíz Digital · MCCEMS 2025
+</div>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 6 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

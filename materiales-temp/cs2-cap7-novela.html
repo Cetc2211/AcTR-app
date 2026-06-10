@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 7 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>La Cadena Rota · Capítulo 7 · El día de la cadena</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #f8f7fc; color: #0e0a1e;
+  font-size: 11pt; line-height: 1.85;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 2rem 0 1.5rem; border-bottom: 2.5pt solid #1a1060; margin-bottom: 1.5rem;
+}
+.raiz-digital .serie-label {
+  font-family: 'Arial Narrow', Arial, sans-serif; font-size: 7.5pt;
+  letter-spacing: .28em; text-transform: uppercase; color: #1a1060;
+  margin-bottom: 2rem; line-height: 2; display: block;
+}
+.raiz-digital .libro-num {
+  font-family: Georgia, serif; font-size: 64pt; font-weight: bold;
+  color: #b85010; line-height: 1; margin-bottom: .3rem; display: block;
+}
+.raiz-digital .libro-titulo {
+  font-family: Georgia, serif; font-size: 28pt; font-style: italic;
+  font-weight: bold; color: #0e0a1e; line-height: 1.2; margin-bottom: .4rem; display: block;
+}
+.raiz-digital .libro-subtitulo {
+  font-size: 9pt; font-family: Arial, sans-serif; color: #1a1060;
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1.2rem; display: block;
+}
+.raiz-digital .cap-ficha {
+  background: #1a1060; color: #ffffff; border-left: 4pt solid #b85010;
+  padding: .65rem .9rem; font-family: Arial, sans-serif;
+  font-size: 8.5pt; line-height: 1.9; margin-bottom: 1.2rem;
+}
+.raiz-digital .cap-ficha strong { color: #ffc090; }
+.raiz-digital .portadilla-meta {
+  font-family: Arial, sans-serif; font-size: 8pt; color: #2a1e50;
+  line-height: 2; border-top: .5pt solid #8080c0; padding-top: .6rem;
+}
+.raiz-digital .capitulo-header {
+  text-align: center; margin: 2rem 0 1.5rem; padding-bottom: .8rem;
+  border-bottom: 1pt solid #9090c8;
+}
+.raiz-digital .cap-num {
+  font-family: 'Arial Narrow', Arial, sans-serif; font-size: 7.5pt;
+  letter-spacing: .35em; text-transform: uppercase; color: #1a1060;
+  margin-bottom: .4rem; display: block;
+}
+.raiz-digital .cap-titulo {
+  font-family: Georgia, serif; font-size: 20pt; font-style: italic;
+  font-weight: bold; color: #0e0a1e; line-height: 1.3; margin-bottom: .3rem; display: block;
+}
+.raiz-digital .cap-epigrafe {
+  font-size: 9pt; font-style: italic; color: #2a2050;
+  max-width: 12rem; margin: .6rem auto 0; line-height: 1.6;
+}
+.raiz-digital .cap-epigrafe cite {
+  display: block; font-style: normal; font-size: 8pt;
+  color: #5050a0; margin-top: .3rem; letter-spacing: .06em;
+}
+.raiz-digital .escena-titulo {
+  font-family: 'Arial Narrow', Arial, sans-serif; font-size: 7pt;
+  letter-spacing: .3em; text-transform: uppercase; color: #1a1060;
+  margin: 1.5rem 0 .5rem; padding-bottom: .3rem;
+  border-bottom: .5pt solid #b0a8e0; display: block;
+}
+.raiz-digital p {
+  margin-bottom: .7em; text-align: justify; hyphens: auto;
+  font-size: 11pt; line-height: 1.85; color: #0e0a1e;
+}
+.raiz-digital p + p { text-indent: 1.2em; }
+.raiz-digital .escena-titulo + p,
+.raiz-digital .capitulo-header + p,
+.raiz-digital .dialogo-bloque + p,
+.raiz-digital .presentacion-card + p,
+.raiz-digital .recuadro + p,
+.raiz-digital .recuadro-oscuro + p,
+.raiz-digital .pizarron + p { text-indent: 0; }
+.raiz-digital .dialogo-bloque {
+  margin: .8em 0; padding-left: .9rem; border-left: 3pt solid #b85010;
+}
+.raiz-digital .hablante {
+  font-family: Arial, sans-serif; font-size: 7pt; letter-spacing: .15em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .1rem;
+  font-weight: bold; display: block;
+}
+.raiz-digital .dialogo-bloque p {
+  font-style: italic; margin-bottom: .3em; text-indent: 0 !important; color: #0e0a1e;
+}
+.raiz-digital .pensamiento { font-style: italic; color: #2a2050; }
+.raiz-digital .separador {
+  text-align: center; color: #8080c0; font-size: 14pt;
+  letter-spacing: .5em; margin: 1.2rem 0; display: block;
+}
+/* PRESENTACIÓN: teal oscuro → BLANCO */
+.raiz-digital .presentacion-card {
+  background: #083840; color: #ffffff; border-left: 4pt solid #50c0a0;
+  padding: .65rem .85rem; margin: .8rem 0;
+  font-family: Arial, sans-serif; font-size: 8.5pt; line-height: 1.7;
+}
+.raiz-digital .presentacion-card .equipo {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #b0f0d8; display: block; margin-bottom: .2rem; font-weight: bold;
+}
+.raiz-digital .presentacion-card p { text-indent: 0 !important; margin-bottom: .3em; }
+.raiz-digital .presentacion-card .retro {
+  font-size: 8pt; color: #90d8c0; border-top: .5pt solid #2a6858;
+  margin-top: .3rem; padding-top: .2rem; font-style: italic;
+}
+/* RECUADRO LAVANDA → oscuro */
+.raiz-digital .recuadro {
+  background: #eeeaf8; border: 1pt solid #9090c8; border-left: 4pt solid #1a1060;
+  padding: .65rem .85rem; margin: 1rem 0; font-family: Arial, sans-serif;
+  font-size: 8.5pt; line-height: 1.7; color: #0e0a1e;
+}
+.raiz-digital .recuadro .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .35rem; display: block; font-weight: bold;
+}
+.raiz-digital .recuadro p { text-indent: 0 !important; margin-bottom: .35em; }
+/* RECUADRO ÍNDIGO → BLANCO */
+.raiz-digital .recuadro-oscuro {
+  background: #1a1060; color: #ffffff; border-left: 4pt solid #b85010;
+  padding: .65rem .85rem; margin: 1rem 0; font-family: Arial, sans-serif;
+  font-size: 8.5pt; line-height: 1.7;
+}
+.raiz-digital .recuadro-oscuro .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #ffc090; margin-bottom: .3rem; display: block; font-weight: bold;
+}
+.raiz-digital .recuadro-oscuro p { text-indent: 0 !important; margin-bottom: .3em; }
+/* PIZARRÓN */
+.raiz-digital .pizarron {
+  background: #080618; color: #c0d8ff; font-family: Georgia, serif;
+  font-size: 10.5pt; font-style: italic; padding: .8rem 1rem;
+  margin: .8rem 0; text-align: center; line-height: 1.65; display: block;
+}
+/* NOTA NARRATIVA */
+.raiz-digital .nota-narrativa {
+  background: #fff4e0; border: 1pt dashed #d08020; border-left: 3pt solid #b85010;
+  padding: .55rem .85rem; margin: 1.2rem 0 0; font-family: Arial, sans-serif;
+  font-size: 8pt; color: #0e0a1e; line-height: 1.65;
+}
+.raiz-digital .nota-narrativa .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #b85010; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .cierre-capitulo {
+  margin-top: 1.5rem; padding-top: .8rem; border-top: 1pt solid #9090c8;
+  font-family: Arial, sans-serif; font-size: 7.5pt;
+  color: #3a3070; text-align: center; letter-spacing: .08em;
+}
+.raiz-digital .fin-capitulo {
+  text-align: center; font-style: italic; color: #1a1060;
+  font-size: 10pt; margin-top: 1rem;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="serie-label">Ciencias Sociales II · NEM 2025 · DGETAYCM<br>
+  Bachillerato Tecnológico Agropecuario · Trilogía Raíz Digital · La Cadena Rota · Capítulo 7</span>
+  <span class="libro-num">II</span>
+  <span class="libro-titulo">La Cadena<br>Rota</span>
+  <span class="libro-subtitulo">Organización, relaciones económicas y sociales</span>
+  <div class="cap-ficha">
+    <strong>Capítulo 7 · "El día de la cadena"</strong><br>
+    Propósitos: <strong>PF-1 al PF-4 · Evaluación integradora</strong><br>
+    Contenidos: Presentación pública del Reto Central · El aula como espacio deliberativo · Diagnóstico de cadena de valor + propuesta de distribución justa<br>
+    Sesiones: 13 y 14 · Semana 10
+  </div>
+  <div class="portadilla-meta">
+    <strong>El espejo del Capítulo 7 de CS-I.</strong> El salón vuelve a organizarse en semicírculo. Los mapas de derechos siguen en la pared norte. Hoy se añaden las cadenas de valor. Cada equipo tiene tres minutos para decir lo que encontró, lo que cuesta y cómo podría ser diferente.
+  </div>
+</div>
+
+
+<div class="capitulo-header">
+  <span class="cap-num">Capítulo Siete</span>
+  <span class="cap-titulo">"El día de la cadena"</span>
+  <div class="cap-epigrafe">
+    "Hacer visible lo invisible es el acto más político que conozco. No porque cambie todo de inmediato. Sino porque lo que no tiene nombre no puede cambiar nunca."
+    <cite>— Yesenia, cuaderno propio, semana 10</cite>
+  </div>
+</div>
+
+
+<span class="escena-titulo">Escena I · El salón que ya sabe organizarse</span>
+
+<p>El martes de la semana diez, Rodrigo volvió a mover las sillas en semicírculo antes de que nadie se lo pidiera. Lo había hecho también en el Capítulo 7 de CS-I. Era su forma de decir que sabía lo que venía y que le parecía bien.</p>
+
+<p>Los mapas de papel kraft del semestre anterior seguían en la pared norte, con las esquinas más amarillas y algunos bordes levantados. Debajo de ellos, el grupo había pegado esa mañana las cadenas de valor de cada equipo: hojas de papel bond, cartulinas, cuadernillos abiertos con las fichas ordenadas y la propuesta escrita en el centro con letra grande. Las cadenas eran más complejas visualmente que los mapas de derechos. Tenían flechas, números, columnas de márgenes, anotaciones en los bordes sobre el trabajo invisible y los costos que el precio no incluía. Tenían también, en cada caso, un espacio señalado con una línea de otro color donde podría estar la propuesta: el eslabón que no existía todavía pero que el equipo había imaginado.</p>
+
+<p>María miró la pared. Vio el mapa de derechos del semestre anterior —el triángulo azul del canal, el círculo rojo del invernadero, la estrella amarilla donde vivía la abuela de Miranda que no existía para el Estado— y vio, exactamente debajo, la cadena del maíz con la propuesta de cooperativa integrada. El mismo territorio. Dos capas de análisis superpuestas.</p>
+
+<p class="pensamiento">CS-I preguntó: ¿quién tiene el papel? CS-II pregunta: ¿quién tiene el dinero? Y debajo de las dos preguntas está el mismo canal, el mismo ejido, la misma agua que alguien quiere controlar.</p>
+
+<p>El Profe Ramírez llegó sin bolsa de tela. Solo con el cronómetro y el cuaderno de espiral. Se sentó en el semicírculo, al mismo nivel que todos.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Las reglas son las mismas que en enero: tres minutos de presentación, señal a los dos y medio, dos minutos de preguntas del grupo. Una pregunta por persona. Quien pregunta no argumenta durante la pregunta. Quien presenta no interrumpe las preguntas: las escucha completas. Las cadenas quedan en la pared al terminar. El orden fue sorteado la semana pasada. Empezamos.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena II · Las primeras cadenas</span>
+
+<p>El primer equipo en presentar mapeó la cadena de la miel artesanal en tres comunidades del municipio. La apicultora recibe 85 pesos el kilo. El distribuidor de la ciudad la revende a 240 en tienda naturista. El intermediario que conecta los dos aporta transporte y etiquetado certificado como "miel orgánica local", pero ni el apicultor participó en la certificación ni recibe beneficio adicional por ella.</p>
+
+<p>Su propuesta: que los apicultores constituyan una marca colectiva certificada directamente —el proceso existe y cuesta aproximadamente 18,000 pesos divididos entre doce familias— y vendan directamente a cuatro tiendas naturistas de la ciudad que ya preguntaban por proveedores verificables.</p>
+
+<div class="presentacion-card">
+  <span class="equipo">Equipo 1 · Miel artesanal · Tres comunidades del municipio</span>
+  <p><strong>Patrón identificado:</strong> "El productor recibe el 35% del precio final. El intermediario captura el valor de la certificación orgánica aunque el producto siempre fue orgánico: el apicultor nunca usó agroquímicos. La certificación es una capa de información que tiene precio pero que no mejoró la producción."</p>
+  <p><strong>Propuesta:</strong> "Marca colectiva de 12 familias apicultoras. Costo: $1,500 por familia una sola vez. Precio estimado al productor con venta directa: $155–170/kg. Aumento: +$70–85 por kilo, el doble del precio actual."</p>
+  <p class="retro">Retroalimentación del grupo: Fernanda preguntó cómo garantizarían la calidad sin el intermediario que hace el etiquetado. El equipo respondió que la certificación colectiva incluye protocolo de calidad propio. El Profe Ramírez anotó: propuesta con número real de costo, fundamento en programa de INAES.</p>
+</div>
+
+<p>El segundo equipo presentó la cadena del nopal. El productor vende a 4 pesos el kilo en el campo. En el supermercado cuesta 22 pesos. Su propuesta: mercado municipal ampliado con acceso directo para productores locales, sin comisionista.</p>
+
+<p>El tercer equipo mapeó la cadena de artesanías de palma. La tejedora invierte ocho horas en un sombrero que vende a 35 pesos al revendedor. El revendedor lo coloca en un puesto de artesanías de la ciudad a 280 pesos. La propuesta: tienda en línea colectiva administrada por la cooperativa de artesanas, con entrega quincenal a clientes de la ciudad.</p>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena III · La propuesta de Ulises</span>
+
+<p>Ulises presentó de pie, sin guión escrito visible, con el cuaderno negro cerrado sobre la silla y la tabla de la cadena del aguacate desplegada detrás de él en papel bond. Era la misma tabla que había construido durante el receso del primer semestre, pero con cuatro columnas nuevas: factores de producción aportados, poder de negociación, externalidades absorbidas y comparación con el modelo cooperativo de Doña Esperanza.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—El patrón de la cadena del aguacate es este: quien más aporta y más arriesga recibe menos, porque tiene menos información del precio final y menos poder de negociación. Eso no es injusticia abstracta: es un mecanismo concreto llamado asimetría de información, y produce exactamente 146 pesos de diferencia entre lo que recibe mi papá y lo que paga el consumidor final. Esa diferencia no es proporcional al trabajo ni al riesgo. Es proporcional al acceso a la información.</p>
+</div>
+
+<div class="presentacion-card">
+  <span class="equipo">Equipo 2 · Ulises · Aguacate Hass · Valle de Nopalera</span>
+  <p><strong>Patrón identificado:</strong> "Asimetría de información + ausencia de organización colectiva = 16% del precio final al productor que aporta el 100% del riesgo climático y 8 meses de ciclo productivo."</p>
+  <p><strong>Propuesta:</strong> "Extensión del modelo Raíz Común a San Pedro Aguacate: 10 familias productoras, transporte compartido (costo mensual compartido: $1,200/familia), venta directa a tres restaurantes de la ciudad verificados, precio mínimo garantizado $65/kg. Fondo de riesgo climático: 8% de cada venta. Código QR de trazabilidad en cada caja: nombre del productor, parcela y precio recibido."</p>
+  <p><strong>Sostenibilidad en 20 años:</strong> "La propuesta no resuelve el agua. Si el acuífero baja al ritmo actual, en 15–20 años el aguacate en esta región no será viable con ningún modelo de organización. La propuesta de precio justo necesita ir acompañada de una propuesta de manejo del agua: eso es CS-III."</p>
+  <p class="retro">Retroalimentación: Miranda preguntó si los restaurantes en la ciudad pueden garantizar volumen constante de compra. Ulises respondió que eso es parte de la negociación que la cooperativa tendría que hacer antes de constituirse. El Profe Ramírez anotó: única propuesta del grupo que incluye respuesta a la pregunta de los 20 años con nombre de la limitante.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena IV · La cadena del maíz de María</span>
+
+<p>María fue al frente cuando le tocó sin el nerviosismo de la primera vez en CS-I. No porque hubiera desaparecido el miedo: sino porque había algo más grande que el miedo, que era que lo que iba a decir era verdad y estaba basado en datos y eso lo hacía más sólido que cualquier seguridad personal.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">María</span>
+  <p>—Mi cadena empieza con el agua. No con el maíz. El canal que el municipio quería controlar es el primer factor de producción de la cadena del maíz de mi mamá. Sin el canal, no hay riego. Sin riego, el maíz criollo no sobrevive el estiaje. Sin maíz, no hay masa. Sin masa, no hay tortillas. Y sin tortillas, la señora del molino y la dueña de la tortillería tampoco tienen qué procesar. El problema jurídico del canal es también un problema económico que afecta a tres eslabones de la cadena que están antes de que el producto llegue a ningún mercado.
+  </p>
+</div>
+
+<div class="presentacion-card">
+  <span class="equipo">Equipo 3 · María · Maíz criollo y tortilla · San Martín Tecuatitla</span>
+  <p><strong>Patrón identificado:</strong> "La productora recibe entre el 27% y el 36% del precio final de la tortilla. El mayor margen está en el eslabón de transformación (tortillería), no en el de producción. Y el agua que hace posible toda la cadena no tiene precio en el sistema: se disputa en un proceso legal que lleva dos semestres."</p>
+  <p><strong>Propuesta:</strong> "Cooperativa integrada de maíz y tortilla: productoras ejidales + señora del molino + dueña de la tortillería como socias. Producción, transformación y venta directa bajo una sola entidad. Precio al consumidor: igual o menor que ahora (22 pesos/kg). Precio a la productora: $14/kg en lugar de $6–8. El margen extra viene de eliminar la comisión del tianguis."</p>
+  <p><strong>Componente ambiental:</strong> "El maíz criollo no consume agua virtual de exportación. Sí consume el agua del canal. La propuesta requiere que el ejido gane el proceso legal actual. Sin el canal, no hay cooperativa posible."</p>
+  <p class="retro">Retroalimentación: Rodrigo preguntó cómo se repartirían las ganancias entre productoras, molinera y tortillera. María respondió que eso lo decidiría la asamblea de la cooperativa: el principio sería proporcional a las horas de trabajo aportadas. El Profe Ramírez anotó: única propuesta que conecta explícitamente CS-I (el canal) con CS-II (la cadena) y con CS-III (el agua).</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena V · La pregunta que nadie había hecho antes</span>
+
+<p>Después de la quinta presentación, el Profe Ramírez introdujo la pregunta de síntesis.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—En todas las cadenas que presentaron hoy apareció el mismo patrón con distintos nombres. ¿Alguien puede nombrarlo en una sola oración?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—Quien más trabaja y más arriesga recibe menos, porque tiene menos acceso a la información del precio final y menos poder de negociación colectiva.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—Y el segundo patrón: ¿quiénes están sistemáticamente del lado que menos recibe?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Fernanda</span>
+  <p>—Mujeres, principalmente. Rurales. Con menos acceso a organizaciones colectivas. En muchos casos de origen indígena o con lengua materna diferente al español jurídico y económico. Los más jóvenes o los más viejos: los que el mercado no ve como actores con poder.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Profe Ramírez</span>
+  <p>—¿Y por qué ese patrón se mantiene aunque existan instituciones que deberían resolverlo?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Ulises</span>
+  <p>—Porque las instituciones que deberían resolverlo no tienen incentivos para hacerlo, o no llegan, o llegan con lenguaje que solo entiende quien ya tiene acceso al sistema. Es el mismo argumento del semestre pasado pero aplicado al sistema económico en lugar del jurídico.</p>
+</div>
+
+<div class="recuadro">
+  <span class="label">Síntesis colectiva del salón 4-C · Semana 10 · Lo que todas las cadenas encontraron</span>
+  <p><strong>Patrón estructural:</strong> Asimetría de información + ausencia de organización colectiva + distribución desigual del trabajo invisible = concentración del valor en los eslabones cercanos al mercado final, independientemente del esfuerzo o el riesgo del productor primario.</p>
+  <p><strong>Interseccionalidad consistente:</strong> Las personas del lado que menos recibe comparten múltiples dimensiones de desigualdad que se refuerzan mutuamente: género + clase + etnia + territorio + edad.</p>
+  <p><strong>Límite de todas las propuestas:</strong> Ninguna propuesta económica alternativa resuelve por sí sola el problema de la sostenibilidad del territorio (agua, suelo, demografía). La propuesta más justa económicamente puede seguir siendo ambientalmente insostenible si el modelo de producción no cambia.</p>
+</div>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena VI · Miranda y lo que se lleva</span>
+
+<p>Miranda no fue al frente para su presentación. Habló desde su lugar, como siempre lo hacía cuando lo que iba a decir era más personal que académico.</p>
+
+<p>Su equipo había mapeado la cadena de las remesas: el dinero que los migrantes envían a sus familias y que en muchos casos es el ingreso más estable de la comunidad. Eso también era una cadena, con actores, márgenes y poder de negociación desigual: los servicios de transferencia de dinero cobran entre el 3% y el 8% de cada envío.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—La cadena de las remesas tiene la misma estructura que todas las demás: quien tiene menos opciones acepta los términos que le ofrecen. Un migrante que necesita mandar dinero a su familia esta semana no puede esperar a encontrar el servicio más barato: usa el que tiene disponible. Y el que tiene disponible cobra el doble que el promedio porque sabe que no hay alternativa en ese momento.</p>
+</div>
+
+<p>Su propuesta no era una cooperativa. Era un protocolo de información: que las comunidades con alta tasa de migración tengan acceso a comparadores de tarifas de remesas —existen en línea, son gratuitos— y que alguna persona de la comunidad se encargue de actualizarlo mensualmente, igual que la cartelera de apoyos que el equipo de Rodrigo propuso en CS-I.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Miranda</span>
+  <p>—Lo que me llevo de este semestre no es la solución a nada. Es el método. Sé cómo mapear una cadena. Sé identificar dónde está el poder y por qué. Sé nombrar quién absorbe los costos que el precio no incluye. Ese método no caduca. Lo voy a usar en el call center de Querétaro donde voy a trabajar, y lo voy a usar cuando entienda la cadena de valor del servicio al cliente que voy a dar.</p>
+</div>
+
+<p>Había algo que sonó a despedida. Rodrigo lo notó. María también.</p>
+
+
+<span class="separador">· · ·</span>
+
+
+<span class="escena-titulo">Escena VII · Yesenia y lo que se queda</span>
+
+<p>Al final, cuando las presentaciones habían terminado y el grupo empezaba a recoger sus cosas, Yesenia levantó la mano.</p>
+
+<p>En CS-I lo había hecho para hablar de su propio silencio como forma de exclusión. Era el momento más recordado del semestre anterior. Esta vez el salón sabía que si Yesenia levantaba la mano al final era porque tenía algo que decir que no cabía en ninguna actividad del cuadernillo.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Yesenia</span>
+  <p>—En CS-I dije que aprendí a hablar. Hoy quiero decir otra cosa. Estuve todo el semestre pensando si me iba o me quedaba. Mi hermana ya se fue. Mi prima también. Yo tenía decidido ir a la ciudad a estudiar enfermería cuando terminara el bachillerato.</p>
+</div>
+
+<p>El salón esperó.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Yesenia</span>
+  <p>—Pero este semestre aprendí algo que cambió la pregunta. No es: ¿me voy o me quedo? Es: ¿qué tiene que existir para que quedarme sea una decisión racional? Y resulta que hay respuesta. Una cooperativa de cuidados donde el trabajo que hago con mis hermanos sea trabajo reconocido. Una comunidad donde quienes se quedan tengan voz en cómo se organiza el territorio. Un sistema de salud que llegue sin que tenga que moverme. Esas cosas no existen todavía aquí. Pero ahora sé que son posibles porque tienen nombre y porque hay lugares donde están pasando.</p>
+</div>
+
+<p>Pausa.</p>
+
+<div class="dialogo-bloque">
+  <span class="hablante">Yesenia</span>
+  <p>—Todavía no sé si me voy o me quedo. Pero ya no es la misma pregunta de antes. Y eso, creo, es lo que debería hacer la educación: cambiar las preguntas, no darte las respuestas.</p>
+</div>
+
+<p>El salón guardó el silencio específico de cuando alguien dice algo que todos habían pensado sin saber que lo pensaban.</p>
+
+<p>El Profe Ramírez no dijo nada. Después de un momento, empezó a escribir lentamente en el pizarrón lo que Yesenia acababa de decir, con la letra compacta de los días importantes. No para evaluarla. Para que quedara.</p>
+
+<div class="pizarron">
+  "Lo que debería hacer la educación:<br>cambiar las preguntas, no darte las respuestas."<br>
+  <span style="color:#90e0ff;font-size:9pt;">— Yesenia · Salón 4-C · Semana 10</span>
+</div>
+
+<p class="fin-capitulo">Fin del Capítulo 7</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Sobre el Capítulo 7 de CS-II y su relación con el de CS-I</span>
+  <p>El Capítulo 7 de CS-II es deliberadamente paralelo al Capítulo 7 de CS-I: mismo formato de presentación, mismo semicírculo, mismas reglas, mismos mapas en la pared. Esa continuidad no es estética: es curricular. El grupo ve en la pared norte, superpuestos, los resultados de dos semestres de trabajo sobre el mismo territorio desde dos ángulos distintos. Los mapas de derechos de CS-I y las cadenas de valor de CS-II cuentan la misma historia con dos idiomas. El momento de Yesenia al final —que en CS-I fue sobre su silencio y en CS-II es sobre su decisión de quedarse o irse— muestra el arco completo del personaje: de quien no habla a quien formula la pregunta pedagógica más precisa del año.</p>
+</div>
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 7 · "El día de la cadena"<br>
+  Ciencias Sociales II · La Cadena Rota · Trilogía Raíz Digital · MCCEMS 2025
+</div>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 7 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

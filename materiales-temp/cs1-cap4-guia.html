@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 4 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · Capítulo 4 · Ciencias Sociales I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   CONTRASTE POLO A POLO
+   Fondo oscuro  → texto #ffffff (BLANCO)
+   Fondo claro   → texto #1a1208 (NEGRO)
+═══════════════════════════════════════════ */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+.raiz-cs1 {
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  background: #ffffff;
+  color: #1a1208;
+  font-size: 10pt;
+  line-height: 1.7;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 1.2cm 1.8cm;
+}
+
+
+/* PORTADILLA */
+.raiz-cs1 .portadilla {
+  min-height: 90vh; display: flex; flex-direction: column;
+  justify-content: space-between; padding: 1.5cm 0 1cm;
+  border-bottom: 3pt solid #1a4010; margin-bottom: 1cm; page-break-after: always;
+}
+
+.raiz-cs1 .col-label { font-size: 7pt; letter-spacing: 0.28em; text-transform: uppercase; color: #1a4010; margin-bottom: 0.8cm; line-height: 2; }
+
+.raiz-cs1 .port-titulo { font-size: 22pt; font-weight: 900; color: #1a1208; line-height: 1.1; margin-bottom: 0.2cm; }
+
+.raiz-cs1 .port-sub { font-size: 10pt; color: #1a4010; margin-bottom: 0.3cm; font-weight: 700; }
+
+.raiz-cs1 .port-cap { font-size: 8.5pt; color: #2e3820; font-style: italic; }
+
+
+/* AVISO: FONDO OSCURO → BLANCO */
+.raiz-cs1 .aviso-offline {
+  background: #0f2808;
+  color: #ffffff;          /* BLANCO */
+  padding: 0.55cm 0.85cm; font-size: 8.5pt; line-height: 1.65; margin: 0.8cm 0;
+}
+
+.raiz-cs1 .aviso-offline strong { color: #a0f060; }
+   /* verde muy claro sobre verde muy oscuro */
+
+/* info grid */
+.raiz-cs1 .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4cm; margin: 0.6cm 0; }
+
+.raiz-cs1 .info-cell { border: 1pt solid #5a8040; padding: 0.35cm 0.5cm; font-size: 8.5pt; color: #1a1208; }
+
+.raiz-cs1 .info-cell strong { display: block; font-size: 7pt; letter-spacing: 0.12em; text-transform: uppercase; color: #1a4010; margin-bottom: 0.1cm; }
+
+
+/* encabezados */
+.raiz-cs1 h2 { font-size: 12pt; font-weight: 900; color: #1a1208; margin: 1cm 0 0.3cm; padding-bottom: 0.2cm; border-bottom: 2pt solid #1a4010; page-break-after: avoid; }
+
+.raiz-cs1 h3 { font-size: 10pt; font-weight: 700; color: #1a4010; margin: 0.7cm 0 0.25cm; }
+
+.raiz-cs1 h4 { font-size: 9.5pt; font-weight: 700; color: #1a1208; margin: 0.4cm 0 0.15cm; }
+
+.raiz-cs1 p { margin-bottom: 0.45em; }
+
+
+/* PROPÓSITOS: FONDO OSCURO → BLANCO */
+.raiz-cs1 .proposito-row {
+  display: grid; grid-template-columns: 2.5cm 1fr 1fr; gap: 0;
+  border: 1pt solid #5a8040; margin-bottom: 0.35cm; overflow: hidden; font-size: 8.5pt;
+}
+
+.raiz-cs1 .pf-num-cell {
+  background: #0f2808;
+  color: #ffffff;           /* BLANCO */
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14pt; font-weight: 900; min-height: 2cm; flex-shrink: 0;
+}
+
+.raiz-cs1 .pf-desc { padding: 0.35cm 0.5cm; border-right: 1pt solid #5a8040; line-height: 1.5; color: #1a1208; }
+
+.raiz-cs1 .pf-contenidos { padding: 0.35cm 0.5cm; font-size: 8pt; color: #1a2810; line-height: 1.5; }
+
+
+/* SESIONES */
+.raiz-cs1 .sesion { border: 1pt solid #5a8040; margin: 0.6cm 0; overflow: hidden; page-break-inside: avoid; }
+
+/* encabezado sesión: verde claro (no oscuro) → texto MUY OSCURO */
+.raiz-cs1 .ses-header { background: #c8e8b0; padding: 0.3cm 0.6cm; display: flex; align-items: center; gap: 0.5cm; }
+
+/* número: FONDO OSCURO → BLANCO */
+.raiz-cs1 .ses-num {
+  background: #0f2808;
+  color: #ffffff;
+  width: 1.2cm; height: 1.2cm;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 10pt; flex-shrink: 0;
+}
+
+.raiz-cs1 .ses-info { flex: 1; }
+
+.raiz-cs1 .ses-titulo { font-size: 9.5pt; font-weight: 700; color: #0a1808; }
+  /* muy oscuro sobre verde claro */
+.raiz-cs1 .ses-meta { font-size: 7.5pt; color: #1a2810; }
+
+.raiz-cs1 .ses-tiempo { font-size: 7pt; letter-spacing: 0.1em; text-transform: uppercase; color: #0a2808; font-weight: 700; white-space: nowrap; }
+
+.raiz-cs1 .ses-body { padding: 0.45cm 0.6cm; font-size: 8.5pt; }
+
+
+/* tabla sesión: encabezado FONDO MEDIO → texto MUY OSCURO (no blanco, no verde oscuro) */
+.raiz-cs1 .tabla-sesion { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 0.3cm 0; }
+
+.raiz-cs1 .tabla-sesion th { background: #7ab860; color: #0a1808; padding: 0.2cm 0.4cm; text-align: left; font-size: 7pt; font-weight: 700; }
+
+.raiz-cs1 .tabla-sesion td { border: 0.5pt solid #8ac870; padding: 0.22cm 0.4cm; vertical-align: top; line-height: 1.5; color: #1a1208; }
+
+.raiz-cs1 .tiempo-col { width: 1.5cm; color: #0a2808; font-weight: 700; text-align: center; }
+
+
+/* ALTERNATIVAS: FONDO OSCURO → BLANCO */
+.raiz-cs1 .alt-bloque { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3cm; margin: 0.3cm 0; }
+
+.raiz-cs1 .alt-col { padding: 0.3cm 0.4cm; font-size: 8pt; line-height: 1.5; }
+
+.raiz-cs1 .alt-analog { background: #3a1400; color: #ffffff; border-left: 3pt solid #e09000; }
+
+.raiz-cs1 .alt-analog .label { color: #ffd070; }
+
+.raiz-cs1 .alt-digital { background: #0a2040; color: #ffffff; border-left: 3pt solid #60a8e0; }
+
+.raiz-cs1 .alt-digital .label { color: #90d0ff; }
+
+.raiz-cs1 .alt-col .label { font-size: 6.5pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; margin-bottom: 0.15cm; display: block; }
+
+
+/* ORIENTACIONES */
+.raiz-cs1 .orientacion {
+  background: #eef8e8; border: 1pt solid #5a8040; border-left: 3pt solid #1a4010;
+  padding: 0.4cm 0.6cm; margin: 0.4cm 0; font-size: 8.5pt; line-height: 1.65; color: #1a1208;
+}
+
+.raiz-cs1 .orientacion .label { font-size: 7pt; letter-spacing: 0.15em; text-transform: uppercase; color: #1a4010; font-weight: 700; display: block; margin-bottom: 0.2cm; }
+
+
+/* EVALUACIÓN */
+.raiz-cs1 .eval-item { display: grid; grid-template-columns: 3cm 1fr 2.5cm; gap: 0; border: 1pt solid #5a8040; margin-bottom: 0.25cm; font-size: 8pt; overflow: hidden; }
+
+/* tipo: verde claro → texto MUY OSCURO */
+.raiz-cs1 .ev-tipo { background: #c8e8b0; padding: 0.25cm 0.4cm; font-weight: 700; color: #0a1808; font-size: 7.5pt; display: flex; align-items: center; border-right: 1pt solid #5a8040; }
+
+.raiz-cs1 .ev-desc { padding: 0.25cm 0.4cm; border-right: 1pt solid #5a8040; line-height: 1.5; color: #1a1208; }
+
+.raiz-cs1 .ev-act { padding: 0.25cm 0.4cm; font-size: 7.5pt; color: #2a3820; font-style: italic; }
+
+
+/* TABLA TRANSVERSALIDAD: encabezado OSCURO → BLANCO */
+.raiz-cs1 table.transv { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 0.4cm 0; }
+
+.raiz-cs1 table.transv th { background: #0f2808; color: #ffffff; padding: 0.22cm 0.4cm; font-size: 7pt; font-weight: 700; text-align: left; }
+
+.raiz-cs1 table.transv td { border: 1pt solid #5a8040; padding: 0.22cm 0.4cm; vertical-align: top; line-height: 1.5; color: #1a1208; }
+
+.raiz-cs1 table.transv tr:nth-child(even) td { background: #eef8e8; }
+
+
+/* ADVERTENCIA: fondo amarillo claro → texto muy oscuro */
+.raiz-cs1 .advertencia {
+  background: #fff8d8; border: 1pt solid #b09030; border-left: 3pt solid #6b4000;
+  padding: 0.4cm 0.6cm; margin: 0.4cm 0; font-size: 8.5pt; color: #1a1208; line-height: 1.65;
+}
+
+.raiz-cs1 .advertencia .label { font-size: 7pt; letter-spacing: 0.15em; text-transform: uppercase; color: #6b4000; font-weight: 700; display: block; margin-bottom: 0.2cm; }
+
+
+/* PUENTE: FONDO OSCURO → BLANCO */
+.raiz-cs1 .puente-cap {
+  background: #0f2808;
+  color: #ffffff;
+  padding: 0.65cm 0.85cm; margin: 0.8cm 0; font-size: 8.5pt; line-height: 1.65;
+}
+
+.raiz-cs1 .puente-cap .label { font-size: 7pt; letter-spacing: 0.2em; text-transform: uppercase; color: #a0f060; display: block; margin-bottom: 0.3cm; font-weight: bold; }
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Guía Docente y Articulación Curricular · Ciencias Sociales I<br>Estado, ciudadanía y relaciones de poder · MCCEMS 2025 · DGETAYCM</div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 4 · "La diversidad que molesta"</div>
+    <div class="port-cap">Trilogía Raíz Digital · El Código del Ejido · Sesiones 7 y 8 · Semana 5</div>
+    <div class="aviso-offline">
+      <strong>Offline-First:</strong> Ninguna actividad de este capítulo requiere internet durante la clase. La tabla de avances y pendientes se construye con conocimiento previo del grupo; el docente puede enriquecerla con datos impresos con anticipación. El contrato del salón es el único "material" que necesita estar en la pared.
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><strong>Semestre / Semana</strong>Primero · CS-I · Semana 5</div>
+      <div class="info-cell"><strong>Sesiones</strong>7 y 8</div>
+      <div class="info-cell"><strong>Propósito activo</strong>PF-4 (central) · PF-1 al PF-3 (integración)</div>
+      <div class="info-cell"><strong>Contenidos nuevos</strong>Diversidad real vs. decorativa · Quién ocupa el espacio · Modificación democrática del contrato</div>
+      <div class="info-cell"><strong>Producto del capítulo</strong>Borrador de Carta de Acción Afirmativa + Ficha 4 del Mapa de Derechos</div>
+      <div class="info-cell"><strong>Hito curricular</strong>Cierre de los 4 propósitos formativos de CS-I. Inicio de la fase de presentación del Reto Central.</div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt; color:#2e3820; border-top:0.5pt solid #5a8040; padding-top:0.3cm; font-style:italic;">El Capítulo 4 cierra el arco conceptual de CS-I. El PF-4 no es el más fácil: toca dinámicas de poder dentro del propio salón. El docente necesita prepararse para facilitar conversaciones sobre quién habla y quién no, sin que se conviertan en acusaciones. La clave está en mantener el análisis estructural, no el personal.</p>
+</div>
+
+
+<!-- PROPÓSITOS -->
+<h2>1. Propósito Formativo Central · Capítulo 4</h2>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">4</div>
+  <div class="pf-desc">
+    <strong>PF-4:</strong> Discute y reconoce que la diversidad forma parte del espacio democrático.
+  </div>
+  <div class="pf-contenidos">
+    <strong>Contenidos activos en cap. 4:</strong><br>
+    · Inclusión e igualdad: adelantos y pendientes<br>
+    · Acciones afirmativas (aplicadas al salón y a la comunidad)<br>
+    · La edad como clave de discriminación (edadismo)<br>
+    · Accesos diferenciados y claves de exclusión social<br>
+    · Diversidad decorativa vs. diversidad real<br>
+    <span style="color:#1a4010; font-weight:700;">→ Integración PF-1 al PF-4: Borrador de Carta de Acción Afirmativa</span>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">Hilo conductor de los cuatro capítulos · Cierre conceptual</span>
+  El arco de CS-I completo: Cap. 1 → el Estado existe y opera en la vida cotidiana. Cap. 2 → las normas tienen jerarquías y no todas las voces las construyen igual. Cap. 3 → la exclusión tiene un patrón estructural, no es accidental. Cap. 4 → la diversidad real requiere modificar activamente quién habla y quién decide, no solo declarar que todos son bienvenidos. La Carta de Acción Afirmativa es el producto que integra los cuatro propósitos en un acto concreto de ciudadanía.
+</div>
+
+
+<!-- PLANEACIÓN -->
+<h2>2. Planeación Didáctica · Sesiones 7 y 8</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">7</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Primera hora · Historias de casa + quién ocupa el espacio + avances/pendientes</div>
+      <div class="ses-meta">PF-4 · Activación desde la experiencia personal + construcción colectiva de datos de exclusión</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recursos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">12 min</td>
+          <td><strong>Apertura</strong></td>
+          <td>Ronda de historias de casa (Act. 1). Máximo 3–4 historias compartidas. El docente anota los grupos que aparecen en el pizarrón. Pregunta clave: "¿Qué tienen en común las personas que firmaron sin entender?" No resolver: dejar la pregunta abierta.</td>
+          <td>Pizarrón · Cuadernillo Act. 1</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Quién ocupa el espacio</strong></td>
+          <td>Act. 2: los estudiantes escriben individualmente quién ha hablado más y por qué. No se socializa todavía. El docente dice: "Guarden esas observaciones. Las vamos a necesitar en la segunda hora." Tensión productiva.</td>
+          <td>Cuadernillo Act. 2</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Tabla avances/pendientes</strong></td>
+          <td>Act. 3 en equipos de 3. El docente circula y aporta datos cuando el grupo se queda sin información. Si hay datos locales disponibles (índice de rezago del municipio, datos de beca del plantel), se comparten en este momento.</td>
+          <td>Cuadernillo Act. 3 · datos impresos si disponibles</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">13 min</td>
+          <td><strong>Plenaria</strong></td>
+          <td>Cada equipo comparte su fila más sorprendente de la tabla. El docente sistematiza en el pizarrón: ¿los avances están en las leyes? ¿Los pendientes están en la realidad? ¿Qué falta para cruzar esa brecha?</td>
+          <td>Pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Cierre hora 1</strong></td>
+          <td>Pregunta puente: "¿Este salón es diverso? ¿De qué tipo?" No resolver. Anotar en el pizarrón para la segunda hora.</td>
+          <td>Pizarrón</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Sin datos locales</span>
+        La tabla funciona perfectamente con solo el conocimiento previo del grupo. Los datos nacionales (paridad, becas, discapacidad) están en el cuadernillo. El docente puede dictar los porcentajes clave si no hay copias suficientes.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Con conectividad eventual</span>
+        El índice de rezago social por municipio está en www.coneval.org.mx. Vale la pena descargarlo con anticipación e imprimirlo: es un dato de alto impacto para los estudiantes ver su propio municipio en la tabla nacional.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">8</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Segunda hora · Diversidad real + modificación del contrato + borradores</div>
+      <div class="ses-meta">PF-4 · Síntesis integradora · Producción del Borrador de Carta de Acción Afirmativa</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recursos</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">15 min</td>
+          <td><strong>Diversidad real</strong></td>
+          <td>Act. 4: lectura del fragmento + llenado de la tabla comparativa. Plenaria rápida: un ejemplo de cada columna por equipo. El docente ancla con la pregunta del capítulo: "¿El contrato de nuestro salón fue diversidad decorativa o real?" Uso de las observaciones guardadas de la Act. 2.</td>
+          <td>Cuadernillo Act. 4 · contrato pegado en la pared</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Modificación del contrato</strong></td>
+          <td>El grupo propone y vota modificaciones al contrato. El proceso mismo es el contenido: ¿quién propone? ¿el proceso incluye a quienes menos hablan? El docente facilita explícitamente que Yesenia u otros estudiantes silenciosos tengan turno de propuesta si quieren.</td>
+          <td>Contrato del salón (papel bond en la pared) · marcador</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Borrador de carta</strong></td>
+          <td>Act. 5 individual. El docente circula y hace preguntas para que las propuestas sean específicas: "¿Quién haría eso concretamente?" "¿En qué plazo?" "¿Qué ley lo respalda?" No se entrega hoy: es un borrador para revisar en casa.</td>
+          <td>Cuadernillo Act. 5</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Ficha 4 y cierre</strong></td>
+          <td>Act. 6: ficha integradora del Mapa de Derechos. El docente recuerda que el Capítulo 5 será la sesión de trabajo en el Reto Central y el Capítulo 6 profundizará en políticas públicas antes de las presentaciones.</td>
+          <td>Cuadernillo Act. 6 · fichas anteriores</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Cierre semestral parcial</strong></td>
+          <td>El docente pide que observen el mapa/croquis que construyeron durante las semanas. "¿Qué ven diferente ahora a cuando llegaron la semana 1?" Respuesta oral, libre, sin obligación de hablar.</td>
+          <td>Oral · fichas del mapa</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Modificación del contrato sin plataforma</span>
+        Tachar y reescribir directamente en el papel bond es pedagógicamente más potente que una versión digital: los estudiantes ven el palimpsesto, la historia de lo que se construyó y lo que cambió. No usar procesador de texto para esto.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Borrador de carta con dispositivo</span>
+        Si hay acceso a procesador de texto (celular, tablet), el borrador puede escribirse digitalmente desde el inicio. La versión final, sea cual sea el soporte, debe imprimirse para la presentación oral.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EVALUACIÓN -->
+<h2>3. Criterios de Evaluación Formativa · Capítulo 4</h2>
+
+<div class="eval-item">
+  <div class="ev-tipo">Quién ocupa el espacio</div>
+  <div class="ev-desc">¿El estudiante puede observar y nombrar dinámicas de participación desigual en su propio grupo sin caer en señalar personas sino estructuras? ¿Puede relacionarlo con el concepto de norma no escrita del Capítulo 2?</div>
+  <div class="ev-act">Actividad 2</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Tabla avances/pendientes</div>
+  <div class="ev-desc">¿El estudiante puede distinguir entre el reconocimiento legal de un derecho y su ejercicio efectivo? ¿Los pendientes que identifica son concretos y verificables, no solo genéricos ("falta voluntad")?</div>
+  <div class="ev-act">Actividad 3</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Diversidad real</div>
+  <div class="ev-desc">¿El estudiante puede aplicar la distinción decorativa/real a su propio salón con honestidad? ¿Puede proponer una modificación concreta al contrato social sin que el docente se la sugiera?</div>
+  <div class="ev-act">Actividades 2 y 4</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Borrador de carta</div>
+  <div class="ev-desc">¿La propuesta es específica (una acción concreta, un grupo beneficiario identificado, una institución responsable)? ¿Cita o hace referencia a alguna norma o derecho? ¿Es realista en el contexto de su comunidad?</div>
+  <div class="ev-act">Actividad 5</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Ficha 4 integradora</div>
+  <div class="ev-desc">¿La ficha 4 muestra una comprensión más sofisticada que la ficha 1? ¿El estudiante puede nombrar el patrón, identificar el grupo más afectado, señalar la institución responsable Y proponer una acción propia? Esas cuatro preguntas son los cuatro propósitos formativos en una sola ficha.</div>
+  <div class="ev-act">Actividad 6</div>
+</div>
+
+<div class="orientacion" style="margin-top:0.5cm;">
+  <span class="label">Progresión completa CS-I: lo que el Mapa de Derechos debe mostrar</span>
+  Ficha 1: "hay una situación en mi comunidad relacionada con el Estado." Ficha 2: "esa situación involucra normas escritas y no escritas en tensión." Ficha 3: "esa situación forma parte de un patrón de exclusión estructural." Ficha 4: "propongo una acción concreta para reducir esa exclusión y puedo argumentarla con normas y datos." Si las cuatro fichas muestran esa progresión, el estudiante ha transitado los cuatro propósitos formativos de CS-I con comprensión real.
+</div>
+
+
+<!-- ORIENTACIONES PEDAGÓGICAS -->
+<h2>4. Orientaciones Pedagógicas · Capítulo 4</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre "quién ocupa el espacio" sin que se convierta en denuncia</span>
+  Esta es la parte más delicada del capítulo. El riesgo es que la observación de Miranda (quién ha hablado y quién no) se convierta en señalar con el dedo a quienes han hablado mucho, generando culpa o defensividad. La clave está en mantener el análisis en el nivel estructural: "¿Qué normas (del salón, de las familias, de las comunidades de origen) producen estas dinámicas?" no "¿Por qué Ulises habla tanto?" El docente debe modelar ese lenguaje desde el inicio de la actividad.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la modificación del contrato social</span>
+  Cuando el grupo modifique su contrato, el proceso importa más que el resultado. Preste especial atención a si las personas que menos han hablado tienen un mecanismo real para proponer. Si el debate corre el riesgo de ser dominado por las mismas voces de siempre, el docente puede introducir una ronda de "solo hablan quienes no han hablado aún." Eso es una acción afirmativa en tiempo real, y puede nombrarse como tal.
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre el borrador de la Carta de Acción Afirmativa</span>
+  Las propuestas de los estudiantes deben ser específicas pero no deben ser perfectas en este punto. El borrador es un punto de partida: en el Capítulo 5 (sesión Flex C) el grupo tendrá tiempo de trabajar en el Reto Central y pulir las propuestas. Lo que el docente debe evitar es que los estudiantes escriban propuestas tan genéricas que no digan nada ("que haya más respeto") o tan ambiciosas que sean irrealizables ("cambiar la Constitución"). La pregunta orientadora es: ¿qué podría hacer esta institución concreta en los próximos seis meses?
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre estudiantes que revelan situaciones de exclusión graves</span>
+  En este capítulo, al hablar de grupos históricamente excluidos, puede que algún estudiante revele por primera vez situaciones de discriminación, violencia o exclusión que vive personalmente. El docente debe agradecer la confianza, registrar la situación con cuidado y orientar en privado si es necesario. En ningún caso debe pedirse a un estudiante que desarrolle más su historia personal en frente del grupo si no lo desea. El material de análisis puede ser el caso de los personajes del capítulo, no la vida del estudiante.
+</div>
+
+
+<!-- TRANSVERSALIDAD -->
+<h2>5. Articulación Curricular · Capítulo 4</h2>
+
+<table class="transv">
+  <thead><tr><th>Eje / Asignatura</th><th>Conexión con el Capítulo 4</th><th>Propuesta de trabajo colegiado</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Orientación Educativa</strong></td>
+      <td>El análisis de quién ocupa el espacio y la modificación del contrato del salón son contenidos propios de la formación socioemocional. El Capítulo 4 los trabaja desde las Ciencias Sociales.</td>
+      <td>Compartir los resultados del diagnóstico de participación (Act. 2) con el orientador. Puede ser insumo para un plan de convivencia escolar.</td>
+    </tr>
+    <tr>
+      <td><strong>Lengua y Comunicación</strong></td>
+      <td>El borrador de la Carta de Acción Afirmativa es el primer texto argumentativo formal del semestre. Requiere: tesis (la exclusión que identifico), argumentos (datos de las fichas), propuesta (la acción concreta) y destinatario (la institución).</td>
+      <td>Coordinar con Lengua para que trabajen la estructura del texto argumentativo formal (carta, exposición de motivos) mientras CS-I genera el contenido.</td>
+    </tr>
+    <tr>
+      <td><strong>CS-II (proyección)</strong></td>
+      <td>Las cuatro fichas del Mapa de Derechos son el puente a CS-II. La Ficha 4, específicamente, anticipa el análisis de las políticas públicas y las relaciones económicas que serán el eje de CS-II.</td>
+      <td>Si el docente de CS-II es diferente, compartir las fichas de los estudiantes como diagnóstico inicial para el segundo semestre.</td>
+    </tr>
+    <tr>
+      <td><strong>PAEC / Proyecto integrador</strong></td>
+      <td>La Carta de Acción Afirmativa puede convertirse en el producto de un proyecto integrador del PAEC si se coordina con otras asignaturas. El Reto Central de CS-I está diseñado para ser presentable ante autoridades reales (dirección, ayuntamiento, ejido).</td>
+      <td>Evaluar con la coordinación del PAEC si el Mapa de Derechos y la Carta pueden constituir el entregable de un proyecto integrador del semestre.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- MATERIALES -->
+<h2>6. Materiales · Capítulo 4</h2>
+
+<table class="transv">
+  <thead><tr><th>Material</th><th>Cantidad</th><th>Fuente / Preparación</th></tr></thead>
+  <tbody>
+    <tr><td>Capítulo 4 impreso</td><td>1 por estudiante o pareja</td><td>Imprimir / fotocopiar</td></tr>
+    <tr><td>Cuadernillo del Estudiante Cap. 4</td><td>1 por estudiante</td><td>Imprimir / fotocopiar</td></tr>
+    <tr><td>Fichas 1, 2 y 3 del Mapa de Derechos</td><td>Las propias del estudiante</td><td>El docente recuerda traerlas desde la sesión anterior</td></tr>
+    <tr><td>Contrato del salón (papel bond)</td><td>El original pegado en la pared</td><td>Permanece en el salón desde el Capítulo 2 — no retirarlo</td></tr>
+    <tr><td>Marcador adicional</td><td>1</td><td>Para tachar y reescribir normas durante la modificación del contrato</td></tr>
+    <tr><td>Datos locales opcionales</td><td>1 hoja impresa si disponible</td><td>Índice de rezago social del municipio: www.coneval.org.mx (descargar con anticipación)</td></tr>
+  </tbody>
+</table>
+
+
+<!-- PUENTE CAP 5 -->
+<div class="puente-cap">
+  <span class="label">Puente curricular → Capítulo 5 · Sesión Flex C + trabajo en Reto Central</span>
+  El Capítulo 5 ("El mapa tiene un nombre") corresponde a la Sesión Flex C del calendario semestral. No es un capítulo de contenido nuevo: es la sesión de trabajo colectivo donde los equipos construyen la versión final de su Mapa de Derechos y redactan la Carta de Acción Afirmativa. El capítulo narrativo acompaña ese proceso: María y el grupo preparan su presentación ante el ejido. Los cuatro propósitos formativos de CS-I quedan integrados en ese producto. Las sesiones 11 y 12 (Capítulo 6) introducirán los temas de CS-II (organización económica, relaciones de producción) como puente hacia el siguiente semestre.
+</div>
+
+<p style="font-size:7.5pt; color:#2e3820; border-top:0.5pt solid #5a8040; padding-top:0.4cm; margin-top:0.8cm; text-align:center;">
+  Guía Docente y Academia · Capítulo 4 · Ciencias Sociales I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 4 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 6 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · Capítulo 6 · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#1a1208;font-size:10pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+
+/* PORTADILLA */
+.raiz-cs1 .portadilla {min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #1a4010;margin-bottom:1cm;page-break-after:always;}
+
+.raiz-cs1 .col-label {font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#1a4010;margin-bottom:.8cm;line-height:2;}
+
+.raiz-cs1 .port-titulo {font-size:22pt;font-weight:900;color:#1a1208;line-height:1.1;margin-bottom:.2cm;}
+
+.raiz-cs1 .port-sub {font-size:10pt;color:#1a4010;margin-bottom:.3cm;font-weight:700;}
+
+.raiz-cs1 .port-cap {font-size:8.5pt;color:#2e3820;font-style:italic;}
+
+/* OSCURO → BLANCO */
+.raiz-cs1 .aviso-offline {background:#0f2808;color:#ffffff;padding:.55cm .85cm;font-size:8.5pt;line-height:1.65;margin:.8cm 0;}
+
+.raiz-cs1 .aviso-offline strong {color:#a0f060;}
+
+.raiz-cs1 .info-grid {display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.6cm 0;}
+
+.raiz-cs1 .info-cell {border:1pt solid #5a8040;padding:.35cm .5cm;font-size:8.5pt;color:#1a1208;}
+
+.raiz-cs1 .info-cell strong {display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#1a4010;margin-bottom:.1cm;}
+
+
+/* ENCABEZADOS */
+.raiz-cs1 h2 {font-size:12pt;font-weight:900;color:#1a1208;margin:1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #1a4010;page-break-after:avoid;}
+
+.raiz-cs1 h3 {font-size:10pt;font-weight:700;color:#1a4010;margin:.7cm 0 .25cm;}
+
+.raiz-cs1 h4 {font-size:9.5pt;font-weight:700;color:#1a1208;margin:.4cm 0 .15cm;}
+
+.raiz-cs1 p {margin-bottom:.45em;}
+
+
+/* PROPÓSITOS: OSCURO → BLANCO */
+.raiz-cs1 .proposito-row {display:grid;grid-template-columns:2.5cm 1fr 1fr;gap:0;border:1pt solid #5a8040;margin-bottom:.35cm;overflow:hidden;font-size:8.5pt;}
+
+.raiz-cs1 .pf-num-cell {background:#0f2808;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:900;min-height:2cm;flex-shrink:0;}
+
+.raiz-cs1 .pf-desc {padding:.35cm .5cm;border-right:1pt solid #5a8040;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 .pf-contenidos {padding:.35cm .5cm;font-size:8pt;color:#1a2810;line-height:1.5;}
+
+
+/* SESIONES */
+.raiz-cs1 .sesion {border:1pt solid #5a8040;margin:.6cm 0;overflow:hidden;page-break-inside:avoid;}
+
+/* ENCABEZADO SESIÓN: verde claro → negro */
+.raiz-cs1 .ses-header {background:#c8e8b0;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+
+/* NÚMERO: OSCURO → BLANCO */
+.raiz-cs1 .ses-num {background:#0f2808;color:#ffffff;width:1.2cm;height:1.2cm;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+
+.raiz-cs1 .ses-info {flex:1;}
+
+.raiz-cs1 .ses-titulo {font-size:9.5pt;font-weight:700;color:#0a1808;}
+
+.raiz-cs1 .ses-meta {font-size:7.5pt;color:#1a2810;}
+
+.raiz-cs1 .ses-tiempo {font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#0a2808;font-weight:700;white-space:nowrap;}
+
+.raiz-cs1 .ses-body {padding:.45cm .6cm;font-size:8.5pt;}
+
+
+/* TABLA SESIÓN: encabezado verde medio → negro */
+.raiz-cs1 .tabla-sesion {width:100%;border-collapse:collapse;font-size:8pt;margin:.3cm 0;}
+
+.raiz-cs1 .tabla-sesion th {background:#7ab860;color:#0a1808;padding:.2cm .4cm;text-align:left;font-size:7pt;font-weight:700;}
+
+.raiz-cs1 .tabla-sesion td {border:.5pt solid #8ac870;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 .tiempo-col {width:1.5cm;color:#0a2808;font-weight:700;text-align:center;}
+
+
+/* ALTERNATIVAS: OSCURO → BLANCO */
+.raiz-cs1 .alt-bloque {display:grid;grid-template-columns:1fr 1fr;gap:.3cm;margin:.3cm 0;}
+
+.raiz-cs1 .alt-col {padding:.3cm .4cm;font-size:8pt;line-height:1.5;}
+
+.raiz-cs1 .alt-analog {background:#3a1400;color:#ffffff;border-left:3pt solid #e09000;}
+
+.raiz-cs1 .alt-analog .label {color:#ffd070;}
+
+.raiz-cs1 .alt-digital {background:#0a2040;color:#ffffff;border-left:3pt solid #60a8e0;}
+
+.raiz-cs1 .alt-digital .label {color:#90d0ff;}
+
+.raiz-cs1 .alt-col .label {font-size:6.5pt;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:.15cm;display:block;}
+
+
+/* ORIENTACIONES: verde pálido → negro */
+.raiz-cs1 .orientacion {background:#eef8e8;border:1pt solid #5a8040;border-left:3pt solid #1a4010;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;line-height:1.65;color:#1a1208;}
+
+.raiz-cs1 .orientacion .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a4010;font-weight:700;display:block;margin-bottom:.2cm;}
+
+
+/* ADVERTENCIA: amarillo pálido → negro */
+.raiz-cs1 .advertencia {background:#fff8d8;border:1pt solid #b09030;border-left:3pt solid #6b4000;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;color:#1a1208;line-height:1.65;}
+
+.raiz-cs1 .advertencia .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b4000;font-weight:700;display:block;margin-bottom:.2cm;}
+
+
+/* EVALUACIÓN */
+.raiz-cs1 .eval-item {display:grid;grid-template-columns:3cm 1fr 2.5cm;gap:0;border:1pt solid #5a8040;margin-bottom:.25cm;font-size:8pt;overflow:hidden;}
+
+.raiz-cs1 .ev-tipo {background:#c8e8b0;padding:.25cm .4cm;font-weight:700;color:#0a1808;font-size:7.5pt;display:flex;align-items:center;border-right:1pt solid #5a8040;}
+
+.raiz-cs1 .ev-desc {padding:.25cm .4cm;border-right:1pt solid #5a8040;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 .ev-act {padding:.25cm .4cm;font-size:7.5pt;color:#2a3820;font-style:italic;}
+
+
+/* TABLA TRANSVERSALIDAD: OSCURO → BLANCO */
+.raiz-cs1 table.transv {width:100%;border-collapse:collapse;font-size:8pt;margin:.4cm 0;}
+
+.raiz-cs1 table.transv th {background:#0f2808;color:#ffffff;padding:.22cm .4cm;font-size:7pt;font-weight:700;text-align:left;}
+
+.raiz-cs1 table.transv td {border:1pt solid #5a8040;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 table.transv tr:nth-child(even) td {background:#eef8e8;}
+
+
+/* AFIRMACIÓN IA: azul oscuro → BLANCO */
+.raiz-cs1 .ia-ejemplo {background:#0a2040;color:#ffffff;border-left:4pt solid #60a8e0;padding:.5cm .7cm;margin:.4cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.65;}
+
+.raiz-cs1 .ia-ejemplo .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#90d0ff;margin-bottom:.3cm;display:block;font-weight:bold;}
+
+.raiz-cs1 .ia-ejemplo p {text-indent:0!important;margin-bottom:.3em;}
+
+.raiz-cs1 .ia-ejemplo .nota {font-size:7.5pt;color:#a8d0f8;border-top:.5pt solid #304060;margin-top:.3cm;padding-top:.2cm;}
+
+
+/* PUENTE: OSCURO → BLANCO */
+.raiz-cs1 .puente-cap {background:#0f2808;color:#ffffff;padding:.65cm .85cm;margin:.8cm 0;font-size:8.5pt;line-height:1.65;}
+
+.raiz-cs1 .puente-cap .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#a0f060;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Guía Docente y Articulación Curricular · Ciencias Sociales I<br>Estado, ciudadanía y relaciones de poder · MCCEMS 2025 · DGETAYCM</div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 6 · "Lo que el Estado ve y lo que no" · Puente hacia CS-II</div>
+    <div class="port-cap">Trilogía Raíz Digital · El Código del Ejido · Sesiones 11 y 12 · Semana 9</div>
+
+    <div class="aviso-offline">
+      <strong>Nota de planificación:</strong> Si el Wi-Fi falla el día de esta clase, úselo deliberadamente como apertura. El apagón digital es el mejor detonador de la reflexión sobre brecha digital. Los datos del INEGI están incluidos en el cuadernillo impreso. La afirmación de IA para el ejercicio de verificación (Act. 4) debe prepararse con anticipación y puede dictarse si no hay proyector.
+    </div>
+
+    <div class="info-grid">
+      <div class="info-cell"><strong>Sesiones / Semana</strong>11 y 12 · Semana 9</div>
+      <div class="info-cell"><strong>Propósitos activos</strong>PF-2 y PF-4 (extensión) + puente CS-II</div>
+      <div class="info-cell"><strong>Contenido nuevo</strong>Ciudadanía digital · Brecha digital · Verificación de IA · Cadena de valor (semilla)</div>
+      <div class="info-cell"><strong>Tono pedagógico</strong>Reflexivo, más lento que el taller. El Reto Central ya está construido. Este capítulo abre horizontes hacia el segundo semestre.</div>
+      <div class="info-cell"><strong>Producto</strong>Act. 6 (semilla CS-II) guardada en el portafolio del estudiante para entregar al docente de CS-II</div>
+      <div class="info-cell"><strong>Hito de semestre</strong>Último capítulo de contenido antes de las presentaciones del Cap. 7</div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt;color:#2e3820;border-top:.5pt solid #5a8040;padding-top:.3cm;font-style:italic;">El Capítulo 6 es el más reflexivo del semestre. Después de la intensidad del taller (Cap. 5), este capítulo permite que el grupo asienten lo aprendido antes de las presentaciones, amplíen el análisis de exclusión al mundo digital y reciban una primera mirada hacia CS-II sin que el docente tenga que hacer una introducción formal.</p>
+</div>
+
+
+<!-- PROPÓSITOS -->
+<h2>1. Propósitos Formativos · Capítulo 6 · Extensión y puente</h2>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">2</div>
+  <div class="pf-desc"><strong>PF-2 extendido:</strong> Analiza el devenir del concepto de ciudadanía para la conformación de un Estado democrático e incluyente.</div>
+  <div class="pf-contenidos">
+    <strong>Extensión cap. 6:</strong><br>
+    · Ciudadanía digital como dimensión contemporánea de la ciudadanía<br>
+    · El Estado de datos: qué puede medir, qué no puede ver<br>
+    · Políticas públicas diseñadas con datos incompletos<br>
+    <span style="color:#1a4010;font-weight:700;">→ Vínculo: los mapas de derechos como información que el Estado no tiene</span>
+  </div>
+</div>
+
+<div class="proposito-row">
+  <div class="pf-num-cell">4</div>
+  <div class="pf-desc"><strong>PF-4 extendido:</strong> Discute y reconoce que la diversidad forma parte del espacio democrático.</div>
+  <div class="pf-contenidos">
+    <strong>Extensión cap. 6:</strong><br>
+    · Brecha digital como forma de exclusión estructural análoga a las documentadas en el mapa<br>
+    · Acceso diferenciado a derechos según conectividad<br>
+    · Verificación crítica de fuentes como habilidad ciudadana<br>
+    <span style="color:#1a4010;font-weight:700;">→ Vínculo: los datos INEGI reflejan el mismo patrón de desigualdad del mapa</span>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">Por qué este capítulo es necesario antes de las presentaciones</span>
+  <p>Los mapas de derechos documentaron exclusiones del mundo físico-jurídico. El Cap. 6 añade la dimensión digital: el 40% de la población rural sin acceso estable a internet no puede ejercer los derechos digitales que el Estado ha migrado a plataformas en línea. Esa es exactamente la misma brecha que el grupo documentó con el canal de riego, el contrato de Coppel o la abuela sin acta de nacimiento. El patrón es idéntico; el territorio, diferente. Eso consolida la comprensión de la desigualdad estructural antes de que el grupo la presente públicamente en el Cap. 7.</p>
+</div>
+
+
+<!-- PLANEACIÓN -->
+<h2>2. Planeación Didáctica · Sesiones 11 y 12</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">11</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Primera hora · Ciudadanía digital + brecha + lo que el Estado no ve</div>
+      <div class="ses-meta">PF-2 y PF-4 extendidos · Acts. 1, 2 y 3 del cuadernillo · Construcción conceptual desde los datos</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">8 min</td>
+          <td><strong>Apertura</strong></td>
+          <td>Si es posible, el docente pide guardar todos los dispositivos antes de comenzar (simulación del apagón). Pregunta: "¿Qué derechos tienen en el mundo digital?" Act. 1 individual, 5 min. Sin buscar información. Recolectar 3–4 respuestas en voz alta.</td>
+          <td>Cuadernillo Act. 1</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Derechos digitales</strong></td>
+          <td>El docente o Miranda (en la narrativa) presenta los derechos digitales principales: protección de datos, privacidad, no discriminación algorítmica. Énfasis: existen desde 2010. ¿Por qué nadie los conoce? Conexión directa con las tres condiciones del Cap. 3.</td>
+          <td>Pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Brecha digital</strong></td>
+          <td>Act. 2: lectura del dato INEGI en cuadernillo. Conteo en tiempo real: ¿cuántos en el salón tienen internet estable en casa? El docente anota el número en el pizarrón. Equipos de 3 responden las preguntas. Plenaria: una propuesta de acción afirmativa por equipo.</td>
+          <td>Cuadernillo Act. 2 · pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Lo que el Estado no ve</strong></td>
+          <td>Act. 3: tabla individual, 10 min. Después debate: "¿Los mapas de derechos que construyeron podrían usarse como insumo para una política pública?" Esta pregunta conecta el Reto Central con la utilidad ciudadana real del trabajo del semestre. No hay respuesta única: el docente facilita el debate sin resolverlo.</td>
+          <td>Cuadernillo Act. 3 · pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">7 min</td>
+          <td><strong>Cierre sesión 11</strong></td>
+          <td>Pregunta puente para la siguiente hora: "Si la IA les hubiera dado información jurídica incorrecta durante el semestre, ¿cómo lo sabrían?" Dejar la pregunta sin responder. Anotar en pizarrón para retomar.</td>
+          <td>Pizarrón</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alt-bloque">
+      <div class="alt-col alt-analog">
+        <span class="label">Sin datos locales adicionales</span>
+        El dato INEGI incluido en el cuadernillo es suficiente. El conteo en tiempo real del salón ("¿cuántos tienen internet estable?") es más poderoso pedagógicamente que cualquier estadística nacional: convierte el dato abstracto en experiencia concreta del grupo.
+      </div>
+      <div class="alt-col alt-digital">
+        <span class="label">Con conectividad disponible</span>
+        El docente puede descargar con anticipación la tabla del INEGI filtrada por entidad federativa (www.inegi.org.mx, ENDUTIH 2023) e imprimirla para comparar el dato nacional con el dato local. También puede mostrar el portal de la Cámara de Diputados para el ejercicio de verificación de la sesión siguiente.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">12</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Segunda hora · Verificación de IA + comparación digital/físico + semilla CS-II</div>
+      <div class="ses-meta">Pensamiento crítico digital · Puente curricular · Acts. 4, 5 y 6 · Logística de presentaciones</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">20 min</td>
+          <td><strong>Verificación de IA</strong></td>
+          <td>Act. 4: el docente presenta la afirmación de IA preparada (ver abajo). El grupo verifica individualmente o en parejas usando el portal oficial. Plenaria: ¿es correcta, parcialmente correcta o falsa? ¿Por qué? El docente cierra con el protocolo completo y la conexión con "firmar sin leer".</td>
+          <td>Cuadernillo Act. 4 · afirmación preparada · portal Cámara de Diputados si hay conectividad</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>El mismo patrón digital</strong></td>
+          <td>Act. 5: tabla comparativa individual. El docente pide voluntarios para compartir una exclusión del mundo físico y su equivalente digital. ¿Son el mismo patrón? El docente no resuelve: el grupo decide.</td>
+          <td>Cuadernillo Act. 5</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">15 min</td>
+          <td><strong>Semilla de CS-II</strong></td>
+          <td>Act. 6: el docente introduce la cadena del aguacate con los datos de Ulises (32 pesos productor / 178 supermercado). "Antes de aprender economía: ¿por qué existe esa diferencia?" Los estudiantes responden con sentido común. El docente escribe la pregunta del pizarrón del Cap. 6 en el pizarrón real y la deja ahí.</td>
+          <td>Cuadernillo Act. 6 · pizarrón</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Cierre y logística</strong></td>
+          <td>Cierre del cuadernillo: reflexión final. El docente repasa la logística de las presentaciones (Cap. 7): fecha, formato (3 min + 2 min preguntas), qué llevar, orden de sorteo. ¿Alguien tiene dudas?</td>
+          <td>Cuadernillo · cierre · lista de equipos</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>La pregunta del pizarrón</strong></td>
+          <td>El docente no borra las tres preguntas del pizarrón: "¿Cuánto vale el trabajo de tu familia? ¿Quién decide ese valor? ¿Cómo se decide?" Las deja para que otros grupos las lean. Sale antes que los estudiantes, como en la narrativa.</td>
+          <td>Pizarrón · plumón permanente si es posible</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="ia-ejemplo">
+      <span class="label">Afirmación de IA para el ejercicio de verificación (Act. 4) · Preparar con anticipación</span>
+      <p>El docente puede usar esta afirmación (que es <strong>parcialmente incorrecta</strong>) o crear una propia:</p>
+      <p><em>"El Artículo 27 de la Ley Agraria establece que los ejidatarios tienen derecho a enajenar sus derechos parcelarios sin autorización de la asamblea ejidal, siempre que lo hagan a otros ejidatarios o al núcleo ejidal."</em></p>
+      <p>Lo que dice realmente: el Artículo 80 de la Ley Agraria regula la enajenación de derechos parcelarios, no el 27. El 27 trata sobre la asamblea ejidal. La afirmación mezcla dos artículos distintos y omite que la asamblea sí tiene participación en ciertos casos. Un error plausible que la IA podría generar.</p>
+      <p class="nota">Verificación: www.diputados.gob.mx → Leyes Federales → Ley Agraria → Arts. 27 y 80. Si no hay internet, el docente puede imprimir ambos artículos con anticipación para la consulta en clase.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- EVALUACIÓN -->
+<h2>3. Criterios de Evaluación Formativa · Capítulo 6</h2>
+
+<div class="eval-item">
+  <div class="ev-tipo">Brecha digital como exclusión</div>
+  <div class="ev-desc">¿El estudiante puede conectar la brecha digital con la desigualdad estructural documentada en los capítulos anteriores? ¿Usa los datos del INEGI para argumentar, no solo para citarlos?</div>
+  <div class="ev-act">Act. 2</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Lo que el Estado no ve</div>
+  <div class="ev-desc">¿El estudiante puede identificar qué información falta en los sistemas de datos del Estado para diseñar políticas que reduzcan la exclusión? ¿Puede conectar su propio mapa con ese vacío?</div>
+  <div class="ev-act">Act. 3</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Verificación de IA</div>
+  <div class="ev-desc">¿El estudiante aplica el protocolo de verificación con fuentes primarias reales? ¿Puede explicar por qué confiar en la IA sin verificar es análogo a firmar sin leer?</div>
+  <div class="ev-act">Act. 4</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">El mismo patrón digital</div>
+  <div class="ev-desc">¿El estudiante puede establecer la equivalencia entre la exclusión física del mapa y la exclusión digital, mostrando que operan con la misma lógica estructural?</div>
+  <div class="ev-act">Act. 5</div>
+</div>
+<div class="eval-item">
+  <div class="ev-tipo">Semilla CS-II</div>
+  <div class="ev-desc">¿El estudiante puede hacer hipótesis sobre la cadena de valor del aguacate con sentido común, antes de conocer el lenguaje económico formal? La calidad de esas hipótesis anticipa el nivel de análisis que traerá a CS-II.</div>
+  <div class="ev-act">Act. 6</div>
+</div>
+
+
+<!-- ORIENTACIONES PEDAGÓGICAS -->
+<h2>4. Orientaciones Pedagógicas · Capítulo 6</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre el apagón como recurso pedagógico</span>
+  <p>Si el Wi-Fi funciona el día de la clase, el docente puede simular el apagón pidiendo que se guarden todos los dispositivos durante los primeros 40 minutos. El efecto es poderoso: cuando los estudiantes no tienen el teléfono a la mano, la pregunta "¿qué derechos tienen en el mundo digital?" adquiere una urgencia diferente. La reconexión en la segunda mitad (para el ejercicio de verificación) también es pedagógica: ver el portal oficial de la Cámara de Diputados después de haber funcionado sin él refuerza el valor de las fuentes primarias.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la introducción a la cadena de valor</span>
+  <p>El docente no debe definir formalmente "cadena de valor" en este capítulo. Ese es un concepto de CS-II. Lo que se busca en la Act. 6 es que los estudiantes lleguen al segundo semestre habiendo pensado ya en el problema de distribución de la riqueza con sus propias palabras. La definición académica anclará mejor si el estudiante ya tiene una hipótesis propia que comparar. Si alguien pregunta "¿qué es una cadena de valor?", la respuesta del docente puede ser: "Eso lo definirán en CS-II. Por ahora, ¿cómo lo describirías tú con tus palabras?"</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la pregunta del pizarrón y el cierre del Profe Ramírez</span>
+  <p>La narrativa del capítulo termina con el Profe Ramírez escribiendo tres preguntas en el pizarrón y saliendo antes que los estudiantes. Si el docente puede reproducir ese gesto, vale hacerlo: escribir las preguntas con plumón permanente (o en papel bond pegado en la pared), salir de la clase y dejar que los estudiantes se vayan con las preguntas visibles. Los gestos pedagógicos inesperados son memorables. Las preguntas del pizarrón deben seguir ahí el día de las presentaciones (Cap. 7) y también el primer día de CS-II.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre la afirmación de IA en el ejercicio de verificación</span>
+  <p>El docente debe preparar la afirmación de IA con anticipación y verificar él mismo que sea parcialmente incorrecta o verificable. Lo importante no es "atrapar" a la IA en un error: es que los estudiantes experimenten el proceso de verificación antes de que les importe algo en la vida real. Si no puede prepararse una afirmación jurídica, puede usarse cualquier dato factual plausible pero incorrecto. La afirmación sugerida en esta guía (Arts. 27 y 80 de la Ley Agraria) está comprobada y es adecuada para este nivel.</p>
+</div>
+
+
+<!-- TRANSVERSALIDAD -->
+<h2>5. Articulación Curricular · Capítulo 6</h2>
+
+<table class="transv">
+  <thead><tr><th>Eje / Asignatura</th><th>Conexión con el Capítulo 6</th><th>Propuesta de trabajo colegiado</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Informática / TIC</strong></td>
+      <td>El protocolo de verificación de fuentes digitales y la discusión sobre IA son contenidos naturales de TIC. El ejercicio de verificación del Art. 80 de la Ley Agraria puede reproducirse en cualquier tema con fuentes oficiales.</td>
+      <td>Compartir el protocolo de verificación con el área de informática para que se refuerce durante el semestre. El ejercicio con el portal de la Cámara de Diputados puede reproducirse como práctica en laboratorio de cómputo.</td>
+    </tr>
+    <tr>
+      <td><strong>Ética y Valores</strong></td>
+      <td>El debate sobre el uso ético de la IA (¿cuándo es útil, cuándo es peligrosa sin verificación?) y la privacidad en internet son contenidos propios de formación ética. El Capítulo 6 los trabaja desde la perspectiva ciudadana.</td>
+      <td>Coordinar con Ética para ampliar el debate sobre privacidad digital y algoritmos durante el mismo semestre o el siguiente. El concepto de "producto gratuito donde el producto eres tú" es un excelente detonador de discusión ética.</td>
+    </tr>
+    <tr>
+      <td><strong>CS-II (puente central)</strong></td>
+      <td>La Act. 6 del cuadernillo (semilla de CS-II) es el producto más importante del capítulo para el puente curricular. Las hipótesis del estudiante sobre la cadena del aguacate son el diagnóstico de entrada de CS-II: muestran qué nivel de análisis económico trae el grupo al segundo semestre.</td>
+      <td>El docente de CS-II debe recibir las fichas de la Act. 6 de cada estudiante al inicio del segundo semestre. Si es el mismo docente, puede revisar los cuadernillos entre semestres. La cadena del aguacate de Ulises es el caso de apertura de CS-II recomendado.</td>
+    </tr>
+    <tr>
+      <td><strong>Módulos Agropecuarios</strong></td>
+      <td>La cadena de valor del aguacate conecta directamente con la economía de los módulos productivos del plantel. Los estudiantes de agropecuario probablemente tienen experiencia directa con alguna cadena de valor (nopal, maíz, maguey, ganado) que puede ser el caso de análisis de CS-II.</td>
+      <td>Preguntar a los docentes de módulos qué cultivos o productos maneja el plantel. CS-II puede usar esos datos reales como material de análisis en lugar de un caso genérico. El aguacate de Ulises puede sustituirse por el producto principal del plantel.</td>
+    </tr>
+    <tr>
+      <td><strong>Orientación Educativa</strong></td>
+      <td>La brecha digital afecta también las opciones de continuación educativa: muchas convocatorias universitarias y de becas de nivel superior solo están disponibles en línea. Orientación puede integrar este análisis en la orientación vocacional del grupo.</td>
+      <td>Compartir los datos de la Act. 2 con el orientador: ¿qué porcentaje del grupo tiene acceso digital estable para solicitar becas o convocatorias universitarias? Esa información puede activar apoyos del plantel o del municipio.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- MATERIALES -->
+<h2>6. Materiales · Capítulo 6</h2>
+
+<table class="transv">
+  <thead><tr><th>Material</th><th>Especificación</th><th>Fuente / Preparación</th></tr></thead>
+  <tbody>
+    <tr><td>Capítulo 6 (novela)</td><td>1 por estudiante o pareja</td><td>Imprimir antes de la semana 9</td></tr>
+    <tr><td>Cuadernillo Cap. 6</td><td>1 por estudiante</td><td>Incluye datos INEGI y protocolo de verificación. Fotocopiar.</td></tr>
+    <tr><td>Afirmación de IA para verificación</td><td>1 copia en el pizarrón o impresa</td><td>Preparada con anticipación por el docente. Usar la sugerida en esta guía o crear una equivalente. Verificar que sea comprobable con fuentes disponibles.</td></tr>
+    <tr><td>Artículos 27 y 80 de la Ley Agraria (impresos)</td><td>1 set por equipo de 4</td><td>Descargar de www.diputados.gob.mx con anticipación. Son 2 páginas. Necesarios solo si no hay conectividad el día de la clase.</td></tr>
+    <tr><td>Plumón permanente (opcional)</td><td>1</td><td>Para escribir las tres preguntas del pizarrón de forma que permanezcan visibles hasta el Cap. 7 y el inicio de CS-II.</td></tr>
+  </tbody>
+</table>
+
+
+<!-- PUENTE -->
+<div class="puente-cap">
+  <span class="label">Puente curricular → Capítulo 7 · "El día del mapa" · Semana 10 · Sesiones 13 y 14</span>
+  El Capítulo 7 es el día de presentaciones del Reto Central. El salón se configura como espacio público deliberativo: mapas en la pared, sillas en semicírculo, tres minutos por equipo más dos de preguntas. El docente recoge los portafolios completos (cartas individuales + cuadernillos 1–7 + mapa de equipo). La reflexión colectiva al final del Cap. 7 —sobre por qué el patrón persiste aunque existan las leyes— cierra el ciclo conceptual de los cuatro propósitos formativos de CS-I. El Cap. 8 (Flex D) será el cierre narrativo: sin contenido nuevo, solo reflexión y la carta de cada estudiante a su futuro yo.
+</div>
+
+<p style="font-size:7.5pt;color:#2e3820;border-top:.5pt solid #5a8040;padding-top:.4cm;margin-top:.8cm;text-align:center;">
+  Guía Docente y Academia · Capítulo 6 · Ciencias Sociales I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 6 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

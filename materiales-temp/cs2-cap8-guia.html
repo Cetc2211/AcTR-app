@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 8 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · CS-II · Capítulo 8 · Raíz II</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff; color: #0e0a1e;
+  font-size: 10pt; line-height: 1.7;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 1.5rem 0 1rem; border-bottom: 3pt solid #083840; margin-bottom: 1rem;
+}
+.raiz-digital .col-label {
+  font-size: 7pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #083840; margin-bottom: .8rem; line-height: 2; display: block;
+}
+.raiz-digital .port-titulo {
+  font-size: 22pt; font-weight: 900; color: #0e0a1e; line-height: 1.1; margin-bottom: .2rem; display: block;
+}
+.raiz-digital .port-sub { font-size: 10pt; color: #083840; margin-bottom: .3rem; font-weight: 700; display: block; }
+.raiz-digital .aviso {
+  background: #083840; color: #ffffff; padding: .55rem .85rem; font-size: 8.5pt; line-height: 1.65; margin: .8rem 0;
+}
+.raiz-digital .aviso strong { color: #b0f0d8; }
+.raiz-digital .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin: .6rem 0; }
+.raiz-digital .info-cell { border: 1pt solid #50a090; padding: .35rem .5rem; font-size: 8.5pt; }
+.raiz-digital .info-cell strong { display: block; font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: #083840; margin-bottom: .1rem; }
+.raiz-digital h2 { font-size: 12pt; font-weight: 900; color: #0e0a1e; margin: 1rem 0 .3rem; padding-bottom: .2rem; border-bottom: 2pt solid #083840; }
+.raiz-digital h3 { font-size: 10pt; font-weight: 700; color: #083840; margin: .7rem 0 .25rem; }
+.raiz-digital h4 { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; margin: .4rem 0 .15rem; }
+.raiz-digital p  { margin-bottom: .45em; font-size: 10pt; color: #0e0a1e; }
+/* SESIÓN FLEX */
+.raiz-digital .sesion { border: 1pt solid #50a090; margin: .6rem 0; overflow: hidden; }
+.raiz-digital .ses-header { background: #b8e8d8; padding: .3rem .6rem; display: flex; align-items: center; gap: .5rem; }
+.raiz-digital .ses-num { background: #083840; color: #ffffff; min-width: 2rem; min-height: 2rem; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10pt; flex-shrink: 0; }
+.raiz-digital .ses-info { flex: 1; }
+.raiz-digital .ses-titulo { font-size: 9.5pt; font-weight: 700; color: #041a18; }
+.raiz-digital .ses-meta  { font-size: 7.5pt; color: #0a2828; }
+.raiz-digital .ses-tiempo { font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; color: #041a18; font-weight: 700; white-space: nowrap; }
+.raiz-digital .ses-body  { padding: .45rem .6rem; font-size: 8.5pt; }
+.raiz-digital .t-ses { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .3rem 0; }
+.raiz-digital .t-ses th { background: #50a090; color: #041818; padding: .2rem .4rem; text-align: left; font-size: 7pt; font-weight: 700; }
+.raiz-digital .t-ses td { border: .5pt solid #60b8a8; padding: .22rem .4rem; vertical-align: top; line-height: 1.5; }
+.raiz-digital .tc { width: 1.5rem; color: #083840; font-weight: 700; text-align: center; }
+/* ORIENTACIONES */
+.raiz-digital .orientacion { background: #e8f8f4; border: 1pt solid #50a090; border-left: 3pt solid #083840; padding: .4rem .6rem; margin: .4rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .orientacion .label { font-size: 7pt; letter-spacing: .15em; text-transform: uppercase; color: #083840; font-weight: 700; display: block; margin-bottom: .2rem; }
+/* TABLA DEL ARCO ANUAL */
+.raiz-digital .t-arco { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .4rem 0; }
+.raiz-digital .t-arco th { background: #1a1060; color: #ffffff; padding: .22rem .4rem; font-size: 7.5pt; font-weight: 700; text-align: left; }
+.raiz-digital .t-arco td { border: 1pt solid #8080c0; padding: .22rem .4rem; vertical-align: top; line-height: 1.5; }
+.raiz-digital .t-arco tr:nth-child(even) td { background: #f0eef8; }
+.raiz-digital .t-arco .bloque td { background: #b8e8d8 !important; font-weight: 700; font-size: 7.5pt; color: #0a1808; }
+/* TRANSVERSALIDAD */
+.raiz-digital .t-transv { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .4rem 0; }
+.raiz-digital .t-transv th { background: #083840; color: #ffffff; padding: .22rem .4rem; font-size: 7pt; font-weight: 700; text-align: left; }
+.raiz-digital .t-transv td { border: 1pt solid #50a090; padding: .22rem .4rem; vertical-align: top; line-height: 1.5; }
+.raiz-digital .t-transv tr:nth-child(even) td { background: #e8f8f4; }
+/* COLOFÓN DOCENTE: cobre oscuro → BLANCO */
+.raiz-digital .colofon-doc { background: #5a2000; color: #ffffff; padding: .7rem 1rem; margin: 1rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .colofon-doc .label { font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase; color: #ffc890; display: block; margin-bottom: .3rem; font-weight: bold; }
+.raiz-digital .colofon-doc h3 { color: #ffffff; font-size: 10.5pt; margin: 0 0 .3rem; }
+.raiz-digital .colofon-doc p  { font-size: 9pt; line-height: 1.7; color: #f0d8b8; }
+/* PUENTE CS-III: cobre oscuro → BLANCO */
+.raiz-digital .puente-cs3 { background: #1a1060; color: #ffffff; padding: .65rem .85rem; margin: .8rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .puente-cs3 .label { font-size: 7pt; letter-spacing: .2em; text-transform: uppercase; color: #ffc090; display: block; margin-bottom: .3rem; font-weight: bold; }
+.raiz-digital .pie-pagina { font-size: 7.5pt; color: #1a3838; border-top: .5pt solid #50a090; padding-top: .4rem; margin-top: .8rem; text-align: center; }
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="col-label">Guía Docente y Articulación Curricular · CS-II · MCCEMS 2025 · DGETAYCM</span>
+  <span class="port-titulo">Guía Docente<br>y Academia</span>
+  <span class="port-sub">Capítulo 8 · "Raíz II" · Cierre de CS-II · Flex D · Semanas 11–12</span>
+  <span style="font-size:8.5pt;color:#1a3838;font-style:italic;display:block;">Trilogía Raíz Digital · La Cadena Rota · Capítulo Final</span>
+  <div class="aviso">
+    <strong>Capítulo sin estructura rígida.</strong> El Flex D es el espacio de cierre del año escolar. No hay contenido nuevo, no hay evaluación, no hay rúbrica. Lo que el docente necesita para este capítulo es disponibilidad, silencio y la capacidad de escuchar lo que el grupo quiera decir después de dos semestres trabajando juntos.
+  </div>
+  <div class="info-grid">
+    <div class="info-cell"><strong>Sesiones / Semana</strong>Flex D · Semanas 11–12</div>
+    <div class="info-cell"><strong>Propósito</strong>Síntesis integradora del año · Carta al futuro yo de CS-III · Puente explícito al tercer semestre</div>
+    <div class="info-cell"><strong>Acción previa clave</strong>Guardar las cartas del Cap. 7 en sobres cerrados y escribir el nombre de cada estudiante en el exterior. Traerlas a este Flex D.</div>
+    <div class="info-cell"><strong>Hito físico</strong>La quinta pregunta se escribe con plumón permanente en el pizarrón y permanece visible hasta el inicio de CS-III.</div>
+    <div class="info-cell"><strong>Materiales a entregar</strong>Al docente de CS-III: portafolios completos + semillas CS-III del Cap. 6 + cartas al futuro yo del Cap. 8.</div>
+    <div class="info-cell"><strong>Rol docente</strong>Escuchar más que hablar. Facilitar sin dirigir. Proteger el silencio generativo.</div>
+  </div>
+</div>
+
+
+<h2>1. Cómo Facilitar el Flex D de Cierre del Año</h2>
+
+<div class="orientacion">
+  <span class="label">Principios del cierre anual · Más exigentes que los del cierre semestral</span>
+  <p>El Flex D de CS-II no es solo el cierre del segundo semestre: es el cierre del año escolar de Ciencias Sociales. El grupo lleva dos semestres de trabajo acumulado. Ese peso merece un espacio de cierre más amplio que el Flex D de CS-I. La sesión debe organizarse en tres bloques: devolución de las cartas del Cap. 7 + lectura y conversación (15 min), escritura de la carta al futuro yo de CS-III (25 min), y espacio abierto + quinta pregunta del pizarrón (20 min). Si hay tiempo, la comparación del arco anual en la tabla del cuadernillo puede hacerse en la sesión o como tarea final.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la devolución de las cartas del Capítulo 7</span>
+  <p>Las cartas se guardaron en el Cap. 7 con el compromiso de devolverlas en el Flex D. El gesto de devolver algo que el estudiante escribió para sí mismo —ahora sellado en un sobre con su propio nombre— es el acto pedagógico más sencillo y más poderoso del año. No necesita explicación: simplemente se hace.</p>
+</div>
+
+
+<h2>2. Planeación del Flex D · Una o Dos Sesiones</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">F</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Sesión Flex D · Cierre del año escolar de CS · 60 minutos</div>
+      <div class="ses-meta">Si hay dos sesiones, la primera para la carta y el arco anual; la segunda para el espacio abierto y la quinta pregunta.</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tc">15 min</td>
+          <td><strong>Cartas + conversación</strong></td>
+          <td>El docente entrega los sobres del Cap. 7. Cinco minutos de lectura silenciosa. Pregunta: "¿Alguien quiere compartir algo de lo que escribió y que resultó cierto?" El docente escucha sin evaluar. Deja que el silencio entre respuestas dure lo que tenga que durar.</td>
+        </tr>
+        <tr>
+          <td class="tc">5 min</td>
+          <td><strong>Las tres oraciones del año</strong></td>
+          <td>El docente pide que el grupo responda en tres oraciones: "Si tuvieran que explicarle a alguien que no ha estudiado nada de esto lo que aprendieron en dos semestres, ¿qué dirían?" Tres voluntarios. Sin corrección. Sin aplausos inmediatos.</td>
+        </tr>
+        <tr>
+          <td class="tc">25 min</td>
+          <td><strong>Carta al futuro yo de CS-III</strong></td>
+          <td>Cuadernillo: carta al futuro yo. El docente guarda silencio absoluto mientras todos escriben. Si alguien termina antes, puede releer la carta del Cap. 7 o continuar en su cuaderno. No llenar el silencio con instrucciones adicionales.</td>
+        </tr>
+        <tr>
+          <td class="tc">10 min</td>
+          <td><strong>Espacio abierto</strong></td>
+          <td>El docente invita a quien quiera a decir algo que no haya dicho en el año. Sin obligación, sin estructura. Si alguien habla, el docente escucha sin comentar. Si nadie habla, el silencio también es una forma de cierre válida.</td>
+        </tr>
+        <tr>
+          <td class="tc">5 min</td>
+          <td><strong>La quinta pregunta</strong></td>
+          <td>El docente va al pizarrón. Escribe la quinta pregunta con plumón permanente. La escribe de espaldas al grupo, despacio, sin decir lo que está escribiendo. Cuando termina, deja el marcador, recoge la bolsa y sale. El grupo se queda con las cinco preguntas, las dos capas de mapas en la pared y el año completo como evidencia.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<h2>3. Síntesis Curricular · Arco Completo CS-I + CS-II</h2>
+<p style="font-size:9pt;margin-bottom:.4rem;">Esta tabla es para el docente: el mapa completo de los dos años de Ciencias Sociales como un arco integrado. Útil para la entrega al docente de CS-III.</p>
+
+<table class="t-arco">
+  <thead><tr><th>Semestre</th><th>Título</th><th>Pregunta central</th><th>Concepto integrador</th><th>Producto de cierre</th></tr></thead>
+  <tbody>
+    <tr class="bloque"><td colspan="5">Ciencias Sociales I · El Código del Ejido · Estado, ciudadanía y relaciones de poder</td></tr>
+    <tr><td>CS-I</td><td>El Código del Ejido</td><td>¿Quién tiene el papel? ¿Quién queda fuera del sistema jurídico y por qué?</td><td>El Estado opera a través de textos. Los derechos se conocen, se entienden y se ejercen.</td><td>Mapa de Derechos + Carta de Acción Afirmativa</td></tr>
+    <tr class="bloque"><td colspan="5">Ciencias Sociales II · La Cadena Rota · Organización, relaciones económicas y sociales</td></tr>
+    <tr><td>CS-II</td><td>La Cadena Rota</td><td>¿Quién tiene el dinero? ¿Cómo se distribuye el valor y quién queda fuera de la distribución?</td><td>El mercado opera a través de cadenas de valor. La asimetría de información y la falta de organización colectiva concentran el valor en los eslabones con más poder.</td><td>Diagnóstico de Cadena de Valor + Propuesta de Distribución Justa</td></tr>
+    <tr class="bloque"><td colspan="5">Ciencias Sociales III · Generación Raíz · Las dinámicas de la realidad actual (pendiente)</td></tr>
+    <tr><td>CS-III</td><td>Generación Raíz</td><td>¿Qué pasa cuando el territorio ya no puede sostener ninguna decisión económica o jurídica?</td><td>Los límites del planeta son el techo de cualquier propuesta humana. La sostenibilidad requiere repensar la relación sociedad-naturaleza.</td><td>Pendiente</td></tr>
+  </tbody>
+</table>
+
+
+<h2>4. Orientaciones Pedagógicas · Capítulo 8 CS-II</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre el aprendizaje irreversible al final del año</span>
+  <p>Al final de dos semestres, el indicador más poderoso de aprendizaje irreversible no es lo que el estudiante puede repetir de memoria, sino lo que puede aplicar espontáneamente a una situación nueva. María que detecta en el canal de riego un problema jurídico + económico + ambiental simultáneamente. Ulises que sabe exactamente qué datos llevar a una conversación sobre cooperativas. Yesenia que reformula la pregunta de su propio futuro usando vocabulario de capacidades. Esas no son respuestas correctas en una prueba: son indicadores de que el aprendizaje se integró al modo de ver el mundo.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la entrega al docente de CS-III</span>
+  <p>Los materiales que el docente de CS-III necesita recibir son: los portafolios completos de CS-II (cinco fichas + cuadernillos), las semillas CS-III del Capítulo 6 (las tres preguntas que cada estudiante escribió para el tercer semestre), y las cartas al futuro yo del Capítulo 8. Con esos tres elementos, el docente de CS-III tiene: un diagnóstico del nivel de análisis del grupo, las preguntas que el grupo ya tiene sobre CS-III antes de empezarlo, y una carta personal de cada estudiante que puede devolver al final de CS-III como cierre del arco de tres semestres. Si es el mismo docente, revisar los materiales entre semestres y usarlos para abrir la primera clase de CS-III.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre los mapas y las cadenas en la pared al final del año</span>
+  <p>Al terminar el año escolar, el docente debe preguntar al grupo qué hacer con los dos capas de mapas en la pared norte. Las opciones son las mismas que al final de CS-I: quedarse, llevarse, fotografiar y retirar. Lo que no es adecuado es retirarlos sin preguntar. Si el espacio del salón lo permite, dejar los materiales durante CS-III convierte el aula en un archivo vivo del trabajo de tres semestres.</p>
+</div>
+
+
+<h2>5. Articulación Curricular · Cierre del Año</h2>
+
+<table class="t-transv">
+  <thead><tr><th>Conexión</th><th>Lo que se transfiere</th><th>Acción recomendada</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>CS-III (entrega curricular)</strong></td>
+      <td>Portafolios completos CS-II + semillas CS-III + cartas al futuro yo + resumen del docente sobre el nivel de análisis del grupo.</td>
+      <td>Entregar al docente de CS-III en la primera semana del tercer semestre. Si es el mismo docente, revisar durante el período intersemestral.</td>
+    </tr>
+    <tr>
+      <td><strong>Orientación Educativa</strong></td>
+      <td>El arco de dos semestres produjo cambios en la participación, la voz y la confianza de algunos estudiantes (Yesenia como caso más visible). Esos cambios son información relevante para el plan de convivencia y seguimiento del tercer semestre.</td>
+      <td>Compartir con orientación un resumen del arco de participación del grupo: qué voces crecieron, cuáles necesitan seguimiento, qué situaciones personales (como el conflicto trabajo/educación de Miranda) deben monitorearse.</td>
+    </tr>
+    <tr>
+      <td><strong>Dirección del plantel</strong></td>
+      <td>Las propuestas del Reto Central que son aplicables al plantel (modelo cooperativo para módulo productivo, protocolo de precios para feria escolar, cartelera de apoyos) quedan como insumo para el siguiente ciclo.</td>
+      <td>Documentar las propuestas aplicables al plantel y entregarlas a la dirección con el nombre del equipo que las generó. Eso cierra el ciclo: el aprendizaje produjo algo que existe en el mundo real del plantel.</td>
+    </tr>
+    <tr>
+      <td><strong>Comunidades de procedencia</strong></td>
+      <td>Los estudiantes han llevado a sus casas vocabulario económico (cadena de valor, asimetría de información, trabajo de cuidados, externalidades) que sus familias no tenían. Ese efecto de difusión es silencioso pero real.</td>
+      <td>No hay acción institucional posible aquí. Solo el reconocimiento de que el aprendizaje no se queda en el salón.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<div class="colofon-doc">
+  <span class="label">Nota final para el personal docente que facilitó el año completo</span>
+  <h3>Lo que el grupo construyó en dos semestres</h3>
+  <p>Durante CS-I y CS-II, el grupo transitó de "el sistema es así y punto" a "el sistema es una organización social construida históricamente que puede organizarse de otra manera". Ese tránsito —dieciséis capítulos, ocho cuadernillos por semestre, un mapa de derechos, un diagnóstico de cadena de valor, dos propuestas concretas, una visita de Doña Esperanza, dieciséis cartas al futuro yo— no se produjo solo. Requirió un docente que hiciera exactamente lo que Yesenia describió: cambiar las preguntas sin dar las respuestas. El tercer semestre empieza donde el segundo terminó: con cinco preguntas en el pizarrón y un grupo que sabe cómo usarlas.</p>
+</div>
+
+<div class="puente-cs3">
+  <span class="label">Puente definitivo → CS-III · Generación Raíz · Las dinámicas de la realidad actual</span>
+  CS-III abre donde CS-II cerró: con la quinta pregunta del pizarrón. El docente de CS-III puede iniciar el primer día preguntando si alguien recuerda qué había en su carta al futuro yo, o qué respondió a la quinta pregunta antes de empezar CS-III. Esa continuidad explícita convierte los tres semestres en un arco y no en tres materias separadas. Los personajes de la trilogía continúan en la narrativa de CS-III: ahora como actores que entienden el sistema jurídico y el económico, y que se enfrentan a los límites de ambos cuando el territorio que los sostiene empieza a dar señales de agotamiento.
+</div>
+
+<p class="pie-pagina">
+  Guía Docente · Capítulo 8 · "Raíz II" · Ciencias Sociales II · La Cadena Rota<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 8 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;
+&#9553;  &#169; 2025 Letras Necias &#183; Todos los derechos reservados               &#9553;
+&#9553;  www.letrasnecias.com &#183; contacto@letrasnecias.com                   &#9553;
+&#9553;  Trilog&#237;a Ra&#237;z Digital &#183; CS-III &#183; Gu&#237;a Docente &#183; Cap&#237;tulo 6         &#9553;
+&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;
+-->
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="&#169; 2025 Letras Necias. Todos los derechos reservados.">
+<title>Gu&#237;a Docente &#183; CS-III &#183; Cap. 6 &#183; Redes, resistencias y ra&#237;ces &#183; Letras Necias</title>
+</head>
+<body>
+<style>
+/*
+ * © 2025 Letras Necias · www.letrasnecias.com
+ * CS-III · Guía Docente · Capítulo 6 · Clase: .raiz-cs3
+ */
+.raiz-cs3{font-family:Arial,Helvetica,sans-serif;background:#ffffff;color:#0e1a14;font-size:10pt;line-height:1.7;max-width:min(960px,100%);margin:0 auto;padding:1.2rem 1.8rem;box-sizing:border-box;}
+.raiz-cs3 *,.raiz-cs3 *::before,.raiz-cs3 *::after{box-sizing:border-box;margin:0;padding:0;}
+.raiz-cs3 .portadilla{padding:1.5rem 0 1rem;border-bottom:3pt solid #0a5040;margin-bottom:1rem;}
+.raiz-cs3 .col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#0a5040;margin-bottom:.8rem;line-height:2;display:block;}
+.raiz-cs3 .port-titulo{font-size:22pt;font-weight:900;color:#0e1a14;line-height:1.1;margin-bottom:.2rem;display:block;}
+.raiz-cs3 .port-sub{font-size:10pt;color:#0a5040;margin-bottom:.3rem;font-weight:700;display:block;}
+.raiz-cs3 .aviso{background:#0a5040;color:#ffffff;padding:.55rem .85rem;font-size:8.5pt;line-height:1.65;margin:.8rem 0;}
+.raiz-cs3 .aviso strong{color:#a0f0d0;}
+.raiz-cs3 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin:.6rem 0;}
+.raiz-cs3 .info-cell{border:1pt solid #4a9070;padding:.35rem .5rem;font-size:8.5pt;}
+.raiz-cs3 .info-cell strong{display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#0a5040;margin-bottom:.1rem;}
+.raiz-cs3 h2{font-size:12pt;font-weight:900;color:#0e1a14;margin:1rem 0 .3rem;padding-bottom:.2rem;border-bottom:2pt solid #0a5040;}
+.raiz-cs3 h3{font-size:10pt;font-weight:700;color:#0a5040;margin:.7rem 0 .25rem;}
+.raiz-cs3 p{margin-bottom:.45em;font-size:10pt;color:#0e1a14;}
+.raiz-cs3 .prop-rows{display:flex;flex-direction:column;gap:.35rem;margin-bottom:.8rem;}
+.raiz-cs3 .prop-row{display:grid;grid-template-columns:3rem 1fr 1fr;border:1pt solid #4a9070;overflow:hidden;font-size:8.5pt;}
+.raiz-cs3 .pf-num{background:#1a2830;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:900;min-height:3rem;min-width:3rem;flex-shrink:0;}
+.raiz-cs3 .pf-desc{padding:.35rem .5rem;border-right:1pt solid #4a9070;line-height:1.5;}
+.raiz-cs3 .pf-cont{padding:.35rem .5rem;font-size:8pt;color:#0a2818;line-height:1.5;}
+.raiz-cs3 .sesion{border:1pt solid #4a9070;margin:.6rem 0;overflow:hidden;}
+.raiz-cs3 .ses-header{background:#c8e8d0;padding:.3rem .6rem;display:flex;align-items:center;gap:.5rem;}
+.raiz-cs3 .ses-num{background:#0a5040;color:#ffffff;min-width:2rem;min-height:2rem;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+.raiz-cs3 .ses-info{flex:1;}
+.raiz-cs3 .ses-titulo{font-size:9.5pt;font-weight:700;color:#082818;}
+.raiz-cs3 .ses-meta{font-size:7.5pt;color:#0a2818;}
+.raiz-cs3 .ses-tiempo{font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#082818;font-weight:700;white-space:nowrap;}
+.raiz-cs3 .ses-body{padding:.45rem .6rem;font-size:8.5pt;}
+.raiz-cs3 .t-ses{width:100%;border-collapse:collapse;font-size:8pt;margin:.3rem 0;}
+.raiz-cs3 .t-ses th{background:#4a9070;color:#0a1808;padding:.2rem .4rem;text-align:left;font-size:7pt;font-weight:700;}
+.raiz-cs3 .t-ses td{border:.5pt solid #4a9070;padding:.22rem .4rem;vertical-align:top;line-height:1.5;}
+.raiz-cs3 .tc{width:1.5rem;color:#0a5040;font-weight:700;text-align:center;}
+.raiz-cs3 .orientacion{background:#e8f4ec;border:1pt solid #4a9070;border-left:3pt solid #0a5040;padding:.4rem .6rem;margin:.4rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .orientacion .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#0a5040;font-weight:700;display:block;margin-bottom:.2rem;}
+.raiz-cs3 .advertencia{background:#fff8e8;border:1pt solid #c07820;border-left:3pt solid #c03010;padding:.4rem .6rem;margin:.4rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .advertencia .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#c03010;font-weight:700;display:block;margin-bottom:.2rem;}
+/* PROTOCOLO CAP 7 */
+.raiz-cs3 .protocolo-cap7{background:#1a2830;color:#ffffff;padding:.8rem 1rem;margin:.8rem 0;}
+.raiz-cs3 .protocolo-cap7 .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.4rem;font-weight:bold;}
+.raiz-cs3 .protocolo-cap7 h3{color:#ffffff;font-size:11pt;margin:0 0 .6rem;font-family:Arial,sans-serif;}
+.raiz-cs3 .proto-item{border-left:2pt solid #0a5040;padding-left:.7rem;margin:.5rem 0;font-size:8.5pt;color:rgba(245,237,224,.85);}
+.raiz-cs3 .proto-label{font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#60c8a0;display:block;margin-bottom:.15rem;font-weight:bold;}
+.raiz-cs3 .ev-item{display:grid;grid-template-columns:3.5rem 1fr 2.5rem;border:1pt solid #4a9070;margin-bottom:.25rem;font-size:8pt;overflow:hidden;}
+.raiz-cs3 .ev-tipo{background:#c8e8d0;padding:.25rem .4rem;font-weight:700;color:#082818;font-size:7.5pt;display:flex;align-items:center;border-right:1pt solid #4a9070;}
+.raiz-cs3 .ev-desc{padding:.25rem .4rem;border-right:1pt solid #4a9070;line-height:1.5;}
+.raiz-cs3 .ev-act{padding:.25rem .4rem;font-size:7.5pt;color:#0a2818;font-style:italic;}
+.raiz-cs3 .rubrica-preview{width:100%;border-collapse:collapse;font-size:8pt;margin:.5rem 0;}
+.raiz-cs3 .rubrica-preview th{background:#0a5040;color:#ffffff;padding:.28rem .4rem;font-size:7pt;font-weight:700;text-align:left;}
+.raiz-cs3 .rubrica-preview td{border:1pt solid #4a9070;padding:.3rem .4rem;vertical-align:top;line-height:1.5;}
+.raiz-cs3 .rubrica-preview tr:nth-child(even) td{background:#eef7f2;}
+.raiz-cs3 .puente{background:#1a2830;color:#ffffff;padding:.65rem .85rem;margin:.8rem 0;font-size:8.5pt;line-height:1.65;}
+.raiz-cs3 .puente .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.3rem;font-weight:bold;}
+.raiz-cs3 .ln-firma{margin-top:2.5rem;padding:1rem 0 .5rem;border-top:2pt solid #1a2830;font-family:Arial,sans-serif;font-size:8pt;color:#1a2830;text-align:center;line-height:2;}
+.raiz-cs3 .ln-logotipo{line-height:1.05;margin-bottom:.55rem;}
+.raiz-cs3 .ln-letras{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#3d2d1e;letter-spacing:.01em;}
+.raiz-cs3 .ln-necias{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#7a1818;letter-spacing:.01em;}
+.raiz-cs3 .ln-contacto{font-size:8.5pt;color:#3d2d1e;margin-bottom:.35rem;line-height:1.8;}
+.raiz-cs3 .ln-contacto a{color:#7a1818;text-decoration:none;font-weight:700;}
+.raiz-cs3 .ln-derechos{font-size:7pt;color:#5a4030;line-height:1.65;max-width:560px;margin:0 auto;display:block;}
+</style>
+
+<div class="raiz-cs3">
+
+<div class="portadilla">
+  <span class="col-label">Gu&#237;a Docente &#183; Ciencias Sociales III &#183; MCCEMS 2025 &#183; DGETAYCM &#183; Letras Necias</span>
+  <span class="port-titulo">Gu&#237;a Docente<br>y Academia</span>
+  <span class="port-sub">Cap&#237;tulo 6 &#183; "Redes, resistencias y ra&#237;ces" &#183; PF-3 cierre &#183; Ensayo final &#183; Semana 6</span>
+  <div class="aviso">
+    <strong>El cap&#237;tulo de preparaci&#243;n emocional y t&#233;cnica:</strong> El Cap. 6 tiene dos funciones cr&#237;ticas: cerrar el PF-3 con los conceptos de activismo juvenil y repertorios de acci&#243;n, y dejar a todos los equipos listos para presentar en el Cap. 7. La sesi&#243;n 11 es m&#225;s conceptual y la sesi&#243;n 12 es casi completamente de ensayo. El docente debe asegurarse de que cada equipo ensaye su presentaci&#243;n al menos dos veces durante este cap&#237;tulo.
+  </div>
+  <div class="info-grid">
+    <div class="info-cell"><strong>Sesiones / Semana</strong>11 y 12 &#183; Semana 6</div>
+    <div class="info-cell"><strong>Prop&#243;sitos</strong>PF-3 cierre + PF-2 integraci&#243;n &#183; Activismo juvenil &#183; Repertorios de acci&#243;n</div>
+    <div class="info-cell"><strong>Producto</strong>Presentaci&#243;n del Caleidoscopio lista y ensayada para el Cap. 7</div>
+    <div class="info-cell"><strong>Protocolo Cap. 7</strong>Definir antes de la sesi&#243;n 11: &#191;qui&#233;n es el p&#250;blico invitado? &#191;Cu&#225;nto tiempo por equipo? &#191;Habr&#225; preguntas?</div>
+    <div class="info-cell"><strong>Carta al futuro yo</strong>Pedir al grupo que la escriba durante el Cap. 6 en casa, en sobre cerrado. Se devuelve en el Flex D del Cap. 8.</div>
+    <div class="info-cell"><strong>Cierre de PF</strong>PF-3 cierra aqu&#237;. PF-1 y PF-2 cerraron en Cap. 4. El Cap. 7 es evaluaci&#243;n integradora.</div>
+  </div>
+</div>
+
+
+<h2>1. Prop&#243;sitos Formativos &#183; Cap&#237;tulo 6 &#183; Cierre</h2>
+
+<div class="prop-rows">
+  <div class="prop-row">
+    <div class="pf-num">3</div>
+    <div class="pf-desc"><strong>PF-3 (cierre):</strong> Las juventudes como agentes de transformaci&#243;n: formas concretas de participaci&#243;n, repertorios de acci&#243;n colectiva y el conocimiento situado como recurso.</div>
+    <div class="pf-cont"><strong>Cap. 6 &#183; PF-3 cierre:</strong><br>
+    &#183; Movimientos juveniles en M&#233;xico: Ayotzinapa, 8M, FFF, colectivos digitales<br>
+    &#183; Repertorios de acci&#243;n: documentaci&#243;n, visibilizaci&#243;n, litigio, coalici&#243;n, educaci&#243;n popular<br>
+    &#183; Ra&#237;ces = conocimiento situado: legitimidad desde el territorio<br>
+    &#183; Las propuestas del Caleidoscopio como acci&#243;n concreta</div>
+  </div>
+  <div class="prop-row">
+    <div class="pf-num">2</div>
+    <div class="pf-desc"><strong>PF-2 (integraci&#243;n final):</strong> Los movimientos sociales de juventudes son actores sociales con recursos espec&#237;ficos &#8212; informaci&#243;n, organizaci&#243;n, movilizaci&#243;n &#8212; que problematizan las din&#225;micas recientes.</div>
+    <div class="pf-cont"><strong>Cap. 6 &#183; PF-2 integraci&#243;n:</strong><br>
+    &#183; Movimientos juveniles como actores sin poder formal pero con poder de movilizaci&#243;n<br>
+    &#183; La coalici&#243;n como multiplicador de poder entre actores con recursos complementarios<br>
+    &#183; El conocimiento producido desde la base como insumo para el litigio estrat&#233;gico</div>
+  </div>
+</div>
+
+
+<h2>2. Planeaci&#243;n Did&#225;ctica &#183; Sesiones 11 y 12</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">11</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Und&#233;cima sesi&#243;n &#183; PF-3 cierre: movimientos + repertorios + ra&#237;ces &#183; Ensayo 1</div>
+      <div class="ses-meta">PF-3 + PF-2 &#183; Acts. 1, 2 y 3 del cuadernillo</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">5 min</td><td><strong>El contador</strong></td><td>El docente escribe en el pizarr&#243;n "6 d&#237;as para el Cap. 7." Sin dramatismo: como orientaci&#243;n temporal. Anuncia la estructura del Cap. 6.</td><td>Pizarr&#243;n</td></tr>
+        <tr><td class="tc">20 min</td><td><strong>Movimientos juveniles</strong></td><td>Act. 1: el docente presenta los cuatro movimientos (Ayotzinapa, 8M, FFF, colectivos digitales). El grupo completa la tabla y responde qu&#233; tienen en com&#250;n. El docente no da la respuesta: deja que el grupo la construya. Si el grupo llega solo a "documentaron antes de exigir" y "no pidieron permiso para empezar", el PF-3 est&#225; logrado.</td><td>Cuadernillo Act. 1 &#183; informaci&#243;n en gu&#237;a</td></tr>
+        <tr><td class="tc">10 min</td><td><strong>Repertorios + ra&#237;ces</strong></td><td>Acts. 2 y 3: repertorios de acci&#243;n y conocimiento situado. Breves: el grupo ya tiene el marco, solo necesita conectarlo con su propuesta. El docente facilita la conexi&#243;n: "&#191;Qu&#233; repertorio usa tu equipo?"</td><td>Cuadernillo Acts. 2 y 3</td></tr>
+        <tr><td class="tc">25 min</td><td><strong>Primer ensayo</strong></td><td>Dos equipos ensayan mientras el tercero escucha con el protocolo del cuadernillo. El docente toma notas de retroalimentaci&#243;n espec&#237;fica para cada equipo. Priorizar: &#191;la propuesta es concreta y sin pedir permiso?</td><td>Protocolo de ensayo del cuadernillo</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">12</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Duod&#233;cima sesi&#243;n &#183; Ensayo final &#183; Retroalimentaci&#243;n docente &#183; Carta al futuro yo</div>
+      <div class="ses-meta">PF-3 cierre &#183; Preparaci&#243;n Cap. 7</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">5 min</td><td><strong>Retroalimentaci&#243;n docente</strong></td><td>El docente devuelve la retroalimentaci&#243;n espec&#237;fica de la sesi&#243;n 11 a cada equipo. Breve y directa: "El equipo X necesita trabajar X en la presentaci&#243;n."</td><td>Notas de la sesi&#243;n 11</td></tr>
+        <tr><td class="tc">40 min</td><td><strong>Ensayo final</strong></td><td>Cada equipo ensaya completo. El docente puede simular ser el p&#250;blico con preguntas dif&#237;ciles. Si hay tiempo, ensayar dos veces. La segunda vez siempre es mejor que la primera: la diferencia es la confianza, no el contenido.</td><td>Cuadernillo ensayo final</td></tr>
+        <tr><td class="tc">10 min</td><td><strong>Carta al futuro yo</strong></td><td>El docente pide que cada quien escriba en casa, en sobre cerrado, la carta al futuro yo de CS-III. Indicaciones: "Escr&#237;bela al yo que habr&#225; terminado el bachillerato. &#191;Qu&#233; quieres que ese yo sepa? &#191;Qu&#233; te llevas de este semestre?" Los sobres se devuelven sellados en el Cap. 8 (Flex D).</td><td>Sobre cerrado &#183; instrucciones orales</td></tr>
+        <tr><td class="tc">5 min</td><td><strong>Cierre del semestre</strong></td><td>El Profe Ram&#237;rez escribe la &#250;ltima l&#237;nea del pizarr&#243;n: "El Cap. 7 es la respuesta." Sin m&#225;s. El grupo sale sabiendo lo que viene.</td><td>Pizarr&#243;n</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<h2>3. Protocolo del Cap&#237;tulo 7 &#183; Preparar antes de la sesi&#243;n 11</h2>
+
+<div class="protocolo-cap7">
+  <span class="label">Definiciones necesarias para el Cap. 7 &#183; El docente decide antes del Cap. 6</span>
+  <h3>El d&#237;a de la generaci&#243;n: log&#237;stica</h3>
+
+  <div class="proto-item">
+    <span class="proto-label">&#191;Qui&#233;n es el p&#250;blico invitado?</span>
+    Opciones: docentes de otras materias, directivo del plantel, representante del municipio, familias de los estudiantes, estudiantes de otro grupo. Cuanto m&#225;s real y externo al sal&#243;n sea el p&#250;blico, m&#225;s significativa es la presentaci&#243;n. Coordinar con anticipaci&#243;n.
+  </div>
+
+  <div class="proto-item">
+    <span class="proto-label">Tiempo por equipo</span>
+    10 a 15 minutos de presentaci&#243;n + 5 minutos de preguntas del p&#250;blico. Si hay tres equipos: 45 a 60 minutos total. El docente es moderador, no juez.
+  </div>
+
+  <div class="proto-item">
+    <span class="proto-label">Formato de las preguntas</span>
+    El p&#250;blico puede preguntar sobre cualquier parte de la presentaci&#243;n. El docente puede facilitar si las preguntas son muy t&#233;cnicas o si se quedan en silencio. Las preguntas dif&#237;ciles son pedag&#243;gicamente valiosas si los equipos las responden con lo que saben.
+  </div>
+
+  <div class="proto-item">
+    <span class="proto-label">Disposici&#243;n del sal&#243;n</span>
+    Semic&#237;rculo o "herradura": el equipo que presenta al frente, el resto del grupo y el p&#250;blico en semic&#237;rculo. No mesas al frente: los presentadores de pie o sentados en sillas, no detr&#225;s de un escritorio.
+  </div>
+
+  <div class="proto-item">
+    <span class="proto-label">&#191;Materiales visuales?</span>
+    No son obligatorios. Si alg&#250;n equipo quiere usar una l&#225;mina, el pizarr&#243;n o el pliego de papel bond, puede. Lo que no se permite: leer la presentaci&#243;n desde el cuadernillo.
+  </div>
+</div>
+
+
+<h2>4. R&#250;brica del Caleidoscopio de Transformaci&#243;n &#183; Cap. 7</h2>
+
+<table class="rubrica-preview">
+  <thead><tr><th>Criterio</th><th>Logrado (3 pts)</th><th>En proceso (2 pts)</th><th>Inicial (1 pt)</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>La crisis</strong></td>
+      <td>Nombrada con precisi&#243;n usando vocabulario del semestre. Impactos multidimensionales identificados en al menos 3 dimensiones.</td>
+      <td>Nombrada con algunos t&#233;rminos t&#233;cnicos. Al menos 2 dimensiones de impacto identificadas.</td>
+      <td>Descripci&#243;n general sin vocabulario espec&#237;fico del semestre.</td>
+    </tr>
+    <tr>
+      <td><strong>Los actores</strong></td>
+      <td>Actor principal identificado con su tipo y recurso de poder. Asimetr&#237;a con la comunidad documentada. Pol&#237;tica p&#250;blica y su brecha nombradas.</td>
+      <td>Actor identificado. Al menos una contradicci&#243;n de pol&#237;tica nombrada.</td>
+      <td>Solo menciona al gobierno como actor responsable sin an&#225;lisis de la asimetr&#237;a.</td>
+    </tr>
+    <tr>
+      <td><strong>Los tres idiomas</strong></td>
+      <td>Los tres idiomas aplicados con an&#225;lisis cualitativamente diferente en cada uno. Cada idioma agrega algo que los otros no ven.</td>
+      <td>Al menos dos idiomas aplicados con diferenciaci&#243;n visible.</td>
+      <td>Solo un idioma aplicado, o los tres sin diferenciaci&#243;n.</td>
+    </tr>
+    <tr>
+      <td><strong>La propuesta</strong></td>
+      <td>Espec&#237;fica, posible con recursos existentes, protagonizada por j&#243;venes. Primer paso identificado y realizable.</td>
+      <td>Concreta pero depende de aprobaci&#243;n externa. Las juventudes tienen alg&#250;n rol.</td>
+      <td>Petici&#243;n al gobierno sin rol activo de las juventudes.</td>
+    </tr>
+    <tr>
+      <td><strong>La presentaci&#243;n</strong></td>
+      <td>Sin leer. Todos los integrantes participan. Responde preguntas del p&#250;blico con el vocabulario del semestre.</td>
+      <td>Parcialmente le&#237;da. La mayor&#237;a de integrantes participa.</td>
+      <td>Le&#237;da completa. No responde preguntas o lo hace sin vocabulario del semestre.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h2>5. Orientaciones Pedag&#243;gicas &#183; Cap&#237;tulo 6</h2>
+
+<div class="orientacion">
+  <span class="label">La diferencia entre el primer y el cuarto ensayo de Yesenia</span>
+  <p>La Escena VI de la narrativa muestra a Yesenia ensayando cuatro veces. La cuarta vez habla sin leer, con convicci&#243;n. Eso no es talento: es pr&#225;ctica. El docente que asegura que cada equipo ensaya al menos dos veces completas durante el Cap. 6 lleva al Cap. 7 un grupo cualitativamente distinto al que tendr&#237;a si el ensayo es solo una vez o si es interrumpido constantemente. El tiempo de ensayo sin interrupci&#243;n es el regalo m&#225;s importante que el docente puede dar al grupo en este cap&#237;tulo.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Si un equipo no tiene la propuesta lista</span>
+  <p>Si al inicio del Cap. 6 hay alg&#250;n equipo cuya propuesta de transformaci&#243;n sigue siendo vaga o depende completamente de que el gobierno apruebe algo, el docente debe intervenir en la sesi&#243;n 11 con preguntas espec&#237;ficas antes del ensayo: "&#191;Qu&#233; pueden hacer ustedes, con lo que ya tienen, sin esperar ninguna aprobaci&#243;n? &#191;Qu&#233; primer paso es posible esta semana?" Si la propuesta no es concreta despu&#233;s de esa intervenci&#243;n, el docente puede sugerir que la propuesta sea m&#225;s peque&#241;a pero real: documentar un caso, crear un recurso, organizar una reuni&#243;n. Peque&#241;o y real es mejor que grande y vac&#237;o.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">La carta al futuro yo de CS-III</span>
+  <p>La carta al futuro yo de CS-III es la tercera de la trilog&#237;a. A diferencia de las de CS-I y CS-II (que se devolv&#237;an al inicio del semestre siguiente), la de CS-III se guarda en el Cap. 8 (Flex D) y el docente puede optar por devolver todas las cartas del BTA juntas en la ceremonia de graduaci&#243;n del bachillerato, si el plantel la tiene, o en la &#250;ltima sesi&#243;n del semestre. El docente que guard&#243; las cartas de CS-I y CS-II tiene ahora un archivo de tres a&#241;os de crecimiento anal&#237;tico y personal de cada estudiante. Ese archivo es pedag&#243;gicamente invaluable.</p>
+</div>
+
+
+<div class="puente">
+  <span class="label">Puente &#8594; Cap&#237;tulo 7 &#183; "El d&#237;a de la generaci&#243;n" &#183; Semana 7 &#183; Presentaciones del Caleidoscopio</span>
+  El Cap. 7 es el d&#237;a de presentaciones. No hay contenido conceptual nuevo: es el espacio donde el aprendizaje de seis semanas se vuelve p&#250;blico. El docente debe llegar al Cap. 7 con el protocolo definido (p&#250;blico invitado, tiempo por equipo, disposici&#243;n del sal&#243;n), la r&#250;brica lista y la certeza de que todos los equipos tienen su presentaci&#243;n ensayada. El docente act&#250;a como moderador y facilitador de las preguntas del p&#250;blico, no como evaluador en tiempo real: la evaluaci&#243;n se hace despu&#233;s, con la r&#250;brica.
+</div>
+
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;&#183;&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    &#169; 2025 Letras Necias. Todos los derechos reservados.<br>
+    Gu&#237;a Docente &#183; Cap&#237;tulo 6 &#183; CS-III &#183; Trilog&#237;a Ra&#237;z Digital &#183; MCCEMS 2025 &#183; SEP &#183; DGETAYCM.<br>
+    Prohibida la reproducci&#243;n total o parcial sin autorizaci&#243;n expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+
+</div>
+</body>
+</html>

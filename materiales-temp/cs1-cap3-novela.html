@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 3 · Novela narrativa                                        ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>El Código del Ejido · Capítulo 3 · Ciencias Sociales I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+.raiz-cs1 {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #faf8f3;
+  color: #1c1410;
+  font-size: 11pt;
+  line-height: 1.85;
+  max-width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 1.5cm 1.8cm;
+}
+
+
+/* ── PORTADILLA ── */
+.raiz-cs1 .portadilla {
+  min-height: 96vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2cm 0 1.5cm;
+  border-bottom: 2pt solid #7a3010;
+  margin-bottom: 1.5cm;
+  page-break-after: always;
+}
+
+.raiz-cs1 .serie-label {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #7a3010;        /* dark enough on white */
+  margin-bottom: 2.5cm;
+  line-height: 2;
+}
+
+.raiz-cs1 .libro-num {
+  font-family: 'Georgia', serif;
+  font-size: 64pt;
+  font-weight: bold;
+  color: #b8860b;        /* golden, readable on white */
+  line-height: 1;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .libro-titulo {
+  font-family: 'Georgia', serif;
+  font-size: 28pt;
+  font-style: italic;
+  font-weight: bold;
+  color: #1c1410;
+  line-height: 1.2;
+  margin-bottom: 0.4cm;
+}
+
+.raiz-cs1 .libro-subtitulo {
+  font-family: 'Arial', sans-serif;
+  font-size: 9pt;
+  color: #4a2810;        /* dark enough */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5cm;
+}
+
+
+/* Ficha en portadilla: fondo oscuro → texto BLANCO */
+.raiz-cs1 .cap-ficha {
+  background: #5c3010;
+  color: #f5ece0;        /* casi blanco cálido */
+  border-left: 4pt solid #b8860b;
+  padding: 0.6cm 0.9cm;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.9;
+  margin-bottom: 1.5cm;
+}
+
+.raiz-cs1 .cap-ficha strong { color: #f5d080; }
+   /* dorado claro sobre marrón oscuro */
+
+.raiz-cs1 .portadilla-meta {
+  font-family: 'Arial', sans-serif;
+  font-size: 8pt;
+  color: #3a2810;        /* oscuro sobre blanco */
+  line-height: 2;
+  border-top: 0.5pt solid #b09870;
+  padding-top: 0.6cm;
+  margin-top: auto;
+}
+
+.raiz-cs1 .portadilla-meta strong { color: #4a2810; }
+
+
+/* ── CAPÍTULO ── */
+.raiz-cs1 .capitulo-header {
+  page-break-before: always;
+  text-align: center;
+  margin-bottom: 1.5cm;
+  padding-bottom: 0.8cm;
+  border-bottom: 1pt solid #b09870;
+}
+
+.raiz-cs1 .cap-num {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #7a3010;
+  margin-bottom: 0.4cm;
+}
+
+.raiz-cs1 .cap-titulo {
+  font-family: 'Georgia', serif;
+  font-size: 20pt;
+  font-style: italic;
+  font-weight: bold;
+  color: #1c1410;
+  line-height: 1.3;
+  margin-bottom: 0.3cm;
+}
+
+.raiz-cs1 .cap-epigrafe {
+  font-size: 9pt;
+  font-style: italic;
+  color: #4a3828;        /* oscuro legible */
+  max-width: 12cm;
+  margin: 0.6cm auto 0;
+  line-height: 1.6;
+}
+
+.raiz-cs1 .cap-epigrafe cite {
+  display: block;
+  font-style: normal;
+  font-size: 8pt;
+  color: #6a5040;
+  margin-top: 0.3cm;
+  letter-spacing: 0.06em;
+}
+
+
+/* ── ESCENAS ── */
+.raiz-cs1 .escena-titulo {
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #7a3010;
+  margin: 1.5cm 0 0.5cm;
+  padding-bottom: 0.3cm;
+  border-bottom: 0.5pt solid #c8a878;
+}
+
+
+.raiz-cs1 p {
+  margin-bottom: 0.7em;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.raiz-cs1 p + p { text-indent: 1.2em; }
+
+.raiz-cs1 .escena-titulo + p, .raiz-cs1 .capitulo-header + p, .raiz-cs1 .dialogo-bloque + p, .raiz-cs1 .recuadro + p { text-indent: 0; }
+
+
+/* ── DIÁLOGO ── */
+.raiz-cs1 .dialogo-bloque {
+  margin: 0.8em 0;
+  padding-left: 0.9cm;
+  border-left: 3pt solid #b8860b;
+}
+
+.raiz-cs1 .hablante {
+  font-family: 'Arial', sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #7a3010;        /* oscuro, legible */
+  margin-bottom: 0.15cm;
+  font-weight: bold;
+}
+
+.raiz-cs1 .dialogo-bloque p {
+  font-style: italic;
+  margin-bottom: 0.3em;
+  text-indent: 0 !important;
+  color: #2a1e14;        /* oscuro, no gris claro */
+}
+
+
+/* ── PENSAMIENTO ── */
+.raiz-cs1 .pensamiento {
+  font-style: italic;
+  color: #3a2a1e;
+}
+
+
+/* ── SEPARADOR ── */
+.raiz-cs1 .separador {
+  text-align: center;
+  color: #a08060;
+  font-size: 14pt;
+  letter-spacing: 0.5em;
+  margin: 1.2cm 0;
+}
+
+
+/* ── RECUADRO JURÍDICO / INSTITUCIONAL ── */
+/* fondo claro (crema) → texto MUY OSCURO */
+.raiz-cs1 .recuadro {
+  background: #f0e8d8;
+  border: 1pt solid #a08060;
+  border-left: 4pt solid #4a2810;
+  padding: 0.65cm 0.85cm;
+  margin: 1cm 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.7;
+  color: #1c1410;        /* NEGRO sobre crema */
+}
+
+.raiz-cs1 .recuadro .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #4a2810;        /* marrón oscuro, muy legible */
+  margin-bottom: 0.35cm;
+  display: block;
+  font-weight: bold;
+}
+
+.raiz-cs1 .recuadro p { text-indent: 0 !important; margin-bottom: 0.35em; }
+
+.raiz-cs1 .recuadro .nota-pie {
+  font-size: 7.5pt;
+  color: #4a3828;        /* oscuro */
+  border-top: 0.5pt solid #b09870;
+  margin-top: 0.4cm;
+  padding-top: 0.25cm;
+}
+
+
+/* ── PIZARRÓN ── */
+/* fondo muy oscuro → texto BLANCO */
+.raiz-cs1 .pizarron {
+  background: #162010;
+  color: #d8f0c0;        /* verde claro sobre verde muy oscuro */
+  font-family: 'Georgia', serif;
+  font-size: 10.5pt;
+  font-style: italic;
+  padding: 0.8cm 1cm;
+  margin: 0.8cm 0;
+  text-align: center;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+
+/* ── RECUADRO DE DATOS / ESTADÍSTICAS ── */
+/* fondo azul oscuro → texto BLANCO */
+.raiz-cs1 .recuadro-dato {
+  background: #1a3050;
+  color: #e0eeff;        /* blanco azulado */
+  border-left: 4pt solid #80b0e0;
+  padding: 0.6cm 0.85cm;
+  margin: 0.9cm 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8.5pt;
+  line-height: 1.7;
+}
+
+.raiz-cs1 .recuadro-dato .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a0c8f0;        /* azul claro sobre azul oscuro */
+  display: block;
+  margin-bottom: 0.3cm;
+  font-weight: bold;
+}
+
+.raiz-cs1 .recuadro-dato p { text-indent: 0 !important; margin-bottom: 0.3em; }
+
+.raiz-cs1 .recuadro-dato .fuente {
+  font-size: 7.5pt;
+  color: #90b8e0;
+  border-top: 0.5pt solid #405878;
+  margin-top: 0.35cm;
+  padding-top: 0.2cm;
+}
+
+
+/* ── NOTA NARRATIVA ── */
+/* fondo muy claro amarillo → texto muy oscuro */
+.raiz-cs1 .nota-narrativa {
+  background: #fff8e0;
+  border: 1pt dashed #b89830;
+  border-left: 3pt solid #7a5010;
+  padding: 0.55cm 0.85cm;
+  margin: 1.2cm 0 0;
+  font-family: 'Arial', sans-serif;
+  font-size: 8pt;
+  color: #2a1e08;        /* casi negro */
+  line-height: 1.65;
+}
+
+.raiz-cs1 .nota-narrativa .label {
+  font-size: 7pt;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7a5010;
+  display: block;
+  margin-bottom: 0.3cm;
+  font-weight: bold;
+}
+
+
+/* ── CIERRE ── */
+.raiz-cs1 .cierre-capitulo {
+  margin-top: 1.5cm;
+  padding-top: 0.8cm;
+  border-top: 1pt solid #b09870;
+  font-family: 'Arial', sans-serif;
+  font-size: 7.5pt;
+  color: #4a3828;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div class="serie-label">
+    Ciencias Sociales I · NEM 2025 · DGETAYCM<br>
+    Bachillerato Tecnológico Agropecuario y Científico<br>
+    Trilogía Raíz Digital · El Código del Ejido · Capítulo 3
+  </div>
+  <div class="libro-num">I</div>
+  <div class="libro-titulo">El Código<br>del Ejido</div>
+  <div class="libro-subtitulo">Estado, ciudadanía y relaciones de poder</div>
+
+  <div class="cap-ficha">
+    <strong>Capítulo 3 · "Lo que firma el que no lee"</strong><br>
+    Propósitos formativos activos: <strong>PF-2</strong> · El devenir del concepto de ciudadanía · <strong>PF-4</strong> · La diversidad en el espacio democrático<br>
+    Contenidos: Ciudadanía política, civil, económica y cultural · Democracia participativa y representativa · Justicia social · Políticas públicas y derechos ciudadanos · Inclusión e igualdad · Acciones afirmativas · Edadismo · Exclusión social<br>
+    Sesiones: 5 y 6 · Semana 4
+  </div>
+
+  <div class="portadilla-meta">
+    <strong>Continuación del Capítulo 2.</strong> María fue a la Procuraduría Agraria.
+    Volvió con una cita, una esperanza pequeña y una pregunta nueva:
+    si la ley la protege, ¿por qué nadie le dijo que existía?
+  </div>
+</div>
+
+
+<!-- CAPÍTULO 3 -->
+<div class="capitulo-header">
+  <div class="cap-num">Capítulo Tres</div>
+  <div class="cap-titulo">"Lo que firma el que no lee"</div>
+  <div class="cap-epigrafe">
+    "La justicia no es lo mismo que la ley.
+    La ley es lo que existe. La justicia es lo que debería existir.
+    La distancia entre las dos es el territorio donde viven
+    la mayoría de las personas de este país."
+    <cite>— Profe Ramírez, pizarrón del martes</cite>
+  </div>
+</div>
+
+
+<!-- ESCENA I -->
+<div class="escena-titulo">Escena I · Lo que encontró María en Actopan</div>
+
+<p>La oficina de la Procuraduría Agraria en Actopan huele a papel y a café instantáneo. Hay tres sillas de plástico en la sala de espera y un letrero de cartón escrito a mano que dice "Turno: pida número". María y su mamá esperaron cuarenta minutos. Cuando los atendió la licenciada Guerrero, una mujer de unos cuarenta años con el cabello recogido y lentes de armazón grueso, María ya traía la hoja rosada, el acta de dotación ejidal de 1984 y tres preguntas que había escrito en su cuaderno para no olvidarlas.</p>
+
+<p>La licenciada Guerrero leyó la hoja rosada con esa velocidad que tienen los abogados para ver en segundos lo que a otros les toma minutos. Cuando llegó a la cláusula del conflicto de interés, hizo una pequeña marca con lápiz.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Licenciada Guerrero</div>
+  <p>—Esta cláusula es problemática. El ayuntamiento no puede ser árbitro de sus propios acuerdos. Hay un principio jurídico básico: nadie puede ser juez y parte al mismo tiempo. ¿Tiene el acta de asamblea ejidal donde se aprobó el uso del canal originalmente?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Dolores (la mamá de María)</div>
+  <p>—Tengo el acta de dotación de 1984. La asamblea del canal no sé si quedó registrada. Las asambleas ejidales de antes no siempre se levantaban en acta.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Licenciada Guerrero</div>
+  <p>—Las que sí se registraron están en el Registro Agrario Nacional. Podemos pedir la consulta. Si existe el registro, tenemos un argumento. Si no existe, trabajamos con el Convenio 169 y con testigos de la comunidad. En cualquier caso, la firma que usted dio no tiene validez plena si fue sin asesoría y sin el plano adjunto que menciona el documento. Eso es vicio del consentimiento.</p>
+</div>
+
+<p>María tomó notas. Su mamá escuchaba con esa atención particular de quien lleva años siendo la única que entiende el idioma pero nunca le enseñaron el diccionario.</p>
+
+<p>Salieron de Actopan con una cita para tres semanas después y con algo que ninguna de las dos había esperado: la sensación de que tenían, por primera vez, un lugar donde pararse.</p>
+
+<p>En el autobús de regreso, la mamá de María dijo una sola cosa:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Dolores</div>
+  <p>—¿Por qué nadie nos dijo que eso existía?</p>
+</div>
+
+<p>María no respondió. Pero la pregunta se le quedó adherida al pensamiento como cal a la piedra, y llegó con ella al martes siguiente.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA II -->
+<div class="escena-titulo">Escena II · El regreso y la pregunta de Dolores</div>
+
+<p>Cuando María contó lo de la Procuraduría, el salón escuchó de una manera diferente a las semanas anteriores. Ya no era solo el problema de María: era un espejo donde varios reconocían algo propio.</p>
+
+<p>Pero fue la pregunta de su mamá —<em>"¿Por qué nadie nos dijo que eso existía?"</em>— la que detuvo al Profe Ramírez a mitad de camino hacia el pizarrón.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Esa pregunta tiene nombre en las Ciencias Sociales. Se llama el problema del acceso a derechos. No basta con que un derecho exista en la ley: hay que poder conocerlo, entenderlo y ejercerlo. Cuando esas tres cosas no ocurren, el derecho existe en el papel y no existe en la vida. ¿Alguien puede decirme por qué las comunidades como la de María frecuentemente no conocen sus derechos?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Rodrigo</div>
+  <p>—Porque no hay información en los pueblos. La Procuraduría está en Actopan, no en San Martín.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Y porque la información que hay está escrita en un lenguaje que no es el de las comunidades. Ni en nahua ni en español sencillo: en "juridiqués".</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Y porque confiar en el gobierno no es algo que venga natural cuando el gobierno es el que llega a tu casa con un papel que no entiendes y te pide que firmes.</p>
+</div>
+
+<p>El Profe Ramírez escribió en el pizarrón tres palabras en columna: <em>Conocer. Entender. Ejercer.</em> Debajo escribió: <em>Las tres condiciones del derecho real.</em></p>
+
+<p>María copiaba. Y mientras copiaba pensaba que su mamá cumplía con la primera —sabía que existían leyes— pero nadie le había dado las herramientas para las otras dos.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA III -->
+<div class="escena-titulo">Escena III · La ciudadanía que no alcanza para todos</div>
+
+<p>El Profe Ramírez retomó el tema de las cuatro ciudadanías que había aparecido en el cuadernillo de la semana anterior: política, civil, económica, cultural. Pero esta vez con un giro.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—La semana pasada vimos qué dice la Constitución sobre cada tipo de ciudadanía. Esta semana quiero que me digan quién no tiene acceso real a cada una. No en el papel: en la práctica. ¿Quién en México tiene ciudadanía política en el papel pero no en los hechos?</p>
+</div>
+
+<p>Las respuestas fueron surgiendo lentas, después más rápidas, como cuando una presa se abre de a poco. Personas indígenas que votan pero no tienen representación en ningún cargo. Mujeres que pueden ser presidentas municipales pero en algunas comunidades no pueden hablar en la asamblea ejidal. Jóvenes de dieciocho años con credencial del INE pero sin acceso a ningún espacio real de decisión política. Personas sin acta de nacimiento —como la abuela de Miranda— que no existen para el Estado en ninguna categoría.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—Yo tengo doble situación. En México soy ciudadana porque nací aquí. En Estados Unidos fui residente durante catorce años. Cuando me deportaron, perdí los dos: aquí no tengo historial, no tengo empleo registrado, no tengo nada que el sistema reconozca. Allá ya no tengo nada. Soy ciudadana de ningún lado práctico.</p>
+</div>
+
+<p>El salón absorbió eso. Miranda lo dijo sin drama, con la misma precisión con que María leía un contrato: señalando lo que falta, no solo lo que duele.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Lo que describes, Miranda, tiene un concepto en las Ciencias Sociales: exclusión social. No es pobreza únicamente. Es la condición de quien no puede participar plenamente en la vida económica, política, social o cultural de su comunidad por razones que no dependen de sus decisiones individuales, sino de estructuras que los dejan fuera. ¿Eso te suena conocido a alguien más?</p>
+</div>
+
+<p>Casi todos levantaron la mano. No todos, pero casi todos.</p>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA IV -->
+<div class="escena-titulo">Escena IV · El edadismo y los que "todavía no"</div>
+
+<p>Fue Ulises quien sacó el tema que nadie había nombrado todavía.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—¿Puedo decir algo que no tiene que ver con la comunidad sino con este salón?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Este salón es una comunidad.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—La semana pasada fui con mi papá a la reunión del comité de la huerta. Quería proponer algo sobre cómo negociar el precio con el intermediario. Mi papá me dijo que esperara. Que eso era para los que ya tienen años trabajando la tierra. Que yo "todavía no". Tengo dieciséis años y llevo cuatro trabajando la parcela con él, pero "todavía no". ¿Eso es lo que pasa cuando llegas a votar a los dieciocho y resulta que tampoco tienes voz real en nada?</p>
+</div>
+
+<p>El Profe Ramírez no respondió de inmediato. Dejó que la pregunta respirara.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Lo que describes tiene nombre: edadismo. Es la discriminación basada en la edad. Generalmente se habla de él cuando afecta a personas mayores: les quitan el trabajo porque "ya están grandes". Pero existe también en la dirección contraria: se niega participación a los jóvenes porque "todavía no". ¿Alguien más lo ha vivido?</p>
+</div>
+
+<p>Las historias empezaron a salir. La chica de San Andrés que propuso en la asamblea escolar cambiar el horario del comedor y le dijeron que eso "lo decidían los maestros". El chico del nopal a quien su abuela sigue explicando cómo sembrar aunque él lleva tres años haciéndolo. María, que en la reunión ejidal estuvo presente pero nadie le preguntó nada.</p>
+
+<div class="recuadro-dato">
+  <span class="label">Dato · IMJUVE 2022 (México)</span>
+  <p>El 67% de los jóvenes de entre 15 y 29 años en México reporta que sus opiniones "rara vez" o "nunca" son tomadas en cuenta en las decisiones importantes de su comunidad o familia.</p>
+  <p>Solo el 12% participa en algún espacio formal de toma de decisiones (consejo estudiantil, comité comunitario, organización social).</p>
+  <p class="fuente">Fuente: Encuesta Nacional de Juventud, IMJUVE 2022. Disponible en: www.imjuventud.gob.mx — el docente puede imprimir los datos con anticipación.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—En mi escuela en California había un consejo estudiantil con voto en algunas decisiones del presupuesto escolar. Aquí en el CBTA hay un consejo estudiantil en el papel. ¿Alguien sabe qué decide en la práctica?</p>
+</div>
+
+<p>Silencio. Nadie lo sabía.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Esa distancia —entre el consejo estudiantil que existe en el reglamento y el que decide algo real— es exactamente la misma distancia que hay entre la Constitución y la vida de la mamá de María. La ciudadanía formal y la ciudadanía real. ¿Lo ven?</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA V -->
+<div class="escena-titulo">Escena V · Justicia y ley no son lo mismo</div>
+
+<p>En la segunda hora, el Profe Ramírez escribió dos palabras en lados opuestos del pizarrón.</p>
+
+<div class="pizarron">
+  L E Y · · · · · · · · · · · · · · J U S T I C I A
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Son lo mismo?</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Rodrigo</div>
+  <p>—Deberían ser lo mismo.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—No lo son. La ley de Arizona dice que un policía puede pedirte documentos si tiene "sospecha razonable". La justicia no tiene nada que ver con eso.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">María</div>
+  <p>—El municipio tiene una ley que dice que el canal es suyo. Pero la justicia, si se aplica bien, dice que es del ejido. Dos leyes en conflicto. Ninguna es necesariamente justa.</p>
+</div>
+
+<p>El Profe Ramírez anotó eso en el pizarrón entre las dos palabras: <em>"Dos leyes en conflicto. Ninguna necesariamente justa."</em></p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—La justicia social no es que haya leyes. Es que las leyes, las instituciones y las políticas públicas reduzcan las desigualdades en lugar de reproducirlas. Cuando una política de gobierno llega tarde, llega incompleta o no llega, no es un accidente. Es una decisión. Y las decisiones tienen responsables. ¿Quiénes son los responsables de que la mamá de María no supiera que la Procuraduría Agraria existía?</p>
+</div>
+
+<p>Fue una pregunta incómoda. Nadie quería responderla de inmediato porque implicaba nombrar actores reales con nombres reales. Pero poco a poco fueron apareciendo: el municipio que no informa. El ejido que no capacita. La escuela que no enseña derechos. El Estado que asume que la gente sabe lo que nunca le enseñaron. Y también, más difícil de decir: las propias familias que normalizan no saber, que firman sin preguntar porque eso es lo que siempre han hecho.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises (despacio)</div>
+  <p>—Mi papá firma muchas cosas sin leerlas. Siempre pensé que era porque no quería perder el tiempo. Ahora creo que es porque nadie le enseñó que tenía derecho a leer antes de firmar.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA VI -->
+<div class="escena-titulo">Escena VI · ¿Qué es una acción afirmativa?</div>
+
+<p>El Profe Ramírez repartió una hoja impresa. Tenía tres párrafos cortos sobre tres políticas públicas distintas: el sistema de cuotas de género en el Congreso mexicano, las becas indígenas de la SEP y el programa de acceso preferente para personas con discapacidad en las universidades públicas.</p>
+
+<div class="recuadro">
+  <span class="label">Fragmento para análisis en clase · Tres tipos de acción afirmativa en México</span>
+  <p><strong>1. Paridad de género en cargos de elección:</strong> La reforma constitucional de 2019 establece que el 50% de las candidaturas a cargos de elección popular deben ser de mujeres. Antes de esta reforma, las mujeres representaban el 22% del Congreso. En 2024 representan el 50.8%.</p>
+  <p><strong>2. Becas Bienestar para estudiantes indígenas:</strong> El programa prioritario de la SEP que en 2023 benefició a 847,000 estudiantes de comunidades indígenas o afromexicanas con una transferencia mensual para reducir el abandono escolar por razones económicas.</p>
+  <p><strong>3. Acceso preferente en universidades:</strong> La UNAM y el IPN tienen programas de admisión con puntaje diferenciado para estudiantes de bachillerato público de zonas de alta marginación, reconociendo que las condiciones de acceso al conocimiento no son iguales para todos.</p>
+  <p class="nota-pie">Fuente: Cámara de Diputados (paridad), SEP (becas), UNAM (admisión). Todos los documentos son de acceso público. El docente puede ampliar con datos actualizados si hay conectividad.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Qué tienen en común estas tres políticas?</p>
+</div>
+
+<p>Tardaron un momento, pero llegaron: las tres reconocen que hay grupos que históricamente han tenido menos acceso que otros, y crean un mecanismo para compensarlo. No dan lo mismo a todos: dan más a quienes han recibido menos.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Estudiante desconocida</div>
+  <p>—Pero eso no es justo. Si dan más a unos que a otros, están discriminando al revés.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—¿Es justo que en una carrera de cien metros unos salgan desde la línea de salida y otros desde veinte metros atrás? Las acciones afirmativas no dan ventaja: eliminan una desventaja que ya existía.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Ulises</div>
+  <p>—Yo recibo una beca de esas. La de estudiante de zona rural. Y les digo: sin ella no estaría aquí. El dinero del autobús y el uniforme ya se comían lo que mi familia podía darme.</p>
+</div>
+
+<p>El silencio que siguió no fue de incomodidad sino de recalibración. Varios estudiantes miraron a Ulises de otra manera.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—El debate que acaban de tener lleva siglos en la filosofía política. Se llama el debate entre igualdad formal —tratar a todos exactamente igual— e igualdad material —reconocer que las condiciones de partida son distintas y actuar en consecuencia. Ninguna respuesta es sencilla. Pero lo que sí pueden concluir es que la justicia social requiere, al menos, hacerse esa pregunta.</p>
+</div>
+
+
+<div class="separador">· · ·</div>
+
+
+<!-- ESCENA VII -->
+<div class="escena-titulo">Escena VII · El mapa empieza a mostrar un patrón</div>
+
+<p>Al final de la clase, el Profe Ramírez pidió que todos abrieran su cuadernillo en la ficha del Mapa de Derechos y que observaran lo que habían escrito en las tres semanas anteriores.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—Miren sus fichas. ¿Qué tienen en común las situaciones que identificaron?</p>
+</div>
+
+<p>Los estudiantes compararon en voz baja. María con Ulises. La chica de San Andrés con Rodrigo. Miranda, que miraba las fichas ajenas con esa atención de quien busca un patrón que ya intuye.</p>
+
+<p>Lo que encontraron, sin que nadie se los dijera, fue esto: en casi todas las situaciones había alguien con acceso a información que otros no tenían. En casi todas, quienes firmaban sin leer eran los mismos. En casi todas, las instituciones que deberían proteger estaban lejos, físicamente o en términos de idioma.</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Miranda</div>
+  <p>—No son situaciones sueltas. Es el mismo patrón repetido con distintos nombres.</p>
+</div>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Profe Ramírez</div>
+  <p>—¿Y cómo se llama ese patrón?</p>
+</div>
+
+<p>Nadie respondió de inmediato. Después, desde algún lugar del salón —María nunca supo exactamente quién—, alguien dijo en voz baja:</p>
+
+<div class="dialogo-bloque">
+  <div class="hablante">Voz del grupo</div>
+  <p>—Desigualdad estructural.</p>
+</div>
+
+<p>El Profe Ramírez asintió despacio. Lo escribió en el pizarrón con letras más grandes que de costumbre. Y dejó ahí la clase.</p>
+
+<p>Mientras salían, María recogió sus cosas en silencio. Pensaba en su mamá firmando la hoja rosada. En el tío Cipriano marcando con lápiz lo que faltaba. En la licenciada Guerrero diciendo <em>vicio del consentimiento</em> con la misma calma con que se dice el tiempo que hace. En Ulises y la beca sin la que no estaría aquí. En Miranda y sus dos pasaportes que no sirven en ningún lado. En Rodrigo y la abuela que no existe para el Estado.</p>
+
+<p>El mapa tenía un patrón. El patrón tenía nombre. Y el nombre no era accidente.</p>
+
+<p style="text-align:center; font-style:italic; color:#7a3010; font-size:10pt; margin-top:1cm;">Fin del Capítulo 3</p>
+
+
+<div class="nota-narrativa">
+  <span class="label">Nota para el personal docente · Nexo narrativa – propósitos formativos</span>
+  <p>Este capítulo activa el <strong>PF-2</strong> a través del recorrido de María a la Procuraduría Agraria: la ciudadanía no como abstracción sino como acto concreto de ejercer un derecho conocido. El concepto de <em>ciudadanía formal vs. ciudadanía real</em> se construye desde las tres condiciones (conocer / entender / ejercer) que el Profe Ramírez escribe en el pizarrón, y se ilustra simultáneamente con las cuatro dimensiones de la ciudadanía (política, civil, económica, cultural). El <strong>PF-4</strong> se activa a través del edadismo (Ulises en la reunión del comité), la exclusión de Miranda, el debate sobre acciones afirmativas, y el cierre colectivo donde el grupo reconoce el patrón de exclusión estructural. La hoja de datos del IMJUVE está diseñada para usarse impresa en ausencia de internet. El Capítulo 3 cierra el arco de los tres propósitos iniciales y prepara el terreno para el PF-4 extendido del Capítulo 4, centrado en diversidad, inclusión e igualdad.</p>
+</div>
+
+
+<div class="cierre-capitulo">
+  Continúa en: Cuadernillo del Estudiante · Capítulo 3<br>
+  "Lo que firma el que no lee"<br><br>
+  Ciencias Sociales I · El Código del Ejido · Trilogía Raíz Digital<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM
+</div>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Novela narrativa · Capítulo 3 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

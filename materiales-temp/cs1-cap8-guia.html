@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 8 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · Capítulo 8 · Raíz · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#1a1208;font-size:10pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+
+.raiz-cs1 .portadilla {min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #1a4010;margin-bottom:1cm;page-break-after:always;}
+
+.raiz-cs1 .col-label {font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#1a4010;margin-bottom:.8cm;line-height:2;}
+
+.raiz-cs1 .port-titulo {font-size:22pt;font-weight:900;color:#1a1208;line-height:1.1;margin-bottom:.2cm;}
+
+.raiz-cs1 .port-sub {font-size:10pt;color:#1a4010;margin-bottom:.3cm;font-weight:700;}
+
+.raiz-cs1 .port-cap {font-size:8.5pt;color:#2e3820;font-style:italic;}
+
+/* OSCURO → BLANCO */
+.raiz-cs1 .aviso {background:#0f2808;color:#ffffff;padding:.55cm .85cm;font-size:8.5pt;line-height:1.65;margin:.8cm 0;}
+
+.raiz-cs1 .aviso strong {color:#a0f060;}
+
+.raiz-cs1 .info-grid {display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.6cm 0;}
+
+.raiz-cs1 .info-cell {border:1pt solid #5a8040;padding:.35cm .5cm;font-size:8.5pt;color:#1a1208;}
+
+.raiz-cs1 .info-cell strong {display:block;font-size:7pt;letter-spacing:.12em;text-transform:uppercase;color:#1a4010;margin-bottom:.1cm;}
+
+
+.raiz-cs1 h2 {font-size:12pt;font-weight:900;color:#1a1208;margin:1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #1a4010;page-break-after:avoid;}
+
+.raiz-cs1 h3 {font-size:10pt;font-weight:700;color:#1a4010;margin:.7cm 0 .25cm;}
+
+.raiz-cs1 h4 {font-size:9.5pt;font-weight:700;color:#1a1208;margin:.4cm 0 .15cm;}
+
+.raiz-cs1 p {margin-bottom:.45em;}
+
+
+/* SESIÓN FLEX */
+.raiz-cs1 .sesion {border:1pt solid #5a8040;margin:.6cm 0;overflow:hidden;page-break-inside:avoid;}
+
+.raiz-cs1 .ses-header {background:#c8e8b0;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+
+/* NÚMERO: OSCURO → BLANCO */
+.raiz-cs1 .ses-num {background:#0f2808;color:#ffffff;width:1.2cm;height:1.2cm;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10pt;flex-shrink:0;}
+
+.raiz-cs1 .ses-info {flex:1;}
+
+.raiz-cs1 .ses-titulo {font-size:9.5pt;font-weight:700;color:#0a1808;}
+
+.raiz-cs1 .ses-meta {font-size:7.5pt;color:#1a2810;}
+
+.raiz-cs1 .ses-tiempo {font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#0a2808;font-weight:700;white-space:nowrap;}
+
+.raiz-cs1 .ses-body {padding:.45cm .6cm;font-size:8.5pt;}
+
+.raiz-cs1 .tabla-sesion {width:100%;border-collapse:collapse;font-size:8pt;margin:.3cm 0;}
+
+.raiz-cs1 .tabla-sesion th {background:#7ab860;color:#0a1808;padding:.2cm .4cm;text-align:left;font-size:7pt;font-weight:700;}
+
+.raiz-cs1 .tabla-sesion td {border:.5pt solid #8ac870;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 .tiempo-col {width:1.5cm;color:#0a2808;font-weight:700;text-align:center;}
+
+
+/* ORIENTACIONES: verde pálido → negro */
+.raiz-cs1 .orientacion {background:#eef8e8;border:1pt solid #5a8040;border-left:3pt solid #1a4010;padding:.4cm .6cm;margin:.4cm 0;font-size:8.5pt;line-height:1.65;color:#1a1208;}
+
+.raiz-cs1 .orientacion .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a4010;font-weight:700;display:block;margin-bottom:.2cm;}
+
+
+/* TABLA ARC COMPLETO: encabezado oscuro → BLANCO */
+.raiz-cs1 table.arc {width:100%;border-collapse:collapse;font-size:8pt;margin:.4cm 0;}
+
+.raiz-cs1 table.arc th {background:#0f2808;color:#ffffff;padding:.22cm .4cm;font-size:7.5pt;font-weight:700;text-align:left;}
+
+.raiz-cs1 table.arc td {border:1pt solid #5a8040;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;font-size:8pt;}
+
+.raiz-cs1 table.arc tr:nth-child(even) td {background:#eef8e8;}
+
+/* encabezado de grupo de capítulos: crema → negro */
+.raiz-cs1 table.arc .grupo td {background:#c8e8b0;font-weight:700;color:#0a1808;}
+
+
+/* TABLA TRANSVERSALIDAD */
+.raiz-cs1 table.transv {width:100%;border-collapse:collapse;font-size:8pt;margin:.4cm 0;}
+
+.raiz-cs1 table.transv th {background:#0f2808;color:#ffffff;padding:.22cm .4cm;font-size:7pt;font-weight:700;text-align:left;}
+
+.raiz-cs1 table.transv td {border:1pt solid #5a8040;padding:.22cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 table.transv tr:nth-child(even) td {background:#eef8e8;}
+
+
+/* PUENTE: OSCURO → BLANCO */
+.raiz-cs1 .puente {background:#0f2808;color:#ffffff;padding:.65cm .85cm;margin:.8cm 0;font-size:8.5pt;line-height:1.65;}
+
+.raiz-cs1 .puente .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#a0f060;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+
+/* PIZARRÓN CS-II: verde muy oscuro → BLANCO */
+.raiz-cs1 .pizarron-cs2 {background:#0c1a08;color:#ffffff;font-family:'Georgia',serif;font-size:11pt;font-style:italic;padding:1cm 1.2cm;margin:.8cm 0;text-align:center;line-height:1.85;border-left:4pt solid #a0f060;}
+
+.raiz-cs1 .pizarron-cs2 .sub {font-family:'Arial',sans-serif;font-size:7.5pt;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:#a0f060;display:block;margin-top:.5cm;}
+
+
+/* NOTA CARTA: crema → negro */
+.raiz-cs1 .nota-carta {background:#f0e8d0;border:1pt solid #9a7040;border-left:4pt solid #4a1e00;padding:.55cm .75cm;margin:.5cm 0;font-size:8.5pt;line-height:1.7;color:#1a1208;}
+
+.raiz-cs1 .nota-carta .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#4a1e00;font-weight:bold;display:block;margin-bottom:.25cm;}
+
+.raiz-cs1 .nota-carta p {text-indent:0!important;margin-bottom:.3em;}
+
+
+/* COLOFÓN: marrón oscuro → BLANCO */
+.raiz-cs1 .colofon-docente {background:#3a1400;color:#ffffff;padding:.7cm 1cm;margin:1cm 0;}
+
+.raiz-cs1 .colofon-docente .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+.raiz-cs1 .colofon-docente h3 {color:#ffffff;font-size:10.5pt;margin:0 0 .35cm;}
+
+.raiz-cs1 .colofon-docente p {font-size:9pt;line-height:1.65;color:#f0e0c8;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Guía Docente y Articulación Curricular · CS-I · MCCEMS 2025 · DGETAYCM</div>
+    <div class="port-titulo">Guía Docente<br>y Academia</div>
+    <div class="port-sub">Capítulo 8 · "Raíz" · Cierre de CS-I · Flex D</div>
+    <div class="port-cap">Trilogía Raíz Digital · El Código del Ejido · Semanas 11–12</div>
+    <div class="aviso">
+      <strong>Capítulo sin estructura rígida.</strong> El Flex D es el espacio de cierre del semestre. No hay contenido nuevo, no hay evaluación, no hay rúbrica. Lo que el docente necesita para este capítulo no es un plan detallado: es disponibilidad, silencio y la capacidad de escuchar lo que el grupo quiera decir antes de que termine el semestre.
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><strong>Sesiones / Semana</strong>Flex D · Semanas 11–12 (1–2 sesiones según el calendario del plantel)</div>
+      <div class="info-cell"><strong>Propósito</strong>Síntesis integradora personal · Carta al futuro yo · Puente explícito a CS-II</div>
+      <div class="info-cell"><strong>Producto</strong>Carta al futuro yo (personal, no evaluada a menos que el grupo lo decida) + respuestas a las preguntas del pizarrón CS-II</div>
+      <div class="info-cell"><strong>Rol docente</strong>Facilitador de silencio y conversación · No instructor · No evaluador</div>
+      <div class="info-cell"><strong>Hito final</strong>La pregunta del pizarrón se escribe con plumón permanente y queda para el inicio de CS-II</div>
+      <div class="info-cell"><strong>Materiales</strong>Cuadernillo cap. 8 · Plumón permanente para el pizarrón · Nada más</div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt;color:#2e3820;border-top:.5pt solid #5a8040;padding-top:.3cm;font-style:italic;">Este capítulo es el más libre del semestre. El docente que lo facilite bien no necesita hablar mucho. Necesita estar presente.</p>
+</div>
+
+
+<!-- CÓMO FACILITAR UN CIERRE -->
+<h2>1. Cómo Facilitar una Sesión de Cierre</h2>
+
+<div class="orientacion">
+  <span class="label">Principios de facilitación para el Flex D</span>
+  <p>Una sesión de cierre bien facilitada sigue lógica inversa a la clase habitual. En clase, el docente inicia con contenido y el grupo responde. En el cierre, el docente abre el espacio y el grupo decide qué llena ese espacio. Eso requiere que el docente tenga alta tolerancia al silencio (que no sea incómodo sino generativo), que no interprete ni evalúe lo que los estudiantes dicen (solo escucha y reconoce), y que no llene los espacios vacíos con instrucciones o análisis cuando el grupo está procesando.</p>
+  <p>La instrucción más útil para este capítulo: <em>si duda entre hablar y no hablar, no hable.</em></p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la carta al futuro yo</span>
+  <p>La carta es el único producto de este capítulo. Tiene tres opciones de uso: (1) el docente la pide y la guarda, con el compromiso de entregarla al inicio de CS-II para que el estudiante la relea; (2) el docente no la pide, el estudiante la guarda personalmente y decide si la comparte; (3) el docente pide solo la última oración de cada carta —lo que el estudiante quiere llevar a CS-II— y la compila como texto colectivo del grupo. Cualquiera de las tres funciona. La que no funciona es evaluarla con rúbrica: la honestidad de lo que se escribe depende de que no haya consecuencia académica.</p>
+</div>
+
+<div class="nota-carta">
+  <span class="label">Referencia · La carta de María en el capítulo como modelo no prescriptivo</span>
+  <p>La carta de María en la novela tiene una estructura que el docente puede compartir como referencia —no como obligación— para estudiantes que no saben por dónde empezar: comienza con lo que aprendiste, continúa con lo que no sabías en agosto y ahora sabes, pasa por un momento concreto que recuerdes, y cierra con lo que llevas a CS-II. Pero si alguien quiere escribir solo una oración, o un poema, o una lista de cosas, es igualmente válido. La carta es honesta o no es carta.</p>
+</div>
+
+
+<!-- PLANEACIÓN -->
+<h2>2. Planeación del Flex D · Una o Dos Sesiones</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">F</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Sesión Flex D · Cierre del semestre · 60 minutos</div>
+      <div class="ses-meta">Si hay dos sesiones disponibles, se usa la primera para conversar y escribir, la segunda para compartir voluntariamente y la pregunta del pizarrón.</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="tabla-sesion">
+      <thead><tr><th class="tiempo-col">Tiempo</th><th>Momento</th><th>Actividad</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>Apertura</strong></td>
+          <td>El docente se sienta en el semicírculo, al mismo nivel que todos. Dice: "Hoy no hay clase. Hoy hay conversación. Pueden hablar de lo que quieran. Si no quieren hablar, pueden escribir. La única regla es que lo que se diga sea verdad." Nada más.</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">15 min</td>
+          <td><strong>Conversación abierta</strong></td>
+          <td>El grupo habla de lo que quiere llevar del semestre. El docente escucha. Si el silencio dura más de 30 segundos, puede preguntar: "¿Alguien quiere decir algo antes de que termine el semestre?" No más que eso. Si nadie habla, pasar a la escritura. No hay fracaso en el silencio.</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">25 min</td>
+          <td><strong>Escritura de la carta</strong></td>
+          <td>Cuadernillo Act. principal: carta al futuro yo. El docente guarda silencio mientras todos escriben. Puede poner música suave si hay dispositivo disponible y el grupo lo desea. Si alguien termina muy rápido, puede releer lo que escribió o continuar en su cuaderno.</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">10 min</td>
+          <td><strong>Compartir voluntario</strong></td>
+          <td>El docente invita a quienes quieran a leer la última oración de su carta. Solo la última. Nadie está obligado. No hay comentarios del docente después de cada lectura: solo escucha y "gracias."</td>
+        </tr>
+        <tr>
+          <td class="tiempo-col">5 min</td>
+          <td><strong>La pregunta del pizarrón</strong></td>
+          <td>El docente escribe con plumón permanente en el pizarrón las tres preguntas de CS-II (ver recuadro abajo). Las escribe de espaldas al grupo, sin anunciar qué escribe. Cuando termina, recoge su bolsa y sale. Deja el salón con las preguntas visibles y los mapas en la pared.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="pizarron-cs2">
+  ¿Cuánto vale el trabajo de tu familia?<br><br>
+  ¿Quién decide ese valor?<br><br>
+  ¿Cómo se decide?
+  <span class="sub">→ Escribir con plumón permanente · Dejar en el pizarrón hasta el inicio de CS-II</span>
+</div>
+
+<div class="orientacion">
+  <span class="label">Por qué el docente sale antes que los estudiantes</span>
+  <p>En la narrativa del capítulo, el Profe Ramírez escribe las preguntas y sale antes que el grupo. Ese gesto tiene valor pedagógico: deja que las preguntas existan en el espacio sin explicación, sin contexto, sin instrucción. Los estudiantes las leen solos, las interpretan solos, y se van con ellas. Reproducir ese gesto en la clase real, aunque sea solo simbólicamente, puede ser uno de los momentos más memorables del semestre.</p>
+</div>
+
+
+<!-- SÍNTESIS CURRICULAR CS-I COMPLETA -->
+<h2>3. Síntesis Curricular · Arco Completo de CS-I</h2>
+
+<p style="font-size:9pt;margin-bottom:.4cm;">Esta tabla es para el docente: un mapa de todo lo que se construyó durante el semestre, capítulo por capítulo. Útil para la entrega al docente de CS-II y para la memoria pedagógica del plantel.</p>
+
+<table class="arc">
+  <thead>
+    <tr>
+      <th>Cap.</th>
+      <th>Título</th>
+      <th>PF activos</th>
+      <th>Concepto clave construido</th>
+      <th>Producto del estudiante</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="grupo"><td colspan="5">Bloque 1 · El Estado y sus normas (Caps. 1–3)</td></tr>
+    <tr>
+      <td>1</td>
+      <td>"El primer día que pregunté algo peligroso"</td>
+      <td>PF-1, PF-2</td>
+      <td>El Estado como red de textos · Ejido · Ley Agraria · Derechos en tensión</td>
+      <td>Ficha 1 del Mapa de Derechos</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>"El idioma de los papeles"</td>
+      <td>PF-1, PF-3</td>
+      <td>Jerarquía normativa · Derecho consuetudinario vs. derecho positivo · Convenio 169 OIT · Contrato social del salón</td>
+      <td>Ficha 2 · Mini-contrato social</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>"Lo que firma el que no lee"</td>
+      <td>PF-2, PF-4</td>
+      <td>Tres condiciones del derecho real (conocer/entender/ejercer) · Ciudadanía formal vs. real · Justicia social · Edadismo · Acciones afirmativas</td>
+      <td>Ficha 3 · Tabla de ciudadanías</td>
+    </tr>
+    <tr class="grupo"><td colspan="5">Bloque 2 · Diversidad, exclusión y construcción del mapa (Caps. 4–5)</td></tr>
+    <tr>
+      <td>4</td>
+      <td>"La diversidad que molesta"</td>
+      <td>PF-4 (central)</td>
+      <td>Diversidad decorativa vs. real · Quién ocupa el espacio · Modificación democrática del contrato · Borrador de acción afirmativa</td>
+      <td>Ficha 4 · Borrador de carta</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>"El mapa tiene un nombre"</td>
+      <td>PF-1 al PF-4 (integración)</td>
+      <td>Integración de los cuatro propósitos en un producto tangible · Ciudadanía como acto concreto</td>
+      <td>Mapa de Derechos final · Carta de Acción Afirmativa final</td>
+    </tr>
+    <tr class="grupo"><td colspan="5">Bloque 3 · Ciudadanía digital y presentación (Caps. 6–7)</td></tr>
+    <tr>
+      <td>6</td>
+      <td>"Lo que el Estado ve y lo que no"</td>
+      <td>PF-2, PF-4 (extensión)</td>
+      <td>Ciudadanía digital · Brecha como exclusión · Verificación de IA · Semilla CS-II: cadena de valor</td>
+      <td>Semilla CS-II (Act. 6) · Protocolo de verificación</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>"El día del mapa"</td>
+      <td>PF-1 al PF-4 (evaluación)</td>
+      <td>El aula como espacio deliberativo · Ciudadanía ejercida públicamente · Análisis de política pública colectivo</td>
+      <td>Presentación oral · Portafolio completo</td>
+    </tr>
+    <tr class="grupo"><td colspan="5">Cierre · Síntesis y puente (Cap. 8)</td></tr>
+    <tr>
+      <td>8</td>
+      <td>"Raíz"</td>
+      <td>Síntesis</td>
+      <td>Aprendizaje irreversible · El método como legado · Las preguntas de CS-II</td>
+      <td>Carta al futuro yo · Hipótesis sobre la cadena de valor</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- ORIENTACIONES PEDAGÓGICAS -->
+<h2>4. Orientaciones Pedagógicas · Capítulo 8</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre el aprendizaje irreversible y cómo reconocerlo</span>
+  <p>En la conversación de cierre, el docente puede escuchar dos tipos de respuesta cuando pregunta qué se lleva el grupo. El primer tipo: respuestas en el lenguaje del programa ("aprendí los cuatro tipos de ciudadanía"). El segundo tipo: respuestas que conectan el concepto con algo concreto en la vida del estudiante ("ahora entiendo por qué mi papá nunca leyó el contrato y ya sé que no tiene que ser así"). El segundo tipo es el indicador de aprendizaje irreversible. El docente no necesita valorarlo en voz alta: simplemente reconocerlo y escucharlo es suficiente.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre lo que el grupo puede haber procesado que no aparece en ninguna actividad</span>
+  <p>A lo largo del semestre, el grupo construyó normas de convivencia, documentó situaciones dolorosas de sus comunidades, y varios estudiantes hablaron en público de cosas que no habían dicho antes. Ese proceso de apertura tiene un lado luminoso y un lado que requiere cuidado. En el cierre, pueden surgir cosas que el docente no esperaba: tristeza, gratitud, algo parecido a la pérdida de lo que termina. Eso no requiere solución. Requiere presencia y silencio.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la carta y la confidencialidad</span>
+  <p>Si el docente pide las cartas para guardarlas y devolverlas al inicio de CS-II, debe ser explícito sobre quién las va a leer. Lo más respetuoso: decir que solo el propio estudiante la leerá al inicio de CS-II, que el docente no las leerá, y que se guardarán en un sobre cerrado con el nombre escrito en el exterior. Esa transparencia hace que los estudiantes escriban con más honestidad.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre los mapas al final del ciclo escolar</span>
+  <p>Al terminar el ciclo escolar, el docente debe preguntar al grupo qué hacer con los mapas de la pared. Tres opciones habituales: (1) los equipos se los llevan y los guardan; (2) quedan en el salón para el siguiente ciclo como antecedente visible; (3) se fotografían digitalmente y se retiran. Cualquiera es válida. Lo que no es adecuado es tirarlos sin preguntarles: son documentos de trabajo comunitario, no decoración.</p>
+</div>
+
+
+<!-- TRANSVERSALIDAD -->
+<h2>5. Articulación Curricular · Cierre de CS-I</h2>
+
+<table class="transv">
+  <thead><tr><th>Conexión</th><th>Qué se transfiere y a quién</th><th>Acción recomendada</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>CS-II (entrega curricular)</strong></td>
+      <td>Los portafolios completos (fichas 1–4, carta de acción afirmativa, Act. 6 del cap. 6 con hipótesis de cadena de valor) son el diagnóstico de entrada de CS-II. Muestran el nivel de análisis que el grupo trae al segundo semestre.</td>
+      <td>Entregar los portafolios al docente de CS-II con un resumen de dos páginas: patrón de comprensión del grupo, casos documentados en los mapas, propuestas de acción afirmativa generadas. Si es el mismo docente, revisar entre semestres.</td>
+    </tr>
+    <tr>
+      <td><strong>Orientación Educativa</strong></td>
+      <td>La dinámica de participación del grupo (quién habló más, quién menos, qué cambió) es información relevante para el orientador. No datos personales: patrones del grupo.</td>
+      <td>Compartir con orientación un breve resumen del arco de participación: qué voces aparecieron, cuáles crecieron, cuáles siguen necesitando apoyo para expresarse en espacios formales.</td>
+    </tr>
+    <tr>
+      <td><strong>Dirección del plantel</strong></td>
+      <td>Si alguna propuesta de los estudiantes fue aplicable al plantel (cartelera de apoyos, consejo estudiantil, transporte, protocolo de becas), el cierre del semestre es el momento de hacer la entrega formal.</td>
+      <td>El docente puede acompañar a los equipos interesados a presentar su propuesta ante la dirección en la semana del Flex D. Eso convierte el ejercicio académico en acto ciudadano real dentro de la comunidad escolar.</td>
+    </tr>
+    <tr>
+      <td><strong>Procuraduría Agraria y otras instituciones</strong></td>
+      <td>Las cartas que se enviaron ya tienen folio de acuse o están en proceso. El semestre terminó, pero el seguimiento puede continuar en CS-II o en actividades extracurriculares.</td>
+      <td>Registrar qué cartas se enviaron y a qué instituciones. Si llega alguna respuesta durante el siguiente semestre, compartirla con el grupo que la generó. Una respuesta —aunque sea denegatoria— cierra el ciclo y refuerza la noción de que sus acciones tienen efecto en el mundo real.</td>
+    </tr>
+    <tr>
+      <td><strong>Comunidades de procedencia</strong></td>
+      <td>Varios estudiantes le explicaron a familiares lo que aprendieron: el contrato de Diego, el aguacate de Ulises, la carta de María. Ese trasvase informal de conocimiento jurídico y ciudadano es un efecto multiplicador del semestre que el docente nunca podrá medir pero que ocurre.</td>
+      <td>No hay acción institucional posible aquí. Solo el reconocimiento de que el aprendizaje que el grupo se lleva no se queda en el salón.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- PUENTE FINAL -->
+<div class="puente">
+  <span class="label">Puente definitivo → CS-II · La Cadena Rota</span>
+  CS-II abre donde CS-I cerró: con las preguntas del pizarrón. El docente de CS-II puede iniciar la primera sesión del segundo semestre preguntando si alguien recuerda qué había escrito en su carta al futuro yo, o qué respondió sobre la cadena del aguacate. Esa continuidad explícita —del Libro I al Libro II— hace que los dos semestres sean un arco y no dos materias separadas. Los personajes de la trilogía (María, Ulises, Miranda, Yesenia) continúan en la narrativa de CS-II: ahora como agentes que entienden el sistema jurídico y empiezan a leer el sistema económico con los mismos instrumentos.
+</div>
+
+
+<!-- COLOFÓN -->
+<div class="colofon-docente">
+  <span class="label">Nota final para el personal docente que facilitó este semestre</span>
+  <h3>Lo que construyeron, capítulo por capítulo</h3>
+  <p>Durante CS-I, el grupo transitó desde "el Estado es una abstracción" hasta "el Estado opera en mi comunidad a través de textos, normas e instituciones que tienen efectos concretos y diferenciados según quién eres." Ese trayecto —ocho capítulos, cuatro propósitos formativos, un mapa de derechos, veintitrés cartas de acción afirmativa— no se produjo solo. Requirió un docente que facilitara sin sobreexplicar, que escuchara más de lo que habló, que resistiera la tentación de dar las respuestas antes de que el grupo las encontrara.</p>
+  <p>La trilogía continúa. Los personajes también. Y lo que el grupo aprendió este semestre es la raíz desde la que crece lo que sigue.</p>
+</div>
+
+<p style="font-size:7.5pt;color:#2e3820;border-top:.5pt solid #5a8040;padding-top:.4cm;margin-top:.8cm;text-align:center;">
+  Guía Docente y Academia · Capítulo 8 · "Raíz" · Ciencias Sociales I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Trilogía Raíz Digital<br>
+  Diseño Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 8 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

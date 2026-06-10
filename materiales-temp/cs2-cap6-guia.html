@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 6 · Guía Docente y Academia                                 ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Guía Docente · CS-II · Capítulo 6</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff; color: #0e0a1e;
+  font-size: 10pt; line-height: 1.7;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 1.5rem 0 1rem; border-bottom: 3pt solid #083840; margin-bottom: 1rem;
+}
+.raiz-digital .col-label {
+  font-size: 7pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #083840; margin-bottom: .8rem; line-height: 2; display: block;
+}
+.raiz-digital .port-titulo {
+  font-size: 22pt; font-weight: 900; color: #0e0a1e; line-height: 1.1; margin-bottom: .2rem; display: block;
+}
+.raiz-digital .port-sub { font-size: 10pt; color: #083840; margin-bottom: .3rem; font-weight: 700; display: block; }
+/* TEAL → BLANCO */
+.raiz-digital .aviso {
+  background: #083840; color: #ffffff; padding: .55rem .85rem; font-size: 8.5pt; line-height: 1.65; margin: .8rem 0;
+}
+.raiz-digital .aviso strong { color: #b0f0d8; }
+.raiz-digital .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin: .6rem 0; }
+.raiz-digital .info-cell { border: 1pt solid #50a090; padding: .35rem .5rem; font-size: 8.5pt; }
+.raiz-digital .info-cell strong { display: block; font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: #083840; margin-bottom: .1rem; }
+.raiz-digital h2 { font-size: 12pt; font-weight: 900; color: #0e0a1e; margin: 1rem 0 .3rem; padding-bottom: .2rem; border-bottom: 2pt solid #083840; }
+.raiz-digital h3 { font-size: 10pt; font-weight: 700; color: #083840; margin: .7rem 0 .25rem; }
+.raiz-digital h4 { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; margin: .4rem 0 .15rem; }
+.raiz-digital p  { margin-bottom: .45em; color: #0e0a1e; font-size: 10pt; }
+/* PROPÓSITOS: ÍNDIGO → BLANCO */
+.raiz-digital .prop-row { display: grid; grid-template-columns: 3rem 1fr 1fr; border: 1pt solid #50a090; margin-bottom: .35rem; overflow: hidden; font-size: 8.5pt; }
+.raiz-digital .pf-num { background: #1a1060; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 14pt; font-weight: 900; min-height: 3rem; min-width: 3rem; flex-shrink: 0; }
+.raiz-digital .pf-desc { padding: .35rem .5rem; border-right: 1pt solid #50a090; line-height: 1.5; }
+.raiz-digital .pf-cont { padding: .35rem .5rem; font-size: 8pt; color: #0a2828; line-height: 1.5; }
+/* SESIONES */
+.raiz-digital .sesion { border: 1pt solid #50a090; margin: .6rem 0; overflow: hidden; }
+.raiz-digital .ses-header { background: #b8e8d8; padding: .3rem .6rem; display: flex; align-items: center; gap: .5rem; }
+.raiz-digital .ses-num { background: #083840; color: #ffffff; min-width: 2rem; min-height: 2rem; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10pt; flex-shrink: 0; }
+.raiz-digital .ses-info { flex: 1; }
+.raiz-digital .ses-titulo { font-size: 9.5pt; font-weight: 700; color: #041a18; }
+.raiz-digital .ses-meta  { font-size: 7.5pt; color: #0a2828; }
+.raiz-digital .ses-tiempo { font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; color: #041a18; font-weight: 700; white-space: nowrap; }
+.raiz-digital .ses-body  { padding: .45rem .6rem; font-size: 8.5pt; }
+.raiz-digital .t-ses { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .3rem 0; }
+.raiz-digital .t-ses th { background: #50a090; color: #041818; padding: .2rem .4rem; text-align: left; font-size: 7pt; font-weight: 700; }
+.raiz-digital .t-ses td { border: .5pt solid #60b8a8; padding: .22rem .4rem; vertical-align: top; line-height: 1.5; }
+.raiz-digital .tc { width: 1.5rem; color: #083840; font-weight: 700; text-align: center; }
+/* ALTERNATIVAS */
+.raiz-digital .alt-bloque { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; margin: .3rem 0; }
+.raiz-digital .alt-col { padding: .3rem .4rem; font-size: 8pt; line-height: 1.5; }
+.raiz-digital .alt-col .label { font-size: 6.5pt; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; margin-bottom: .15rem; display: block; }
+.raiz-digital .alt-a { background: #1a1060; color: #ffffff; border-left: 3pt solid #b85010; }
+.raiz-digital .alt-a .label { color: #ffc090; }
+.raiz-digital .alt-d { background: #083840; color: #ffffff; border-left: 3pt solid #50c0a0; }
+.raiz-digital .alt-d .label { color: #b0f0d8; }
+/* ORIENTACIONES: teal pálido */
+.raiz-digital .orientacion { background: #e8f8f4; border: 1pt solid #50a090; border-left: 3pt solid #083840; padding: .4rem .6rem; margin: .4rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .orientacion .label { font-size: 7pt; letter-spacing: .15em; text-transform: uppercase; color: #083840; font-weight: 700; display: block; margin-bottom: .2rem; }
+/* ADVERTENCIA: ámbar */
+.raiz-digital .advertencia { background: #fff4e0; border: 1pt solid #d08020; border-left: 3pt solid #b85010; padding: .4rem .6rem; margin: .4rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .advertencia .label { font-size: 7pt; letter-spacing: .15em; text-transform: uppercase; color: #b85010; font-weight: 700; display: block; margin-bottom: .2rem; }
+/* EVALUACIÓN */
+.raiz-digital .ev-item { display: grid; grid-template-columns: 3.5rem 1fr 2.5rem; border: 1pt solid #50a090; margin-bottom: .25rem; font-size: 8pt; overflow: hidden; }
+.raiz-digital .ev-tipo { background: #b8e8d8; padding: .25rem .4rem; font-weight: 700; color: #041a18; font-size: 7.5pt; display: flex; align-items: center; border-right: 1pt solid #50a090; }
+.raiz-digital .ev-desc { padding: .25rem .4rem; border-right: 1pt solid #50a090; line-height: 1.5; }
+.raiz-digital .ev-act  { padding: .25rem .4rem; font-size: 7.5pt; color: #0a2828; font-style: italic; }
+/* TRANSVERSALIDAD */
+.raiz-digital .t-transv { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .4rem 0; }
+.raiz-digital .t-transv th { background: #083840; color: #ffffff; padding: .22rem .4rem; font-size: 7pt; font-weight: 700; text-align: left; }
+.raiz-digital .t-transv td { border: 1pt solid #50a090; padding: .22rem .4rem; vertical-align: top; line-height: 1.5; }
+.raiz-digital .t-transv tr:nth-child(even) td { background: #e8f8f4; }
+/* RÚBRICA DE PRESENTACIONES */
+.raiz-digital .rubrica { width: 100%; border-collapse: collapse; font-size: 8pt; margin: .5rem 0; }
+.raiz-digital .rubrica th { background: #1a1060; color: #ffffff; padding: .25rem .4rem; font-size: 7.5pt; font-weight: 700; text-align: left; }
+.raiz-digital .rubrica td { border: .5pt solid #8080c0; padding: .25rem .4rem; vertical-align: top; line-height: 1.45; }
+.raiz-digital .rubrica tr:nth-child(odd) td { background: #fafafa; }
+.raiz-digital .rubrica tr:nth-child(even) td { background: #eeeaf8; }
+.raiz-digital .nivel-header td { background: #b8e8d8 !important; font-weight: 700; font-size: 7.5pt; color: #0a1808; text-align: center; }
+/* PUENTE: ÍNDIGO → BLANCO */
+.raiz-digital .puente { background: #1a1060; color: #ffffff; padding: .65rem .85rem; margin: .8rem 0; font-size: 8.5pt; line-height: 1.65; }
+.raiz-digital .puente .label { font-size: 7pt; letter-spacing: .2em; text-transform: uppercase; color: #ffc090; display: block; margin-bottom: .3rem; font-weight: bold; }
+.raiz-digital .pie-pagina { font-size: 7.5pt; color: #1a3838; border-top: .5pt solid #50a090; padding-top: .4rem; margin-top: .8rem; text-align: center; }
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="col-label">Guía Docente y Articulación Curricular · CS-II · MCCEMS 2025 · DGETAYCM</span>
+  <span class="port-titulo">Guía Docente<br>y Academia</span>
+  <span class="port-sub">Capítulo 6 · "La tierra que nos cuesta" · PF-4 central · Último contenido nuevo antes del Cap. 7</span>
+  <span style="font-size:8.5pt;color:#1a3838;font-style:italic;display:block;">La Cadena Rota · Sesiones 11 y 12 · Semana 9</span>
+  <div class="aviso">
+    <strong>Posición en el semestre:</strong> Este es el último capítulo de contenido conceptual nuevo. La segunda sesión (12) debe reservar tiempo para que los equipos revisen su Reto Central con el checklist del cuadernillo y corrijan lo que falta. El docente que llega a la sesión 12 sin ese tiempo dedicado llega al Cap. 7 con propuestas incompletas.
+  </div>
+  <div class="info-grid">
+    <div class="info-cell"><strong>Sesiones / Semana</strong>11 y 12 · Semana 9</div>
+    <div class="info-cell"><strong>Propósito central</strong>PF-4 · Interseccionalidad territorial · Demografía · Sostenibilidad ambiental</div>
+    <div class="info-cell"><strong>Conceptos finales</strong>Trampa demográfica · Precio verdadero · Sostenibilidad social · Tensión precio justo vs. sostenibilidad ambiental</div>
+    <div class="info-cell"><strong>Productos</strong>Checklist del Reto Central completo · Semilla CS-III (3 preguntas propias)</div>
+    <div class="info-cell"><strong>Hito narrativo</strong>El canal de María recibe dictamen favorable · La quinta pregunta en el pizarrón · Puente explícito a CS-III</div>
+    <div class="info-cell"><strong>Riesgo a gestionar</strong>El debate sobre migración puede activar situaciones personales difíciles. Ver orientaciones §4.</div>
+  </div>
+</div>
+
+
+<h2>1. Propósito Formativo · Capítulo 6</h2>
+
+<div class="prop-row">
+  <div class="pf-num">4</div>
+  <div class="pf-desc"><strong>PF-4 (central):</strong> Reconoce y problematiza las relaciones de poder para explicar su función dentro de la diversidad en el funcionamiento de la organización social.</div>
+  <div class="pf-cont">
+    <strong>Contenidos cap. 6:</strong><br>
+    · Desafíos demográficos: migración rural-urbana, envejecimiento del campo, trampa demográfica<br>
+    · Interseccionalidad territorial: el territorio como dimensión adicional de desigualdad<br>
+    · Relación sociedad-naturaleza: sostenibilidad de los modelos económicos alternativos<br>
+    · Tensión no resuelta: precio justo ≠ producción sostenible automáticamente<br>
+    · Semilla CS-III: límites planetarios y modelos económicos sostenibles<br>
+    <span style="color:#083840;font-weight:700;">→ La quinta pregunta del pizarrón cierra CS-II y abre CS-III</span>
+  </div>
+</div>
+
+<div class="orientacion">
+  <span class="label">Por qué la migración y la demografía son contenido de CS-II, no solo de sociología</span>
+  <p>Los desafíos demográficos del campo mexicano son directamente relevantes para el PF-4 porque determinan la sostenibilidad social de cualquier modelo económico alternativo: una cooperativa de 14 familias funciona si hay familias dispuestas a quedarse. La migración es también una decisión económica racional —como Miranda dice en el capítulo— que el análisis de CS-II debe poder explicar sin juzgar. El docente debe mantener el nivel de análisis estructural: la migración no es abandono del territorio sino respuesta racional a una estructura económica que no remunera suficientemente el trabajo rural.</p>
+</div>
+
+
+<h2>2. Planeación Didáctica · Sesiones 11 y 12</h2>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">11</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Primera sesión · Los tres idiomas + sostenibilidad + demografía</div>
+      <div class="ses-meta">PF-4 · Acts. 1, 2, 3 y 4 del cuadernillo</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">10 min</td><td><strong>Apertura: tres idiomas</strong></td><td>El docente escribe el esquema del pizarrón de la novela (CS-I: jurídico / CS-II: económico / CS-III: socioambiental) y el noticias del canal de María como caso de los tres idiomas simultáneos. Act. 1: la tabla de los tres ángulos.</td><td>Pizarrón · cuadernillo Act. 1</td></tr>
+        <tr><td class="tc">15 min</td><td><strong>Cooperativa y territorio</strong></td><td>Pregunta: si la cooperativa crece, ¿el impacto ambiental crece también? Act. 2. El docente no resuelve la tensión: la deja visible como pregunta abierta que CS-III retomará.</td><td>Cuadernillo Act. 2</td></tr>
+        <tr><td class="tc">25 min</td><td><strong>Demografía y migración</strong></td><td>El docente pregunta cuántos del grupo tienen familiar que emigró. Después Act. 3: datos de migración rural + análisis. Act. 4: trampa demográfica e interseccionalidad territorial. El debate debe mantenerse en el nivel estructural.</td><td>Cuadernillo Acts. 3 y 4 · datos en cuadernillo</td></tr>
+        <tr><td class="tc">10 min</td><td><strong>Cierre sesión 11</strong></td><td>La quinta pregunta del pizarrón. El docente la escribe y la anuncia como la pregunta que abre CS-III. No responder: sembrar.</td><td>Pizarrón permanente</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sesion">
+  <div class="ses-header">
+    <div class="ses-num">12</div>
+    <div class="ses-info">
+      <div class="ses-titulo">Segunda sesión · Precio verdadero + revisión final del Reto Central</div>
+      <div class="ses-meta">PF-4 + revisión integradora · Acts. 5, 6 del cuadernillo + preparación Cap. 7</div>
+    </div>
+    <div class="ses-tiempo">60 min</div>
+  </div>
+  <div class="ses-body">
+    <table class="t-ses">
+      <thead><tr><th class="tc">Tiempo</th><th>Momento</th><th>Actividad</th><th>Recurso</th></tr></thead>
+      <tbody>
+        <tr><td class="tc">15 min</td><td><strong>Precio verdadero</strong></td><td>Act. 5: tabla de costos ambientales y sociales que el precio no incluye, aplicada a la cadena propia. El docente circula y hace preguntas. Énfasis: "¿quién pagará ese costo y cuándo?" es siempre la pregunta que lleva al análisis más profundo.</td><td>Cuadernillo Act. 5</td></tr>
+        <tr><td class="tc">5 min</td><td><strong>Semilla CS-III</strong></td><td>Cada estudiante escribe sus tres preguntas para CS-III. El docente puede recoger las más interesantes y compartirlas con el docente de CS-III como diagnóstico de entrada del grupo.</td><td>Cuadernillo (semilla)</td></tr>
+        <tr><td class="tc">30 min</td><td><strong>Revisión Reto Central</strong></td><td>Act. 6: checklist por equipo. El docente circula y revisa. Preguntas orientadoras: "¿La propuesta tiene un número concreto?" / "¿Responde a la pregunta de los 20 años?" / "¿La presentación tiene diagnóstico + patrón + propuesta + sostenibilidad en 3 minutos?" Los equipos que terminan ensayan su presentación con otro equipo.</td><td>Cuadernillo Act. 6 · Fichas 1–Final del Reto Central</td></tr>
+        <tr><td class="tc">10 min</td><td><strong>Cierre y anuncio Cap. 7</strong></td><td>El docente anuncia el formato del Cap. 7: mismo que el Cap. 7 de CS-I pero el mapa de derechos es ahora el diagnóstico económico. Mismo semicírculo, mismas reglas de presentación (3 min + 2 min preguntas), mismos mapas en la pared. El docente pide que traigan sus fichas en una carpeta o sobre identificado con el nombre del equipo.</td><td>Oral · cuadernillo cierre</td></tr>
+      </tbody>
+    </table>
+    <div class="alt-bloque">
+      <div class="alt-col alt-a">
+        <span class="label">Si el equipo tiene fichas incompletas al final de la sesión 12</span>
+        El docente puede dar los primeros 15 minutos del Flex D (semana 10, antes del Cap. 7) para completar fichas. No retrasar el Cap. 7: las presentaciones con fichas imperfectas son más valiosas pedagógicamente que ninguna presentación.
+      </div>
+      <div class="alt-col alt-d">
+        <span class="label">Para compartir las semillas CS-III con el próximo docente</span>
+        Recoger las tres preguntas que cada estudiante escribió para CS-III y organizarlas por categoría (ambiental, demográfica, tecnológica, política). Ese mapa de preguntas es el diagnóstico de entrada más útil que el docente de CS-III puede recibir.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h2>3. Rúbrica de Evaluación · Reto Central Completo (Cap. 7)</h2>
+<p style="font-size:9pt;margin-bottom:.4rem;">Esta rúbrica evalúa el conjunto del Reto Central (5 fichas + presentación oral). El docente la llena durante las presentaciones del Cap. 7.</p>
+
+<table class="rubrica">
+  <thead>
+    <tr>
+      <th style="width:20%;">Criterio</th>
+      <th style="width:27%;">Logrado con profundidad</th>
+      <th style="width:27%;">Logrado</th>
+      <th style="width:26%;">En proceso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="nivel-header"><td colspan="4">PF-1 · Necesidades y satisfactores</td></tr>
+    <tr>
+      <td>Necesidades identificadas en la cadena</td>
+      <td>La propuesta nombra qué necesidades (Max-Neef) satisface mejor y a quién</td>
+      <td>La propuesta menciona el bienestar de los productores pero sin categorías de Max-Neef</td>
+      <td>La propuesta no conecta distribución del valor con necesidades básicas</td>
+    </tr>
+    <tr class="nivel-header"><td colspan="4">PF-3 · Factores de producción y distribución del valor</td></tr>
+    <tr>
+      <td>Análisis de la cadena de valor</td>
+      <td>Mapa con actores reales, precios verificados en al menos dos eslabones y columna de poder de negociación</td>
+      <td>Mapa con actores identificados pero sin precios verificados o sin análisis de poder</td>
+      <td>Descripción genérica de la cadena sin datos concretos</td>
+    </tr>
+    <tr>
+      <td>Propuesta de distribución alternativa</td>
+      <td>Mecanismo específico con número o proceso concreto, destinatario real y fuente que lo respalda</td>
+      <td>Propuesta con intención clara pero sin mecanismo específico o sin fundamento</td>
+      <td>Propuesta vaga ("deberían pagarse más") sin mecanismo ni fundamento</td>
+    </tr>
+    <tr class="nivel-header"><td colspan="4">PF-4 · Relaciones de poder e interseccionalidad</td></tr>
+    <tr>
+      <td>Interseccionalidad en la cadena</td>
+      <td>Más de una dimensión (género + clase + etnia / territorio + edad) con evidencia de cómo se combinan</td>
+      <td>Una dimensión identificada con nombre (ej. "las mujeres hacen el trabajo invisible")</td>
+      <td>La desigualdad en la cadena se describe sin nombrar dimensiones de interseccionalidad</td>
+    </tr>
+    <tr>
+      <td>Externalidades</td>
+      <td>Al menos una externalidad con nombre propio, identificación de quién la absorbe y conexión con la propuesta alternativa</td>
+      <td>Una externalidad nombrada pero sin conexión con la propuesta</td>
+      <td>El precio se analiza sin mencionar costos que no incluye</td>
+    </tr>
+    <tr>
+      <td>Sostenibilidad de la propuesta</td>
+      <td>Responde a la pregunta de los 20 años: agua, suelo, personas, instituciones. Reconoce límites de la propuesta.</td>
+      <td>Menciona la sostenibilidad de la propuesta pero sin dimensión temporal o ambiental específica</td>
+      <td>La propuesta no considera la sostenibilidad a largo plazo</td>
+    </tr>
+    <tr class="nivel-header"><td colspan="4">Presentación oral</td></tr>
+    <tr>
+      <td>Estructura y especificidad</td>
+      <td>Diagnóstico → patrón → propuesta → sostenibilidad en 3 minutos. La propuesta es específica y el equipo puede defenderla ante preguntas.</td>
+      <td>La estructura es clara pero la propuesta pierde especificidad bajo preguntas del grupo</td>
+      <td>La presentación describe el problema pero la propuesta queda vaga bajo cualquier pregunta</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h2>4. Orientaciones Pedagógicas · Capítulo 6</h2>
+
+<div class="orientacion">
+  <span class="label">Sobre el debate de migración y la sensibilidad del grupo</span>
+  <p>La pregunta "¿cuántos de ustedes están pensando en irse?" puede generar respuestas que activen culpa, presión familiar o tensiones entre quienes quieren irse y quienes quieren quedarse. El docente debe modelar el tono correcto desde el inicio: no hay respuesta moralmente correcta. Irse es una decisión económica racional dada la estructura existente. Quedarse también puede serlo. El análisis va a las condiciones estructurales que hacen que una opción sea más racional que otra, no a las decisiones individuales.</p>
+</div>
+
+<div class="orientacion">
+  <span class="label">Sobre la tensión precio justo vs. sostenibilidad ambiental</span>
+  <p>Esta tensión no tiene resolución académicamente limpia y el docente no debe fingir que la tiene. Lo correcto es nombrarla como una pregunta abierta que los movimientos de economía solidaria, agroecología y soberanía alimentaria están intentando resolver con distintos grados de éxito. CS-III es el espacio donde esa pregunta se profundiza. El Cap. 6 solo necesita que el grupo la vea: no que la resuelva.</p>
+</div>
+
+<div class="advertencia">
+  <span class="label">Sobre el checklist del Reto Central en la sesión 12</span>
+  <p>Algunos equipos pueden llegar a la sesión 12 con fichas significativamente incompletas. El docente no debe alarmar ni sancionar, pero sí ser claro: "Lo que no esté en la ficha no podrá estar en la presentación del Cap. 7. Tienen 30 minutos ahora y el Flex D si lo necesitan." La claridad sobre las consecuencias es más útil que cualquier extensión del plazo.</p>
+</div>
+
+
+<h2>5. Articulación Curricular · Capítulo 6</h2>
+
+<table class="t-transv">
+  <thead><tr><th>Eje</th><th>Conexión</th><th>Propuesta colegiada</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>CS-III (puente explícito)</strong></td>
+      <td>La quinta pregunta del pizarrón ("¿qué pasa cuando el territorio ya no puede sostener ninguna decisión?") es el eje de CS-III. El docente la escribe con plumón permanente en el pizarrón del salón para que esté visible el primer día del tercer semestre.</td>
+      <td>Compartir las semillas CS-III (preguntas del cuadernillo) con el docente de CS-III como diagnóstico de entrada del grupo. Si es el mismo docente, revisarlas entre semestres y usarlas para abrir la primera clase de CS-III.</td>
+    </tr>
+    <tr>
+      <td><strong>CS-I (cierre del arco)</strong></td>
+      <td>La tabla de los tres idiomas del mismo problema (CS-I jurídico / CS-II económico / CS-III ambiental) cierra el arco narrativo que empezó con la hoja rosada que firmó la mamá de María. El docente puede nombrar ese arco explícitamente en la sesión 11.</td>
+      <td>Si los estudiantes conservan sus cuadernillos de CS-I, pueden leer su Ficha 1 (primera situación del mapa de derechos) y compararla con la Ficha Final del Reto Central. La diferencia entre las dos es el aprendizaje del año.</td>
+    </tr>
+    <tr>
+      <td><strong>Biología / Ecología</strong></td>
+      <td>Los datos de degradación del suelo, sobreexplotación de acuíferos y pérdida de biodiversidad tienen base científica. Si el plantel tiene módulo de recursos naturales, este capítulo es el momento de conectar los análisis.</td>
+      <td>Preguntar al área de ciencias naturales si tienen datos de acuíferos o calidad del suelo local. Esos datos pueden enriquecer las fichas finales del Reto Central de los equipos que trabajan cadenas agrícolas.</td>
+    </tr>
+    <tr>
+      <td><strong>CONAPO / Estadística</strong></td>
+      <td>Los datos demográficos de migración y envejecimiento rural son verificables en INEGI y CONAPO. Si hay conectividad en algún momento del ciclo, los datos del municipio o la región específica del plantel son más impactantes que los datos nacionales.</td>
+      <td>El docente puede preparar con anticipación los datos demográficos del municipio de la escuela (edad promedio de productores, tasa de migración, porcentaje de adultos mayores en zona rural) como material de apoyo para la sesión 11.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h2>6. Materiales · Capítulo 6</h2>
+<table class="t-transv">
+  <thead><tr><th>Material</th><th>Especificación</th><th>Fuente</th></tr></thead>
+  <tbody>
+    <tr><td>Capítulo 6 novela</td><td>1 por estudiante o pareja</td><td>Imprimir antes de la semana 9</td></tr>
+    <tr><td>Cuadernillo CS-II Cap. 6</td><td>1 por estudiante · incluye checklist del Reto Central</td><td>Fotocopiar. Es el último cuadernillo de contenido nuevo.</td></tr>
+    <tr><td>Rúbrica de evaluación (Cap. 7)</td><td>1 por docente · incluida en esta guía</td><td>Imprimir antes del Cap. 7. Llenarla durante las presentaciones.</td></tr>
+    <tr><td>Plumón permanente</td><td>Para la quinta pregunta del pizarrón</td><td>Debe quedar hasta el inicio de CS-III.</td></tr>
+    <tr><td>Datos demográficos del municipio (opcional)</td><td>Tasa de migración, edad promedio de productores</td><td>INEGI · CONAPO. Descargar con anticipación si hay conectividad.</td></tr>
+  </tbody>
+</table>
+
+
+<div class="puente">
+  <span class="label">Puente → Capítulo 7 · "El día de la cadena" · Semana 10 · Presentaciones del Reto Central</span>
+  El Capítulo 7 es el espejo del Capítulo 7 de CS-I: el salón se reorganiza en semicírculo, los equipos presentan sus diagnósticos económicos durante 3 minutos cada uno, el grupo hace preguntas durante 2 minutos, y los mapas de cadenas de valor quedan pegados en la pared norte junto a los mapas de derechos del semestre anterior. La rúbrica incluida en esta guía orienta la evaluación formativa. El docente facilita el espacio deliberativo, modera el tiempo, anota retroalimentación descriptiva y abre el espacio libre al final para que el grupo diga lo que necesite decir antes de que termine el semestre.
+</div>
+
+<p class="pie-pagina">
+  Guía Docente · Capítulo 6 · Ciencias Sociales II · La Cadena Rota · MCCEMS 2025 · DGETAYCM<br>
+  Trilogía Raíz Digital · Offline-First · Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Guía Docente y Academia · Capítulo 6 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>
