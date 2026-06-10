@@ -41,12 +41,14 @@ async function solicitarUrlDescarga(
 export default function PaginaCapitulo({ config }: PaginaCapituloProps) {
  const params = useParams();
  const capitulo = params.capitulo as string;
+ const esPreview = capitulo.includes('cap1');
+ const accesoRequerido = esPreview ? 'preview_cap1' : config.claveAcceso;
 
  const solicitarDescarga = (clave: string) =>
    solicitarUrlDescarga(clave, config.id);
 
  return (
-   <EcosistemaAuthGuard accesoRequerido={config.claveAcceso}>
+   <EcosistemaAuthGuard accesoRequerido={accesoRequerido}>
      <div style={{ padding: '1.5rem', maxWidth: 1200, margin: '0 auto' }}>
        <nav
          style={{
