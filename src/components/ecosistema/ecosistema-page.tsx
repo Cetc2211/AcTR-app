@@ -120,30 +120,18 @@ export default function EcosistemaPage() {
               gap: '1.25rem',
             }}
           >
-            <EstacionCard
-              titulo="CS-I · Capítulo 1"
-              subtitulo="El Código del Ejido · Acceso gratuito"
-              tipo="articulo"
-              href="/ecosistema/cs1/cs1-cap1-novela"
-              tieneAcceso={true}
-              colorEstacion="#4a2e10"
-            />
-            <EstacionCard
-              titulo="CS-II · Capítulo 1"
-              subtitulo="La Cadena Rota · Acceso gratuito"
-              tipo="articulo"
-              href="/ecosistema/cs2/cs2-cap1-novela"
-              tieneAcceso={true}
-              colorEstacion="#1a1060"
-            />
-            <EstacionCard
-              titulo="CS-III · Capítulo 1"
-              subtitulo="Generación Raíz · Acceso gratuito"
-              tipo="articulo"
-              href="/ecosistema/cs3/cs3-cap1-novela"
-              tieneAcceso={true}
-              colorEstacion="#0a5040"
-            />
+            {/* CS-I */}
+            <EstacionCard titulo="CS-I · Novela Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-novela" tieneAcceso={true} colorEstacion="#4a2e10" />
+            <EstacionCard titulo="CS-I · Cuadernillo Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#4a2e10" />
+            <EstacionCard titulo="CS-I · Guía Docente Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-guia" tieneAcceso={true} colorEstacion="#4a2e10" />
+            {/* CS-II */}
+            <EstacionCard titulo="CS-II · Novela Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-novela" tieneAcceso={true} colorEstacion="#1a1060" />
+            <EstacionCard titulo="CS-II · Cuadernillo Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#1a1060" />
+            <EstacionCard titulo="CS-II · Guía Docente Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-guia" tieneAcceso={true} colorEstacion="#1a1060" />
+            {/* CS-III */}
+            <EstacionCard titulo="CS-III · Novela Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-novela" tieneAcceso={true} colorEstacion="#0a5040" />
+            <EstacionCard titulo="CS-III · Cuadernillo Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#0a5040" />
+            <EstacionCard titulo="CS-III · Guía Docente Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-guia" tieneAcceso={true} colorEstacion="#0a5040" />
           </div>
         </div>
       )}
