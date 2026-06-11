@@ -91,6 +91,8 @@ export default function EcosistemaLoginPage() {
     setRegistroError('');
     setRegistroCargando(true);
 
+    const nombreLimpio = registroNombre.trim();
+
     try {
       const normalizedEmail = registroEmail.trim().toLowerCase();
       const credenciales = await createUserWithEmailAndPassword(
@@ -101,7 +103,7 @@ export default function EcosistemaLoginPage() {
 
       await setDoc(doc(db, 'ecosistema_usuarios', credenciales.user.uid), {
         uid: credenciales.user.uid,
-        nombre: registroNombre,
+        nombre: nombreLimpio,
         email: normalizedEmail,
         rol: 'lector_free',
         accesos: ACCESOS_FREE,
@@ -109,6 +111,12 @@ export default function EcosistemaLoginPage() {
         fechaExpiracion: null,
         activo: true,
       });
+
+      void fetch('/api/ecosistema/notificar-registro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombreLimpio, email: normalizedEmail }),
+      }).catch(() => {});
     } catch (error: unknown) {
       const code = (error as { code?: string })?.code || '';
       setRegistroError(traducirError(code));
