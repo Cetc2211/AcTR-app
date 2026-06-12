@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useEcosistema } from '@/hooks/use-ecosistema';
-import EstacionCard from '@/components/ecosistema/estacion-card';
 
 const ECOSISTEMAS = [
   {
@@ -18,6 +17,11 @@ const ECOSISTEMAS = [
     colorClaro: '#fdf5e8',
     acento: '#c9a227',
     semestre: 'Primer semestre',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/cs1/cs1-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/cs1/cs1-cap1-cuadernillo' },
+      { titulo: 'Guía docente', href: '/ecosistema/cs1/cs1-cap1-guia' },
+    ],
   },
   {
     id: 'cs2',
@@ -32,6 +36,11 @@ const ECOSISTEMAS = [
     colorClaro: '#eeeaf8',
     acento: '#7b6fd0',
     semestre: 'Segundo semestre',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/cs2/cs2-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/cs2/cs2-cap1-cuadernillo' },
+      { titulo: 'Guía docente', href: '/ecosistema/cs2/cs2-cap1-guia' },
+    ],
   },
   {
     id: 'cs3',
@@ -46,6 +55,11 @@ const ECOSISTEMAS = [
     colorClaro: '#e6f2ee',
     acento: '#4db896',
     semestre: 'Tercer semestre',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/cs3/cs3-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/cs3/cs3-cap1-cuadernillo' },
+      { titulo: 'Guía docente', href: '/ecosistema/cs3/cs3-cap1-guia' },
+    ],
   },
   {
     id: 'pfh1',
@@ -60,6 +74,11 @@ const ECOSISTEMAS = [
     colorClaro: '#eceaf8',
     acento: '#a87c2a',
     semestre: 'Pensamiento Filosófico · DGB',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/pfh1/pfh1-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/pfh1/pfh1-cap1-cuadernillo' },
+      { titulo: 'Guía', href: '/ecosistema/pfh1/pfh1-cap1-guia' },
+    ],
   },
 ];
 
@@ -100,33 +119,37 @@ export default function EcosistemaPage() {
         {ECOSISTEMAS.map((eco) => {
           const acceso = tieneAcceso(eco.claveAcceso);
           const bloqueado = !acceso && suscripcionExpirada;
+          const verPreviews = tieneAcceso('preview_cap1');
 
           return (
             <div
               key={eco.id}
-              onClick={() => router.push(eco.href)}
               style={{
                 background: eco.color,
                 borderRadius: 8,
                 overflow: 'hidden',
-                cursor: 'pointer',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                 transition: 'transform .25s, box-shadow .25s',
                 opacity: bloqueado ? 0.6 : 1,
                 display: 'flex',
                 flexDirection: 'column',
               }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
-              }}
             >
-              {/* HEADER TARJETA */}
-              <div style={{ padding: '1.8rem 1.8rem 1.2rem', position: 'relative', flex: 1 }}>
+              {/* HEADER TARJETA — clicable a la estación */}
+              <div
+                onClick={() => router.push(eco.href)}
+                style={{ padding: '1.8rem 1.8rem 1.2rem', position: 'relative', flex: 1, cursor: 'pointer' }}
+                onMouseEnter={e => {
+                  const card = e.currentTarget.parentElement!;
+                  card.style.transform = 'translateY(-4px)';
+                  card.style.boxShadow = '0 8px 32px rgba(0,0,0,0.2)';
+                }}
+                onMouseLeave={e => {
+                  const card = e.currentTarget.parentElement!;
+                  card.style.transform = 'translateY(0)';
+                  card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+                }}
+              >
                 {/* Número decorativo */}
                 <span style={{
                   position: 'absolute', top: '1rem', right: '1.2rem',
@@ -192,14 +215,64 @@ export default function EcosistemaPage() {
                 </p>
               </div>
 
+              {/* VISTA PREVIA — dentro de la tarjeta */}
+              {verPreviews && (
+                <div style={{
+                  padding: '0 1.8rem .8rem',
+                }}>
+                  <span style={{
+                    fontFamily: 'var(--font-mono, monospace)',
+                    fontSize: '.55rem', letterSpacing: '.2em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,.35)',
+                    display: 'block',
+                    marginBottom: '.5rem',
+                  }}>
+                    Vista previa · Capítulo 1
+                  </span>
+                  <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                    {eco.previews.map((pv) => (
+                      <span
+                        key={pv.href}
+                        onClick={(e) => { e.stopPropagation(); router.push(pv.href); }}
+                        style={{
+                          display: 'inline-block',
+                          padding: '.3rem .7rem',
+                          background: 'rgba(255,255,255,.08)',
+                          border: `1px solid rgba(255,255,255,.12)`,
+                          borderRadius: 4,
+                          color: eco.acento,
+                          fontSize: '.72rem',
+                          fontFamily: 'var(--font-body)',
+                          cursor: 'pointer',
+                          transition: 'background .2s',
+                        }}
+                        onMouseEnter={e => {
+                          (e.currentTarget as HTMLSpanElement).style.background = 'rgba(255,255,255,.15)';
+                        }}
+                        onMouseLeave={e => {
+                          (e.currentTarget as HTMLSpanElement).style.background = 'rgba(255,255,255,.08)';
+                        }}
+                      >
+                        {pv.titulo}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* FOOTER TARJETA */}
-              <div style={{
-                padding: '.9rem 1.8rem',
-                background: 'rgba(0,0,0,.2)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
+              <div
+                onClick={() => router.push(eco.href)}
+                style={{
+                  padding: '.9rem 1.8rem',
+                  background: 'rgba(0,0,0,.2)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                }}
+              >
                 <span style={{
                   fontFamily: 'var(--font-mono, monospace)',
                   fontSize: '.58rem', letterSpacing: '.12em',
@@ -215,51 +288,13 @@ export default function EcosistemaPage() {
                   color: acceso ? eco.acento : 'rgba(255,255,255,.3)',
                   display: 'flex', alignItems: 'center', gap: '.3rem',
                 }}>
-                  {acceso ? '● Acceso completo' : tieneAcceso('preview_cap1') ? '○ Vista previa' : '🔒 Sin acceso'}
+                  {acceso ? '● Acceso completo' : verPreviews ? '○ Vista previa' : '🔒 Sin acceso'}
                 </span>
               </div>
             </div>
           );
         })}
       </div>
-
-      {/* VISTA PREVIA — Capítulo 1 gratuito */}
-      {tieneAcceso('preview_cap1') && (
-        <div style={{ padding: '0 2rem 2rem', maxWidth: 1200, margin: '0 auto' }}>
-          <p style={{
-            fontFamily: 'var(--font-mono, monospace)',
-            fontSize: '.65rem', letterSpacing: '.25em',
-            textTransform: 'uppercase', color: '#888',
-            marginBottom: '1rem',
-          }}>
-            Vista previa gratuita · Capítulo 1
-          </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '1.25rem',
-            }}
-          >
-            {/* CS-I */}
-            <EstacionCard titulo="CS-I · Novela Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-novela" tieneAcceso={true} colorEstacion="#4a2e10" />
-            <EstacionCard titulo="CS-I · Cuadernillo Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#4a2e10" />
-            <EstacionCard titulo="CS-I · Guía Docente Cap. 1" subtitulo="El Código del Ejido · Acceso gratuito" tipo="articulo" href="/ecosistema/cs1/cs1-cap1-guia" tieneAcceso={true} colorEstacion="#4a2e10" />
-            {/* CS-II */}
-            <EstacionCard titulo="CS-II · Novela Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-novela" tieneAcceso={true} colorEstacion="#1a1060" />
-            <EstacionCard titulo="CS-II · Cuadernillo Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#1a1060" />
-            <EstacionCard titulo="CS-II · Guía Docente Cap. 1" subtitulo="La Cadena Rota · Acceso gratuito" tipo="articulo" href="/ecosistema/cs2/cs2-cap1-guia" tieneAcceso={true} colorEstacion="#1a1060" />
-            {/* CS-III */}
-            <EstacionCard titulo="CS-III · Novela Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-novela" tieneAcceso={true} colorEstacion="#0a5040" />
-            <EstacionCard titulo="CS-III · Cuadernillo Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#0a5040" />
-            <EstacionCard titulo="CS-III · Guía Docente Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-guia" tieneAcceso={true} colorEstacion="#0a5040" />
-            {/* PFH1 */}
-            <EstacionCard titulo="PFH1 · Capitulo 1 · Novela" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-novela" tieneAcceso={true} colorEstacion="#1a1440" />
-            <EstacionCard titulo="PFH1 · Capitulo 1 · Cuadernillo" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#1a1440" />
-            <EstacionCard titulo="PFH1 · Capitulo 1 · Guía" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-guia" tieneAcceso={true} colorEstacion="#1a1440" />
-          </div>
-        </div>
-      )}
 
       {/* ARTICULACIÓN */}
       {tieneAcceso('articulacion') && (
