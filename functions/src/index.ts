@@ -24,6 +24,7 @@ const NIVELES_VALIDOS = new Set([
   'estacion_cs1',
   'estacion_cs2',
   'estacion_cs3',
+  'estacion_pfh1',
 ]);
 
 const ACCESOS_INICIALES = {
@@ -32,6 +33,7 @@ const ACCESOS_INICIALES = {
   estacion_cs1: false,
   estacion_cs2: false,
   estacion_cs3: false,
+  estacion_pfh1: false,
 };
 
 type RolEcosistema =
@@ -190,6 +192,11 @@ function foldersForNivel(nivel: string): string[] {
       return [
         'ecosistema/materiales/estacion_CS3',
         'ecosistema/materiales/estacion_cs3',
+      ];
+    case 'estacion_pfh1':
+      return [
+        'ecosistema/materiales/estacion_PFH1',
+        'ecosistema/materiales/estacion_pfh1',
       ];
     default:
       return [];
