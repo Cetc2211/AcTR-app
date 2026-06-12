@@ -99,6 +99,9 @@ const TIPO_ORDEN: Record<string, number> = {
 
 export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
   const { tieneAcceso } = useEcosistema();
+  const accesoCompleto = tieneAcceso(config.claveAcceso);
+  const esPreview = !accesoCompleto && tieneAcceso('preview_cap1');
+
   const [materiales, setMateriales] = useState<MaterialItem[]>([]);
   const [cargando, setCargando] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -147,7 +150,6 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
 
     const grupos: CapituloGrupo[] = [];
     for (const [num, mats] of mapa) {
-      // Ordenar materiales dentro del capítulo: novela, cuadernillo, guía
       mats.sort((a, b) => (TIPO_ORDEN[a.tipo] ?? 99) - (TIPO_ORDEN[b.tipo] ?? 99));
       grupos.push({
         num,
@@ -160,8 +162,16 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
     return grupos;
   }, [materiales]);
 
+  // Para preview: auto-expandir cap1 al cargar
+  useEffect(() => {
+    if (esPreview && capitulos.length > 0 && expandido === null) {
+      const cap1 = capitulos.find(c => c.num === 1);
+      if (cap1) setExpandido(1);
+    }
+  }, [esPreview, capitulos, expandido]);
+
   return (
-    <EcosistemaAuthGuard accesoRequerido={config.claveAcceso}>
+    <EcosistemaAuthGuard accesoRequerido="preview_cap1">
       <div style={{
         background: '#fdf8f0',
         minHeight: '100vh',
@@ -205,8 +215,30 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
             margin: '.25rem 0 0',
           }}>
             Estación {config.numeroRomano} · {capitulos.length} capítulos
+            {esPreview && ' · Vista previa'}
           </p>
         </div>
+
+        {/* BANNER PREVIEW */}
+        {esPreview && (
+          <div style={{
+            background: `${config.color}10`,
+            borderBottom: `1px solid ${config.color}20`,
+            padding: '.75rem 2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '.5rem',
+            fontFamily: 'var(--font-body)',
+            fontSize: '.8rem',
+            color: config.color,
+          }}>
+            <span style={{ fontSize: '1rem' }}>○</span>
+            <span>
+              Estás viendo el <strong>capítulo 1</strong> como vista previa.
+              Los demás capítulos requieren acceso completo.
+            </span>
+          </div>
+        )}
 
         {/* CONTENIDO */}
         <div style={{ padding: '2rem', maxWidth: 1200, margin: '0 auto' }}>
@@ -237,8 +269,61 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
               gap: '.75rem',
             }}>
               {capitulos.map((cap) => {
+                const esCap1 = cap.num === 1;
+                const desbloqueado = accesoCompleto || (esPreview && esCap1);
                 const abierto = expandido === cap.num;
 
+                // ─── Capítulo bloqueado (preview sin acceso) ───
+                if (!desbloqueado) {
+                  return (
+                    <div key={cap.num}>
+                      <div style={{
+                        background: '#e8e4de',
+                        borderRadius: 6,
+                        padding: '1rem 1.2rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        opacity: 0.55,
+                        cursor: 'default',
+                      }}>
+                        <div>
+                          <span style={{
+                            fontFamily: 'var(--font-mono, monospace)',
+                            fontSize: '.55rem',
+                            letterSpacing: '.18em',
+                            textTransform: 'uppercase',
+                            color: '#999',
+                            display: 'block',
+                            marginBottom: '.25rem',
+                          }}>
+                            Capítulo {cap.num}
+                          </span>
+                          <span style={{
+                            fontFamily: 'var(--font-display)',
+                            fontStyle: 'italic',
+                            fontWeight: 400,
+                            fontSize: '.95rem',
+                            lineHeight: 1.2,
+                            color: '#888',
+                          }}>
+                            {cap.titulo}
+                          </span>
+                        </div>
+                        <span style={{
+                          fontSize: '.75rem',
+                          color: '#bbb',
+                          fontFamily: 'var(--font-mono, monospace)',
+                          letterSpacing: '.05em',
+                        }}>
+                          &#128274;
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // ─── Capítulo desbloqueado ───
                 return (
                   <div key={cap.num}>
                     {/* CAJA CAPÍTULO */}
@@ -281,6 +366,11 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
                           marginBottom: '.25rem',
                         }}>
                           Capítulo {cap.num}
+                          {esPreview && esCap1 && (
+                            <span style={{ color: config.color === '#4a2e10' ? '#c9a227' : 'rgba(255,255,255,.6)', marginLeft: '.4rem' }}>
+                              · Vista previa
+                            </span>
+                          )}
                         </span>
                         <span style={{
                           fontFamily: 'var(--font-display)',

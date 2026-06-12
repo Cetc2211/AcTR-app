@@ -118,8 +118,10 @@ export default function EcosistemaPage() {
       }}>
         {ECOSISTEMAS.map((eco) => {
           const acceso = tieneAcceso(eco.claveAcceso);
-          const bloqueado = !acceso && suscripcionExpirada;
           const verPreviews = tieneAcceso('preview_cap1');
+          const puedeEntrar = acceso || verPreviews;
+          const bloqueado = !puedeEntrar;
+          const esSoloPreview = verPreviews && !acceso;
 
           return (
             <div
@@ -130,7 +132,7 @@ export default function EcosistemaPage() {
                 overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                 transition: 'transform .25s, box-shadow .25s',
-                opacity: bloqueado ? 0.6 : 1,
+                opacity: bloqueado ? 0.5 : 1,
                 display: 'flex',
                 flexDirection: 'column',
               }}
@@ -215,8 +217,8 @@ export default function EcosistemaPage() {
                 </p>
               </div>
 
-              {/* VISTA PREVIA — dentro de la tarjeta */}
-              {verPreviews && (
+              {/* INDICADOR PREVIEW — dentro de la tarjeta */}
+              {esSoloPreview && (
                 <div style={{
                   padding: '0 1.8rem .8rem',
                 }}>
@@ -224,40 +226,12 @@ export default function EcosistemaPage() {
                     fontFamily: 'var(--font-mono, monospace)',
                     fontSize: '.55rem', letterSpacing: '.2em',
                     textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,.35)',
+                    color: eco.acento,
                     display: 'block',
-                    marginBottom: '.5rem',
+                    opacity: .7,
                   }}>
-                    Vista previa · Capítulo 1
+                    Entra para ver el capítulo 1
                   </span>
-                  <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-                    {eco.previews.map((pv) => (
-                      <span
-                        key={pv.href}
-                        onClick={(e) => { e.stopPropagation(); router.push(pv.href); }}
-                        style={{
-                          display: 'inline-block',
-                          padding: '.3rem .7rem',
-                          background: 'rgba(255,255,255,.08)',
-                          border: `1px solid rgba(255,255,255,.12)`,
-                          borderRadius: 4,
-                          color: eco.acento,
-                          fontSize: '.72rem',
-                          fontFamily: 'var(--font-body)',
-                          cursor: 'pointer',
-                          transition: 'background .2s',
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLSpanElement).style.background = 'rgba(255,255,255,.15)';
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLSpanElement).style.background = 'rgba(255,255,255,.08)';
-                        }}
-                      >
-                        {pv.titulo}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               )}
 
@@ -288,7 +262,7 @@ export default function EcosistemaPage() {
                   color: acceso ? eco.acento : 'rgba(255,255,255,.3)',
                   display: 'flex', alignItems: 'center', gap: '.3rem',
                 }}>
-                  {acceso ? '● Acceso completo' : verPreviews ? '○ Vista previa' : '🔒 Sin acceso'}
+                  {acceso ? '● Acceso completo' : esSoloPreview ? '○ Vista previa · Cap. 1' : '🔒 Sin acceso'}
                 </span>
               </div>
             </div>
