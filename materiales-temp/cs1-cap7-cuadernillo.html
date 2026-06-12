@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 7 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo del Estudiante · Capítulo 7 · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#1a1208;font-size:10.5pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+
+.raiz-cs1 .portadilla {min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #4a1e00;margin-bottom:1cm;page-break-after:always;}
+
+.raiz-cs1 .col-label {font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#6b2e00;margin-bottom:.8cm;line-height:2;}
+
+.raiz-cs1 .port-titulo {font-size:24pt;font-weight:900;color:#1a1208;line-height:1.1;margin-bottom:.2cm;}
+
+.raiz-cs1 .port-sub {font-size:10pt;color:#4a1e00;margin-bottom:.3cm;font-weight:700;}
+
+.raiz-cs1 .port-cap {font-size:8.5pt;color:#382010;font-style:italic;}
+
+.raiz-cs1 .ficha-est {border:1.5pt solid #9a7040;padding:.6cm .8cm;margin:.8cm 0;display:grid;grid-template-columns:1fr 1fr;gap:.5cm 1cm;}
+
+.raiz-cs1 .campo {border-bottom:1pt solid #6a4820;padding-bottom:.2cm;font-size:8.5pt;color:#1a1208;}
+
+.raiz-cs1 .campo strong {display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#6b2e00;margin-bottom:.1cm;}
+
+/* OSCURO → BLANCO */
+.raiz-cs1 .proposito-strip {background:#3a1400;color:#ffffff;padding:.55cm .85cm;margin:.5cm 0;font-size:8pt;line-height:1.7;}
+
+.raiz-cs1 .proposito-strip .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.2cm;font-weight:bold;}
+
+
+.raiz-cs1 h2 {font-size:13pt;font-weight:900;color:#1a1208;margin:1.1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #4a1e00;}
+
+.raiz-cs1 h3 {font-size:10pt;font-weight:700;color:#4a1e00;margin:.7cm 0 .25cm;}
+
+.raiz-cs1 h4 {font-size:9.5pt;font-weight:700;color:#1a1208;margin:.45cm 0 .15cm;}
+
+.raiz-cs1 p {margin-bottom:.45em;line-height:1.65;}
+
+
+.raiz-cs1 .actividad {border:1.5pt solid #9a7040;margin:.7cm 0;overflow:hidden;}
+
+.raiz-cs1 .act-header {background:#ede0c0;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+
+/* NÚMERO: OSCURO → BLANCO */
+.raiz-cs1 .act-num {background:#4a1e00;color:#ffffff;width:1.4cm;height:1.4cm;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11pt;flex-shrink:0;}
+
+.raiz-cs1 .act-titulo {font-size:9.5pt;font-weight:700;color:#1a1208;line-height:1.3;flex:1;}
+
+.raiz-cs1 .act-tipo-badges {display:flex;gap:.3cm;flex-wrap:wrap;align-items:center;}
+
+.raiz-cs1 .tipo-badge {font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;padding:.15cm .38cm;font-weight:700;border:1.5pt solid;}
+
+.raiz-cs1 .badge-obs {border-color:#0a2a50;color:#0a2a50;}
+
+.raiz-cs1 .badge-auto {border-color:#4a1e00;color:#4a1e00;}
+
+.raiz-cs1 .badge-sint {border-color:#0a3010;color:#0a3010;}
+
+.raiz-cs1 .badge-prod {border-color:#6b4000;color:#6b4000;}
+
+.raiz-cs1 .badge-refl {border-color:#4a1e00;color:#4a1e00;}
+
+.raiz-cs1 .act-body {padding:.5cm .6cm;font-size:9.5pt;}
+
+.raiz-cs1 .act-body p {margin-bottom:.4em;}
+
+
+.raiz-cs1 .espacio-respuesta {border:1pt solid #9a7040;padding:.3cm .5cm;margin:.4cm 0;background:#fdfaf2;}
+
+.raiz-cs1 .esp-label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b2e00;margin-bottom:.2cm;font-weight:bold;}
+
+.raiz-cs1 .lineas {display:flex;flex-direction:column;gap:.6cm;}
+
+.raiz-cs1 .linea {border-bottom:1pt solid #b09060;height:.6cm;}
+
+
+/* TABLA */
+.raiz-cs1 table {width:100%;border-collapse:collapse;font-size:8.5pt;margin:.5cm 0;}
+
+/* ENCABEZADO TABLA: OSCURO → BLANCO */
+.raiz-cs1 th {background:#3a1400;color:#ffffff;padding:.28cm .4cm;text-align:left;font-size:7.5pt;font-weight:700;}
+
+.raiz-cs1 td {border:1pt solid #9a7040;padding:.28cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 tr:nth-child(even) td {background:#faf4e8;}
+
+
+/* TABLA DE OBSERVACIÓN: encabezado azul oscuro → BLANCO */
+.raiz-cs1 .tabla-obs th {background:#0a2040;color:#ffffff;padding:.25cm .4cm;font-size:7pt;font-weight:700;}
+
+.raiz-cs1 .tabla-obs td {border:.5pt solid #9a7040;padding:.28cm .4cm;line-height:1.45;color:#1a1208;}
+
+.raiz-cs1 .tabla-obs tr:nth-child(even) td {background:#f8f4ff;}
+
+
+/* ESCALA LIKERT: verde pálido → negro */
+.raiz-cs1 .escala-row {display:grid;grid-template-columns:1fr repeat(4,2.2cm);border:.5pt solid #9a7040;font-size:8.5pt;}
+
+.raiz-cs1 .escala-row:first-child {background:#c8e8b0;font-weight:700;font-size:7.5pt;color:#0a1808;}
+
+.raiz-cs1 .escala-row+.escala-row {border-top:none;}
+
+.raiz-cs1 .escala-row div {padding:.25cm .35cm;border-right:.5pt solid #9a7040;color:#1a1208;}
+
+.raiz-cs1 .escala-row div:last-child {border-right:none;}
+
+.raiz-cs1 .escala-row .cb {display:flex;align-items:center;justify-content:center;}
+
+.raiz-cs1 .checkbox {width:.7cm;height:.7cm;border:1.5pt solid #6a4820;display:block;}
+
+
+/* PORTAFOLIO: verde oscuro → BLANCO */
+.raiz-cs1 .portafolio {background:#0f2808;color:#ffffff;padding:.7cm 1cm;margin:1cm 0;}
+
+.raiz-cs1 .portafolio .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f060;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+.raiz-cs1 .portafolio h3 {color:#ffffff;font-size:10.5pt;margin:0 0 .3cm;}
+
+.raiz-cs1 .portafolio p {font-size:9pt;line-height:1.65;color:#d0f0c8;}
+
+/* tabla portafolio: encabezado verde medio → negro */
+.raiz-cs1 .portafolio table {width:100%;border-collapse:collapse;font-size:8.5pt;margin:.4cm 0;}
+
+.raiz-cs1 .portafolio table th {background:#7ab860;color:#0a1808;padding:.22cm .4cm;font-size:7.5pt;font-weight:700;text-align:left;}
+
+.raiz-cs1 .portafolio table td {border:.5pt solid #3a6028;padding:.25cm .4cm;vertical-align:top;color:#1a1208;background:#ffffff;}
+
+
+/* REFLEXIÓN: amarillo pálido → negro */
+.raiz-cs1 .reflexion-final {border:1.5pt solid #b09030;padding:.6cm .8cm;margin:1cm 0;background:#fffbe8;}
+
+.raiz-cs1 .reflexion-final .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b4000;font-weight:bold;display:block;margin-bottom:.3cm;}
+
+
+/* CARTA: marrón muy oscuro → BLANCO */
+.raiz-cs1 .carta-box {background:#2a1000;color:#ffffff;border-left:4pt solid #e09000;padding:.55cm .85cm;margin:.5cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.65;}
+
+.raiz-cs1 .carta-box .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.2cm;font-weight:bold;}
+
+
+.raiz-cs1 .nota-pie-cuadernillo {font-size:8pt;color:#3e2810;border-top:.5pt solid #9a7040;margin-top:.5cm;padding-top:.3cm;font-style:italic;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Ciencias Sociales I · Estado, ciudadanía y relaciones de poder · MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital</div>
+    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+    <div class="port-sub">Capítulo 7 · "El día del mapa" · Presentaciones del Reto Central</div>
+    <div class="port-cap" style="margin-top:.4cm;">Sesiones 13 y 14 · Semana 10</div>
+  </div>
+  <div>
+    <div class="ficha-est">
+      <div class="campo"><strong>Nombre completo</strong></div>
+      <div class="campo"><strong>Equipo</strong></div>
+      <div class="campo"><strong>¿Entregaste tu carta hoy?</strong></div>
+      <div class="campo"><strong>Fecha</strong></div>
+    </div>
+    <div class="proposito-strip">
+      <span class="label">Evaluación integradora · Propósitos Formativos PF-1 al PF-4</span>
+      Hoy no construyes conceptos nuevos: demuestras los que aprendiste. Este cuadernillo tiene tres funciones: observar con criterio mientras otros presentan, autoevaluar tu propia presentación, y sintetizar lo que el grupo encontró en conjunto a lo largo del semestre.
+    </div>
+    <p style="font-size:8.5pt;color:#382010;font-style:italic;margin-top:.3cm;">Lleva: Mapa de Derechos (equipo), Carta de Acción Afirmativa (individual), Fichas 1–4 completas (individual). Este cuadernillo también es parte del portafolio de entrega.</p>
+  </div>
+</div>
+
+
+<!-- DURANTE LAS PRESENTACIONES -->
+<h2>Durante las Presentaciones · Observación activa</h2>
+<p style="font-size:9pt;">Mientras los otros equipos presentan, llena esta tabla. No es una calificación para tus compañeros: es tu ejercicio de análisis. Usa las mismas categorías que aprendiste durante el semestre.</p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">Registro de las presentaciones de los otros equipos</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-obs">Observación activa</span></div>
+  </div>
+  <div class="act-body">
+    <p>Llena una fila por cada equipo. Si no alcanza el espacio, usa el reverso o tu cuaderno.</p>
+    <table class="tabla-obs">
+      <thead>
+        <tr>
+          <th style="width:18%;">Equipo / Integrantes</th>
+          <th style="width:22%;">Patrón que identificaron (en tus propias palabras)</th>
+          <th style="width:22%;">Propuesta de acción afirmativa</th>
+          <th style="width:20%;">¿La propuesta tiene destinatario, fundamento legal y es específica?</th>
+          <th style="width:18%;">Una pregunta que habrías hecho (o que hiciste)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="height:2.2cm;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2cm;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2cm;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2cm;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2cm;"></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué tiene en común el patrón que encontraron todos los equipos? Escríbelo en una oración.</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AUTOEVALUACIÓN -->
+<h2>Tu Presentación · Autoevaluación</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">¿Cómo te fue? · Escala de autoevaluación</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-auto">Autoevaluación</span></div>
+  </div>
+  <div class="act-body">
+    <p>Marca con una X la columna que mejor describe tu experiencia. Sé honesto: esta autoevaluación es para ti, no para el docente.</p>
+    <div class="escala-row">
+      <div><strong>Criterio</strong></div>
+      <div style="text-align:center;"><strong>Muy bien</strong></div>
+      <div style="text-align:center;"><strong>Bien</strong></div>
+      <div style="text-align:center;"><strong>Regular</strong></div>
+      <div style="text-align:center;"><strong>Mejorar</strong></div>
+    </div>
+    <div class="escala-row">
+      <div>Comuniqué el patrón claramente en 3 minutos</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>La propuesta quedó específica (responsable + plazo + fundamento)</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>Todo el equipo habló, no solo una o dos personas</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>Respondí las preguntas del grupo con argumentos, no defensividad</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>La oración de apertura dijo el patrón sin rodeos</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>La oración de cierre fue lo que quería que recordaran</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="escala-row">
+      <div>El mapa fue comprensible para quien no había estado en las clases</div>
+      <div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div><div class="cb"><span class="checkbox"></span></div>
+    </div>
+
+    <div class="espacio-respuesta" style="margin-top:.5cm;">
+      <div class="esp-label">Si presentaras de nuevo mañana, ¿qué cambiarías y por qué?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Hay algo que querías decir y no dijiste? ¿Por qué no lo dijiste?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SÍNTESIS COLECTIVA -->
+<h2>Síntesis del Semestre · Lo que los mapas encontraron juntos</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">¿Por qué persiste el patrón si existen las leyes?</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-sint">Síntesis grupal</span><span class="tipo-badge badge-refl">Reflexión</span></div>
+  </div>
+  <div class="act-body">
+    <p>Al final de las presentaciones, el Profe Ramírez hace esta pregunta. Escribe tu respuesta antes del debate. Después anota cómo cambió o se profundizó después de escuchar al grupo.</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Mi respuesta ANTES del debate: ¿por qué persiste la desigualdad aunque existan leyes que la prohíban?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Mi respuesta DESPUÉS del debate: ¿qué añadiría o cambiaría a partir de lo que escuché?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Los mapas que construyó el grupo podrían usarse como evidencia real ante una institución? ¿Bajo qué condiciones?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">Los cuatro propósitos y dónde los encontraste</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-sint">Integración</span><span class="tipo-badge badge-auto">Individual</span></div>
+  </div>
+  <div class="act-body">
+    <p>Ahora que terminó el semestre, conecta cada propósito formativo con un momento o producto concreto donde lo aplicaste.</p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30%;">Propósito formativo</th>
+          <th style="width:35%;">¿En qué momento concreto del semestre lo pusiste en práctica?</th>
+          <th style="width:35%;">¿Aparece en tu Mapa de Derechos o en tu carta? ¿Cómo?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PF-1:</strong> El Estado y la ciudadanía crítica</td>
+          <td style="height:2cm;"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>PF-2:</strong> El concepto de ciudadanía y la democracia incluyente</td>
+          <td style="height:2cm;"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>PF-3:</strong> Las normas sociales y su función</td>
+          <td style="height:2cm;"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>PF-4:</strong> La diversidad en el espacio democrático</td>
+          <td style="height:2cm;"></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- LA CARTA -->
+<h2>La Carta · ¿Sale del salón?</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">5</div>
+    <div class="act-titulo">Decisión sobre el envío de tu carta</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-prod">Decisión ciudadana</span></div>
+  </div>
+  <div class="act-body">
+    <div class="carta-box">
+      <span class="label">Lo que dice el Profe Ramírez sobre la carta</span>
+      "Esa pregunta solo tiene respuesta si la mandas. Una carta que no se envía nunca llega a ningún lado. Eso sí lo podemos garantizar."
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Vas a enviar tu carta? ¿Por qué sí o por qué no?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Si la envías: ¿cuándo, cómo y a través de qué canal (correo, ventanilla presencial, portal de transparencia)?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Si no la envías: ¿qué tendría que cambiar para que decidieras enviarla? ¿Es una barrera real o un miedo?</div>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <p class="nota-pie-cuadernillo">El docente puede orientar sobre cómo enviar la carta a cada institución. No es obligatorio enviarla, pero es una opción real. Los datos de contacto de la Procuraduría Agraria (800-200-2420 · www.gob.mx/pa), el ayuntamiento y la dirección del plantel están disponibles sin internet.</p>
+  </div>
+</div>
+
+
+<!-- PORTAFOLIO -->
+<div class="portafolio">
+  <span class="label">Portafolio de Evidencias · Entrega Final CS-I</span>
+  <h3>Lo que entregas hoy al docente</h3>
+  <p>Estos documentos constituyen tu evaluación final del semestre. Marca los que tienes listos.</p>
+  <table>
+    <thead><tr><th>Documento</th><th>Formato</th><th>¿Lo tienes?</th></tr></thead>
+    <tbody>
+      <tr><td>Carta de Acción Afirmativa (versión final)</td><td>Individual · Hoja separada</td><td style="width:2.5cm;"></td></tr>
+      <tr><td>Ficha 1 del Mapa de Derechos</td><td>Cuadernillo cap. 1</td><td></td></tr>
+      <tr><td>Ficha 2 del Mapa de Derechos</td><td>Cuadernillo cap. 2</td><td></td></tr>
+      <tr><td>Ficha 3 del Mapa de Derechos</td><td>Cuadernillo cap. 3</td><td></td></tr>
+      <tr><td>Ficha 4 · Síntesis integradora</td><td>Cuadernillo cap. 4</td><td></td></tr>
+      <tr><td>Mapa de Derechos visual</td><td>Papel kraft / cartulina · Equipo</td><td></td></tr>
+      <tr><td>Cuadernillos completos caps. 1 al 7</td><td>Individual</td><td></td></tr>
+      <tr><td>Semilla CS-II (Act. 6 del cuadernillo cap. 6)</td><td>Individual · Para el docente de CS-II</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- REFLEXIÓN FINAL -->
+<div class="reflexion-final">
+  <span class="label">Reflexión final del Capítulo 7 · Cierre del semestre de evaluación</span>
+  <div class="espacio-respuesta">
+    <div class="esp-label">Yesenia habló sobre su propio silencio como una forma de exclusión que aprendió sin que nadie se la impusiera directamente. ¿Reconoces algo parecido en tu propia historia?</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué fue lo más inesperado de todo el semestre? ¿Qué no esperabas encontrar cuando llegaste en agosto?</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué vas a hacer diferente en tu comunidad, familia o escuela a partir de lo que aprendiste? (Algo concreto, aunque sea pequeño.)</div>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <p style="font-size:8.5pt;color:#4a2010;margin-top:.5cm;"><strong>Siguiente y último capítulo:</strong> Cap. 8 "Raíz" · Flex D · Semana 11–12 · Sin contenido nuevo · Solo reflexión y la carta de cada estudiante a su futuro yo.</p>
+</div>
+
+<p style="font-size:8pt;color:#3e2810;border-top:1pt solid #9a7040;padding-top:.4cm;margin-top:.5cm;text-align:center;">
+  Cuadernillo del Estudiante · Capítulo 7 · "El día del mapa" · CS-I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Materiales fotocopiables sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 7 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+</body>
+</html>

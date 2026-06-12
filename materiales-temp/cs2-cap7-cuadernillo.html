@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 7 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo · CS-II · Capítulo 7</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff; color: #0e0a1e;
+  font-size: 10.5pt; line-height: 1.7;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 1.5rem 0 1rem; border-bottom: 3pt solid #1a1060; margin-bottom: 1rem;
+}
+.raiz-digital .col-label {
+  font-size: 7pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .8rem; line-height: 2; display: block;
+}
+.raiz-digital .port-titulo {
+  font-size: 24pt; font-weight: 900; color: #0e0a1e; line-height: 1.1;
+  margin-bottom: .2rem; display: block;
+}
+.raiz-digital .port-sub {
+  font-size: 10pt; color: #1a1060; margin-bottom: .3rem; font-weight: 700; display: block;
+}
+/* ÍNDIGO → BLANCO */
+.raiz-digital .proposito-strip {
+  background: #1a1060; color: #ffffff;
+  padding: .55rem .85rem; margin: .5rem 0; font-size: 8pt; line-height: 1.7;
+}
+.raiz-digital .proposito-strip .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #ffc090; display: block; margin-bottom: .2rem; font-weight: bold;
+}
+.raiz-digital .ficha-est {
+  border: 1.5pt solid #8080c0; padding: .6rem .8rem; margin: .8rem 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem;
+}
+.raiz-digital .campo { border-bottom: 1pt solid #6060a8; padding-bottom: .2rem; font-size: 8.5pt; }
+.raiz-digital .campo strong {
+  display: block; font-size: 7pt; letter-spacing: .1em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .1rem;
+}
+.raiz-digital h2 {
+  font-size: 13pt; font-weight: 900; color: #0e0a1e;
+  margin: 1.1rem 0 .3rem; padding-bottom: .2rem; border-bottom: 2pt solid #1a1060;
+}
+.raiz-digital h3 { font-size: 10pt; font-weight: 700; color: #1a1060; margin: .7rem 0 .25rem; }
+.raiz-digital h4 { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; margin: .45rem 0 .15rem; }
+.raiz-digital p { margin-bottom: .45em; line-height: 1.65; font-size: 10.5pt; color: #0e0a1e; }
+.raiz-digital .actividad { border: 1.5pt solid #8080c0; margin: .7rem 0; overflow: hidden; }
+.raiz-digital .act-header {
+  background: #dcdaf8; padding: .3rem .6rem; display: flex; align-items: center; gap: .5rem;
+}
+.raiz-digital .act-num {
+  background: #1a1060; color: #ffffff; min-width: 2rem; min-height: 2rem;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 11pt; flex-shrink: 0;
+}
+.raiz-digital .act-titulo {
+  font-size: 9.5pt; font-weight: 700; color: #0e0a1e; line-height: 1.3; flex: 1;
+}
+.raiz-digital .act-tipo-badges { display: flex; gap: .3rem; flex-wrap: wrap; align-items: center; }
+.raiz-digital .tipo-badge {
+  font-size: 6.5pt; letter-spacing: .1em; text-transform: uppercase;
+  padding: .15rem .38rem; font-weight: 700; border: 1.5pt solid;
+}
+.raiz-digital .badge-obs    { border-color: #083840; color: #083840; }
+.raiz-digital .badge-auto   { border-color: #b85010; color: #b85010; }
+.raiz-digital .badge-sint   { border-color: #1a1060; color: #1a1060; }
+.raiz-digital .badge-prod   { border-color: #5a10a0; color: #5a10a0; }
+.raiz-digital .badge-refl   { border-color: #b85010; color: #b85010; }
+.raiz-digital .act-body { padding: .5rem .6rem; font-size: 9.5pt; }
+.raiz-digital .act-body p { margin-bottom: .4em; }
+.raiz-digital .espacio-respuesta {
+  border: 1pt solid #8080c0; padding: .3rem .5rem; margin: .4rem 0; background: #f8f7fc;
+}
+.raiz-digital .esp-label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .2rem; font-weight: bold; display: block;
+}
+.raiz-digital .lineas { display: flex; flex-direction: column; gap: .6rem; }
+.raiz-digital .linea { border-bottom: 1pt solid #a0a0d8; height: .6rem; }
+/* TABLA OBSERVACIÓN: encabezado teal → negro */
+.raiz-digital table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin: .5rem 0; }
+.raiz-digital .t-obs th {
+  background: #083840; color: #ffffff; padding: .25rem .4rem;
+  text-align: left; font-size: 7pt; font-weight: 700;
+}
+.raiz-digital .t-obs td {
+  border: .5pt solid #50a090; padding: .28rem .4rem;
+  vertical-align: top; line-height: 1.45; color: #0e0a1e;
+}
+.raiz-digital .t-obs tr:nth-child(even) td { background: #e8f8f4; }
+/* TABLA PF: encabezado ÍNDIGO → BLANCO */
+.raiz-digital .t-pf th {
+  background: #1a1060; color: #ffffff; padding: .28rem .4rem;
+  text-align: left; font-size: 7.5pt; font-weight: 700;
+}
+.raiz-digital .t-pf td {
+  border: 1pt solid #8080c0; padding: .3rem .4rem;
+  vertical-align: top; line-height: 1.5; color: #0e0a1e;
+}
+.raiz-digital .t-pf tr:nth-child(even) td { background: #f0eef8; }
+/* LIKERT */
+.raiz-digital .likert-row {
+  display: grid; grid-template-columns: 1fr repeat(4, 2.2rem);
+  border: .5pt solid #8080c0; font-size: 8.5pt;
+}
+.raiz-digital .likert-row:first-child {
+  background: #b8e8d8; font-weight: 700; font-size: 7.5pt; color: #0a1808;
+}
+.raiz-digital .likert-row + .raiz-digital .likert-row { border-top: none; }
+.raiz-digital .likert-row div {
+  padding: .25rem .35rem; border-right: .5pt solid #8080c0; color: #0e0a1e;
+}
+.raiz-digital .likert-row div:last-child { border-right: none; }
+.raiz-digital .likert-cb { display: flex; align-items: center; justify-content: center; }
+.raiz-digital .checkbox { width: .7rem; height: .7rem; border: 1.5pt solid #6060a8; display: inline-block; }
+/* PORTAFOLIO: teal oscuro → BLANCO */
+.raiz-digital .portafolio {
+  background: #083840; color: #ffffff; padding: .7rem 1rem; margin: 1rem 0;
+}
+.raiz-digital .portafolio .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #b0f0d8; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .portafolio h3 { color: #ffffff; font-size: 10.5pt; margin: 0 0 .3rem; }
+.raiz-digital .portafolio p  { font-size: 9pt; line-height: 1.65; color: #c0f0e0; }
+.raiz-digital .t-port { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin: .4rem 0; }
+.raiz-digital .t-port th { background: #50a090; color: #0a1808; padding: .22rem .4rem; font-size: 7.5pt; font-weight: 700; text-align: left; }
+.raiz-digital .t-port td { border: .5pt solid #2a6858; padding: .25rem .4rem; vertical-align: top; color: #0e0a1e; background: #ffffff; }
+.raiz-digital .t-port .cb-cell { width: 2rem; text-align: center; }
+/* REFLEXIÓN FINAL: ámbar → oscuro */
+.raiz-digital .reflexion-final {
+  border: 1.5pt solid #b09030; padding: .6rem .8rem; margin: 1rem 0; background: #fffbe8;
+}
+.raiz-digital .reflexion-final .label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #6b4000; font-weight: bold; display: block; margin-bottom: .3rem;
+}
+.raiz-digital .cierre-semana {
+  border: 1.5pt solid #d08020; padding: .6rem .8rem; margin: 1rem 0; background: #fff8e8;
+}
+.raiz-digital .cierre-semana .label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #b85010; font-weight: bold; display: block; margin-bottom: .3rem;
+}
+.raiz-digital .nota-pie-cuadernillo {
+  font-size: 8pt; color: #3a3070; border-top: .5pt solid #8080c0;
+  margin-top: .5rem; padding-top: .3rem; font-style: italic;
+}
+.raiz-digital .pie-pagina {
+  font-size: 8pt; color: #3a3070; border-top: 1pt solid #8080c0;
+  padding-top: .4rem; margin-top: .5rem; text-align: center;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="col-label">Ciencias Sociales II · Organización, relaciones económicas y sociales<br>MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital · La Cadena Rota</span>
+  <span class="port-titulo">Cuadernillo<br>del Estudiante</span>
+  <span class="port-sub">Capítulo 7 · "El día de la cadena" · Presentaciones del Reto Central</span>
+  <span style="font-size:8.5pt;color:#2a2050;font-style:italic;display:block;margin-top:.4rem;">Sesiones 13 y 14 · Semana 10 · Evaluación integradora PF-1 al PF-4</span>
+
+  <div class="ficha-est">
+    <div class="campo"><strong>Nombre completo</strong></div>
+    <div class="campo"><strong>Equipo</strong></div>
+    <div class="campo"><strong>Producto mapeado en el Reto Central</strong></div>
+    <div class="campo"><strong>Fecha</strong></div>
+  </div>
+  <div class="proposito-strip">
+    <span class="label">Evaluación integradora · Propósitos Formativos PF-1 al PF-4</span>
+    Hoy no hay contenido nuevo. El cuadernillo tiene tres funciones: observar con criterio mientras otros presentan, autoevaluar tu propia presentación, y sintetizar lo que el grupo encontró en conjunto sobre la economía del valle.
+  </div>
+</div>
+
+
+<!-- DURANTE LAS PRESENTACIONES -->
+<h2>Durante las Presentaciones · Observación activa</h2>
+<p style="font-size:9pt;">Mientras los otros equipos presentan, llena esta tabla. No es una calificación: es tu ejercicio de análisis comparado.</p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">Registro de las presentaciones de los otros equipos</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-obs">Observación activa</span></div>
+  </div>
+  <div class="act-body">
+    <table class="t-obs">
+      <thead>
+        <tr>
+          <th style="width:16%;">Equipo / Producto</th>
+          <th style="width:22%;">Patrón que identificaron</th>
+          <th style="width:22%;">Propuesta alternativa</th>
+          <th style="width:20%;">¿La propuesta tiene número específico, mecanismo real y respuesta a los 20 años?</th>
+          <th style="width:20%;">Una pregunta que habrías hecho</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="height:2.2rem;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2rem;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2rem;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2rem;"></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:2.2rem;"></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Qué tienen en común el patrón que encontraron todos los equipos? Escríbelo en una oración.</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AUTOEVALUACIÓN -->
+<h2>Tu Presentación · Autoevaluación</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">¿Cómo te fue? · Escala de autoevaluación del Reto Central</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-auto">Autoevaluación</span></div>
+  </div>
+  <div class="act-body">
+    <div class="likert-row">
+      <div><strong>Criterio</strong></div>
+      <div style="text-align:center;"><strong>Muy bien</strong></div>
+      <div style="text-align:center;"><strong>Bien</strong></div>
+      <div style="text-align:center;"><strong>Regular</strong></div>
+      <div style="text-align:center;"><strong>Mejorar</strong></div>
+    </div>
+    <div class="likert-row">
+      <div>El patrón quedó nombrado con claridad en la primera oración</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>La propuesta tiene número / mecanismo concreto</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>Todo el equipo habló, no solo una persona</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>Respondimos las preguntas con argumento, no defensividad</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>Incluimos la interseccionalidad (al menos dos dimensiones)</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>Incluimos una externalidad con nombre propio</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="likert-row">
+      <div>Respondimos la pregunta de la sostenibilidad en 20 años</div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+      <div class="likert-cb"><span class="checkbox"></span></div>
+    </div>
+    <div class="espacio-respuesta" style="margin-top:.4rem;">
+      <span class="esp-label">¿Qué cambiarías si presentaras de nuevo mañana?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Hubo algo que querías decir y no dijiste? ¿Por qué no?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SÍNTESIS -->
+<h2>Síntesis del Semestre · Lo que todas las cadenas encontraron juntas</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">El patrón estructural del semestre</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-sint">Síntesis grupal</span><span class="tipo-badge badge-refl">Individual</span></div>
+  </div>
+  <div class="act-body">
+    <div class="espacio-respuesta">
+      <span class="esp-label">En una oración: ¿cuál es el patrón que todas las cadenas del salón encontraron?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Por qué ese patrón se mantiene aunque existan instituciones que deberían resolverlo?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Cuál de todas las propuestas del salón te pareció más viable y por qué?</span>
+      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">Los cuatro propósitos: dónde los pusiste en práctica</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-sint">Integración</span><span class="tipo-badge badge-auto">Individual</span></div>
+  </div>
+  <div class="act-body">
+    <table class="t-pf">
+      <thead><tr><th>Propósito formativo</th><th>Momento concreto donde lo pusiste en práctica</th><th>¿Aparece en tu Reto Central? ¿Cómo?</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PF-1:</strong> Necesidades y satisfactores · organización social</td><td style="height:1.8rem;"></td><td></td></tr>
+        <tr><td><strong>PF-2:</strong> Formas de organización social · cooperativismo</td><td style="height:1.8rem;"></td><td></td></tr>
+        <tr><td><strong>PF-3:</strong> Factores de producción · distribución desigual</td><td style="height:1.8rem;"></td><td></td></tr>
+        <tr><td><strong>PF-4:</strong> Relaciones de poder · interseccionalidad · ambiente</td><td style="height:1.8rem;"></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- PORTAFOLIO -->
+<div class="portafolio">
+  <span class="label">Portafolio de Evidencias · Entrega Final CS-II</span>
+  <h3>Lo que entregas hoy al docente</h3>
+  <p>Marca lo que tienes completo. El portafolio es la evidencia de todo el semestre.</p>
+  <table class="t-port">
+    <thead><tr><th class="cb-cell">✓</th><th>Documento</th><th style="width:30%;">Observación</th></tr></thead>
+    <tbody>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 1 del Diagnóstico Económico (producto elegido + primera hipótesis)</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 2 (trabajo invisible en la cadena)</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 3 (primera versión de la cadena de valor)</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 4 (interseccionalidad y externalidades)</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha Final (propuesta de distribución justa con mecanismo específico)</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Cuadernillos completos Caps. 1 al 7</td><td></td></tr>
+      <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Semilla CS-III (tres preguntas del Cap. 6)</td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- REFLEXIÓN FINAL -->
+<div class="reflexion-final">
+  <span class="label">Reflexión de cierre · Para guardarte</span>
+  <div class="espacio-respuesta">
+    <span class="esp-label">Yesenia dijo: "Lo que debería hacer la educación es cambiar las preguntas, no darte las respuestas." ¿Cambió CS-II alguna pregunta tuya? ¿Cuál?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">¿Qué fue lo más inesperado de todo el semestre? ¿Qué no esperabas encontrar en agosto?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">Miranda dice que se lleva el método. ¿Qué te llevas tú? ¿En qué otro contexto lo usarías?</span>
+    <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+  </div>
+  <p style="font-size:8.5pt;color:#4a2010;margin-top:.5rem;"><strong>Siguiente y último capítulo:</strong> Cap. 8 "Raíz II" · Flex D · Sin contenido nuevo · Carta al futuro yo y la quinta pregunta que abre CS-III.</p>
+</div>
+
+<p class="pie-pagina">
+  Cuadernillo del Estudiante · Capítulo 7 · CS-II · La Cadena Rota · MCCEMS 2025 · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 7 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+</body>
+</html>
