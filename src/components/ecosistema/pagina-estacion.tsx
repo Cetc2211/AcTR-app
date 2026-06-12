@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -71,6 +71,12 @@ interface MaterialItem {
   storageFile?: string;
 }
 
+interface CapituloGrupo {
+  num: number;
+  titulo: string;
+  materiales: MaterialItem[];
+}
+
 const TIPO_LABEL: Record<string, string> = {
   novela: 'Novela',
   cuadernillo: 'Cuadernillo',
@@ -81,11 +87,22 @@ const TIPO_LABEL: Record<string, string> = {
   curso: 'Curso',
 };
 
+const TIPO_ORDEN: Record<string, number> = {
+  novela: 1,
+  cuadernillo: 2,
+  guia: 3,
+  libro: 1,
+  articulo: 2,
+  ensayo: 3,
+  curso: 4,
+};
+
 export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
   const { tieneAcceso } = useEcosistema();
   const [materiales, setMateriales] = useState<MaterialItem[]>([]);
   const [cargando, setCargando] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [expandido, setExpandido] = useState<number | null>(null);
 
   useEffect(() => {
     async function cargarMateriales() {
@@ -99,9 +116,7 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
           .sort((a, b) => {
             const ordenA = typeof a.orden === 'number' ? a.orden : Number.MAX_SAFE_INTEGER;
             const ordenB = typeof b.orden === 'number' ? b.orden : Number.MAX_SAFE_INTEGER;
-            if (ordenA !== ordenB) {
-              return ordenA - ordenB;
-            }
+            if (ordenA !== ordenB) return ordenA - ordenB;
             return a.titulo.localeCompare(b.titulo, 'es');
           });
         setMateriales(items);
@@ -119,7 +134,31 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
     void cargarMateriales();
   }, [config.coleccionFirestore]);
 
-  const accesoEstacion = tieneAcceso(config.claveAcceso);
+  // Agrupar materiales por capítulo
+  const capitulos = useMemo<CapituloGrupo[]>(() => {
+    const mapa = new Map<number, MaterialItem[]>();
+
+    for (const m of materiales) {
+      const capMatch = m.id.match(/cap(\d+)/);
+      const capNum = capMatch ? parseInt(capMatch[1], 10) : (m.orden ?? 0);
+      if (!mapa.has(capNum)) mapa.set(capNum, []);
+      mapa.get(capNum)!.push(m);
+    }
+
+    const grupos: CapituloGrupo[] = [];
+    for (const [num, mats] of mapa) {
+      // Ordenar materiales dentro del capítulo: novela, cuadernillo, guía
+      mats.sort((a, b) => (TIPO_ORDEN[a.tipo] ?? 99) - (TIPO_ORDEN[b.tipo] ?? 99));
+      grupos.push({
+        num,
+        titulo: mats[0]?.titulo || `Capítulo ${num}`,
+        materiales: mats,
+      });
+    }
+
+    grupos.sort((a, b) => a.num - b.num);
+    return grupos;
+  }, [materiales]);
 
   return (
     <EcosistemaAuthGuard accesoRequerido={config.claveAcceso}>
@@ -165,7 +204,7 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
             color: 'rgba(255,255,255,.4)',
             margin: '.25rem 0 0',
           }}>
-            Estación {config.numeroRomano} · {materiales.length} materiales
+            Estación {config.numeroRomano} · {capitulos.length} capítulos
           </p>
         </div>
 
@@ -181,9 +220,6 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
                 <div style={{ background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: 8, padding: '1rem 1.25rem', color: '#a8071a' }}>
                   <p style={{ margin: '0 0 0.25rem', fontWeight: 700 }}>Error al cargar materiales</p>
                   <p style={{ margin: 0, fontSize: '0.85rem', fontFamily: 'monospace', wordBreak: 'break-all' }}>{errorMsg}</p>
-                  <p style={{ margin: '0.75rem 0 0', fontSize: '0.8rem', color: '#595959' }}>
-                    Colección consultada: <code>{config.coleccionFirestore}</code>
-                  </p>
                 </div>
               ) : (
                 <div style={{ background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 8, padding: '1rem 1.25rem', color: '#614700' }}>
@@ -197,64 +233,135 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
           ) : (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
               gap: '.75rem',
             }}>
-              {materiales.map((material) => {
-                const capNum = material.id.match(/cap(\d+)/)?.[1];
-                const tipoKey = material.tipo || '';
-                const tipoLabel = TIPO_LABEL[tipoKey] || tipoKey;
+              {capitulos.map((cap) => {
+                const abierto = expandido === cap.num;
 
                 return (
-                  <Link
-                    key={material.id}
-                    href={`${config.rutaBase}/${material.id}`}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      background: config.color,
-                      borderRadius: 6,
-                      padding: '1rem 1.2rem',
-                      textDecoration: 'none',
-                      color: '#fff',
-                      transition: 'transform .2s, box-shadow .2s',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      minHeight: 70,
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)';
-                      (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 6px 20px rgba(0,0,0,0.18)';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
-                      (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                    }}
-                  >
-                    {/* Capítulo + tipo */}
-                    <span style={{
-                      fontFamily: 'var(--font-mono, monospace)',
-                      fontSize: '.55rem',
-                      letterSpacing: '.18em',
-                      textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,.4)',
-                      marginBottom: '.3rem',
-                    }}>
-                      {capNum ? `Cap. ${capNum}` : ''} {tipoLabel}
-                    </span>
+                  <div key={cap.num}>
+                    {/* CAJA CAPÍTULO */}
+                    <div
+                      onClick={() => setExpandido(abierto ? null : cap.num)}
+                      style={{
+                        background: config.color,
+                        borderRadius: abierto ? '6px 6px 0 0' : 6,
+                        padding: '1rem 1.2rem',
+                        cursor: 'pointer',
+                        transition: 'transform .2s, box-shadow .2s',
+                        boxShadow: abierto
+                          ? '0 4px 16px rgba(0,0,0,0.15)'
+                          : '0 2px 8px rgba(0,0,0,0.1)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                      onMouseEnter={e => {
+                        if (!abierto) {
+                          (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
+                          (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 20px rgba(0,0,0,0.18)';
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        if (!abierto) {
+                          (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
+                          (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                        }
+                      }}
+                    >
+                      <div>
+                        <span style={{
+                          fontFamily: 'var(--font-mono, monospace)',
+                          fontSize: '.55rem',
+                          letterSpacing: '.18em',
+                          textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,.4)',
+                          display: 'block',
+                          marginBottom: '.25rem',
+                        }}>
+                          Capítulo {cap.num}
+                        </span>
+                        <span style={{
+                          fontFamily: 'var(--font-display)',
+                          fontStyle: 'italic',
+                          fontWeight: 400,
+                          fontSize: '.95rem',
+                          lineHeight: 1.2,
+                          color: '#fff',
+                        }}>
+                          {cap.titulo}
+                        </span>
+                      </div>
 
-                    {/* Título */}
-                    <span style={{
-                      fontFamily: 'var(--font-display)',
-                      fontStyle: 'italic',
-                      fontWeight: 400,
-                      fontSize: '.95rem',
-                      lineHeight: 1.2,
-                      color: '#fff',
-                    }}>
-                      {material.titulo}
-                    </span>
-                  </Link>
+                      {/* Indicador expandir/colapsar */}
+                      <span style={{
+                        fontSize: '1.1rem',
+                        color: 'rgba(255,255,255,.35)',
+                        transition: 'transform .2s',
+                        transform: abierto ? 'rotate(180deg)' : 'rotate(0deg)',
+                        lineHeight: 1,
+                        userSelect: 'none',
+                      }}>
+                        ▾
+                      </span>
+                    </div>
+
+                    {/* MATERIALES DESPLEGADOS */}
+                    {abierto && (
+                      <div style={{
+                        background: 'rgba(0,0,0,.08)',
+                        borderRadius: '0 0 6px 6px',
+                        overflow: 'hidden',
+                      }}>
+                        {cap.materiales.map((mat) => {
+                          const tipoLabel = TIPO_LABEL[mat.tipo] || mat.tipo;
+
+                          return (
+                            <Link
+                              key={mat.id}
+                              href={`${config.rutaBase}/${mat.id}`}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '.65rem 1.2rem',
+                                textDecoration: 'none',
+                                color: config.color,
+                                fontFamily: 'var(--font-body)',
+                                fontSize: '.82rem',
+                                borderBottom: '1px solid rgba(0,0,0,.04)',
+                                transition: 'background .15s',
+                              }}
+                              onMouseEnter={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(0,0,0,.04)';
+                              }}
+                              onMouseLeave={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+                              }}
+                            >
+                              <span style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '.5rem',
+                              }}>
+                                <span style={{
+                                  display: 'inline-block',
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: '50%',
+                                  background: config.color,
+                                  opacity: .4,
+                                }} />
+                                {tipoLabel}
+                              </span>
+                              <span style={{ fontSize: '.7rem', color: '#999' }}>→</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
