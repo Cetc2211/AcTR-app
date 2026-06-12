@@ -63,6 +63,7 @@ service firebase.storage {
     //     estacion_cs1  → accesos.estacion_cs1
     //     estacion_cs2  → accesos.estacion_cs2
     //     estacion_cs3  → accesos.estacion_cs3
+    //     estacion_pfh1 → accesos.estacion_pfh1
     //     articulacion  → accesos.articulacion
     //
     //   El wildcard {nivel} coincide directamente con la clave en el mapa

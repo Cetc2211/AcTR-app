@@ -34,6 +34,15 @@ export default function EcosistemaPage() {
       claveAcceso: 'estacion_cs3',
       color: '#0a5040',
     },
+    {
+      id: 'pfh1',
+      titulo: 'Pensamiento Filosófico y Humanidades 1',
+      subtitulo: 'La pregunta que habita el mundo',
+      tipo: 'libro' as const,
+      href: '/ecosistema/pfh1',
+      claveAcceso: 'estacion_pfh1',
+      color: '#1a1440',
+    },
   ];
 
   return (
@@ -132,6 +141,10 @@ export default function EcosistemaPage() {
             <EstacionCard titulo="CS-III · Novela Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-novela" tieneAcceso={true} colorEstacion="#0a5040" />
             <EstacionCard titulo="CS-III · Cuadernillo Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#0a5040" />
             <EstacionCard titulo="CS-III · Guía Docente Cap. 1" subtitulo="Generación Raíz · Acceso gratuito" tipo="articulo" href="/ecosistema/cs3/cs3-cap1-guia" tieneAcceso={true} colorEstacion="#0a5040" />
+            {/* PFH1 */}
+            <EstacionCard titulo="PFH1 · Capitulo 1 · Novela" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-novela" tieneAcceso={true} colorEstacion="#1a1440" />
+            <EstacionCard titulo="PFH1 · Capitulo 1 · Cuadernillo" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-cuadernillo" tieneAcceso={true} colorEstacion="#1a1440" />
+            <EstacionCard titulo="PFH1 · Capitulo 1 · Guía" subtitulo="Panta Rhei · Acceso gratuito" tipo="articulo" href="/ecosistema/pfh1/pfh1-cap1-guia" tieneAcceso={true} colorEstacion="#1a1440" />
           </div>
         </div>
       )}

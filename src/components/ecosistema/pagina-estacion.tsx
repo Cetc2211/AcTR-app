@@ -48,6 +48,16 @@ export const CONFIG_CS3: ConfigEstacion = {
   rutaBase: '/ecosistema/cs3',
 };
 
+export const CONFIG_PFH1: ConfigEstacion = {
+  id: 'pfh1',
+  nombre: 'Pensamiento Filosófico y Humanidades I',
+  color: '#1a1440',
+  numeroRomano: 'I',
+  claveAcceso: 'estacion_pfh1',
+  coleccionFirestore: 'ecosistema_materiales_pfh1',
+  rutaBase: '/ecosistema/pfh1',
+};
+
 type TipoMaterial = 'libro' | 'articulo' | 'ensayo' | 'curso';
 
 interface MaterialItem {
