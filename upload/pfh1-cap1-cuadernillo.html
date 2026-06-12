@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Módulo 1 · Panta Rhei · El cuaderno de Mateo</title>
+</head>
+<body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Spectral:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --tinta:#1a1410;--tinta-2:#3d3028;--tinta-3:#6b5a48;
+  --pergamino:#f7f2ea;--pergamino-2:#ede5d8;--pergamino-3:#e0d5c4;
+  --indigo:#2a2060;--indigo-2:#1a1440;--indigo-claro:#eceaf8;
+  --oro:#a87c2a;--verde:#1a4a2a;--verde-claro:#e8f2ea;
+  --linea:rgba(26,20,16,0.12);
+  --fd:'EB Garamond',Georgia,serif;
+  --fc:'Spectral',Georgia,serif;
+  --fm:'Space Mono',monospace;
+}
+.pf1-cuad{background:var(--pergamino);color:var(--tinta);font-family:var(--fc);font-size:clamp(10pt,2.1vw,12pt);line-height:1.8;max-width:min(800px,100%);margin:0 auto}
+
+/* PORTADA */
+.pf1c-portada{background:var(--indigo-2);padding:clamp(2.5rem,7vw,5rem) clamp(2rem,6vw,4rem);position:relative;overflow:hidden}
+.pf1c-portada::after{content:'01';position:absolute;right:clamp(1rem,4vw,3rem);bottom:-1rem;font-family:var(--fd);font-style:italic;font-size:clamp(6rem,20vw,12rem);line-height:1;color:rgba(247,242,234,.04);pointer-events:none;user-select:none}
+.pf1c-kit{font-family:var(--fm);font-size:.4rem;letter-spacing:.32em;text-transform:uppercase;color:var(--oro);display:block;margin-bottom:2rem}
+.pf1c-bloque{font-family:var(--fm);font-size:.38rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(247,242,234,.35);display:block;margin-bottom:.4rem}
+.pf1c-titulo{font-family:var(--fd);font-style:italic;font-weight:400;font-size:clamp(1.6rem,5vw,2.8rem);color:var(--pergamino);line-height:1.05;margin-bottom:.4rem}
+.pf1c-subtitulo{font-family:var(--fd);font-style:italic;font-size:clamp(.85rem,2vw,1rem);color:rgba(247,242,234,.45);display:block;margin-bottom:2.5rem}
+.pf1c-datos{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;max-width:500px}
+.pf1c-dato label{font-family:var(--fm);font-size:.34rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(247,242,234,.35);display:block;margin-bottom:.3rem}
+.pf1c-dato input{width:100%;background:transparent;border:none;border-bottom:1px solid rgba(247,242,234,.2);color:var(--pergamino);font-family:var(--fc);font-size:.85rem;padding:.2rem 0;outline:none}
+.pf1c-dato input:focus{border-bottom-color:var(--oro)}
+
+/* SECCIONES */
+.pf1c-sec{padding:clamp(2rem,5vw,3.5rem) clamp(2rem,6vw,4rem)}
+.pf1c-sec+.pf1c-sec{border-top:1px solid var(--linea)}
+
+/* MOMENTO */
+.pf1c-momento{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem}
+.pf1c-num{background:var(--indigo);color:#fff;font-family:var(--fm);font-size:.55rem;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+.pf1c-mtitulo{font-family:var(--fd);font-style:italic;font-size:clamp(1rem,2.5vw,1.3rem);color:var(--indigo);line-height:1.2}
+.pf1c-msub{font-family:var(--fm);font-size:.38rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tinta-3);display:block;margin-top:.2rem}
+
+/* PREGUNTA INTERACTIVA */
+.pf1c-q{margin-bottom:1.5rem}
+.pf1c-ql{font-family:var(--fm);font-size:.42rem;letter-spacing:.15em;color:var(--indigo);font-weight:700;display:block;margin-bottom:.4rem}
+.pf1c-qt{color:var(--tinta-2);margin-bottom:.6rem}
+textarea.pf1c-r{width:100%;border:1px solid var(--pergamino-3);border-radius:3px;background:rgba(255,255,255,.6);font-family:var(--fc);font-size:.9rem;line-height:1.7;color:var(--tinta);padding:.6rem .8rem;resize:vertical;min-height:4rem;outline:none;transition:border-color .2s}
+textarea.pf1c-r:focus{border-color:var(--indigo);background:#fff}
+textarea.pf1c-r.grande{min-height:6rem}
+textarea.pf1c-r.xgrande{min-height:8rem}
+
+/* PAUSA */
+.pf1c-pausa{background:var(--indigo-claro);border-left:3px solid var(--indigo);padding:1.2rem 1.5rem;margin:1.5rem 0}
+.pf1c-pausa-label{font-family:var(--fm);font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:var(--indigo);display:block;margin-bottom:.5rem}
+.pf1c-pausa-texto{color:var(--tinta-2);font-style:italic;margin-bottom:.8rem;font-size:.92rem}
+.pf1c-pausa-mi{font-family:var(--fm);font-size:.36rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tinta-3);display:block;margin-bottom:.3rem}
+
+/* MI PREGUNTA */
+.pf1c-mip{background:var(--indigo-2);color:var(--pergamino);padding:2rem;margin:1rem 0}
+.pf1c-mip-label{font-family:var(--fm);font-size:.38rem;letter-spacing:.22em;text-transform:uppercase;color:var(--oro);display:block;margin-bottom:1rem}
+textarea.pf1c-mip-r{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(247,242,234,.15);color:var(--pergamino);font-family:var(--fc);font-size:.95rem;line-height:1.7;padding:.6rem .8rem;resize:vertical;min-height:5rem;outline:none;border-radius:3px;margin-bottom:1.2rem}
+textarea.pf1c-mip-r:focus{border-color:var(--oro);background:rgba(255,255,255,.12)}
+.pf1c-tipo{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:1rem}
+.pf1c-tipo label{display:flex;align-items:center;gap:.4rem;font-family:var(--fm);font-size:.38rem;letter-spacing:.1em;color:rgba(247,242,234,.6);cursor:pointer}
+.pf1c-tipo input[type=radio]{accent-color:var(--oro);width:.9rem;height:.9rem}
+
+/* TABLA ACTIVIDAD */
+.pf1c-tabla{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.88rem}
+.pf1c-tabla th{background:var(--indigo);color:#fff;font-family:var(--fm);font-size:.36rem;letter-spacing:.15em;text-transform:uppercase;padding:.6rem .8rem;text-align:left}
+.pf1c-tabla td{border-bottom:1px solid var(--pergamino-3);padding:.5rem .8rem;color:var(--tinta-2);vertical-align:middle}
+.pf1c-tabla tr:nth-child(even) td{background:var(--pergamino-2)}
+.pf1c-tabla select{font-family:var(--fc);font-size:.85rem;border:1px solid var(--pergamino-3);padding:.2rem .4rem;background:var(--pergamino);color:var(--tinta);border-radius:2px;width:100%}
+.pf1c-tabla textarea{font-family:var(--fc);font-size:.82rem;border:1px solid var(--pergamino-3);padding:.3rem .5rem;background:var(--pergamino);color:var(--tinta);resize:vertical;min-height:2.5rem;width:100%;border-radius:2px}
+
+/* ACTIVIDAD */
+.pf1c-act{background:var(--verde-claro);border-left:3px solid var(--verde);padding:1.5rem;margin:1.5rem 0}
+.pf1c-act-label{font-family:var(--fm);font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:var(--verde);display:block;margin-bottom:.6rem}
+.pf1c-paso{font-family:var(--fm);font-size:.4rem;letter-spacing:.12em;text-transform:uppercase;color:var(--verde);display:block;margin:1rem 0 .4rem}
+
+/* COMUNIDAD */
+.pf1c-com{background:var(--pergamino-2);border:1px solid var(--pergamino-3);border-top:3px solid var(--oro);padding:1.5rem;margin:1.5rem 0}
+.pf1c-com-label{font-family:var(--fm);font-size:.38rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro);display:block;margin-bottom:.6rem}
+.pf1c-com-q{font-family:var(--fd);font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--tinta);border-left:2px solid var(--oro);padding-left:1rem;margin:1rem 0 1.2rem;line-height:1.5}
+
+/* AUTOEVALUACIÓN */
+.pf1c-auto-tabla{width:100%;border-collapse:collapse;font-size:.82rem}
+.pf1c-auto-tabla th{background:var(--tinta-2);color:#fff;font-family:var(--fm);font-size:.34rem;letter-spacing:.14em;text-transform:uppercase;padding:.6rem .8rem;text-align:left}
+.pf1c-auto-tabla td{border:1px solid var(--pergamino-3);padding:.7rem .8rem;color:var(--tinta-2);vertical-align:top;font-size:.82rem;line-height:1.6}
+.pf1c-auto-tabla .crit{font-weight:600;font-style:italic;background:var(--pergamino-2)}
+.pf1c-radio-cell{display:flex;justify-content:center;gap:.4rem;padding:.4rem 0}
+.pf1c-radio-cell label{display:flex;flex-direction:column;align-items:center;gap:.2rem;font-family:var(--fm);font-size:.3rem;letter-spacing:.08em;color:var(--tinta-3);cursor:pointer}
+.pf1c-radio-cell input[type=radio]{accent-color:var(--indigo);width:1rem;height:1rem}
+
+/* GUARDAR */
+.pf1c-guardar{text-align:center;padding:1.5rem;background:var(--pergamino-2);border-top:1px solid var(--linea)}
+.btn-guardar{background:var(--indigo);color:#fff;font-family:var(--fm);font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;padding:.7rem 2rem;border:none;cursor:pointer;border-radius:3px;transition:background .2s}
+.btn-guardar:hover{background:var(--indigo-2)}
+.btn-limpiar{background:transparent;color:var(--tinta-3);font-family:var(--fm);font-size:.4rem;letter-spacing:.15em;text-transform:uppercase;padding:.5rem 1rem;border:1px solid var(--pergamino-3);cursor:pointer;margin-left:.8rem;border-radius:3px}
+.pf1c-aviso{font-family:var(--fm);font-size:.38rem;color:var(--tinta-3);margin-top:.6rem;display:block}
+
+/* FIRMA */
+.pf1c-firma{padding:1.2rem 2rem;border-top:1px solid var(--linea);background:var(--pergamino);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.pf1c-fn{font-family:var(--fd);font-style:italic;font-size:1rem;color:var(--tinta-2)}
+.pf1c-fd{font-family:var(--fm);font-size:.36rem;letter-spacing:.1em;color:var(--tinta-3);text-align:right;line-height:1.8}
+
+@media(max-width:520px){
+  .pf1c-datos{grid-template-columns:1fr}
+  .pf1c-firma{flex-direction:column;text-align:center}
+  .pf1c-fd{text-align:center}
+  .pf1c-portada::after{display:none}
+  .pf1c-tipo{gap:.6rem}
+}
+</style>
+
+<div class="pf1-cuad">
+
+<!-- PORTADA -->
+<header class="pf1c-portada">
+  <span class="pf1c-kit">Kit PF1 &middot; El cuaderno de Mateo &middot; Letras Necias</span>
+  <span class="pf1c-bloque">Bloque I &middot; La pregunta &middot; M&#243;dulo 1</span>
+  <h1 class="pf1c-titulo">Panta Rhei</h1>
+  <span class="pf1c-subtitulo">Cap&#237;tulo I &middot; Pensamiento Filos&#243;fico y Humanidades 1</span>
+  <div class="pf1c-datos">
+    <div class="pf1c-dato"><label for="nombre">Nombre</label><input type="text" id="nombre" placeholder="Tu nombre completo"></div>
+    <div class="pf1c-dato"><label for="grupo">Grupo</label><input type="text" id="grupo" placeholder="Grupo"></div>
+    <div class="pf1c-dato"><label for="docente">Docente</label><input type="text" id="docente" placeholder="Nombre del docente"></div>
+  </div>
+</header>
+
+<!-- ① ANTES DE LEER -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">①</div>
+    <div><div class="pf1c-mtitulo">Antes de leer</div><span class="pf1c-msub">Responde antes de abrir el libro &middot; No hay respuestas correctas</span></div>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">a)</span>
+    <p class="pf1c-qt">&#191;Hay algo que sabes con certeza absoluta? Escribe una sola cosa y de d&#243;nde crees que viene ese saber.</p>
+    <textarea class="pf1c-r grande" id="r1a" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">b)</span>
+    <p class="pf1c-qt">&#191;Cu&#225;ndo fue la &#250;ltima vez que algo que cre&#237;as saber result&#243; ser diferente a lo que pensabas?</p>
+    <textarea class="pf1c-r grande" id="r1b" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">c)</span>
+    <p class="pf1c-qt">Si alguien te preguntara &#171;&#191;por qu&#233; est&#225;s aqu&#237;?&#187;, &#191;qu&#233; responder&#237;as? Escribe lo primero que se te ocurra.</p>
+    <textarea class="pf1c-r" id="r1c" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+</section>
+
+<!-- ② MIENTRAS LEES -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">②</div>
+    <div><div class="pf1c-mtitulo">Mientras lees &mdash; tres pausas</div><span class="pf1c-msub">Tu docente indicar&#225; en qu&#233; momentos hacer estas pausas</span></div>
+  </div>
+
+  <div class="pf1c-pausa">
+    <span class="pf1c-pausa-label">&#9208; Pausa 1 &mdash; Al llegar al primer encuentro con la profesora Galarza</span>
+    <p class="pf1c-pausa-texto">La profesora pregunta: &#171;&#191;Por qu&#233; est&#225;n aqu&#237;?&#187; El grupo no sabe c&#243;mo responder. &#191;Qu&#233; habr&#237;as respondido t&#250;? Anota dos palabras que describan c&#243;mo crees que se sentir&#237;a Mateo en ese momento.</p>
+    <span class="pf1c-pausa-mi">Mi respuesta:</span>
+    <textarea class="pf1c-r" id="p1" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-pausa">
+    <span class="pf1c-pausa-label">&#9208; Pausa 2 &mdash; Al leer el texto de Her&#225;clito</span>
+    <p class="pf1c-pausa-texto">Mateo lee: &#171;La naturaleza misma de la vida es el cambio; resistirse al cambio es resistirse a la vida.&#187; Piensa en una cosa de tu vida que ha cambiado en el &#250;ltimo a&#241;o. &#191;Resististe ese cambio o lo aceptaste?</p>
+    <span class="pf1c-pausa-mi">Mi respuesta:</span>
+    <textarea class="pf1c-r" id="p2" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-pausa">
+    <span class="pf1c-pausa-label">&#9208; Pausa 3 &mdash; Al llegar a la milpa del abuelo</span>
+    <p class="pf1c-pausa-texto">El abuelo le dice a Mateo: &#171;Tal vez hay m&#225;s de dos tipos&#187; de conocimiento. &#191;Qu&#233; pregunta te gener&#243; a ti este cap&#237;tulo hasta este momento? An&#243;tala aunque sea incompleta.</p>
+    <span class="pf1c-pausa-mi">Mi respuesta:</span>
+    <textarea class="pf1c-r" id="p3" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+</section>
+
+<!-- ③ COMPRENSIÓN -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">③</div>
+    <div><div class="pf1c-mtitulo">Comprensi&#243;n &mdash; &#191;qu&#233; pas&#243; en la historia?</div><span class="pf1c-msub">Responde con base en lo que le&#237;ste &middot; Si necesitas releer, hazlo</span></div>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">1.</span>
+    <p class="pf1c-qt">&#191;Por qu&#233; los pupitres en c&#237;rculo desconciertan a Mateo cuando entra al sal&#243;n? &#191;Qu&#233; dice ese detalle sobre lo que &#233;l esperaba que fuera la prepa?</p>
+    <textarea class="pf1c-r grande" id="c1" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">2.</span>
+    <p class="pf1c-qt">La profesora distingue entre <em>doxa</em> y <em>episteme</em>. Explica la diferencia con tus propias palabras y da un ejemplo de cada una tomado de tu propia vida.</p>
+    <textarea class="pf1c-r xgrande" id="c2" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">3.</span>
+    <p class="pf1c-qt">Mateo se qued&#243; abajo cuando Rodrigo subi&#243; al pretil del puente. Al final del cap&#237;tulo, despu&#233;s de escuchar sobre <em>phr&#243;nesis</em> e <em>hibris</em>, &#191;c&#243;mo reinterpreta &#233;l mismo esa decisi&#243;n? &#191;Qu&#233; diferencia hay entre quedarse abajo por miedo y quedarse abajo porque tienes algo que perder?</p>
+    <textarea class="pf1c-r xgrande" id="c3" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">4.</span>
+    <p class="pf1c-qt">&#191;Qu&#233; le responde el abuelo Bernab&#233; cuando Mateo le pregunta qu&#233; es mirar de verdad? &#191;Cu&#225;l es el l&#237;mite de la respuesta del abuelo?</p>
+    <textarea class="pf1c-r grande" id="c4" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+</section>
+
+<!-- ④ FILOSOFÍA -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">④</div>
+    <div><div class="pf1c-mtitulo">Filosof&#237;a &mdash; preguntas m&#225;s profundas</div><span class="pf1c-msub">Estas preguntas no tienen una respuesta &#250;nica &middot; Explora, argumenta, cuestiona</span></div>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">a)</span>
+    <p class="pf1c-qt">Da un ejemplo de <em>doxa</em> de tu vida cotidiana: algo que crees porque lo escuchaste muchas veces, sin haberlo examinado t&#250; mismo.</p>
+    <textarea class="pf1c-r grande" id="f1" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">b)</span>
+    <p class="pf1c-qt">Mateo piensa: &#171;Nadie me ense&#241;&#243; a preguntar. Solo me ense&#241;aron las respuestas.&#187; &#191;Est&#225;s de acuerdo? &#191;La escuela te ense&#241;a a preguntar o a responder? Argumenta.</p>
+    <textarea class="pf1c-r grande" id="f2" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+
+  <div class="pf1c-q">
+    <span class="pf1c-ql">c)</span>
+    <p class="pf1c-qt">Her&#225;clito dice que todo fluye. Si todo cambia constantemente, &#191;c&#243;mo es posible conocer algo con certeza? Plantea una respuesta, aunque sea provisional.</p>
+    <textarea class="pf1c-r grande" id="f3" placeholder="Escribe tu respuesta aquí..."></textarea>
+  </div>
+</section>
+
+<!-- ⑤ MI PREGUNTA -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">⑤</div>
+    <div><div class="pf1c-mtitulo">Mi pregunta</div><span class="pf1c-msub">La parte m&#225;s importante del m&#243;dulo</span></div>
+  </div>
+
+  <div class="pf1c-mip">
+    <span class="pf1c-mip-label">Mi pregunta filos&#243;fica &mdash; M&#243;dulo 1</span>
+    <textarea class="pf1c-mip-r" id="mip" placeholder="Escribe aquí tu pregunta filosófica. Si no da un poco de vértigo escribirla, probablemente es demasiado segura..."></textarea>
+    <div class="pf1c-tipo">
+      <span style="font-family:var(--fm);font-size:.38rem;letter-spacing:.1em;color:rgba(247,242,234,.5)">&#191;Qu&#233; tipo de pregunta es?</span>
+      <label><input type="radio" name="tipo" value="ontologica"> Ontol&#243;gica</label>
+      <label><input type="radio" name="tipo" value="epistemologica"> Epistemol&#243;gica</label>
+      <label><input type="radio" name="tipo" value="etica"> &#201;tica</label>
+      <label><input type="radio" name="tipo" value="no-se"> No lo s&#233; todav&#237;a</label>
+    </div>
+    <p style="font-size:.85rem;color:rgba(247,242,234,.5);font-style:italic;margin-bottom:.4rem">&#191;Por qu&#233; esta pregunta te parece importante? &#191;De d&#243;nde viene?</p>
+    <textarea class="pf1c-mip-r" id="mip2" placeholder="Explica el origen de tu pregunta..."></textarea>
+  </div>
+</section>
+
+<!-- ⑥ ACTIVIDAD -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">⑥</div>
+    <div><div class="pf1c-mtitulo">Actividad &mdash; El mapa de mis certezas</div><span class="pf1c-msub">Individual</span></div>
+  </div>
+
+  <div class="pf1c-act">
+    <span class="pf1c-act-label">&#9312; Actividad</span>
+    <p style="color:var(--tinta-2);margin-bottom:1rem">Mateo comienza el cap&#237;tulo con certezas absolutas sobre su mundo. Son cosas que sabe sin haberlas cuestionado nunca.</p>
+
+    <span class="pf1c-paso">Paso 1 &mdash; Mis cinco certezas</span>
+    <p style="color:var(--tinta-2);font-size:.9rem;margin-bottom:.8rem">Anota cinco cosas que sabes con certeza absoluta sobre tu vida, tu familia o tu comunidad.</p>
+    <textarea class="pf1c-r xgrande" id="a1" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5."></textarea>
+
+    <span class="pf1c-paso">Paso 2 &mdash; La certeza examinada</span>
+    <p style="color:var(--tinta-2);font-size:.9rem;margin-bottom:.8rem">Elige una de esas certezas y hazte la pregunta de Mateo: &#191;c&#243;mo s&#233; que s&#233; esto? &#191;Qui&#233;n me lo ense&#241;&#243;? &#191;Lo verifiqu&#233; alguna vez?</p>
+    <textarea class="pf1c-r xgrande" id="a2" placeholder="Escribe aquí tu análisis..."></textarea>
+
+    <span class="pf1c-paso">Paso 3 &mdash; &#191;Cambi&#243; algo?</span>
+    <textarea class="pf1c-r grande" id="a3" placeholder="¿Cambió algo en tu forma de ver esa certeza después de examinarla?"></textarea>
+  </div>
+</section>
+
+<!-- ⑦ COMUNIDAD DE INDAGACIÓN -->
+<section class="pf1c-sec">
+  <div class="pf1c-momento">
+    <div class="pf1c-num">⑦</div>
+    <div><div class="pf1c-mtitulo">Comunidad de indagaci&#243;n</div><span class="pf1c-msub">Debate grupal coordinado por tu docente &middot; Anota antes y despu&#233;s</span></div>
+  </div>
+
+  <div class="pf1c-com">
+    <span class="pf1c-com-label">Pregunta para el di&#225;logo filos&#243;fico</span>
+    <div class="pf1c-com-q">&#191;Hay preguntas que no deber&#237;an hacerse? &#191;Qui&#233;n decide cu&#225;les?</div>
+
+    <div class="pf1c-q">
+      <span class="pf1c-ql">Mis ideas antes del debate:</span>
+      <textarea class="pf1c-r grande" id="d1" placeholder="Escribe tus ideas iniciales antes de que comience el debate..."></textarea>
+    </div>
+    <div class="pf1c-q">
+      <span class="pf1c-ql">Un argumento que apoye mi posici&#243;n:</span>
+      <textarea class="pf1c-r" id="d2" placeholder="Escribe un argumento a favor..."></textarea>
+    </div>
+    <div class="pf1c-q">
+      <span class="pf1c-ql">Un argumento que la cuestione:</span>
+      <textarea class="pf1c-r" id="d3" placeholder="Escribe un argumento en contra o que complique tu posición..."></textarea>
+    </div>
+    <div class="pf1c-q">
+      <span class="pf1c-ql">Lo que m&#225;s me sorprendi&#243; del debate (llenar despu&#233;s):</span>
+      <textarea class="pf1c-r grande" id="d4" placeholder="Llena este campo después del debate en clase..."></textarea>
+    </div>
+  </div>
+
+  <!-- AUTOEVALUACIÓN -->
+  <div style="overflow-x:auto;margin-top:1.5rem">
+    <table class="pf1c-auto-tabla">
+      <thead>
+        <tr>
+          <th>Criterio</th>
+          <th>Nivel alto</th>
+          <th>Nivel medio</th>
+          <th>Nivel inicial</th>
+          <th style="width:5rem;text-align:center">Mi nivel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="crit">Formulo preguntas propias</td>
+          <td>Pregunta original, abierta y genuinamente inc&#243;moda.</td>
+          <td>Pregunta cerrada o poco profunda.</td>
+          <td>No logr&#233; formular una pregunta propia.</td>
+          <td>
+            <div class="pf1c-radio-cell">
+              <label><input type="radio" name="ae1" value="alto">Alto</label>
+              <label><input type="radio" name="ae1" value="medio">Medio</label>
+              <label><input type="radio" name="ae1" value="inicial">Inicial</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="crit">Relaciono la lectura con mi vida</td>
+          <td>Conexiones concretas con mi experiencia real.</td>
+          <td>Conexi&#243;n superficial o general.</td>
+          <td>No logr&#233; conectar la lectura con mi vida.</td>
+          <td>
+            <div class="pf1c-radio-cell">
+              <label><input type="radio" name="ae2" value="alto">Alto</label>
+              <label><input type="radio" name="ae2" value="medio">Medio</label>
+              <label><input type="radio" name="ae2" value="inicial">Inicial</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="crit">Identifico doxa propia</td>
+          <td>Identifica una certeza propia no examinada y explica por qu&#233; es doxa.</td>
+          <td>Identifica certezas ajenas pero no las propias.</td>
+          <td>No puede distinguir certezas examinadas de las no examinadas.</td>
+          <td>
+            <div class="pf1c-radio-cell">
+              <label><input type="radio" name="ae3" value="alto">Alto</label>
+              <label><input type="radio" name="ae3" value="medio">Medio</label>
+              <label><input type="radio" name="ae3" value="inicial">Inicial</label>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BOTONES GUARDAR -->
+<div class="pf1c-guardar">
+  <button class="btn-guardar" onclick="guardar()">&#8595; Guardar mis respuestas</button>
+  <button class="btn-limpiar" onclick="limpiar()">Borrar todo</button>
+  <span class="pf1c-aviso" id="aviso"></span>
+</div>
+
+<!-- FIRMA -->
+<footer class="pf1c-firma">
+  <span class="pf1c-fn">El cuaderno de Mateo</span>
+  <span class="pf1c-fd">M&#243;dulo 1 &middot; Panta Rhei &middot; Kit PF1<br>Pensamiento Filos&#243;fico y Humanidades 1 &middot; MCCEMS / DGB<br>&copy; 2026 Letras Necias &middot; letrasnecias.com</span>
+</footer>
+
+</div>
+
+<script>
+const CLAVE = 'pf1_mod1_';
+const CAMPOS = ['nombre','grupo','docente','r1a','r1b','r1c','p1','p2','p3','c1','c2','c3','c4','f1','f2','f3','mip','mip2','a1','a2','a3','d1','d2','d3','d4'];
+const RADIOS = {tipo:['ontologica','epistemologica','etica','no-se'],ae1:['alto','medio','inicial'],ae2:['alto','medio','inicial'],ae3:['alto','medio','inicial']};
+
+function cargar(){
+  CAMPOS.forEach(id=>{
+    const el=document.getElementById(id);
+    const v=localStorage.getItem(CLAVE+id);
+    if(el&&v)el.value=v;
+  });
+  Object.keys(RADIOS).forEach(name=>{
+    const v=localStorage.getItem(CLAVE+'radio_'+name);
+    if(v){const r=document.querySelector(`input[name="${name}"][value="${v}"]`);if(r)r.checked=true;}
+  });
+}
+
+function guardar(){
+  CAMPOS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)localStorage.setItem(CLAVE+id,el.value);
+  });
+  Object.keys(RADIOS).forEach(name=>{
+    const r=document.querySelector(`input[name="${name}"]:checked`);
+    if(r)localStorage.setItem(CLAVE+'radio_'+name,r.value);
+  });
+  const av=document.getElementById('aviso');
+  av.textContent='✓ Respuestas guardadas en este dispositivo';
+  setTimeout(()=>av.textContent='',3000);
+}
+
+function limpiar(){
+  if(!confirm('¿Borrar todas las respuestas? Esta acción no se puede deshacer.'))return;
+  CAMPOS.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  Object.keys(RADIOS).forEach(name=>{
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r=>r.checked=false);
+  });
+  CAMPOS.forEach(id=>localStorage.removeItem(CLAVE+id));
+  Object.keys(RADIOS).forEach(name=>localStorage.removeItem(CLAVE+'radio_'+name));
+}
+
+window.addEventListener('load',cargar);
+// Autoguardado cada 30 segundos
+setInterval(guardar,30000);
+</script>
+</body>
+</html>
