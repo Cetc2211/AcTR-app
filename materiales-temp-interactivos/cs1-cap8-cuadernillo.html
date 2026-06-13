@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 8 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo del Estudiante · Capítulo 8 · Raíz · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#1a1208;font-size:10.5pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+
+.raiz-cs1 .portadilla {min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #4a1e00;margin-bottom:1cm;page-break-after:always;}
+
+.raiz-cs1 .col-label {font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#6b2e00;margin-bottom:.8cm;line-height:2;}
+
+.raiz-cs1 .port-titulo {font-size:24pt;font-weight:900;color:#1a1208;line-height:1.1;margin-bottom:.2cm;}
+
+.raiz-cs1 .port-sub {font-size:10pt;color:#4a1e00;margin-bottom:.3cm;font-weight:700;}
+
+.raiz-cs1 .port-cap {font-size:8.5pt;color:#382010;font-style:italic;}
+
+.raiz-cs1 .ficha-est {border:1.5pt solid #9a7040;padding:.6cm .8cm;margin:.8cm 0;display:grid;grid-template-columns:1fr 1fr;gap:.5cm 1cm;}
+
+.raiz-cs1 .campo {border-bottom:1pt solid #6a4820;padding-bottom:.2cm;font-size:8.5pt;color:#1a1208;}
+
+.raiz-cs1 .campo strong {display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#6b2e00;margin-bottom:.1cm;}
+
+/* OSCURO → BLANCO */
+.raiz-cs1 .proposito-strip {background:#3a1400;color:#ffffff;padding:.55cm .85cm;margin:.5cm 0;font-size:8pt;line-height:1.7;}
+
+.raiz-cs1 .proposito-strip .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.2cm;font-weight:bold;}
+
+
+.raiz-cs1 h2 {font-size:13pt;font-weight:900;color:#1a1208;margin:1.1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #4a1e00;}
+
+.raiz-cs1 h3 {font-size:10pt;font-weight:700;color:#4a1e00;margin:.7cm 0 .25cm;}
+
+.raiz-cs1 h4 {font-size:9.5pt;font-weight:700;color:#1a1208;margin:.45cm 0 .15cm;}
+
+.raiz-cs1 p {margin-bottom:.45em;line-height:1.65;}
+
+
+.raiz-cs1 .espacio-respuesta {border:1pt solid #9a7040;padding:.3cm .5cm;margin:.4cm 0;background:#fdfaf2;}
+
+.raiz-cs1 .esp-label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b2e00;margin-bottom:.2cm;font-weight:bold;}
+
+.raiz-cs1 .lineas {display:flex;flex-direction:column;gap:.6cm;}
+
+.raiz-cs1 .linea {border-bottom:1pt solid #b09060;height:.6cm;}
+
+
+/* CARTA: espacio amplio con formato de carta */
+.raiz-cs1 .carta-espacio {border:1pt solid #9a7040;margin:.6cm 0;background:#fdfaf2;overflow:hidden;}
+
+.raiz-cs1 .carta-cabecera {background:#ede0c0;padding:.35cm .6cm;display:flex;gap:1cm;font-size:8.5pt;border-bottom:1pt solid #9a7040;}
+
+.raiz-cs1 .carta-campo {flex:1;border-bottom:1pt solid #6a4820;padding-bottom:.1cm;}
+
+.raiz-cs1 .carta-campo strong {display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#6b2e00;margin-bottom:.05cm;}
+
+.raiz-cs1 .carta-cuerpo {padding:.5cm .6cm;}
+
+.raiz-cs1 .carta-lineas {display:flex;flex-direction:column;gap:.75cm;}
+
+.raiz-cs1 .carta-linea {border-bottom:1pt solid #c8a878;height:.75cm;}
+
+
+/* PIZARRÓN CS-II: verde muy oscuro → BLANCO */
+.raiz-cs1 .pizarron-cs2 {background:#0c1a08;color:#ffffff;font-family:'Georgia',serif;font-size:11pt;font-style:italic;padding:1cm 1.2cm;margin:1cm 0;text-align:center;line-height:1.85;border-left:4pt solid #a0f060;}
+
+.raiz-cs1 .pizarron-cs2 .sub {font-family:'Arial',sans-serif;font-size:7.5pt;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:#a0f060;display:block;margin-top:.6cm;}
+
+
+/* PERSONAJES: recuadro crema → negro */
+.raiz-cs1 .personajes {background:#f0e8d0;border:1pt solid #9a7040;border-left:4pt solid #4a1e00;padding:.6cm .8cm;margin:.5cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;color:#1a1208;}
+
+.raiz-cs1 .personajes .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#4a1e00;margin-bottom:.35cm;display:block;font-weight:bold;}
+
+.raiz-cs1 .personajes p {text-indent:0!important;margin-bottom:.3em;}
+
+
+/* CIERRE FINAL: verde oscuro → BLANCO */
+.raiz-cs1 .cierre-final {background:#0f2808;color:#ffffff;padding:.8cm 1cm;margin:1.2cm 0;}
+
+.raiz-cs1 .cierre-final .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f060;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+.raiz-cs1 .cierre-final h3 {color:#ffffff;font-size:11pt;margin:0 0 .4cm;}
+
+.raiz-cs1 .cierre-final p {font-size:9pt;line-height:1.7;color:#d0f0c8;}
+
+.raiz-cs1 .cierre-final .colofon-mini {background:#1a4010;padding:.4cm .6cm;margin-top:.5cm;font-size:8.5pt;color:#a0f060;font-family:'Arial',sans-serif;}
+
+
+/* TABLA DE SEMESTRE */
+.raiz-cs1 table {width:100%;border-collapse:collapse;font-size:9pt;margin:.5cm 0;}
+
+.raiz-cs1 th {background:#3a1400;color:#ffffff;padding:.28cm .4cm;text-align:left;font-size:7.5pt;font-weight:700;}
+
+.raiz-cs1 td {border:1pt solid #9a7040;padding:.3cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 tr:nth-child(even) td {background:#faf4e8;}
+
+
+/* REFLEXIONES: amarillo pálido → negro */
+.raiz-cs1 .reflexion {border:1.5pt solid #b09030;padding:.6cm .8cm;margin:1cm 0;background:#fffbe8;}
+
+.raiz-cs1 .reflexion .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b4000;font-weight:bold;display:block;margin-bottom:.3cm;}
+
+
+.raiz-cs1 .nota-pie-cuadernillo {font-size:8pt;color:#3e2810;border-top:.5pt solid #9a7040;margin-top:.5cm;padding-top:.3cm;font-style:italic;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+
+/* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
+textarea.cuad-r {
+  width: 100%;
+  border: 1px solid rgba(42,32,16,0.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.7);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #1a1208;
+  padding: 0.55rem 0.8rem;
+  resize: vertical;
+  min-height: 4rem;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  display: block;
+  box-sizing: border-box;
+}
+textarea.cuad-r:focus {
+  border-color: var(--cs-acento, #4a2e10);
+  background: #fff;
+}
+textarea.cuad-r.grande { min-height: 6rem; }
+textarea.cuad-r.xgrande { min-height: 8rem; }
+
+.cuad-guardar-barra {
+  text-align: center;
+  padding: 1.2rem;
+  background: var(--crema, #f5ead8);
+  border-top: 1px solid rgba(42,32,16,0.1);
+  position: sticky;
+  bottom: 0;
+}
+.cuad-btn-guardar {
+  background: var(--cs-acento, #4a2e10);
+  color: #fff;
+  font-family: monospace;
+  font-size: .5rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: .65rem 1.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .2s;
+}
+.cuad-btn-guardar:hover { filter: brightness(1.15); }
+.cuad-btn-limpiar {
+  background: transparent;
+  color: #888;
+  font-family: monospace;
+  font-size: .44rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: .6rem;
+}
+.cuad-aviso {
+  font-family: monospace;
+  font-size: .4rem;
+  color: #666;
+  margin-top: .5rem;
+  display: block;
+}
+@media print {
+  textarea.cuad-r {
+    border: none;
+    border-bottom: 1px solid #999;
+    border-radius: 0;
+    background: transparent;
+    resize: none;
+    min-height: 2rem;
+  }
+  .cuad-guardar-barra { display: none; }
+}
+
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Ciencias Sociales I · Estado, ciudadanía y relaciones de poder · MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital</div>
+    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+    <div class="port-sub">Capítulo 8 · "Raíz" · Capítulo de cierre · Flex D</div>
+    <div class="port-cap" style="margin-top:.4cm;">Semanas 11–12 · Sin contenido nuevo · Solo reflexión y carta</div>
+  </div>
+  <div>
+    <div class="ficha-est">
+      <div class="campo"><strong>Nombre completo</strong></div>
+      <div class="campo"><strong>Grupo</strong></div>
+      <div class="campo"><strong>Fecha de la última sesión</strong></div>
+      <div class="campo"><strong>¿Enviaste tu carta a la institución?</strong></div>
+    </div>
+    <div class="proposito-strip">
+      <span class="label">Este cuadernillo no tiene actividades de evaluación</span>
+      El Capítulo 8 es el espacio de cierre del semestre. Lo que escribas aquí es para ti. La carta al futuro yo es el único producto de este capítulo, y no se califica: se guarda. El docente puede pedirte que la compartas voluntariamente, pero esa decisión es tuya.
+    </div>
+    <p style="font-size:8.5pt;color:#382010;font-style:italic;margin-top:.3cm;">Materiales: cuadernillo, cuaderno personal, pluma. Sin restricción de tiempo: escribe lo que necesites escribir.</p>
+  </div>
+</div>
+
+
+<!-- DOS SEMANAS DESPUÉS -->
+<h2>Dos semanas después · ¿Qué cambió?</h2>
+<p style="font-size:9pt;">En la novela, dos semanas después del día de las presentaciones cada personaje está haciendo algo diferente. Antes de leer, pregúntate: ¿qué estás haciendo tú diferente?</p>
+
+<div class="personajes">
+  <span class="label">Lo que hacen los personajes dos semanas después</span>
+  <p><strong>María:</strong> recibió el folio de acuse de la Procuraduría Agraria. El proceso existe ahora en el sistema. No es una victoria: es el comienzo de un proceso que puede tomar meses.</p>
+  <p><strong>Ulises:</strong> le mostró el análisis de la cadena del aguacate a su papá. Su papá preguntó qué sigue. Eso solo ya cambió algo.</p>
+  <p><strong>Yesenia:</strong> habló con el orientador sobre el espacio de escucha estudiantil y le dijo que lo iba a seguir preguntando. No esperó que pasara solo.</p>
+  <p><strong>Miranda:</strong> encontró el formulario para el acta de nacimiento de su abuela, anotó los pasos y el costo, y empezó a administrar el proceso como lo que es: un problema con solución que necesita pasos, no drama.</p>
+  <p><strong>Diego:</strong> le explicó el contrato de renuncia a indemnización a su papá. Su papá lo leyó y preguntó qué pueden hacer. Todavía no saben, pero ya dejó de ser un silencio resignado.</p>
+</div>
+
+<div class="espacio-respuesta">
+  <div class="esp-label">¿Hiciste algo diferente en las últimas dos semanas a partir de lo que aprendiste? ¿Qué fue?</div>
+  <div class="lineas"><textarea class="cuad-r" id="r1" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r2" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r3" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r4" placeholder="Escribe aquí..."></textarea></div>
+</div>
+<div class="espacio-respuesta">
+  <div class="esp-label">¿Hay algo que descubriste este semestre y que ya le contaste a alguien de tu familia o comunidad?</div>
+  <div class="lineas"><textarea class="cuad-r" id="r5" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r6" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r7" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+
+<!-- SÍNTESIS DEL SEMESTRE -->
+<h2>Síntesis personal del semestre</h2>
+
+<div class="espacio-respuesta">
+  <div class="esp-label">¿Cuál fue el momento del semestre donde sentiste que aprendiste algo que ya no podrás desaprender?</div>
+  <div class="lineas"><textarea class="cuad-r" id="r8" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r9" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r10" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+<div class="espacio-respuesta">
+  <div class="esp-label">¿Qué fue lo más inesperado de todo el semestre? ¿Qué no esperabas encontrar cuando llegaste en agosto?</div>
+  <div class="lineas"><textarea class="cuad-r" id="r11" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r12" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r13" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+<h4>Tu arco del semestre: completa la tabla</h4>
+<table>
+  <thead><tr><th>Lo que pensaba en agosto</th><th>Lo que pienso ahora</th></tr></thead>
+  <tbody>
+    <tr><td>El Estado es...<div style="height:1.2cm;"></div></td><td style="height:1.2cm;"></td></tr>
+    <tr><td>Los derechos son...<div style="height:1.2cm;"></div></td><td></td></tr>
+    <tr><td>La ciudadanía es...<div style="height:1.2cm;"></div></td><td></td></tr>
+    <tr><td>La diversidad en mi salón es...<div style="height:1.2cm;"></div></td><td></td></tr>
+    <tr><td>El lugar donde vivo es...<div style="height:1.2cm;"></div></td><td></td></tr>
+  </tbody>
+</table>
+
+
+<!-- LA CARTA -->
+<h2>La carta al futuro yo</h2>
+<p style="font-size:9pt;">En la novela, María escribe una carta a quien será al final del siguiente semestre. Ahora te toca a ti. No hay estructura correcta. La única regla es que sea verdad.</p>
+
+<div class="carta-espacio">
+  <div class="carta-cabecera">
+    <div class="carta-campo"><strong>Lugar</strong></div>
+    <div class="carta-campo"><strong>Fecha (hoy)</strong></div>
+    <div class="carta-campo" style="flex:2;"><strong>Destinatario</strong>[tu nombre] al final de CS-II</div>
+  </div>
+  <div class="carta-cuerpo">
+    <div class="carta-lineas">
+      <textarea class="cuad-r" id="r14" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r15" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r16" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r17" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r18" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r19" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r20" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r21" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r22" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r23" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r24" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r25" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r26" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r27" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r28" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r29" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r30" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r31" placeholder="Escribe aquí..."></textarea>
+      <textarea class="cuad-r" id="r32" placeholder="Escribe aquí..."></textarea>
+    </div>
+  </div>
+</div>
+
+<p class="nota-pie-cuadernillo">Si no alcanza el espacio, continúa en las hojas sueltas que el docente puede proporcionar o en tu cuaderno personal. Esta carta puede guardarse en el cuadernillo o en un lugar propio. Al final de CS-II, el docente puede pedirte que la releas para ver qué cambió.</p>
+
+
+<!-- LAS PREGUNTAS DEL PIZARRÓN -->
+<h2>Las preguntas que viajan a CS-II</h2>
+
+<div class="pizarron-cs2">
+  ¿Cuánto vale el trabajo de tu familia?<br><br>
+  ¿Quién decide ese valor?<br><br>
+  ¿Cómo se decide?
+  <span class="sub">→ Ciencias Sociales II · La Cadena Rota</span>
+</div>
+
+<div class="espacio-respuesta">
+  <div class="esp-label">Responde estas tres preguntas con tu propio conocimiento, antes de aprender economía formal. Son hipótesis: CS-II te dirá si estabas cerca o lejos.</div>
+  <div class="lineas"><textarea class="cuad-r" id="r33" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r34" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r35" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r36" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r37" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r38" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+<div class="espacio-respuesta">
+  <div class="esp-label">¿Qué conexión ves entre lo que respondiste arriba y lo que aprendiste este semestre sobre el sistema jurídico?</div>
+  <div class="lineas"><textarea class="cuad-r" id="r39" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r40" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r41" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+
+<!-- REFLEXIÓN FINAL -->
+<div class="reflexion">
+  <span class="label">Reflexión de cierre · Para guardarte, no para entregar</span>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué vas a hacer diferente en tu comunidad, familia o escuela a partir de lo que aprendiste? Algo concreto, aunque sea pequeño.</div>
+    <div class="lineas"><textarea class="cuad-r" id="r42" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r43" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r44" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r45" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">Si pudieras decirle una sola cosa al estudiante que llegará a este salón el próximo agosto, ¿qué le dirías?</div>
+    <div class="lineas"><textarea class="cuad-r" id="r46" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r47" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r48" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué te llevas del Profe Ramírez, de Miranda, de Yesenia, de Ulises, de María que no venía en ningún propósito formativo?</div>
+    <div class="lineas"><textarea class="cuad-r" id="r49" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r50" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r51" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r52" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+</div>
+
+
+<!-- CIERRE FINAL -->
+<div class="cierre-final">
+  <span class="label">Fin del Libro I · El Código del Ejido</span>
+  <h3>Ciencias Sociales I · Estado, ciudadanía y relaciones de poder</h3>
+  <p>Terminaste el primer semestre de la Trilogía Raíz Digital. Aprendiste que el Estado opera a través de textos. Que los derechos se conocen, se entienden y se ejercen. Que la desigualdad tiene estructura, no es un accidente. Que la diversidad real cambia quién habla y qué se decide.</p>
+  <p>El próximo semestre aprenderás cómo se organiza la economía. La misma pregunta, otro idioma.</p>
+  <div class="colofon-mini">
+    Continúa en: Libro II · La Cadena Rota · Ciencias Sociales II · Organización, relaciones económicas y sociales
+  </div>
+</div>
+
+<p style="font-size:8pt;color:#3e2810;border-top:1pt solid #9a7040;padding-top:.4cm;margin-top:.5cm;text-align:center;">
+  Cuadernillo del Estudiante · Capítulo 8 · "Raíz" · CS-I · El Código del Ejido<br>
+  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Materiales fotocopiables sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 8 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+
+<!-- BARRA GUARDAR -->
+<div class="cuad-guardar-barra">
+  <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
+  <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
+  <span class="cuad-aviso" id="cuad-aviso"></span>
+</div>
+
+<script>
+(function() {
+  var CLAVE = 'cuad_cs1_cap8_';
+
+  function cuadGuardar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    var av = document.getElementById('cuad-aviso');
+    if (av) { av.textContent = '✓ Respuestas guardadas en este dispositivo'; setTimeout(function(){ av.textContent=''; }, 3000); }
+  }
+
+  function cuadLimpiar() {
+    if (!confirm('¿Borrar todas las respuestas de este cuadernillo?')) return;
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+  }
+
+  function cuadCargar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+  }
+
+  window.cuadGuardar = cuadGuardar;
+  window.cuadLimpiar = cuadLimpiar;
+  window.addEventListener('load', cuadCargar);
+  setInterval(cuadGuardar, 30000);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 2 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo del Estudiante · CS-II · Capítulo 2</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{color-scheme:light;}
+body{font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#0e0a1e;font-size:10.5pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+.portadilla{min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #1a1060;margin-bottom:1cm;page-break-after:always;}
+.col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#1a1060;margin-bottom:.8cm;line-height:2;}
+.port-titulo{font-size:24pt;font-weight:900;color:#0e0a1e;line-height:1.1;margin-bottom:.2cm;}
+.port-sub{font-size:10pt;color:#1a1060;margin-bottom:.3cm;font-weight:700;}
+.port-cap{font-size:8.5pt;color:#2a2050;font-style:italic;}
+.ficha-est{border:1.5pt solid #8080c0;padding:.6cm .8cm;margin:.8cm 0;display:grid;grid-template-columns:1fr 1fr;gap:.5cm 1cm;}
+.campo{border-bottom:1pt solid #6060a8;padding-bottom:.2cm;font-size:8.5pt;color:#0e0a1e;}
+.campo strong{display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#1a1060;margin-bottom:.1cm;}
+/* ÍNDIGO → BLANCO */
+.proposito-strip{background:#1a1060;color:#ffffff;padding:.55cm .85cm;margin:.5cm 0;font-size:8pt;line-height:1.7;}
+.proposito-strip .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffc090;display:block;margin-bottom:.2cm;font-weight:bold;}
+h2{font-size:13pt;font-weight:900;color:#0e0a1e;margin:1.1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #1a1060;}
+h3{font-size:10pt;font-weight:700;color:#1a1060;margin:.7cm 0 .25cm;}
+h4{font-size:9.5pt;font-weight:700;color:#0e0a1e;margin:.45cm 0 .15cm;}
+p{margin-bottom:.45em;line-height:1.65;}
+.actividad{border:1.5pt solid #8080c0;margin:.7cm 0;overflow:hidden;}
+.act-header{background:#dcdaf8;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+.act-num{background:#1a1060;color:#ffffff;width:1.4cm;height:1.4cm;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11pt;flex-shrink:0;}
+.act-titulo{font-size:9.5pt;font-weight:700;color:#0e0a1e;line-height:1.3;flex:1;}
+.act-tipo-badges{display:flex;gap:.3cm;flex-wrap:wrap;align-items:center;}
+.tipo-badge{font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;padding:.15cm .38cm;font-weight:700;border:1.5pt solid;}
+.badge-ind{border-color:#1a1060;color:#1a1060;}
+.badge-col{border-color:#083840;color:#083840;}
+.badge-refl{border-color:#b85010;color:#b85010;}
+.badge-prod{border-color:#5a10a0;color:#5a10a0;}
+.badge-debate{border-color:#1a1060;color:#1a1060;}
+.act-body{padding:.5cm .6cm;font-size:9.5pt;}
+.act-body p{margin-bottom:.4em;}
+.espacio-respuesta{border:1pt solid #8080c0;padding:.3cm .5cm;margin:.4cm 0;background:#f8f7fc;}
+.esp-label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a1060;margin-bottom:.2cm;font-weight:bold;}
+.lineas{display:flex;flex-direction:column;gap:.6cm;}
+.linea{border-bottom:1pt solid #a0a0d8;height:.6cm;}
+table{width:100%;border-collapse:collapse;font-size:9pt;margin:.5cm 0;}
+th{background:#1a1060;color:#ffffff;padding:.28cm .4cm;text-align:left;font-size:7.5pt;font-weight:700;}
+td{border:1pt solid #8080c0;padding:.3cm .4cm;vertical-align:top;line-height:1.5;color:#0e0a1e;}
+tr:nth-child(even) td{background:#f0eef8;}
+/* ALT DIGITAL: TEAL → BLANCO */
+.alt-digital{background:#083840;color:#ffffff;border-left:3pt solid #50c0a0;padding:.35cm .55cm;margin:.35cm 0;font-size:8.5pt;line-height:1.6;}
+.alt-digital .label{font-size:6.5pt;letter-spacing:.15em;text-transform:uppercase;color:#b0f0d8;font-weight:bold;display:block;margin-bottom:.15cm;}
+/* FRAGMENTO: lavanda → oscuro */
+.fragmento{background:#eeeaf8;border:1pt solid #8080c0;border-left:4pt solid #1a1060;padding:.55cm .75cm;margin:.4cm 0;font-size:8.5pt;line-height:1.7;color:#0e0a1e;}
+.fragmento .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#1a1060;font-weight:bold;display:block;margin-bottom:.25cm;}
+.fragmento p{text-indent:0!important;margin-bottom:.3em;}
+.fragmento .nota-pie{font-size:7.5pt;color:#3a3070;border-top:.5pt solid #8080c0;margin-top:.3cm;padding-top:.2cm;}
+/* CÁLCULO RESALTADO: teal oscuro → BLANCO */
+.calculo-box{background:#083840;color:#ffffff;border-left:4pt solid #50c0a0;padding:.55cm .8cm;margin:.5cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+.calculo-box .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#b0f0d8;display:block;margin-bottom:.2cm;font-weight:bold;}
+.calculo-box p{text-indent:0!important;margin-bottom:.3em;}
+/* RETO: ÍNDIGO → BLANCO */
+.reto-avance{background:#1a1060;color:#ffffff;padding:.7cm 1cm;margin:1cm 0;}
+.reto-avance .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffc090;display:block;margin-bottom:.3cm;font-weight:bold;}
+.reto-avance h3{color:#ffffff;font-size:10.5pt;margin:0 0 .3cm;}
+.reto-avance p{font-size:9pt;line-height:1.65;color:#d0c8f8;}
+/* CIERRE: ámbar pálido → oscuro */
+.cierre-semana{border:1.5pt solid #d08020;padding:.6cm .8cm;margin:1cm 0;background:#fff8e8;}
+.cierre-semana .label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#b85010;font-weight:bold;display:block;margin-bottom:.3cm;}
+/* dos columnas */
+.comparacion{display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.4cm 0;}
+.comp-col{padding:.4cm .5cm;font-size:8.5pt;line-height:1.55;}
+.comp-col .label{font-size:7pt;letter-spacing:.12em;text-transform:uppercase;font-weight:bold;margin-bottom:.2cm;display:block;}
+.comp-a{background:#eeeaf8;border:1pt solid #8080c0;color:#0e0a1e;}.comp-a .label{color:#1a1060;}
+.comp-b{background:#e8f8f4;border:1pt solid #50a090;color:#0e0a1e;}.comp-b .label{color:#083840;}
+.nota-pie-cuadernillo{font-size:8pt;color:#3a3070;border-top:.5pt solid #8080c0;margin-top:.5cm;padding-top:.3cm;font-style:italic;}
+@media print{body{font-size:10pt;padding:0;}.portadilla{min-height:100vh;}}
+@page{size:letter;margin:2cm 1.8cm 2.5cm;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+
+/* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
+textarea.cuad-r {
+  width: 100%;
+  border: 1px solid rgba(42,32,16,0.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.7);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #1a1208;
+  padding: 0.55rem 0.8rem;
+  resize: vertical;
+  min-height: 4rem;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  display: block;
+  box-sizing: border-box;
+}
+textarea.cuad-r:focus {
+  border-color: var(--cs-acento, #4a2e10);
+  background: #fff;
+}
+textarea.cuad-r.grande { min-height: 6rem; }
+textarea.cuad-r.xgrande { min-height: 8rem; }
+
+.cuad-guardar-barra {
+  text-align: center;
+  padding: 1.2rem;
+  background: var(--crema, #f5ead8);
+  border-top: 1px solid rgba(42,32,16,0.1);
+  position: sticky;
+  bottom: 0;
+}
+.cuad-btn-guardar {
+  background: var(--cs-acento, #4a2e10);
+  color: #fff;
+  font-family: monospace;
+  font-size: .5rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: .65rem 1.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .2s;
+}
+.cuad-btn-guardar:hover { filter: brightness(1.15); }
+.cuad-btn-limpiar {
+  background: transparent;
+  color: #888;
+  font-family: monospace;
+  font-size: .44rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: .6rem;
+}
+.cuad-aviso {
+  font-family: monospace;
+  font-size: .4rem;
+  color: #666;
+  margin-top: .5rem;
+  display: block;
+}
+@media print {
+  textarea.cuad-r {
+    border: none;
+    border-bottom: 1px solid #999;
+    border-radius: 0;
+    background: transparent;
+    resize: none;
+    min-height: 2rem;
+  }
+  .cuad-guardar-barra { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="portadilla">
+  <div>
+    <div class="col-label">Ciencias Sociales II · Organización, relaciones económicas y sociales · MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital</div>
+    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+    <div class="port-sub">Capítulo 2 · "Lo que necesitamos para vivir"</div>
+    <div class="port-cap" style="margin-top:.4cm;">Sesiones 3 y 4 · Semana 2</div>
+  </div>
+  <div>
+    <div class="ficha-est">
+      <div class="campo"><strong>Nombre completo</strong></div>
+      <div class="campo"><strong>Grupo</strong></div>
+      <div class="campo"><strong>Fuentes de ingreso de mi familia (número)</strong></div>
+      <div class="campo"><strong>Fecha</strong></div>
+    </div>
+    <div class="proposito-strip">
+      <span class="label">Propósitos formativos activos · Capítulo 2</span>
+      PF-1 (central) · Identifica necesidades y satisfactores, para debatir sobre las formas en que se organiza la sociedad.<br>
+      PF-2 (introducción) · Analiza formas de organización social para explicar relaciones entre personas, grupos e instituciones.<br>
+      Contenidos: Economía invisible · Trabajo de cuidados · Bienestar desde el enfoque de capacidades · Desigualdad estructural en el bienestar.
+    </div>
+  </div>
+</div>
+
+
+<!-- APERTURA: LA TAREA -->
+<h2>Apertura · Lo que trajo la tarea</h2>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">1</div><div class="act-titulo">¿Qué fue difícil de contar como ingreso familiar?</div><div class="act-tipo-badges"><span class="tipo-badge badge-col">Grupal</span><span class="tipo-badge badge-refl">Diagnóstico</span></div></div>
+  <div class="act-body">
+    <p>El Profe Ramírez recoge los datos de la tarea y el grupo debate: ¿hubo algo que no sabías si contaba como ingreso?</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Encontraste algún tipo de trabajo o actividad en tu familia que no sabías si "contaba" como ingreso?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r1" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r2" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r3" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Participa alguien de tu familia en alguna organización colectiva (cooperativa, ejido, colectivo, asociación de productores, grupo de artesanas)? ¿Qué hace esa organización?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r4" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r5" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r6" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <p>El docente tabula en el pizarrón: ¿cuántas familias del grupo tienen 1 / 2 / 3 / 4+ fuentes de ingreso? Anota el resultado aquí:</p>
+    <table>
+      <thead><tr><th>Número de fuentes de ingreso</th><th>Número de familias del salón</th><th>¿Qué tipo de fuentes predominan?</th></tr></thead>
+      <tbody>
+        <tr><td>1 sola fuente</td><td style="height:1cm;"></td><td></td></tr>
+        <tr><td>2 fuentes</td><td></td><td></td></tr>
+        <tr><td>3 fuentes</td><td></td><td></td></tr>
+        <tr><td>4 o más fuentes</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ECONOMÍA INVISIBLE -->
+<h2>Estación 1 · La economía que no aparece en las estadísticas</h2>
+<p style="font-size:9pt;color:#1a1060;font-weight:700;"><em>PF-1 · Economía invisible · Trabajo de cuidados · Autoconsumo · Trabajo comunitario</em></p>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">2</div><div class="act-titulo">Los dos círculos: economía de mercado vs. economía total</div><div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual → Debate</span></div></div>
+  <div class="act-body">
+    <p>El Profe Ramírez dibuja dos círculos concéntricos. El pequeño: lo que el mercado y las estadísticas miden. El grande: todo lo que realmente sostiene la vida.</p>
+    <div class="comparacion">
+      <div class="comp-col comp-a">
+        <span class="label">Lo que el mercado SÍ cuenta (círculo pequeño)</span>
+        <p style="font-size:8pt;color:#3a3070;margin-bottom:.3cm;">Trabajo remunerado, producción para venta, servicios con precio...</p>
+        <div class="lineas"><textarea class="cuad-r" id="r7" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r8" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r9" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r10" placeholder="Escribe aquí..."></textarea></div>
+      </div>
+      <div class="comp-col comp-b">
+        <span class="label">Lo que el mercado NO cuenta (corona exterior)</span>
+        <p style="font-size:8pt;color:#0a3028;margin-bottom:.3cm;">Trabajo doméstico, cuidados, autoconsumo, trabajo comunitario...</p>
+        <div class="lineas"><textarea class="cuad-r" id="r11" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r12" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r13" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r14" placeholder="Escribe aquí..."></textarea></div>
+      </div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué actividades de tu familia viven en el "círculo exterior" que el mercado no cuenta?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r15" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r16" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r17" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Si ese trabajo invisible desapareciera un día, ¿qué pasaría en tu casa? ¿Y en tu comunidad?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r18" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r19" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r20" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">3</div><div class="act-titulo">El trabajo invisible en números: el caso de la Sra. Solano</div><div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">Cálculo + análisis</span></div></div>
+  <div class="act-body">
+    <p>Ulises calculó en clase el valor monetario del trabajo no remunerado de su mamá. Haz el mismo ejercicio con alguien de tu familia o comunidad.</p>
+    <div class="calculo-box">
+      <span class="label">Referencia del caso presentado en clase · Sra. Rebeca Solano</span>
+      <p>Trabajo de tamales (sábado): ~16 horas · Trabajo doméstico y cuidados (6 días restantes): ~24 horas · Total semanal: ~40 horas no remuneradas + ~16 remuneradas = ~56 horas totales.</p>
+      <p>Si el trabajo doméstico y de cuidados se pagara al salario mínimo por hora (~$31/hora en 2025): 40 hrs × $31 = <strong>$1,240/semana = ~$4,960/mes que la Sra. Solano aporta sin que aparezca en ningún registro.</strong></p>
+    </div>
+    <h4>Ahora analiza el trabajo invisible en tu familia:</h4>
+    <table>
+      <thead><tr><th>¿Quién hace el trabajo invisible?</th><th>¿Qué hace exactamente?</th><th>¿Cuántas horas por semana aprox.?</th><th>Si se pagara al salario mínimo, ¿cuánto sería al mes?</th></tr></thead>
+      <tbody>
+        <tr><td style="height:1.8cm;"></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:1.8cm;"></td><td></td><td></td><td></td></tr>
+        <tr><td style="height:1.8cm;"></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Quién realiza la mayor parte del trabajo invisible en tu familia? ¿Hay un patrón de género?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r21" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r22" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r23" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="alt-digital">
+      <span class="label">Con conectividad (opcional)</span>
+      Busca "Encuesta Nacional de Uso del Tiempo INEGI" para encontrar cuántas horas semanales dedica en promedio una mujer mexicana al trabajo doméstico y de cuidados comparada con un hombre. El dato es muy impactante y verificable. URL: www.inegi.org.mx/programas/enut/
+    </div>
+  </div>
+</div>
+
+
+<!-- BIENESTAR DESDE LOS DERECHOS -->
+<h2>Estación 2 · Bienestar no es lo mismo que ingreso</h2>
+<p style="font-size:9pt;color:#1a1060;font-weight:700;"><em>PF-1 · Bienestar social desde el enfoque de los derechos y las capacidades · Dimensiones de la desigualdad</em></p>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">4</div><div class="act-titulo">El enfoque de capacidades: ¿qué puedes hacer y ser?</div><div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">Análisis conceptual</span></div></div>
+  <div class="act-body">
+    <div class="fragmento">
+      <span class="label">Enfoque de capacidades · Amartya Sen y Martha Nussbaum · Para análisis</span>
+      <p>El bienestar real no se mide solo por el ingreso sino por las <strong>capacidades</strong>: lo que cada persona puede hacer y ser de manera significativa. Dos personas con el mismo ingreso pueden tener capacidades muy diferentes según su género, etnia, acceso a servicios públicos y las normas culturales de su comunidad.</p>
+      <p>Nussbaum identifica capacidades centrales que toda sociedad debería garantizar: vida, salud, integridad corporal, sentidos e imaginación, emociones, razón práctica, afiliación social, relación con otras especies, juego, y control sobre el propio entorno político y material.</p>
+      <p class="nota-pie">Sen, A. (1999). <em>Development as Freedom.</em> Oxford UP. Nussbaum, M. (2011). <em>Creating Capabilities.</em> Harvard UP.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué capacidades de la lista de Nussbaum son difíciles de ejercer en tu comunidad? ¿Por qué?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r24" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r25" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r26" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r27" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">El caso de Miranda: necesita trabajar para pagar trámites pero eso afecta su educación. ¿Desde el enfoque de capacidades, ¿quién o qué es responsable de ese conflicto?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r28" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r29" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r30" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r31" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">5</div><div class="act-titulo">¿Qué satisfactores garantiza el Estado y cuáles no llegan?</div><div class="act-tipo-badges"><span class="tipo-badge badge-col">Equipos de 3</span><span class="tipo-badge badge-debate">Investigación + debate</span></div></div>
+  <div class="act-body">
+    <p>El Estado mexicano tiene la obligación de garantizar ciertos satisfactores a todos sus ciudadanos. ¿Lo cumple en tu comunidad?</p>
+    <table>
+      <thead>
+        <tr><th>Satisfactor que el Estado debería garantizar</th><th>¿Existe en tu comunidad?</th><th>¿Llega a todos? ¿A quiénes no?</th><th>¿Qué norma lo respalda?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Educación gratuita hasta nivel medio superior</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td>Acceso a servicios de salud</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td>Agua potable</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td>Infraestructura de transporte rural</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td>Acceso a tecnología e internet (brecha digital)</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+        <tr><td>Programas de apoyo a la producción agropecuaria</td><td style="height:1.5cm;"></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Hay algún satisfactor que el Estado garantiza en papel (ley) pero no llega en la práctica a tu comunidad? ¿Cuál y por qué crees que no llega?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r32" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r33" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r34" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <p class="nota-pie-cuadernillo">Conexión con CS-I: este es el mismo análisis de ciudadanía formal vs. ciudadanía real del semestre pasado, aplicado ahora al terreno económico. Las "tres condiciones del derecho real" (conocer, entender, ejercer) aplican también para los satisfactores económicos.</p>
+  </div>
+</div>
+
+
+<!-- RETO CENTRAL AVANCE -->
+<div class="reto-avance">
+  <span class="label">Reto Central CS-II · Segunda pieza · Diagnóstico Económico</span>
+  <h3>Ficha 2 · El trabajo invisible en mi cadena</h3>
+  <p>En el Capítulo 1 elegiste el producto o actividad económica que vas a mapear. En este capítulo añades una capa fundamental: ¿qué trabajo invisible sostiene esa cadena productiva? ¿Quién lo hace? ¿Qué necesidades satisface y cuáles deja sin cubrir?</p>
+</div>
+
+<div class="actividad">
+  <div class="act-header"><div class="act-num">6</div><div class="act-titulo">Ficha 2 del Diagnóstico Económico · El trabajo invisible en mi cadena</div><div class="act-tipo-badges"><span class="tipo-badge badge-prod">Producto</span><span class="tipo-badge badge-ind">Individual</span></div></div>
+  <div class="act-body">
+    <div class="espacio-respuesta">
+      <div class="esp-label">Producto o actividad que estás mapeando (de la Ficha 1)</div>
+      <div class="lineas"><textarea class="cuad-r" id="r35" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué trabajo invisible sostiene esa cadena? (cuidados, mantenimiento de infraestructura, organización comunitaria, autoconsumo...</div>
+      <div class="lineas"><textarea class="cuad-r" id="r36" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r37" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r38" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r39" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Quién realiza ese trabajo invisible? ¿Qué patrón ves (género, edad, posición en la familia/comunidad)?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r40" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r41" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r42" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué capacidad (de la lista de Nussbaum) le es más difícil de ejercer a quien realiza ese trabajo invisible? ¿Por qué?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r43" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r44" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r45" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <p class="nota-pie-cuadernillo">Esta ficha se integra al mapa final del Reto Central. Guárdala junto con la Ficha 1 del capítulo anterior.</p>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="cierre-semana">
+  <span class="label">Cierre · Sesiones 3 y 4 · Semana 2</span>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué concepto del capítulo (economía invisible, trabajo de cuidados, enfoque de capacidades) cambia la forma en que ves la economía de tu familia?</div>
+    <div class="lineas"><textarea class="cuad-r" id="r46" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r47" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r48" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Hay alguien en tu familia o comunidad cuyo trabajo es esencial pero invisible? ¿Qué hace? Trae su caso al próximo capítulo.</div>
+    <div class="lineas"><textarea class="cuad-r" id="r49" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r50" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r51" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <p style="font-size:8.5pt;color:#3a2010;margin-top:.5cm;"><strong>Tarea para el Capítulo 3:</strong> Identifica a una persona cuyo trabajo es esencial pero no aparece en ningún registro oficial. Trae: nombre (puede ser apodo), qué hace y cuántas horas aproximadas invierte por semana.</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 2 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+
+<p style="font-size:8pt;color:#3a3070;border-top:1pt solid #8080c0;padding-top:.4cm;margin-top:.5cm;text-align:center;">
+  Cuadernillo del Estudiante · Capítulo 2 · CS-II · La Cadena Rota · MCCEMS 2025 · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- BARRA GUARDAR -->
+<div class="cuad-guardar-barra">
+  <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
+  <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
+  <span class="cuad-aviso" id="cuad-aviso"></span>
+</div>
+
+<script>
+(function() {
+  var CLAVE = 'cuad_cs2_cap2_';
+
+  function cuadGuardar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    var av = document.getElementById('cuad-aviso');
+    if (av) { av.textContent = '✓ Respuestas guardadas en este dispositivo'; setTimeout(function(){ av.textContent=''; }, 3000); }
+  }
+
+  function cuadLimpiar() {
+    if (!confirm('¿Borrar todas las respuestas de este cuadernillo?')) return;
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+  }
+
+  function cuadCargar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+  }
+
+  window.cuadGuardar = cuadGuardar;
+  window.cuadLimpiar = cuadLimpiar;
+  window.addEventListener('load', cuadCargar);
+  setInterval(cuadGuardar, 30000);
+})();
+</script>
+
+</body>
+</html>

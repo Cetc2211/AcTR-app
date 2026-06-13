@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;
+&#9553;  &#169; 2025 Letras Necias &#183; Todos los derechos reservados               &#9553;
+&#9553;  www.letrasnecias.com &#183; contacto@letrasnecias.com                   &#9553;
+&#9553;  Trilog&#237;a Ra&#237;z Digital &#183; CS-III &#183; Cuadernillo &#183; Cap&#237;tulo 7          &#9553;
+&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;
+-->
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="&#169; 2025 Letras Necias. Todos los derechos reservados.">
+<title>Cuadernillo &#183; CS-III &#183; Cap. 7 &#183; El d&#237;a de la generaci&#243;n &#183; Letras Necias</title>
+</head>
+<body>
+<style>
+/*
+ * © 2025 Letras Necias · www.letrasnecias.com
+ * CS-III · Cuadernillo Capítulo 7 · Clase: .raiz-cs3
+ */
+.raiz-cs3{font-family:Arial,Helvetica,sans-serif;background:#ffffff;color:#0e1a14;font-size:10.5pt;line-height:1.7;max-width:min(960px,100%);margin:0 auto;padding:1.2rem 1.8rem;box-sizing:border-box;}
+.raiz-cs3 *,.raiz-cs3 *::before,.raiz-cs3 *::after{box-sizing:border-box;margin:0;padding:0;}
+.raiz-cs3 .portadilla{padding:1.5rem 0 1rem;border-bottom:3pt solid #1a2830;margin-bottom:1rem;}
+.raiz-cs3 .col-label{font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#1a2830;margin-bottom:.8rem;line-height:2;display:block;}
+.raiz-cs3 .port-titulo{font-size:24pt;font-weight:900;color:#0e1a14;line-height:1.1;margin-bottom:.2rem;display:block;}
+.raiz-cs3 .port-sub{font-size:10pt;color:#1a2830;margin-bottom:.3rem;font-weight:700;display:block;}
+.raiz-cs3 .proposito-strip{background:#1a2830;color:#ffffff;padding:.55rem .85rem;margin:.5rem 0;font-size:8pt;line-height:1.7;}
+.raiz-cs3 .proposito-strip .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.2rem;font-weight:bold;}
+.raiz-cs3 .ficha-est{border:1.5pt solid #4a9070;padding:.6rem .8rem;margin:.8rem 0;display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1rem;}
+.raiz-cs3 .campo{border-bottom:1pt solid #4a7060;padding-bottom:.2rem;font-size:8.5pt;}
+.raiz-cs3 .campo strong{display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#0a5040;margin-bottom:.1rem;}
+.raiz-cs3 h2{font-size:13pt;font-weight:900;color:#0e1a14;margin:1.1rem 0 .3rem;padding-bottom:.2rem;border-bottom:2pt solid #1a2830;}
+.raiz-cs3 h3{font-size:10pt;font-weight:700;color:#0a5040;margin:.7rem 0 .25rem;}
+.raiz-cs3 p{margin-bottom:.45em;line-height:1.65;font-size:10.5pt;color:#0e1a14;}
+.raiz-cs3 .espacio-respuesta{border:1pt solid #4a9070;padding:.3rem .5rem;margin:.4rem 0;background:#f2faf5;}
+.raiz-cs3 .esp-label{font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#0a5040;margin-bottom:.2rem;font-weight:bold;display:block;}
+.raiz-cs3 .lineas{display:flex;flex-direction:column;gap:.6rem;}
+.raiz-cs3 .linea{border-bottom:1pt solid #70b890;height:.6rem;}
+/* RÚBRICA DE EVALUACIÓN ENTRE PARES */
+.raiz-cs3 .rubrica-pares{width:100%;border-collapse:collapse;font-size:8.5pt;margin:.6rem 0;}
+.raiz-cs3 .rubrica-pares th{background:#1a2830;color:#ffffff;padding:.3rem .4rem;text-align:left;font-size:7.5pt;font-weight:700;}
+.raiz-cs3 .rubrica-pares td{border:1pt solid #4a9070;padding:.3rem .4rem;vertical-align:top;line-height:1.5;}
+.raiz-cs3 .rubrica-pares tr:nth-child(even) td{background:#eef7f2;}
+.raiz-cs3 .cal-cell{text-align:center;font-size:9pt;font-weight:700;color:#0a5040;}
+/* AUTOEVALUACIÓN */
+.raiz-cs3 .autoevaluacion{border:2pt solid #0a5040;padding:.8rem 1rem;margin:.8rem 0;background:#edf8f0;}
+.raiz-cs3 .autoevaluacion .label{font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#0a5040;font-weight:bold;display:block;margin-bottom:.4rem;}
+/* NOTAS DE PRESENTACIONES */
+.raiz-cs3 .notas-pres{border:1pt solid #4a9070;overflow:hidden;margin:.6rem 0;}
+.raiz-cs3 .notas-header{background:#d0ede0;padding:.3rem .6rem;font-family:Arial,sans-serif;font-size:8.5pt;font-weight:700;color:#0e1a14;}
+.raiz-cs3 .notas-body{padding:.5rem .6rem;}
+/* CIERRE SEMESTRAL */
+.raiz-cs3 .cierre-semestral{background:#1a2830;color:#ffffff;padding:.9rem 1.1rem;margin:1rem 0;}
+.raiz-cs3 .cierre-semestral .label{font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f0d0;display:block;margin-bottom:.4rem;font-weight:bold;}
+.raiz-cs3 .linea-cierre{border-bottom:1pt solid rgba(255,255,255,.2);height:.7rem;margin:.35rem 0;}
+.raiz-cs3 .ln-firma{margin-top:2.5rem;padding:1rem 0 .5rem;border-top:2pt solid #1a2830;font-family:Arial,sans-serif;font-size:8pt;color:#1a2830;text-align:center;line-height:2;}
+.raiz-cs3 .ln-logotipo{line-height:1.05;margin-bottom:.55rem;}
+.raiz-cs3 .ln-letras{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#3d2d1e;letter-spacing:.01em;}
+.raiz-cs3 .ln-necias{display:block;font-family:'Garamond','EB Garamond','Palatino Linotype','Book Antiqua','Palatino',Georgia,serif;font-style:italic;font-weight:normal;font-size:22pt;color:#7a1818;letter-spacing:.01em;}
+.raiz-cs3 .ln-contacto{font-size:8.5pt;color:#3d2d1e;margin-bottom:.35rem;line-height:1.8;}
+.raiz-cs3 .ln-contacto a{color:#7a1818;text-decoration:none;font-weight:700;}
+.raiz-cs3 .ln-derechos{font-size:7pt;color:#5a4030;line-height:1.65;max-width:560px;margin:0 auto;display:block;}
+
+/* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
+textarea.cuad-r {
+  width: 100%;
+  border: 1px solid rgba(42,32,16,0.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.7);
+  font-family: inherit;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #1a1208;
+  padding: 0.55rem 0.8rem;
+  resize: vertical;
+  min-height: 4rem;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  display: block;
+  box-sizing: border-box;
+}
+textarea.cuad-r:focus {
+  border-color: var(--cs-acento, #4a2e10);
+  background: #fff;
+}
+textarea.cuad-r.grande { min-height: 6rem; }
+textarea.cuad-r.xgrande { min-height: 8rem; }
+
+.cuad-guardar-barra {
+  text-align: center;
+  padding: 1.2rem;
+  background: var(--crema, #f5ead8);
+  border-top: 1px solid rgba(42,32,16,0.1);
+  position: sticky;
+  bottom: 0;
+}
+.cuad-btn-guardar {
+  background: var(--cs-acento, #4a2e10);
+  color: #fff;
+  font-family: monospace;
+  font-size: .5rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: .65rem 1.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .2s;
+}
+.cuad-btn-guardar:hover { filter: brightness(1.15); }
+.cuad-btn-limpiar {
+  background: transparent;
+  color: #888;
+  font-family: monospace;
+  font-size: .44rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: .6rem;
+}
+.cuad-aviso {
+  font-family: monospace;
+  font-size: .4rem;
+  color: #666;
+  margin-top: .5rem;
+  display: block;
+}
+@media print {
+  textarea.cuad-r {
+    border: none;
+    border-bottom: 1px solid #999;
+    border-radius: 0;
+    background: transparent;
+    resize: none;
+    min-height: 2rem;
+  }
+  .cuad-guardar-barra { display: none; }
+}
+
+</style>
+
+<div class="raiz-cs3">
+
+<div class="portadilla">
+  <span class="col-label">Ciencias Sociales III &#183; Las din&#225;micas de la realidad actual &#183; MCCEMS 2025 &#183; DGETAYCM<br>
+  Trilog&#237;a Ra&#237;z Digital &#183; Libro III: Generaci&#243;n Ra&#237;z &#183; Cap&#237;tulo 7</span>
+  <span class="port-titulo">Cuadernillo<br>del Estudiante</span>
+  <span class="port-sub">Cap&#237;tulo 7 &#183; "El d&#237;a de la generaci&#243;n" &#183; Evaluaci&#243;n integradora &#183; Presentaci&#243;n del Caleidoscopio</span>
+  <span style="font-size:8.5pt;color:#1e3228;font-style:italic;display:block;margin-top:.4rem;">Sesiones 13 y 14 &#183; Semana 7 &#183; Evaluaci&#243;n p&#250;blica &#183; Sin contenido nuevo</span>
+  <div class="ficha-est">
+    <div class="campo"><strong>Nombre completo</strong></div>
+    <div class="campo"><strong>Grupo</strong></div>
+    <div class="campo"><strong>Fecha</strong></div>
+    <div class="campo"><strong>Crisis que present&#243; tu equipo</strong></div>
+  </div>
+  <div class="proposito-strip">
+    <span class="label">Cap&#237;tulo 7 &#183; Evaluaci&#243;n integradora PF-1 + PF-2 + PF-3</span>
+    El cuadernillo del Cap. 7 tiene tres funciones: (1) espacio para tomar notas durante las presentaciones de los otros equipos, (2) r&#250;brica de evaluaci&#243;n entre pares, y (3) autoevaluaci&#243;n individual al cierre del semestre. No hay actividades de an&#225;lisis conceptual nuevo.
+  </div>
+</div>
+
+
+<h2>Parte 1 &#183; Notas durante las presentaciones</h2>
+<p style="font-size:9pt;color:#1a2830;"><em>Mientras cada equipo presenta, registra lo m&#225;s relevante. Estas notas son tuyas &#8212; no se entregan.</em></p>
+
+<div class="notas-pres">
+  <div class="notas-header">Presentaci&#243;n 1 &#183; Equipo: ___________________________ &#183; Crisis: ___________________________</div>
+  <div class="notas-body">
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Cu&#225;l es el actor que mantiene la crisis seg&#250;n este equipo?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r1" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r2" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;En cu&#225;ntas dimensiones analizaron el impacto? &#191;Cu&#225;l te pareci&#243; m&#225;s s&#243;lida?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r3" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r4" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;La propuesta de transformaci&#243;n es concreta y protagonizada por j&#243;venes?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r5" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Qu&#233; pregunta le har&#237;as o le hiciste?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r6" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r7" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="notas-pres">
+  <div class="notas-header">Presentaci&#243;n 2 &#183; Equipo: ___________________________ &#183; Crisis: ___________________________</div>
+  <div class="notas-body">
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Cu&#225;l es el actor que mantiene la crisis seg&#250;n este equipo?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r8" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r9" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;En cu&#225;ntas dimensiones analizaron el impacto? &#191;Cu&#225;l te pareci&#243; m&#225;s s&#243;lida?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r10" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r11" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;La propuesta de transformaci&#243;n es concreta y protagonizada por j&#243;venes?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r12" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Qu&#233; pregunta le har&#237;as o le hiciste?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r13" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r14" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="notas-pres">
+  <div class="notas-header">Presentaci&#243;n 3 &#183; Equipo: ___________________________ &#183; Crisis: ___________________________</div>
+  <div class="notas-body">
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Cu&#225;l es el actor que mantiene la crisis seg&#250;n este equipo?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r15" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r16" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;En cu&#225;ntas dimensiones analizaron el impacto? &#191;Cu&#225;l te pareci&#243; m&#225;s s&#243;lida?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r17" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r18" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;La propuesta de transformaci&#243;n es concreta y protagonizada por j&#243;venes?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r19" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">&#191;Qu&#233; pregunta le har&#237;as o le hiciste?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r20" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r21" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Parte 2 &#183; Evaluaci&#243;n entre pares</h2>
+<p style="font-size:9pt;color:#1a2830;"><em>Eval&#250;a la presentaci&#243;n de un equipo diferente al tuyo usando esta r&#250;brica. El docente indicar&#225; cu&#225;l equipo eval&#250;as.</em></p>
+<p style="font-size:8.5pt;color:#1a2830;">Equipo evaluado: _____________________________ &#183; Calificaci&#243;n: _______ / 15 pts</p>
+
+<table class="rubrica-pares">
+  <thead><tr><th>Criterio</th><th>Logrado (3)</th><th>En proceso (2)</th><th>Inicial (1)</th><th>Pts</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>La crisis</strong></td>
+      <td>Nombrada con precisi&#243;n. Al menos 3 dimensiones de impacto identificadas.</td>
+      <td>Nombrada con algunos t&#233;rminos t&#233;cnicos. Al menos 2 dimensiones.</td>
+      <td>Descripci&#243;n general sin vocabulario del semestre.</td>
+      <td class="cal-cell">___</td>
+    </tr>
+    <tr>
+      <td><strong>Los actores</strong></td>
+      <td>Actor principal con tipo y recurso de poder. Asimetr&#237;a documentada. Brecha de pol&#237;tica nombrada.</td>
+      <td>Actor identificado. Al menos una contradicci&#243;n de pol&#237;tica nombrada.</td>
+      <td>Solo "el gobierno" como responsable, sin an&#225;lisis de asimetr&#237;a.</td>
+      <td class="cal-cell">___</td>
+    </tr>
+    <tr>
+      <td><strong>Los tres idiomas</strong></td>
+      <td>Los tres idiomas aplicados con an&#225;lisis diferente en cada uno.</td>
+      <td>Al menos dos idiomas con diferenciaci&#243;n visible.</td>
+      <td>Un solo idioma o los tres sin diferenciaci&#243;n.</td>
+      <td class="cal-cell">___</td>
+    </tr>
+    <tr>
+      <td><strong>La propuesta</strong></td>
+      <td>Espec&#237;fica, posible con recursos existentes, protagonizada por j&#243;venes.</td>
+      <td>Concreta pero depende de aprobaci&#243;n externa.</td>
+      <td>Petici&#243;n al gobierno sin rol activo de las juventudes.</td>
+      <td class="cal-cell">___</td>
+    </tr>
+    <tr>
+      <td><strong>La presentaci&#243;n</strong></td>
+      <td>Sin leer. Todos participan. Responde preguntas con vocabulario del semestre.</td>
+      <td>Parcialmente le&#237;da. La mayor&#237;a participa.</td>
+      <td>Le&#237;da completa. No responde preguntas.</td>
+      <td class="cal-cell">___</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="espacio-respuesta">
+  <span class="esp-label">Comentario de retroalimentaci&#243;n para el equipo que evaluaste (escr&#237;belo como si se lo dijeras directamente)</span>
+  <div class="lineas"><textarea class="cuad-r" id="r22" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r23" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r24" placeholder="Escribe aquí..."></textarea></div>
+</div>
+
+
+<h2>Parte 3 &#183; Autoevaluaci&#243;n individual</h2>
+
+<div class="autoevaluacion">
+  <span class="label">Autoevaluaci&#243;n &#183; Cierre del semestre &#183; Para uso personal</span>
+
+  <div class="espacio-respuesta" style="background:#fff;">
+    <span class="esp-label">&#191;Cu&#225;l fue tu aportaci&#243;n m&#225;s importante al equipo durante el semestre?</span>
+    <div class="lineas"><textarea class="cuad-r" id="r25" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r26" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r27" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+
+  <div class="espacio-respuesta" style="background:#fff;">
+    <span class="esp-label">&#191;Cu&#225;l de los tres idiomas (jur&#237;dico, econ&#243;mico, socioambiental) dominas mejor? &#191;Cu&#225;l necesita m&#225;s trabajo?</span>
+    <div class="lineas"><textarea class="cuad-r" id="r28" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r29" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r30" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+
+  <div class="espacio-respuesta" style="background:#fff;">
+    <span class="esp-label">&#191;Hubo un momento en el semestre en que algo cambi&#243; en tu forma de ver la realidad? &#191;Cu&#225;l fue?</span>
+    <div class="lineas"><textarea class="cuad-r" id="r31" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r32" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r33" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r34" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+
+  <div class="espacio-respuesta" style="background:#fff;">
+    <span class="esp-label">Calificaci&#243;n que te dar&#237;as en el semestre y por qu&#233; (de 6 a 10)</span>
+    <div class="lineas"><textarea class="cuad-r" id="r35" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r36" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r37" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+</div>
+
+
+<div class="cierre-semestral">
+  <span class="label">Para el Cap&#237;tulo 8 &#183; Flex D &#183; Carta al futuro yo</span>
+  <p style="color:rgba(245,237,224,.85);font-size:8.5pt;margin-bottom:.5rem;">Si a&#250;n no escribiste la carta al futuro yo que pidi&#243; el docente al final del Cap. 6, escr&#237;bela antes de la sesi&#243;n 15. Algunas preguntas que pueden ayudarte a empezar:</p>
+  <p style="color:rgba(245,237,224,.7);font-size:8pt;font-style:italic;margin-bottom:.3rem;">&#191;Qu&#233; quieres que el yo que termine el bachillerato recuerde de este semestre?</p>
+  <p style="color:rgba(245,237,224,.7);font-size:8pt;font-style:italic;margin-bottom:.3rem;">&#191;Qu&#233; aprendiste que no esperabas aprender?</p>
+  <p style="color:rgba(245,237,224,.7);font-size:8pt;font-style:italic;margin-bottom:.5rem;">&#191;Qu&#233; vas a hacer con lo que sabes?</p>
+  <p style="color:rgba(245,237,224,.6);font-size:7.5pt;">La carta va en un sobre cerrado con tu nombre. El docente la guarda. La recibir&#225;s de regreso al terminar el bachillerato.</p>
+</div>
+
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;&#183;&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    &#169; 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante &#183; Cap&#237;tulo 7 &#183; CS-III &#183; Trilog&#237;a Ra&#237;z Digital &#183; MCCEMS 2025 &#183; SEP &#183; DGETAYCM.<br>
+    Prohibida la reproducci&#243;n total o parcial sin autorizaci&#243;n expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+
+</div>
+
+<!-- BARRA GUARDAR -->
+<div class="cuad-guardar-barra">
+  <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
+  <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
+  <span class="cuad-aviso" id="cuad-aviso"></span>
+</div>
+
+<script>
+(function() {
+  var CLAVE = 'cuad_cs3_cap7_';
+
+  function cuadGuardar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+    });
+    var av = document.getElementById('cuad-aviso');
+    if (av) { av.textContent = '✓ Respuestas guardadas en este dispositivo'; setTimeout(function(){ av.textContent=''; }, 3000); }
+  }
+
+  function cuadLimpiar() {
+    if (!confirm('¿Borrar todas las respuestas de este cuadernillo?')) return;
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      el.value = '';
+      if (el.id) localStorage.removeItem(CLAVE + el.id);
+    });
+  }
+
+  function cuadCargar() {
+    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+    document.querySelectorAll('input[type="text"]').forEach(function(el) {
+      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+    });
+  }
+
+  window.cuadGuardar = cuadGuardar;
+  window.cuadLimpiar = cuadLimpiar;
+  window.addEventListener('load', cuadCargar);
+  setInterval(cuadGuardar, 30000);
+})();
+</script>
+
+</body>
+</html>
