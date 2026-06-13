@@ -1,0 +1,949 @@
+     1→<!DOCTYPE html>
+     2→<html lang="es">
+     3→<head>
+     4→<!--
+     5→╔══════════════════════════════════════════════════════════════════════╗
+     6→║  © 2025 Letras Necias · Todos los derechos reservados               ║
+     7→║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+     8→║  ─────────────────────────────────────────────────────────────────  ║
+     9→║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+    10→║  Ciencias Sociales I · El Código del Ejido                            ║
+    11→║  Capítulo 3 · Cuadernillo del Estudiante                              ║
+    12→║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+    13→║  ─────────────────────────────────────────────────────────────────  ║
+    14→║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+    15→║  Prohibida la reproducción total o parcial sin autorización          ║
+    16→║  expresa y por escrito de Letras Necias.                            ║
+    17→╚══════════════════════════════════════════════════════════════════════╝
+    18→-->
+    19→
+    20→<meta charset="UTF-8">
+    21→<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    22→<meta name="color-scheme" content="light">
+    23→<title>Cuadernillo del Estudiante · Capítulo 3 · CS-I</title>
+    24→<meta name="author" content="Letras Necias">
+    25→<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+    26→</head>
+    27→<body>
+    28→
+    29→<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+    30→
+    31→<style>
+    32→/*
+    33→ * ══════════════════════════════════════════════════════════════════
+    34→ * © 2025 Letras Necias · Todos los derechos reservados
+    35→ * www.letrasnecias.com · contacto@letrasnecias.com
+    36→ * ──────────────────────────────────────────────────────────────────
+    37→ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+    38→ * Clase contenedora: .raiz-cs1
+    39→ * ──────────────────────────────────────────────────────────────────
+    40→ * Prohibida la reproducción total o parcial sin autorización
+    41→ * expresa y por escrito de Letras Necias.
+    42→ * ══════════════════════════════════════════════════════════════════
+    43→ */
+    44→
+    45→/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+    46→   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+    47→   de Letras Necias sin cambiar ningún aspecto visual del documento.
+    48→──────────────────────────────────────────────────────────────────────── */
+    49→.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    50→
+    51→
+    52→.raiz-cs1 {
+    53→  font-family: 'Arial', 'Helvetica', sans-serif;
+    54→  background: #fefefe;
+    55→  color: #1c1410;
+    56→  font-size: 10.5pt;
+    57→  line-height: 1.7;
+    58→  max-width: min(960px, 100%);
+    59→  margin: 0 auto;
+    60→  padding: 1.2cm 1.8cm;
+    61→}
+    62→
+    63→
+    64→/* ── PORTADILLA ── */
+    65→.raiz-cs1 .portadilla {
+    66→  min-height: 90vh;
+    67→  display: flex;
+    68→  flex-direction: column;
+    69→  justify-content: space-between;
+    70→  padding: 1.5cm 0 1cm;
+    71→  border-bottom: 3pt solid #4a2810;
+    72→  margin-bottom: 1cm;
+    73→  page-break-after: always;
+    74→}
+    75→
+    76→/* etiqueta superior: oscuro sobre blanco */
+    77→.raiz-cs1 .col-label {
+    78→  font-size: 7pt;
+    79→  letter-spacing: 0.28em;
+    80→  text-transform: uppercase;
+    81→  color: #7a3010;
+    82→  margin-bottom: 0.8cm;
+    83→  line-height: 2;
+    84→}
+    85→
+    86→.raiz-cs1 .port-titulo { font-size: 24pt; font-weight: 900; color: #1c1410; line-height: 1.1; margin-bottom: 0.2cm; }
+    87→
+    88→.raiz-cs1 .port-sub { font-size: 10pt; color: #4a2810; margin-bottom: 0.3cm; font-weight: 600; }
+    89→
+    90→.raiz-cs1 .port-cap { font-size: 8.5pt; color: #4a3828; font-style: italic; }
+    91→
+    92→
+    93→/* ficha de datos: fondo blanco, borde visible */
+    94→.raiz-cs1 .ficha-est {
+    95→  border: 1.5pt solid #a08060;
+    96→  padding: 0.6cm 0.8cm;
+    97→  margin: 0.8cm 0;
+    98→  display: grid;
+    99→  grid-template-columns: 1fr 1fr;
+   100→  gap: 0.5cm 1cm;
+   101→}
+   102→
+   103→.raiz-cs1 .campo {
+   104→  border-bottom: 1pt solid #6a5040;
+   105→  padding-bottom: 0.2cm;
+   106→  font-size: 8.5pt;
+   107→  color: #1c1410;
+   108→}
+   109→
+   110→.raiz-cs1 .campo strong {
+   111→  display: block;
+   112→  font-size: 7pt;
+   113→  letter-spacing: 0.1em;
+   114→  text-transform: uppercase;
+   115→  color: #7a3010;          /* oscuro legible */
+   116→  margin-bottom: 0.1cm;
+   117→}
+   118→
+   119→
+   120→/* franja de propósitos: fondo muy oscuro → texto BLANCO */
+   121→.raiz-cs1 .proposito-strip {
+   122→  background: #3a1e08;
+   123→  color: #f5ece0;          /* blanco cálido */
+   124→  padding: 0.55cm 0.85cm;
+   125→  margin: 0.5cm 0;
+   126→  font-size: 8pt;
+   127→  line-height: 1.7;
+   128→}
+   129→
+   130→.raiz-cs1 .proposito-strip .label {
+   131→  font-size: 6.5pt;
+   132→  letter-spacing: 0.25em;
+   133→  text-transform: uppercase;
+   134→  color: #f5d080;          /* dorado claro sobre marrón muy oscuro */
+   135→  display: block;
+   136→  margin-bottom: 0.2cm;
+   137→  font-weight: bold;
+   138→}
+   139→
+   140→
+   141→/* ── ENCABEZADOS ── */
+   142→.raiz-cs1 h2 {
+   143→  font-size: 13pt;
+   144→  font-weight: 900;
+   145→  color: #1c1410;
+   146→  margin: 1.1cm 0 0.3cm;
+   147→  padding-bottom: 0.2cm;
+   148→  border-bottom: 2pt solid #4a2810;
+   149→}
+   150→
+   151→.raiz-cs1 h3 { font-size: 10pt; font-weight: 700; color: #4a2810; margin: 0.7cm 0 0.25cm; }
+   152→
+   153→.raiz-cs1 h4 { font-size: 9.5pt; font-weight: 700; color: #1c1410; margin: 0.45cm 0 0.15cm; }
+   154→
+   155→.raiz-cs1 p { margin-bottom: 0.45em; line-height: 1.65; }
+   156→
+   157→
+   158→/* ── ACTIVIDADES ── */
+   159→.raiz-cs1 .actividad {
+   160→  border: 1.5pt solid #a08060;
+   161→  margin: 0.7cm 0;
+   162→  overflow: hidden;
+   163→}
+   164→
+   165→/* encabezado actividad: fondo crema, texto muy oscuro */
+   166→.raiz-cs1 .act-header {
+   167→  background: #ede0c8;
+   168→  padding: 0.3cm 0.6cm;
+   169→  display: flex;
+   170→  align-items: center;
+   171→  gap: 0.5cm;
+   172→}
+   173→
+   174→.raiz-cs1 .act-num {
+   175→  background: #4a2810;
+   176→  color: #ffffff;          /* BLANCO sobre marrón oscuro */
+   177→  width: 1.4cm;
+   178→  height: 1.4cm;
+   179→  border-radius: 50%;
+   180→  display: flex;
+   181→  align-items: center;
+   182→  justify-content: center;
+   183→  font-weight: 900;
+   184→  font-size: 11pt;
+   185→  flex-shrink: 0;
+   186→}
+   187→
+   188→.raiz-cs1 .act-titulo {
+   189→  font-size: 9.5pt;
+   190→  font-weight: 700;
+   191→  color: #1c1410;          /* muy oscuro sobre crema */
+   192→  line-height: 1.3;
+   193→  flex: 1;
+   194→}
+   195→
+   196→.raiz-cs1 .act-tipo-badges {
+   197→  display: flex;
+   198→  gap: 0.3cm;
+   199→  flex-wrap: wrap;
+   200→  align-items: center;
+   201→}
+   202→
+   203→.raiz-cs1 .tipo-badge {
+   204→  font-size: 6.5pt;
+   205→  letter-spacing: 0.1em;
+   206→  text-transform: uppercase;
+   207→  padding: 0.15cm 0.38cm;
+   208→  font-weight: 700;
+   209→  border: 1.5pt solid;
+   210→}
+   211→
+   212→/* badges: borde oscuro + texto oscuro sobre blanco */
+   213→.raiz-cs1 .badge-analog { border-color: #4a2810; color: #4a2810; }
+   214→
+   215→.raiz-cs1 .badge-digital { border-color: #1a3a58; color: #1a3a58; }
+   216→
+   217→.raiz-cs1 .badge-colectivo { border-color: #1a3a18; color: #1a3a18; }
+   218→
+   219→.raiz-cs1 .badge-reflexion { border-color: #5a2808; color: #5a2808; }
+   220→
+   221→
+   222→.raiz-cs1 .act-body { padding: 0.5cm 0.6cm; font-size: 9.5pt; }
+   223→
+   224→.raiz-cs1 .act-body p { margin-bottom: 0.4em; }
+   225→
+   226→
+   227→/* ── ESPACIOS DE RESPUESTA ── */
+   228→.raiz-cs1 .espacio-respuesta {
+   229→  border: 1pt solid #a08060;
+   230→  padding: 0.3cm 0.5cm;
+   231→  margin: 0.4cm 0;
+   232→  background: #fdfbf6;
+   233→}
+   234→
+   235→.raiz-cs1 .esp-label {
+   236→  font-size: 7pt;
+   237→  letter-spacing: 0.15em;
+   238→  text-transform: uppercase;
+   239→  color: #7a3010;          /* oscuro */
+   240→  margin-bottom: 0.2cm;
+   241→  font-weight: bold;
+   242→}
+   243→
+   244→.raiz-cs1 .lineas { display: flex; flex-direction: column; gap: 0.6cm; }
+   245→
+   246→.raiz-cs1 .linea { border-bottom: 1pt solid #b09870; height: 0.6cm; }
+   247→
+   248→
+   249→/* ── ALTERNATIVA DIGITAL ── */
+   250→/* fondo azul oscuro → texto BLANCO */
+   251→.raiz-cs1 .alt-digital {
+   252→  background: #1a3050;
+   253→  color: #e0eeff;          /* blanco azulado */
+   254→  border-left: 3pt solid #80b0e0;
+   255→  padding: 0.35cm 0.55cm;
+   256→  margin: 0.35cm 0;
+   257→  font-size: 8.5pt;
+   258→  line-height: 1.6;
+   259→}
+   260→
+   261→.raiz-cs1 .alt-digital .label {
+   262→  font-size: 6.5pt;
+   263→  letter-spacing: 0.15em;
+   264→  text-transform: uppercase;
+   265→  color: #a0d0ff;          /* azul muy claro sobre azul oscuro */
+   266→  font-weight: bold;
+   267→  display: block;
+   268→  margin-bottom: 0.15cm;
+   269→}
+   270→
+   271→
+   272→/* ── FRAGMENTO / RECUADRO ── */
+   273→/* fondo crema → texto MUY OSCURO */
+   274→.raiz-cs1 .fragmento {
+   275→  background: #f0e8d8;
+   276→  border: 1pt solid #9a7850;
+   277→  border-left: 4pt solid #4a2810;
+   278→  padding: 0.55cm 0.75cm;
+   279→  margin: 0.4cm 0;
+   280→  font-size: 8.5pt;
+   281→  line-height: 1.7;
+   282→  color: #1c1410;
+   283→}
+   284→
+   285→.raiz-cs1 .fragmento .label {
+   286→  font-size: 7pt;
+   287→  letter-spacing: 0.15em;
+   288→  text-transform: uppercase;
+   289→  color: #4a2810;
+   290→  font-weight: bold;
+   291→  display: block;
+   292→  margin-bottom: 0.25cm;
+   293→}
+   294→
+   295→.raiz-cs1 .fragmento p { text-indent: 0 !important; margin-bottom: 0.3em; }
+   296→
+   297→.raiz-cs1 .fragmento .fuente {
+   298→  font-size: 7.5pt;
+   299→  color: #4a3828;
+   300→  border-top: 0.5pt solid #9a7850;
+   301→  margin-top: 0.35cm;
+   302→  padding-top: 0.2cm;
+   303→}
+   304→
+   305→
+   306→/* ── TABLA ── */
+   307→.raiz-cs1 table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 0.5cm 0; }
+   308→
+   309→/* encabezado tabla: fondo muy oscuro → texto BLANCO */
+   310→.raiz-cs1 th {
+   311→  background: #3a1e08;
+   312→  color: #f5ece0;
+   313→  padding: 0.28cm 0.4cm;
+   314→  text-align: left;
+   315→  font-size: 7.5pt;
+   316→  font-weight: 700;
+   317→  letter-spacing: 0.05em;
+   318→}
+   319→
+   320→.raiz-cs1 td {
+   321→  border: 1pt solid #9a7850;
+   322→  padding: 0.3cm 0.4cm;
+   323→  vertical-align: top;
+   324→  line-height: 1.5;
+   325→  color: #1c1410;
+   326→}
+   327→
+   328→.raiz-cs1 tr:nth-child(even) td { background: #faf4ec; }
+   329→
+   330→
+   331→/* ── RETO AVANCE ── */
+   332→/* fondo muy oscuro → texto BLANCO */
+   333→.raiz-cs1 .reto-avance {
+   334→  background: #3a1e08;
+   335→  color: #f5ece0;
+   336→  padding: 0.7cm 1cm;
+   337→  margin: 1cm 0;
+   338→}
+   339→
+   340→.raiz-cs1 .reto-avance .label {
+   341→  font-size: 6.5pt;
+   342→  letter-spacing: 0.25em;
+   343→  text-transform: uppercase;
+   344→  color: #f5d080;
+   345→  display: block;
+   346→  margin-bottom: 0.3cm;
+   347→  font-weight: bold;
+   348→}
+   349→
+   350→.raiz-cs1 .reto-avance h3 { color: #f5ece0; font-size: 10.5pt; margin: 0 0 0.3cm; }
+   351→
+   352→.raiz-cs1 .reto-avance p { font-size: 9pt; line-height: 1.65; color: #e8ddd0; }
+   353→
+   354→
+   355→/* ── CIERRE SEMANA ── */
+   356→.raiz-cs1 .cierre-semana {
+   357→  border: 1.5pt solid #b89830;
+   358→  padding: 0.6cm 0.8cm;
+   359→  margin: 1cm 0;
+   360→  background: #fffbee;
+   361→}
+   362→
+   363→.raiz-cs1 .cierre-semana .label {
+   364→  font-size: 7pt;
+   365→  letter-spacing: 0.15em;
+   366→  text-transform: uppercase;
+   367→  color: #7a5010;
+   368→  font-weight: bold;
+   369→  display: block;
+   370→  margin-bottom: 0.3cm;
+   371→}
+   372→
+   373→
+   374→/* ── NOTA PIE ── */
+   375→.raiz-cs1 .nota-pie-cuadernillo {
+   376→  font-size: 8pt;
+   377→  color: #4a3828;
+   378→  border-top: 0.5pt solid #9a7850;
+   379→  margin-top: 0.5cm;
+   380→  padding-top: 0.3cm;
+   381→  font-style: italic;
+   382→}
+   383→
+   384→
+   385→/* comparación 2 columnas */
+   386→.raiz-cs1 .comparacion {
+   387→  display: grid;
+   388→  grid-template-columns: 1fr 1fr;
+   389→  gap: 0.4cm;
+   390→  margin: 0.4cm 0;
+   391→}
+   392→
+   393→/* col izquierda: crema oscurecida → texto muy oscuro */
+   394→.raiz-cs1 .comp-col { padding: 0.4cm 0.5cm; font-size: 8.5pt; line-height: 1.55; }
+   395→
+   396→.raiz-cs1 .comp-col .label { font-size: 7pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: bold; margin-bottom: 0.2cm; display: block; }
+   397→
+   398→.raiz-cs1 .comp-formal { background: #f0e8d8; border: 1pt solid #9a7850; color: #1c1410; }
+   399→
+   400→.raiz-cs1 .comp-formal .label { color: #4a2810; }
+   401→
+   402→.raiz-cs1 .comp-real { background: #e8f0e0; border: 1pt solid #6a9050; color: #1c1410; }
+   403→
+   404→.raiz-cs1 .comp-real .label { color: #1a4010; }
+   405→
+   406→/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+   407→.raiz-cs1 .ln-firma {
+   408→  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+   409→  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+   410→  text-align: center; font-family: Arial, Helvetica, sans-serif;
+   411→}
+   412→.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+   413→.raiz-cs1 .ln-letras {
+   414→  display: block;
+   415→  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+   416→               'Book Antiqua','Palatino',Georgia,serif;
+   417→  font-style: italic; font-weight: normal;
+   418→  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+   419→}
+   420→.raiz-cs1 .ln-necias {
+   421→  display: block;
+   422→  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+   423→               'Book Antiqua','Palatino',Georgia,serif;
+   424→  font-style: italic; font-weight: normal;
+   425→  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+   426→}
+   427→.raiz-cs1 .ln-contacto {
+   428→  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+   429→}
+   430→.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+   431→.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+   432→.raiz-cs1 .ln-nombre {
+   433→  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+   434→  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+   435→}
+   436→.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+   437→.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+   438→.raiz-cs1 .ln-derechos {
+   439→  font-size: 7pt; color: #5a4030; line-height: 1.65;
+   440→  max-width: 560px; margin: 0 auto; display: block;
+   441→}
+   442→
+   443→/* ── INTERACTIVO: campos editables ── */
+   444→.raiz-digital textarea.rd-respuesta {
+   445→  width: 100%;
+   446→  border: 1pt solid #8080c0;
+   447→  border-radius: 2px;
+   448→  background: rgba(255,255,255,0.85);
+   449→  font-family: Arial, Helvetica, sans-serif;
+   450→  font-size: 9.5pt;
+   451→  line-height: 1.65;
+   452→  color: #0e0a1e;
+   453→  padding: .3rem .5rem;
+   454→  resize: vertical;
+   455→  min-height: 2.5rem;
+   456→  outline: none;
+   457→  transition: border-color .2s, background .2s;
+   458→}
+   459→.raiz-digital textarea.rd-respuesta:focus {
+   460→  border-color: #1a1060;
+   461→  background: #fff;
+   462→}
+   463→.raiz-digital textarea.rd-respuesta.rd-alta { min-height: 5rem; }
+   464→.raiz-digital textarea.rd-respuesta.rd-muy-alta { min-height: 7rem; }
+   465→
+   466→.raiz-digital td[contenteditable="true"] {
+   467→  outline: 1pt dashed #8080c0;
+   468→  cursor: text;
+   469→  background: rgba(255,255,255,0.6);
+   470→}
+   471→.raiz-digital td[contenteditable="true"]:focus {
+   472→  outline: 1pt solid #1a1060;
+   473→  background: #fff;
+   474→}
+   475→
+   476→.raiz-digital .ficha-est input.rd-input {
+   477→  width: 100%;
+   478→  border: none;
+   479→  border-bottom: 1pt solid #6060a8;
+   480→  background: transparent;
+   481→  font-family: Arial, Helvetica, sans-serif;
+   482→  font-size: 9pt;
+   483→  color: #0e0a1e;
+   484→  padding: .15rem 0;
+   485→  outline: none;
+   486→}
+   487→.raiz-digital .ficha-est input.rd-input:focus {
+   488→  border-bottom-color: #1a1060;
+   489→}
+   490→
+   491→.raiz-digital .rd-guardar {
+   492→  text-align: center;
+   493→  padding: 1rem;
+   494→  margin-top: 1rem;
+   495→  border-top: 1pt solid #8080c0;
+   496→  background: #f0eef8;
+   497→}
+   498→.raiz-digital .rd-btn-guardar {
+   499→  background: #1a1060;
+   500→  color: #fff;
+   501→  font-family: Arial, sans-serif;
+   502→  font-size: 8pt;
+   503→  letter-spacing: .15em;
+   504→  text-transform: uppercase;
+   505→  padding: .5rem 1.5rem;
+   506→  border: none;
+   507→  cursor: pointer;
+   508→  border-radius: 3px;
+   509→  transition: background .2s;
+   510→}
+   511→.raiz-digital .rd-btn-guardar:hover { background: #0e0a1e; }
+   512→.raiz-digital .rd-btn-limpiar {
+   513→  background: transparent;
+   514→  color: #6060a8;
+   515→  font-family: Arial, sans-serif;
+   516→  font-size: 7.5pt;
+   517→  letter-spacing: .12em;
+   518→  text-transform: uppercase;
+   519→  padding: .4rem .8rem;
+   520→  border: 1pt solid #8080c0;
+   521→  cursor: pointer;
+   522→  margin-left: .5rem;
+   523→  border-radius: 3px;
+   524→}
+   525→.raiz-digital .rd-aviso {
+   526→  font-size: 7.5pt;
+   527→  color: #6060a8;
+   528→  margin-top: .4rem;
+   529→  display: block;
+   530→}
+   531→
+   532→</style>
+   533→
+   534→<div class="raiz-cs1">
+   535→<!-- PORTADILLA -->
+   536→<div class="portadilla">
+   537→  <div>
+   538→    <div class="col-label">Ciencias Sociales I · Estado, ciudadanía y relaciones de poder<br>MCCEMS 2025 · Bachillerato Tecnológico Agropecuario · DGETAYCM · Trilogía Raíz Digital</div>
+   539→    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+   540→    <div class="port-sub">Capítulo 3 · "Lo que firma el que no lee"</div>
+   541→    <div class="port-cap" style="margin-top:0.4cm;">Sesiones 5 y 6 · Semana 4</div>
+   542→  </div>
+   543→  <div>
+   544→    <div class="ficha-est">
+   545→      <div class="campo"><strong>Nombre completo</strong><input type="text" class="rd-input" id="rd_ficha_nombre_completo" placeholder=""></div>
+   546→      <div class="campo"><strong>Grupo</strong><input type="text" class="rd-input" id="rd_ficha_grupo" placeholder=""></div>
+   547→      <div class="campo"><strong>¿Visité o contacté alguna institución esta semana?</strong><input type="text" class="rd-input" id="rd_ficha__visité_o_contacté_a" placeholder=""></div>
+   548→      <div class="campo"><strong>Fecha</strong><input type="text" class="rd-input" id="rd_ficha_fecha" placeholder=""></div>
+   549→    </div>
+   550→    <div class="proposito-strip">
+   551→      <span class="label">Propósitos formativos de este capítulo</span>
+   552→      PF-2 · Analiza el devenir del concepto de ciudadanía, para la conformación de un Estado democrático e incluyente.<br>
+   553→      PF-4 · Discute y reconoce que la diversidad forma parte del espacio democrático.
+   554→    </div>
+   555→    <p style="font-size:8.5pt; color:#4a3828; font-style:italic; margin-top:0.3cm;">Materiales: cuadernillo, fragmento de datos IMJUVE impreso, cuaderno personal. Sin necesidad de internet.</p>
+   556→  </div>
+   557→</div>
+   558→
+   559→
+   560→<!-- APERTURA -->
+   561→<h2>Apertura · La pregunta de Dolores</h2>
+   562→<p style="font-size:9pt;">La mamá de María preguntó: <em>"¿Por qué nadie nos dijo que eso existía?"</em> Antes de leer el capítulo, responde tú:</p>
+   563→
+   564→<div class="actividad">
+   565→  <div class="act-header">
+   566→    <div class="act-num">1</div>
+   567→    <div class="act-titulo">¿Conocer un derecho es lo mismo que poder ejercerlo?</div>
+   568→    <div class="act-tipo-badges">
+   569→      <span class="tipo-badge badge-reflexion">Individual</span>
+   570→      <span class="tipo-badge badge-analog">Diagnóstico</span>
+   571→    </div>
+   572→  </div>
+   573→  <div class="act-body">
+   574→    <p>El Profe Ramírez escribe tres condiciones del derecho real: <strong>Conocer · Entender · Ejercer.</strong></p>
+   575→    <p>Piensa en un derecho que tú o tu familia tienen reconocido en la ley. ¿Pueden cumplirse las tres condiciones? ¿Cuál es la más difícil?</p>
+   576→    <div class="espacio-respuesta">
+   577→      <div class="esp-label">El derecho que pienso</div>
+   578→      <textarea class="rd-respuesta" id="rd_a7o0p1" placeholder="Escribe tu respuesta aquí..."></textarea>
+   579→    </div>
+   580→    <div class="espacio-respuesta">
+   581→      <div class="esp-label">¿Lo conocen? ¿Lo entienden? ¿Pueden ejercerlo? Explica qué falta.</div>
+   582→      <textarea class="rd-respuesta rd-alta" id="rd_megvsf" placeholder="Escribe tu respuesta aquí..."></textarea>
+   583→    </div>
+   584→    <div class="espacio-respuesta">
+   585→      <div class="esp-label">¿Por qué crees que esa condición falta? ¿De quién es la responsabilidad?</div>
+   586→      <textarea class="rd-respuesta rd-alta" id="rd_f86fu2" placeholder="Escribe tu respuesta aquí..."></textarea>
+   587→    </div>
+   588→  </div>
+   589→</div>
+   590→
+   591→
+   592→<!-- ESTACIÓN 3 CONTINUACIÓN / PF-2 -->
+   593→<h2>Estación 3 (continuación) · Ciudadanía real vs. ciudadanía formal</h2>
+   594→<p style="font-size:9pt; color:#4a2810; font-weight:600;"><em>PF-2 · Ciudadanía política, civil, económica, cultural · Democracia participativa · Justicia social · Políticas públicas</em></p>
+   595→
+   596→<div class="actividad">
+   597→  <div class="act-header">
+   598→    <div class="act-num">2</div>
+   599→    <div class="act-titulo">Las cuatro ciudadanías: ¿quién queda fuera?</div>
+   600→    <div class="act-tipo-badges">
+   601→      <span class="tipo-badge badge-analog">Individual</span>
+   602→      <span class="tipo-badge badge-reflexion">Análisis</span>
+   603→    </div>
+   604→  </div>
+   605→  <div class="act-body">
+   606→    <p>Completa la tabla usando las situaciones del capítulo <strong>y</strong> ejemplos propios de tu comunidad. Identifica quién tiene la ciudadanía en el papel y quién la tiene en la práctica.</p>
+   607→    <table>
+   608→      <thead>
+   609→        <tr>
+   610→          <th>Tipo de ciudadanía</th>
+   611→          <th>Lo que la ley garantiza</th>
+   612→          <th>¿Quién queda excluido en la práctica?</th>
+   613→          <th>Ejemplo del capítulo o de tu comunidad</th>
+   614→        </tr>
+   615→      </thead>
+   616→      <tbody>
+   617→        <tr>
+   618→          <td><strong>Política</strong><br><span style="font-size:8pt;">Votar, representación, participar</span></td>
+   619→          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
+   620→          <td></td>
+   621→          <td></td>
+   622→        </tr>
+   623→        <tr>
+   624→          <td><strong>Civil</strong><br><span style="font-size:8pt;">Igualdad ante la ley, justicia</span></td>
+   625→          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
+   626→          <td></td>
+   627→          <td></td>
+   628→        </tr>
+   629→        <tr>
+   630→          <td><strong>Económica</strong><br><span style="font-size:8pt;">Trabajo digno, acceso a recursos</span></td>
+   631→          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
+   632→          <td></td>
+   633→          <td></td>
+   634→        </tr>
+   635→        <tr>
+   636→          <td><strong>Cultural</strong><br><span style="font-size:8pt;">Identidad, lengua, tradición</span></td>
+   637→          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
+   638→          <td></td>
+   639→          <td></td>
+   640→        </tr>
+   641→      </tbody>
+   642→    </table>
+   643→  </div>
+   644→</div>
+   645→
+   646→<div class="actividad">
+   647→  <div class="act-header">
+   648→    <div class="act-num">3</div>
+   649→    <div class="act-titulo">Ley y justicia: ¿siempre van juntas?</div>
+   650→    <div class="act-tipo-badges">
+   651→      <span class="tipo-badge badge-colectivo">Debate grupal</span>
+   652→      <span class="tipo-badge badge-reflexion">Reflexión</span>
+   653→    </div>
+   654→  </div>
+   655→  <div class="act-body">
+   656→    <p>El Profe Ramírez escribe en el pizarrón: <strong>LEY</strong> y <strong>JUSTICIA</strong> en lados opuestos. El grupo debate: ¿son lo mismo? Antes del debate, escribe tu posición inicial.</p>
+   657→    <div class="comparacion">
+   658→      <div class="comp-col comp-formal">
+   659→        <span class="label">¿En qué casos la ley produce justicia?</span>
+   660→        <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+   661→      </div>
+   662→      <div class="comp-col comp-real">
+   663→        <span class="label">¿En qué casos la ley NO produce justicia?</span>
+   664→        <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+   665→      </div>
+   666→    </div>
+   667→    <div class="espacio-respuesta" style="margin-top:0.5cm;">
+   668→      <div class="esp-label">Después del debate: ¿cambió tu posición? ¿Por qué sí o por qué no?</div>
+   669→      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+   670→    </div>
+   671→  </div>
+   672→</div>
+   673→
+   674→
+   675→<!-- ESTACIÓN 4 / PF-4 -->
+   676→<h2>Estación 4 · La diversidad en el espacio democrático</h2>
+   677→<p style="font-size:9pt; color:#4a2810; font-weight:600;"><em>PF-4 · Inclusión e igualdad · Acciones afirmativas · Edadismo · Accesos diferenciados · Claves de exclusión social</em></p>
+   678→
+   679→<div class="actividad">
+   680→  <div class="act-header">
+   681→    <div class="act-num">4</div>
+   682→    <div class="act-titulo">El edadismo: "todavía no"</div>
+   683→    <div class="act-tipo-badges">
+   684→      <span class="tipo-badge badge-analog">Individual</span>
+   685→      <span class="tipo-badge badge-reflexion">Experiencia propia</span>
+   686→    </div>
+   687→  </div>
+   688→  <div class="act-body">
+   689→    <p>Ulises describe cómo le dijeron "todavía no" cuando intentó participar en una decisión de la huerta. Esa forma de exclusión basada en la edad se llama <strong>edadismo</strong>.</p>
+   690→    <div class="espacio-respuesta">
+   691→      <div class="esp-label">¿Has vivido una situación de edadismo? Descríbela.</div>
+   692→      <textarea class="rd-respuesta rd-alta" id="rd_rjlral" placeholder="Escribe tu respuesta aquí..."></textarea>
+   693→    </div>
+   694→    <div class="espacio-respuesta">
+   695→      <div class="esp-label">¿El CBTA tiene espacios reales donde los estudiantes participen en decisiones? ¿Cuáles conoces? ¿Qué deciden realmente?</div>
+   696→      <textarea class="rd-respuesta rd-alta" id="rd_jf06zg" placeholder="Escribe tu respuesta aquí..."></textarea>
+   697→    </div>
+   698→    <div class="espacio-respuesta">
+   699→      <div class="esp-label">¿En qué espacio de tu escuela o comunidad te gustaría que los jóvenes tuvieran voz real? ¿Por qué ese?</div>
+   700→      <textarea class="rd-respuesta rd-alta" id="rd_x80jz9" placeholder="Escribe tu respuesta aquí..."></textarea>
+   701→    </div>
+   702→  </div>
+   703→</div>
+   704→
+   705→<div class="actividad">
+   706→  <div class="act-header">
+   707→    <div class="act-num">5</div>
+   708→    <div class="act-titulo">Acciones afirmativas: ¿dar más a quien recibió menos?</div>
+   709→    <div class="act-tipo-badges">
+   710→      <span class="tipo-badge badge-colectivo">Grupal</span>
+   711→      <span class="tipo-badge badge-analog">Análisis + debate</span>
+   712→    </div>
+   713→  </div>
+   714→  <div class="act-body">
+   715→    <p>Lee los tres ejemplos del recuadro que distribuye el docente (también incluido aquí). Después responde.</p>
+   716→
+   717→    <div class="fragmento">
+   718→      <span class="label">Tres tipos de acción afirmativa en México · Para análisis en clase</span>
+   719→      <p><strong>1. Paridad de género en cargos de elección:</strong> Reforma 2019. El 50% de las candidaturas deben ser de mujeres. Resultado: el Congreso pasó de 22% a 50.8% de representación femenina.</p>
+   720→      <p><strong>2. Becas Bienestar para estudiantes indígenas:</strong> En 2023 benefició a 847,000 estudiantes de comunidades indígenas o afromexicanas para reducir el abandono escolar por causas económicas.</p>
+   721→      <p><strong>3. Acceso diferenciado en universidades públicas:</strong> Programas de admisión con puntaje ajustado para estudiantes de zonas de alta marginación, reconociendo desigualdad en las condiciones de acceso al conocimiento.</p>
+   722→      <p class="fuente">Fuentes: Cámara de Diputados · SEP · UNAM. Documentos públicos disponibles en sus respectivos portales.</p>
+   723→    </div>
+   724→
+   725→    <h4>a) ¿Qué tienen en común las tres políticas?</h4>
+   726→    <div class="espacio-respuesta">
+   727→      <textarea class="rd-respuesta rd-alta" id="rd_l7q5cj" placeholder="Escribe tu respuesta aquí..."></textarea>
+   728→    </div>
+   729→
+   730→    <h4>b) En el capítulo hay un estudiante que dice que las acciones afirmativas "discriminan al revés". Y otro que dice que "eliminan una desventaja que ya existía". ¿Con cuál argumentas tú? ¿Por qué?</h4>
+   731→    <div class="espacio-respuesta">
+   732→      <textarea class="rd-respuesta rd-alta" id="rd_wb05x5" placeholder="Escribe tu respuesta aquí..."></textarea>
+   733→    </div>
+   734→
+   735→    <h4>c) ¿Tú o alguien en tu familia se ha beneficiado de alguna de estas políticas o de una similar? ¿Qué cambió?</h4>
+   736→    <div class="espacio-respuesta">
+   737→      <textarea class="rd-respuesta rd-alta" id="rd_rk6ifq" placeholder="Escribe tu respuesta aquí..."></textarea>
+   738→    </div>
+   739→
+   740→    <div class="alt-digital">
+   741→      <span class="label">Extensión digital (opcional)</span>
+   742→      Busca en el portal de la SEP (www.sep.gob.mx) o del gobierno federal (www.gob.mx) qué programas de becas o apoyos existen para estudiantes de tu municipio o estado. Copia los datos en tu cuaderno para tenerlos sin necesidad de internet después.
+   743→    </div>
+   744→  </div>
+   745→</div>
+   746→
+   747→<div class="actividad">
+   748→  <div class="act-header">
+   749→    <div class="act-num">6</div>
+   750→    <div class="act-titulo">El diagnóstico de inclusión en tu escuela</div>
+   751→    <div class="act-tipo-badges">
+   752→      <span class="tipo-badge badge-colectivo">Equipos de 3-4</span>
+   753→      <span class="tipo-badge badge-analog">Investigación</span>
+   754→    </div>
+   755→  </div>
+   756→  <div class="act-body">
+   757→    <p>Miranda pregunta si el consejo estudiantil del CBTA decide algo real. Este ejercicio lo investigan juntos.</p>
+   758→    <table>
+   759→      <thead>
+   760→        <tr>
+   761→          <th>Espacio de participación</th>
+   762→          <th>¿Existe formalmente?</th>
+   763→          <th>¿Qué decide en la práctica?</th>
+   764→          <th>¿Quiénes participan realmente?</th>
+   765→        </tr>
+   766→      </thead>
+   767→      <tbody>
+   768→        <tr>
+   769→          <td>Consejo Estudiantil</td>
+   770→          <td style="height:1.5cm;"></td>
+   771→          <td></td>
+   772→          <td></td>
+   773→        </tr>
+   774→        <tr>
+   775→          <td>Sociedad de Padres</td>
+   776→          <td style="height:1.5cm;"></td>
+   777→          <td></td>
+   778→          <td></td>
+   779→        </tr>
+   780→        <tr>
+   781→          <td>Asamblea de grupo</td>
+   782→          <td style="height:1.5cm;"></td>
+   783→          <td></td>
+   784→          <td></td>
+   785→        </tr>
+   786→        <tr>
+   787→          <td>Otro (escríbelo)</td>
+   788→          <td style="height:1.5cm;"></td>
+   789→          <td></td>
+   790→          <td></td>
+   791→        </tr>
+   792→      </tbody>
+   793→    </table>
+   794→    <div class="espacio-respuesta" style="margin-top:0.4cm;">
+   795→      <div class="esp-label">¿Qué espacio propondrías crear o fortalecer para que los estudiantes del CBTA tengan voz real?</div>
+   796→      <div class="lineas"><div class="linea"></div><div class="linea"></div><div class="linea"></div><div class="linea"></div></div>
+   797→    </div>
+   798→    <p class="nota-pie-cuadernillo">Esta actividad puede completarse preguntando directamente a la dirección, al orientador o a estudiantes de semestres avanzados. No requiere internet.</p>
+   799→  </div>
+   800→</div>
+   801→
+   802→
+   803→<!-- RETO CENTRAL -->
+   804→<div class="reto-avance">
+   805→  <span class="label">Reto Central · Tercera pieza · Mapa de Derechos</span>
+   806→  <h3>El patrón que emerge</h3>
+   807→  <p>En el Capítulo 3, el grupo descubre que las situaciones de sus mapas comparten un patrón: quienes menos acceso a información tienen, quienes firman sin leer, quienes más lejos están de las instituciones, son siempre los mismos. Ese patrón tiene nombre: desigualdad estructural. Agrégalo a tu mapa.</p>
+   808→</div>
+   809→
+   810→<div class="actividad">
+   811→  <div class="act-header">
+   812→    <div class="act-num">7</div>
+   813→    <div class="act-titulo">Ficha 3 del Mapa de Derechos · El patrón</div>
+   814→    <div class="act-tipo-badges">
+   815→      <span class="tipo-badge badge-analog">Individual</span>
+   816→      <span class="tipo-badge badge-reflexion">Síntesis</span>
+   817→    </div>
+   818→  </div>
+   819→  <div class="act-body">
+   820→    <div class="espacio-respuesta">
+   821→      <div class="esp-label">Revisa tus Fichas 1 y 2. ¿Qué tienen en común las situaciones que identificaste?</div>
+   822→      <textarea class="rd-respuesta rd-alta" id="rd_dnjxz2" placeholder="Escribe tu respuesta aquí..."></textarea>
+   823→    </div>
+   824→    <div class="espacio-respuesta">
+   825→      <div class="esp-label">¿Hay un grupo de personas que aparece sistemáticamente en el lado de los que menos acceden a sus derechos? ¿Quiénes son?</div>
+   826→      <textarea class="rd-respuesta rd-alta" id="rd_1jg8dv" placeholder="Escribe tu respuesta aquí..."></textarea>
+   827→    </div>
+   828→    <div class="espacio-respuesta">
+   829→      <div class="esp-label">¿Qué tipo de acción afirmativa podría reducir esa desigualdad en tu comunidad? Propón algo concreto y realista.</div>
+   830→      <textarea class="rd-respuesta rd-alta" id="rd_nxcq0k" placeholder="Escribe tu respuesta aquí..."></textarea>
+   831→    </div>
+   832→    <p class="nota-pie-cuadernillo">Esta ficha es la base de la presentación final del Reto Central. Guárdala junto con las anteriores.</p>
+   833→  </div>
+   834→</div>
+   835→
+   836→
+   837→<!-- CIERRE -->
+   838→<div class="cierre-semana">
+   839→  <span class="label">Cierre · Sesiones 5 y 6 · Semana 4</span>
+   840→  <h4 style="color:#4a2810; margin-bottom:0.3cm;">Tres preguntas para llevar a casa</h4>
+   841→  <div class="espacio-respuesta">
+   842→    <div class="esp-label">¿Qué significa ahora para ti ser ciudadano/a que no tenía ese significado hace tres semanas?</div>
+   843→    <textarea class="rd-respuesta rd-alta" id="rd_mq8vge" placeholder="Escribe tu respuesta aquí..."></textarea>
+   844→    </div>
+   845→  <div class="espacio-respuesta">
+   846→    <div class="esp-label">¿Hay alguien en tu familia o comunidad que ejerce ciudadanía activa? ¿Qué hace concretamente?</div>
+   847→    <textarea class="rd-respuesta rd-alta" id="rd_zm0k5g" placeholder="Escribe tu respuesta aquí..."></textarea>
+   848→    </div>
+   849→  <div class="espacio-respuesta">
+   850→    <div class="esp-label">Tarea: Pregunta en casa si alguien firmó alguna vez un documento sin entenderlo del todo. ¿Qué pasó después?</div>
+   851→    <textarea class="rd-respuesta" id="rd_ihvypz" placeholder="Escribe tu respuesta aquí..."></textarea>
+   852→    </div>
+   853→</div>
+   854→
+   855→<p style="font-size:8pt; color:#4a3828; border-top:1pt solid #a08060; padding-top:0.4cm; margin-top:0.5cm; text-align:center;">
+   856→  Cuadernillo del Estudiante · Capítulo 3 · Ciencias Sociales I · El Código del Ejido<br>
+   857→  Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM · Materiales fotocopiables sin fines de lucro.
+   858→</p>
+   859→
+   860→<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+   861→
+   862→<div class="rd-guardar">
+   863→  <button class="rd-btn-guardar" onclick="rd_guardar()">↓ Guardar mis respuestas</button>
+   864→  <button class="rd-btn-limpiar" onclick="rd_limpiar()">Borrar todo</button>
+   865→  <span class="rd-aviso" id="rd-aviso"></span>
+   866→</div>
+   867→<footer class="ln-firma">
+   868→  <div class="ln-logotipo">
+   869→    <span class="ln-letras">Letras</span>
+   870→    <span class="ln-necias">Necias</span>
+   871→  </div>
+   872→  <div class="ln-contacto">
+   873→    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+   874→    &nbsp;·&nbsp;
+   875→    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+   876→  </div>
+   877→  <span class="ln-derechos">
+   878→    © 2025 Letras Necias. Todos los derechos reservados.<br>
+   879→    Cuadernillo del Estudiante · Capítulo 3 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+   880→    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+   881→    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+   882→  </span>
+   883→</footer>
+   884→</div><!-- /.raiz-cs1 -->
+   885→
+   886→<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+   887→
+   888→
+   889→<script>
+   890→(function(){
+   891→  const CLAVE='rd_cs1_cap3_cuadernillo_';
+   892→  const CAMPOS=[];
+   893→  const EDITABLES=[];
+   894→
+   895→  // Recopilar textareas e inputs con id que empiece con rd_
+   896→  document.querySelectorAll('textarea.rd-respuesta, input.rd-input').forEach(function(el){
+   897→    if(el.id) CAMPOS.push(el.id);
+   898→  });
+   899→
+   900→  // Recopilar celdas contenteditable
+   901→  document.querySelectorAll('td[contenteditable="true"]').forEach(function(el,i){
+   902→    el.id=el.id||('rd_cell_'+i);
+   903→    EDITABLES.push(el.id);
+   904→  });
+   905→
+   906→  function cargar(){
+   907→    CAMPOS.forEach(function(id){
+   908→      var el=document.getElementById(id);
+   909→      var v=localStorage.getItem(CLAVE+id);
+   910→      if(el&&v){el.value=v;}
+   911→    });
+   912→    EDITABLES.forEach(function(id){
+   913→      var el=document.getElementById(id);
+   914→      var v=localStorage.getItem(CLAVE+id);
+   915→      if(el&&v){el.textContent=v;}
+   916→    });
+   917→  }
+   918→
+   919→  function guardar(){
+   920→    CAMPOS.forEach(function(id){
+   921→      var el=document.getElementById(id);
+   922→      if(el) localStorage.setItem(CLAVE+id,el.value);
+   923→    });
+   924→    EDITABLES.forEach(function(id){
+   925→      var el=document.getElementById(id);
+   926→      if(el) localStorage.setItem(CLAVE+id,el.textContent);
+   927→    });
+   928→    var av=document.getElementById('rd-aviso');
+   929→    if(av){av.textContent='✓ Respuestas guardadas en este dispositivo';setTimeout(function(){av.textContent='';},3000);}
+   930→  }
+   931→
+   932→  function limpiar(){
+   933→    if(!confirm('¿Borrar todas las respuestas? Esta acción no se puede deshacer.'))return;
+   934→    CAMPOS.forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+   935→    EDITABLES.forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='';});
+   936→    CAMPOS.forEach(function(id){localStorage.removeItem(CLAVE+id);});
+   937→    EDITABLES.forEach(function(id){localStorage.removeItem(CLAVE+id);});
+   938→  }
+   939→
+   940→  window.addEventListener('load',cargar);
+   941→  setInterval(guardar,30000);
+   942→
+   943→  // Exponer funciones globalmente para los botones
+   944→  window.rd_guardar=guardar;
+   945→  window.rd_limpiar=limpiar;
+   946→})();
+   947→</script>
+   948→</body>
+   949→</html>
