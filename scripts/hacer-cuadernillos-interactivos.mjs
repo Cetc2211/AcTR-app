@@ -6,12 +6,10 @@
  * Transforma los cuadernillos CS (no interactivos) en interactivos,
  * siguiendo el mismo patrón que los cuadernillos PFH1.
  *
- * Cambios que hace:
- *   1. Reemplaza <div class="lineas"> con <textarea> interactivo
- *   2. Hace editables las celdas vacías de tablas (height:2cm)
- *   3. Agrega <input> en los campos de la ficha del estudiante
- *   4. Agrega CSS para textareas y inputs interactivos
- *   5. Agrega JavaScript de guardar/cargar/autoguardado con localStorage
+ * v2 — Correcciones:
+ *   - Textareas más grandes (min-height proporcional al número de líneas)
+ *   - Todas las celdas vacías de tablas son editables (no solo height:2cm)
+ *   - CSS mejorado para celdas editables en tablas
  *
  * Seguridad:
  *   - Solo modifica archivos *-cuadernillo.html
@@ -23,7 +21,7 @@
  *   1. Coloca los HTML originales en materiales-temp/
  *   2. node scripts/hacer-cuadernillos-interactivos.mjs
  *   3. Revisa los archivos generados en materiales-temp-interactivos/
- *   4. Si están correctos, sube con el script de subida
+ *   4. Si están correctos, sube con: node scripts/re-subir-storage.mjs
  */
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'fs';
@@ -45,27 +43,38 @@ const CSS_INTERACTIVO = `
   font-size: 9.5pt;
   line-height: 1.65;
   color: #0e0a1e;
-  padding: .3rem .5rem;
+  padding: .4rem .5rem;
   resize: vertical;
-  min-height: 2.5rem;
+  min-height: 4rem;
   outline: none;
   transition: border-color .2s, background .2s;
+  box-sizing: border-box;
+  display: block;
 }
 .raiz-digital textarea.rd-respuesta:focus {
   border-color: #1a1060;
   background: #fff;
 }
-.raiz-digital textarea.rd-respuesta.rd-alta { min-height: 5rem; }
-.raiz-digital textarea.rd-respuesta.rd-muy-alta { min-height: 7rem; }
+.raiz-digital textarea.rd-respuesta.rd-alta { min-height: 6rem; }
+.raiz-digital textarea.rd-respuesta.rd-muy-alta { min-height: 9rem; }
 
 .raiz-digital td[contenteditable="true"] {
   outline: 1pt dashed #8080c0;
   cursor: text;
   background: rgba(255,255,255,0.6);
+  min-height: 1.8rem;
+  min-width: 3rem;
 }
 .raiz-digital td[contenteditable="true"]:focus {
   outline: 1pt solid #1a1060;
   background: #fff;
+}
+.raiz-digital td[contenteditable="true"]:empty::before {
+  content: attr(data-placeholder);
+  color: #b0b0c8;
+  font-style: italic;
+  font-size: 8.5pt;
+  pointer-events: none;
 }
 
 .raiz-digital .ficha-est input.rd-input {
@@ -132,9 +141,6 @@ const CSS_INTERACTIVO = `
  * dentro de <div class="espacio-respuesta">
  */
 function reemplazarLineas(html) {
-  // Patrón: <div class="lineas"><div class="linea"></div>...(repetido)...</div>
-  // seguido de </div> que cierra espacio-respuesta
-  // Usamos un patrón greedy específico para .linea que evita ambigüedad con </div>
   return html.replace(
     /<div class="espacio-respuesta">([\s\S]*?)<div class="lineas">((?:<div class="linea"><\/div>\s*)+)<\/div>\s*<\/div>/g,
     (match, antes, lineasContent) => {
@@ -151,21 +157,46 @@ function reemplazarLineas(html) {
 }
 
 /**
- * Hace editables las celdas vacías de tablas con height:2cm
+ * Hace editables las celdas vacías de tablas.
+ * v2: Cubre TODOS los patrones de celdas vacías:
+ *   - <td style="height:2cm;"></td>          (celdas con altura)
+ *   - <td style="height:2cm; "></td>         (con espacio)
+ *   - <td></td>                               (celdas vacías sin estilo)
+ *   - <td style="height:2cm;"> </td>         (con espacio interno)
+ *
+ * NO toca celdas que tienen contenido real (texto, strong, etc.)
  */
 function hacerCeldasEditables(html) {
-  return html.replace(
-    /<td style="height:2cm;\s*"><\/td>/g,
-    '<td contenteditable="true" style="height:2cm;min-height:2cm;"></td>'
+  // Patrón 1: celdas con style="height:2cm" (con o sin espacio extra)
+  let resultado = html.replace(
+    /<td style="height:2cm;\s*">\s*<\/td>/g,
+    '<td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>'
   );
+
+  // Patrón 2: celdas vacías simples <td></td> dentro de <tbody>
+  // Solo dentro de tablas (no en cualquier parte del HTML)
+  resultado = resultado.replace(
+    /<tbody>([\s\S]*?)<\/tbody>/g,
+    (match, tbodyContent) => {
+      // Reemplazar <td></td> vacíos, pero NO los que ya tienen contenteditable
+      // ni los que tienen contenido (strong, texto, etc.)
+      const modificado = tbodyContent.replace(
+        /<td>(\s*)<\/td>/g,
+        (tdMatch, ws) => {
+          return `<td contenteditable="true" data-placeholder="...">${ws}</td>`;
+        }
+      );
+      return `<tbody>${modificado}</tbody>`;
+    }
+  );
+
+  return resultado;
 }
 
 /**
  * Agrega inputs en la ficha del estudiante
  */
 function agregarInputsFicha(html) {
-  // Patrón: <div class="campo"><strong>Nombre completo</strong></div>
-  // Agregar un input después del strong
   return html.replace(
     /<div class="campo"><strong>([^<]+)<\/strong><\/div>/g,
     (match, label) => {
@@ -189,7 +220,6 @@ function inyectarCSS(html) {
  * Genera el script JS de guardar/cargar y lo inyecta antes de </body>
  */
 function inyectarScript(html, fileName) {
-  // Generar clave única por archivo
   const baseName = basename(fileName, '.html').replace(/[^a-z0-9_]/gi, '_');
   const CLAVE = `rd_${baseName}_`;
 
@@ -271,7 +301,6 @@ function agregarBarraGuardar(html) {
   <span class="rd-aviso" id="rd-aviso"></span>
 </div>`;
 
-  // Insertar antes del footer ln-firma
   return html.replace(
     /(<footer class="ln-firma">)/,
     barra + '\n$1'
@@ -281,7 +310,7 @@ function agregarBarraGuardar(html) {
 // ─── Main ────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('\n📝  Letras Necias — Hacer cuadernillos interactivos\n');
+  console.log('\n📝  Letras Necias — Hacer cuadernillos interactivos v2\n');
 
   if (!existsSync(CARPETA_ORIGEN)) {
     console.error(`✗  No se encontró la carpeta ${CARPETA_ORIGEN}`);
@@ -289,7 +318,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Crear carpeta destino
+  // Crear carpeta destino (limpiar si existe)
   if (!existsSync(CARPETA_DESTINO)) {
     mkdirSync(CARPETA_DESTINO, { recursive: true });
   }
