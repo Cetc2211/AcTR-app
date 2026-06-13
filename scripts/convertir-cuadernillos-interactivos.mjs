@@ -1,10 +1,7 @@
 /**
  * convertir-cuadernillos-interactivos.mjs
- * 
- * Convierte los cuadernillos CS (cs1/cs2/cs3) de estáticos a interactivos.
- * Lee de: materiales-temp/cs{N}-cap{N}-cuadernillo.html
+ * Lee de:    materiales-temp/cs{N}-cap{N}-cuadernillo.html
  * Escribe en: materiales-temp-interactivos/cs{N}-cap{N}-cuadernillo.html
- * 
  * Uso: node convertir-cuadernillos-interactivos.mjs
  */
 
@@ -13,18 +10,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const RAIZ = path.resolve(__dirname, '..');
+const ORIGEN  = path.join(__dirname, 'materiales-temp');
+const DESTINO = path.join(__dirname, 'materiales-temp-interactivos');
 
-const ORIGEN = path.join(RAIZ, 'materiales-temp');
-const DESTINO = path.join(RAIZ, 'materiales-temp-interactivos');
-
-// ── Crear carpeta destino si no existe ─────────────────────────
 if (!fs.existsSync(DESTINO)) {
   fs.mkdirSync(DESTINO, { recursive: true });
-  console.log(`✓ Carpeta creada: ${DESTINO}`);
+  console.log(`✓ Carpeta creada: materiales-temp-interactivos/`);
 }
 
-// ── Listar cuadernillos CS ──────────────────────────────────────
 const archivos = fs.readdirSync(ORIGEN).filter(f =>
   f.match(/^cs[123]-cap\d+-cuadernillo\.html$/)
 );
@@ -37,39 +30,45 @@ if (archivos.length === 0) {
 console.log(`\nProcesando ${archivos.length} cuadernillos...\n`);
 
 let ok = 0;
-let errores = 0;
 
 for (const archivo of archivos) {
   try {
-    const origen = path.join(ORIGEN, archivo);
-    const destino = path.join(DESTINO, archivo);
-    let html = fs.readFileSync(origen, 'utf-8');
-
-    // Extraer clave única del archivo (ej: cs1_cap3)
     const match = archivo.match(/^(cs[123])-(cap\d+)-cuadernillo\.html$/);
-    const claveBase = match ? `${match[1]}_${match[2]}` : archivo.replace('.html','').replace(/-/g,'_');
-    const CLAVE = `cuad_${claveBase}_`;
+    const CLAVE = `cuad_${match[1]}_${match[2]}_`;
 
-    // ── 1. Convertir líneas de espacio (spans/divs vacíos para escribir) ──────
-    // Patrón: elementos con clase que sugiere espacio de escritura
-    html = html.replace(
-      /<(div|span)\s+class="[^"]*(?:espacio|linea|respuesta|write|answer|blank)[^"]*"[^>]*>\s*<\/\1>/gi,
-      (match, tag) => `<textarea class="cuad-r" placeholder="Escribe aquí..."></textarea>`
+    let html = fs.readFileSync(path.join(ORIGEN, archivo), 'utf-8');
+
+    // ── 1. Convertir .linea (spans/divs vacíos de líneas de escritura) ──────
+    // El patrón del ecosistema CS usa <div class="linea"></div> dentro de .lineas
+    html = html.replace(/<div class="linea"><\/div>/gi,
+      `<textarea class="cuad-r" placeholder="Escribe aquí..."></textarea>`
     );
 
-    // ── 2. Convertir inputs de texto que sean campos de respuesta ─────────────
+    // ── 2. Convertir celdas <td> editables ──────────────────────────────────
+    // Las celdas que tienen style="height:Xcm;" están pensadas para escribir
+    // Agrega un textarea dentro sin eliminar el td
     html = html.replace(
-      /<input\s+type="text"([^>]*)>/gi,
-      (match, attrs) => {
-        if (attrs.includes('id="nombre"') || attrs.includes('id="grupo"') || attrs.includes('id="docente"')) {
-          return match; // Mantener campos de datos del estudiante como están
-        }
-        return `<textarea class="cuad-r" placeholder="Escribe aquí..."${attrs}></textarea>`;
+      /(<td[^>]*style="[^"]*height:\s*[\d.]+cm[^"]*"[^>]*>)([\s\S]*?)(<\/td>)/gi,
+      (match, open, inner, close) => {
+        // Si ya tiene textarea, no duplicar
+        if (inner.includes('<textarea')) return match;
+        // Limpiar contenido vacío y agregar textarea
+        const contenidoLimpio = inner.trim();
+        return `${open}${contenidoLimpio}<textarea class="cuad-r td-r" placeholder="Escribe aquí..."></textarea>${close}`;
       }
     );
 
-    // ── 3. Insertar CSS interactivo antes del cierre de </style> ──────────────
-    const cssInteractivo = `
+    // ── 3. Celdas <td> vacías sin style height (tablas de criterios, etc.) ──
+    html = html.replace(
+      /(<td(?![^>]*colspan)[^>]*>)(\s*)(<\/td>)/gi,
+      (match, open, space, close) => {
+        if (open.includes('cuad-r') || open.includes('textarea')) return match;
+        return `${open}<textarea class="cuad-r td-r" placeholder="Escribe aquí..."></textarea>${close}`;
+      }
+    );
+
+    // ── 4. CSS adicional para tablas + el CSS base ───────────────────────────
+    const cssExtra = `
 /* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
 textarea.cuad-r {
   width: 100%;
@@ -77,52 +76,62 @@ textarea.cuad-r {
   border-radius: 3px;
   background: rgba(255,255,255,0.7);
   font-family: inherit;
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 0.88rem;
+  line-height: 1.65;
   color: #1a1208;
-  padding: 0.55rem 0.8rem;
+  padding: 0.45rem 0.7rem;
   resize: vertical;
-  min-height: 4rem;
+  min-height: 3.5rem;
   outline: none;
   transition: border-color .2s, background .2s;
   display: block;
   box-sizing: border-box;
+  margin-top: 0.2rem;
 }
 textarea.cuad-r:focus {
-  border-color: var(--cs-acento, #4a2e10);
+  border-color: #5c3a1e;
   background: #fff;
+  box-shadow: 0 0 0 2px rgba(92,58,30,0.08);
 }
-textarea.cuad-r.grande { min-height: 6rem; }
-textarea.cuad-r.xgrande { min-height: 8rem; }
+/* Textarea dentro de celda de tabla */
+textarea.cuad-r.td-r {
+  min-height: 5rem;
+  border-radius: 2px;
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.85);
+}
+/* Eliminar height fijo de celdas ahora que tienen textarea */
+.raiz-cs1 td[style*="height"] { height: auto !important; }
 
 .cuad-guardar-barra {
   text-align: center;
-  padding: 1.2rem;
-  background: var(--crema, #f5ead8);
-  border-top: 1px solid rgba(42,32,16,0.1);
+  padding: 1rem 1.2rem;
+  background: #f5ead8;
+  border-top: 1px solid rgba(92,58,30,0.15);
   position: sticky;
   bottom: 0;
+  z-index: 100;
 }
 .cuad-btn-guardar {
-  background: var(--cs-acento, #4a2e10);
+  background: #5c3a1e;
   color: #fff;
   font-family: monospace;
-  font-size: .5rem;
-  letter-spacing: .2em;
+  font-size: .48rem;
+  letter-spacing: .18em;
   text-transform: uppercase;
-  padding: .65rem 1.8rem;
+  padding: .6rem 1.8rem;
   border: none;
   cursor: pointer;
   border-radius: 3px;
   transition: background .2s;
 }
-.cuad-btn-guardar:hover { filter: brightness(1.15); }
+.cuad-btn-guardar:hover { background: #3d2210; }
 .cuad-btn-limpiar {
   background: transparent;
   color: #888;
   font-family: monospace;
-  font-size: .44rem;
-  letter-spacing: .15em;
+  font-size: .42rem;
+  letter-spacing: .14em;
   text-transform: uppercase;
   padding: .5rem 1rem;
   border: 1px solid #ccc;
@@ -132,106 +141,85 @@ textarea.cuad-r.xgrande { min-height: 8rem; }
 }
 .cuad-aviso {
   font-family: monospace;
-  font-size: .4rem;
+  font-size: .38rem;
   color: #666;
-  margin-top: .5rem;
+  margin-top: .4rem;
   display: block;
 }
 @media print {
-  textarea.cuad-r {
-    border: none;
-    border-bottom: 1px solid #999;
+  textarea.cuad-r, textarea.cuad-r.td-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
     border-radius: 0;
-    background: transparent;
+    background: transparent !important;
     resize: none;
-    min-height: 2rem;
+    min-height: 1.5rem;
+    box-shadow: none;
   }
-  .cuad-guardar-barra { display: none; }
+  .cuad-guardar-barra { display: none !important; }
 }
 `;
 
-    if (html.includes('</style>')) {
-      html = html.replace('</style>', cssInteractivo + '\n</style>');
-    } else {
-      // Si no hay </style>, insertar bloque completo antes del cierre de </head>
-      html = html.replace('</head>', `<style>${cssInteractivo}</style>\n</head>`);
-    }
+    // Insertar CSS antes del </style>
+    html = html.includes('</style>')
+      ? html.replace('</style>', cssExtra + '\n</style>')
+      : html.replace('</head>', `<style>${cssExtra}</style>\n</head>`);
 
-    // ── 4. Agregar IDs a textareas sin id para el guardado ───────────────────
+    // ── 5. Asignar IDs únicos a textareas sin id ─────────────────────────────
     let contador = 0;
-    html = html.replace(/<textarea\s+class="cuad-r"([^>]*)>/gi, (match, attrs) => {
-      if (attrs.includes('id=')) return match;
+    html = html.replace(/<textarea\s+class="cuad-r([^"]*)"([^>]*)>/gi, (m, extra, attrs) => {
+      if (attrs.includes('id=')) return m;
       contador++;
-      return `<textarea class="cuad-r" id="r${contador}"${attrs}>`;
+      return `<textarea class="cuad-r${extra}" id="r${contador}"${attrs}>`;
     });
 
-    // ── 5. Insertar barra de guardar + script antes de </body> ───────────────
-    const scriptGuardado = `
+    // ── 6. Barra guardar + script (solo si no existe ya) ────────────────────
+    if (!html.includes('cuadGuardar')) {
+      const script = `
 <!-- BARRA GUARDAR -->
 <div class="cuad-guardar-barra">
   <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
   <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
   <span class="cuad-aviso" id="cuad-aviso"></span>
 </div>
-
 <script>
-(function() {
-  var CLAVE = '${CLAVE}';
-
-  function cuadGuardar() {
-    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
-      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
+(function(){
+  var C='${CLAVE}';
+  function guardar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id) localStorage.setItem(C+el.id,el.value);
     });
-    document.querySelectorAll('input[type="text"]').forEach(function(el) {
-      if (el.id) localStorage.setItem(CLAVE + el.id, el.value);
-    });
-    var av = document.getElementById('cuad-aviso');
-    if (av) { av.textContent = '✓ Respuestas guardadas en este dispositivo'; setTimeout(function(){ av.textContent=''; }, 3000); }
+    var av=document.getElementById('cuad-aviso');
+    if(av){av.textContent='✓ Respuestas guardadas';setTimeout(function(){av.textContent='';},3000);}
   }
-
-  function cuadLimpiar() {
-    if (!confirm('¿Borrar todas las respuestas de este cuadernillo?')) return;
-    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
-      el.value = '';
-      if (el.id) localStorage.removeItem(CLAVE + el.id);
-    });
-    document.querySelectorAll('input[type="text"]').forEach(function(el) {
-      el.value = '';
-      if (el.id) localStorage.removeItem(CLAVE + el.id);
+  function limpiar(){
+    if(!confirm('¿Borrar todas las respuestas?'))return;
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      el.value='';if(el.id)localStorage.removeItem(C+el.id);
     });
   }
-
-  function cuadCargar() {
-    document.querySelectorAll('textarea.cuad-r').forEach(function(el) {
-      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
-    });
-    document.querySelectorAll('input[type="text"]').forEach(function(el) {
-      if (el.id) { var v = localStorage.getItem(CLAVE + el.id); if (v) el.value = v; }
+  function cargar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id){var v=localStorage.getItem(C+el.id);if(v)el.value=v;}
     });
   }
-
-  window.cuadGuardar = cuadGuardar;
-  window.cuadLimpiar = cuadLimpiar;
-  window.addEventListener('load', cuadCargar);
-  setInterval(cuadGuardar, 30000);
+  window.cuadGuardar=guardar;window.cuadLimpiar=limpiar;
+  window.addEventListener('load',cargar);
+  setInterval(guardar,30000);
 })();
-</script>
-`;
+<\/script>`;
+      html = html.replace('</body>', script + '\n</body>');
+    }
 
-    html = html.replace('</body>', scriptGuardado + '\n</body>');
-
-    // ── 6. Escribir archivo destino ──────────────────────────────────────────
-    fs.writeFileSync(destino, html, 'utf-8');
-    console.log(`  ✓ ${archivo}`);
+    fs.writeFileSync(path.join(DESTINO, archivo), html, 'utf-8');
+    console.log(`  ✓ ${archivo} (${contador} campos interactivos)`);
     ok++;
 
   } catch (err) {
     console.error(`  ✗ ${archivo}: ${err.message}`);
-    errores++;
   }
 }
 
 console.log(`\n─────────────────────────────────────`);
 console.log(`✅ ${ok} cuadernillos convertidos`);
-if (errores > 0) console.log(`⚠  ${errores} errores`);
 console.log(`Destino: materiales-temp-interactivos/`);
