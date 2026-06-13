@@ -2,7 +2,7 @@
  * convertir-cuadernillos-interactivos.mjs
  * Lee de:    materiales-temp/cs{N}-cap{N}-cuadernillo.html
  * Escribe en: materiales-temp-interactivos/cs{N}-cap{N}-cuadernillo.html
- * Uso: node convertir-cuadernillos-interactivos.mjs
+ * Uso: node scripts/convertir-cuadernillos-interactivos.mjs
  */
 
 import fs from 'fs';
@@ -208,7 +208,7 @@ textarea.cuad-r.td-r {
   window.addEventListener('load',cargar);
   setInterval(guardar,30000);
 })();
-<\/script>`;
+</script>`;
       html = html.replace('</body>', script + '\n</body>');
     }
 
