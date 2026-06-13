@@ -299,27 +299,38 @@
   font-size: 9.5pt;
   line-height: 1.65;
   color: #0e0a1e;
-  padding: .3rem .5rem;
+  padding: .4rem .5rem;
   resize: vertical;
-  min-height: 2.5rem;
+  min-height: 4rem;
   outline: none;
   transition: border-color .2s, background .2s;
+  box-sizing: border-box;
+  display: block;
 }
 .raiz-digital textarea.rd-respuesta:focus {
   border-color: #1a1060;
   background: #fff;
 }
-.raiz-digital textarea.rd-respuesta.rd-alta { min-height: 5rem; }
-.raiz-digital textarea.rd-respuesta.rd-muy-alta { min-height: 7rem; }
+.raiz-digital textarea.rd-respuesta.rd-alta { min-height: 6rem; }
+.raiz-digital textarea.rd-respuesta.rd-muy-alta { min-height: 9rem; }
 
 .raiz-digital td[contenteditable="true"] {
   outline: 1pt dashed #8080c0;
   cursor: text;
   background: rgba(255,255,255,0.6);
+  min-height: 1.8rem;
+  min-width: 3rem;
 }
 .raiz-digital td[contenteditable="true"]:focus {
   outline: 1pt solid #1a1060;
   background: #fff;
+}
+.raiz-digital td[contenteditable="true"]:empty::before {
+  content: attr(data-placeholder);
+  color: #b0b0c8;
+  font-style: italic;
+  font-size: 8.5pt;
+  pointer-events: none;
 }
 
 .raiz-digital .ficha-est input.rd-input {
@@ -416,11 +427,11 @@
     <p>Antes de escuchar a Doña Esperanza, escribe lo que crees. Esta hipótesis no se evalúa por si acertaste o no: se evalúa porque evidencia que pensaste antes de escuchar.</p>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Cómo crees que Doña Esperanza pasó de 30 a 78 pesos por kilo?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_7iak5z" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_p7lnt4" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">La pregunta que preparaste para hacerle (de tu cuadernillo del Cap. 3 o 4)</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_n1k5om" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_u8o3xm" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
   </div>
 </div>
@@ -446,19 +457,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td contenteditable="true" style="height:2cm;min-height:2cm;"></td><td></td><td></td></tr>
-        <tr><td contenteditable="true" style="height:2cm;min-height:2cm;"></td><td></td><td></td></tr>
-        <tr><td contenteditable="true" style="height:2cm;min-height:2cm;"></td><td></td><td></td></tr>
-        <tr><td contenteditable="true" style="height:2cm;min-height:2cm;"></td><td></td><td></td></tr>
+        <tr><td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td><td contenteditable="true" data-placeholder="..."></td><td contenteditable="true" data-placeholder="..."></td></tr>
+        <tr><td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td><td contenteditable="true" data-placeholder="..."></td><td contenteditable="true" data-placeholder="..."></td></tr>
+        <tr><td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td><td contenteditable="true" data-placeholder="..."></td><td contenteditable="true" data-placeholder="..."></td></tr>
+        <tr><td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td><td contenteditable="true" data-placeholder="..."></td><td contenteditable="true" data-placeholder="..."></td></tr>
       </tbody>
     </table>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Hiciste tu pregunta preparada? ¿Qué respondió?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_137c7v" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_f35urn" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Hubo alguna respuesta de Doña Esperanza que NO esperabas? ¿Cuál y por qué?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_42tlk4" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_itcjjl" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
   </div>
 </div>
@@ -484,11 +495,11 @@
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Qué podría aplicarse del modelo de Doña Esperanza a la cadena de tu Reto Central?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_3l4myc" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_gjtz2e" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Qué obstáculos tendría aplicar ese modelo en tu comunidad? ¿Son obstáculos técnicos, económicos, sociales o culturales?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_hfrkpt" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_hdklxc" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
   </div>
 </div>
@@ -512,28 +523,28 @@
       <tbody>
         <tr>
           <td><strong>Cooperativa de productores</strong> (modelo Doña Esperanza)</td>
-          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
-          <td></td>
+          <td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>
+          <td contenteditable="true" data-placeholder="..."></td>
         </tr>
         <tr>
           <td><strong>Venta directa al consumidor</strong> (tianguis, mercado local, pedidos)</td>
-          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
-          <td></td>
+          <td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>
+          <td contenteditable="true" data-placeholder="..."></td>
         </tr>
         <tr>
           <td><strong>Comercio justo certificado</strong> (precio mínimo garantizado + prima social)</td>
-          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
-          <td></td>
+          <td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>
+          <td contenteditable="true" data-placeholder="..."></td>
         </tr>
         <tr>
           <td><strong>Precio transparente</strong> (etiqueta con % al productor)</td>
-          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
-          <td></td>
+          <td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>
+          <td contenteditable="true" data-placeholder="..."></td>
         </tr>
         <tr>
           <td><strong>Ejido / propiedad colectiva</strong> de los factores de producción</td>
-          <td contenteditable="true" style="height:2cm;min-height:2cm;"></td>
-          <td></td>
+          <td contenteditable="true" data-placeholder="Escribe aquí..." style="height:2cm;"></td>
+          <td contenteditable="true" data-placeholder="..."></td>
         </tr>
       </tbody>
     </table>
@@ -563,27 +574,27 @@
   <div class="act-body">
     <div class="espacio-respuesta">
       <span class="esp-label">Producto o actividad económica de tu cadena</span>
-      <textarea class="rd-respuesta" id="rd_w2ljer" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta" id="rd_chkem1" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Cuál es el nodo donde se concentra el mayor margen sin corresponder al mayor aporte de trabajo o riesgo?</span>
-      <textarea class="rd-respuesta" id="rd_npd30u" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta" id="rd_y1ljge" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">Propuesta de organización alternativa · ¿Qué cambiaría en la cadena y cómo redistribuiría el valor? (Sé específico: número de productoras, precio mínimo, mecanismo de venta, fondo de riesgo, etc.)</span>
-      <textarea class="rd-respuesta rd-muy-alta" id="rd_d6ya9j" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-muy-alta" id="rd_pnkqn1" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Qué dimensión de la interseccionalidad (género, clase, etnia, edad, territorio) mejora con tu propuesta? ¿Cómo?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_suyqbt" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_rsanv2" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Qué externalidad (trabajo invisible, costo ambiental, riesgo) incluye tu propuesta que el precio actual no incluye?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_m14gjh" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_jr1ykg" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <div class="espacio-respuesta">
       <span class="esp-label">¿Cuál es el obstáculo más difícil para implementar esta propuesta en la realidad? ¿Cómo podría superarse?</span>
-      <textarea class="rd-respuesta rd-alta" id="rd_g7djyq" placeholder="Escribe tu respuesta aquí..."></textarea>
+      <textarea class="rd-respuesta rd-alta" id="rd_8tu6hi" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
     <p class="nota-pie-cuadernillo">Esta ficha, más las Fichas 1–4, constituye el Diagnóstico Económico completo. El equipo la presentará en 3 minutos en el Capítulo 7 ("El día de la cadena"). Revisa que la propuesta sea específica: "organizarse mejor" no es una propuesta; "12 familias productoras con precio mínimo de $65/kg y fondo de riesgo del 8%" sí lo es.</p>
   </div>
@@ -595,11 +606,11 @@
   <span class="label">Cierre · Taller Flex C · Semana 7</span>
   <div class="espacio-respuesta">
     <span class="esp-label">¿Qué fue lo más importante que aprendiste de la visita de Doña Esperanza? No el dato: la idea.</span>
-    <textarea class="rd-respuesta rd-alta" id="rd_13awfj" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <textarea class="rd-respuesta rd-alta" id="rd_srpnmn" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
   <div class="espacio-respuesta">
     <span class="esp-label">¿Tu propuesta cambia algo para tu comunidad aunque solo la presente en este salón? ¿Por qué sí o por qué no?</span>
-    <textarea class="rd-respuesta rd-alta" id="rd_wg8qkf" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <textarea class="rd-respuesta rd-alta" id="rd_qg9b05" placeholder="Escribe tu respuesta aquí..."></textarea>
     </div>
   <p style="font-size:8.5pt;color:#3a2010;margin-top:.5rem;"><strong>Próximos dos capítulos:</strong> Cap. 6 profundiza en interseccionalidad ambiental. Cap. 7 es el día de las presentaciones. Lleva tu propuesta lista y tus cuatro fichas completas.</p>
 </div>
