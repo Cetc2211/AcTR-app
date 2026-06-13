@@ -10,8 +10,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ORIGEN  = path.join(__dirname, 'materiales-temp');
-const DESTINO = path.join(__dirname, 'materiales-temp-interactivos');
+const RAIZ = path.resolve(__dirname, '..');
+const ORIGEN  = path.join(RAIZ, 'materiales-temp');
+const DESTINO = path.join(RAIZ, 'materiales-temp-interactivos');
 
 if (!fs.existsSync(DESTINO)) {
   fs.mkdirSync(DESTINO, { recursive: true });
