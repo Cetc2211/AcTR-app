@@ -68,7 +68,24 @@ for (const archivo of archivos) {
       }
     );
 
-    // ── 4. CSS adicional para tablas + el CSS base ───────────────────────────
+    // ── 4. Ficha del estudiante: agregar input dentro de .campo ────────────
+    // Patrón: <div class="campo"><strong>Nombre completo</strong></div>
+    // Resultado: <div class="campo"><strong>Nombre completo</strong><input ...></div>
+    let fichaContador = 0;
+    html = html.replace(
+      /<div class="campo"><strong>([^<]+)<\/strong><\/div>/gi,
+      (match, label) => {
+        fichaContador++;
+        const id = 'ficha_' + label.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+          .replace(/[^a-z0-9]+/gi, '_')                      // solo alfanum
+          .replace(/^_|_$/g, '')                              // quitar _ al inicio/fin
+          .substring(0, 30);
+        return `<div class="campo"><strong>${label}</strong><input type="text" class="cuad-r ficha-r" id="${id}" placeholder=""></div>`;
+      }
+    );
+
+    // ── 5. CSS adicional para tablas + el CSS base ───────────────────────────
     const cssExtra = `
 /* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
 textarea.cuad-r {
@@ -103,6 +120,30 @@ textarea.cuad-r.td-r {
 }
 /* Eliminar height fijo de celdas ahora que tienen textarea */
 .raiz-cs1 td[style*="height"] { height: auto !important; }
+
+/* Input dentro de ficha del estudiante */
+input.cuad-r.ficha-r {
+  width: 100%;
+  border: none;
+  border-bottom: 0.5pt solid #8c7a60;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1208;
+  padding: 0.3rem 0 0.15rem 0;
+  outline: none;
+  transition: border-color .2s;
+  display: block;
+  box-sizing: border-box;
+  min-height: 1.4rem;
+}
+input.cuad-r.ficha-r:focus {
+  border-bottom-color: #5c3a1e;
+  border-bottom-width: 1pt;
+}
+input.cuad-r.ficha-r::placeholder {
+  color: transparent;
+}
 
 .cuad-guardar-barra {
   text-align: center;
@@ -158,6 +199,11 @@ textarea.cuad-r.td-r {
     box-shadow: none;
   }
   .cuad-guardar-barra { display: none !important; }
+  input.cuad-r.ficha-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
+    background: transparent !important;
+  }
 }
 `;
 
@@ -166,7 +212,7 @@ textarea.cuad-r.td-r {
       ? html.replace('</style>', cssExtra + '\n</style>')
       : html.replace('</head>', `<style>${cssExtra}</style>\n</head>`);
 
-    // ── 5. Asignar IDs únicos a textareas sin id ─────────────────────────────
+    // ── 6. Asignar IDs únicos a textareas sin id ─────────────────────────────
     let contador = 0;
     html = html.replace(/<textarea\s+class="cuad-r([^"]*)"([^>]*)>/gi, (m, extra, attrs) => {
       if (attrs.includes('id=')) return m;
@@ -174,7 +220,7 @@ textarea.cuad-r.td-r {
       return `<textarea class="cuad-r${extra}" id="r${contador}"${attrs}>`;
     });
 
-    // ── 6. Barra guardar + script (solo si no existe ya) ────────────────────
+    // ── 7. Barra guardar + script (solo si no existe ya) ────────────────────
     if (!html.includes('cuadGuardar')) {
       const script = `
 <!-- BARRA GUARDAR -->
