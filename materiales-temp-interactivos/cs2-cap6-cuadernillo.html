@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales II · La Cadena Rota                                ║
+║  Capítulo 6 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo · CS-II · Capítulo 6</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-digital
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+.raiz-digital {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff; color: #0e0a1e;
+  font-size: 10.5pt; line-height: 1.7;
+  max-width: min(960px, 100%); margin: 0 auto; padding:  1.5rem clamp(1.2rem, 4vw, 3.5rem);
+  box-sizing: border-box;
+}
+.raiz-digital *, .raiz-digital *::before, .raiz-digital *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.raiz-digital .portadilla {
+  padding: 1.5rem 0 1rem; border-bottom: 3pt solid #1a1060; margin-bottom: 1rem;
+}
+.raiz-digital .col-label {
+  font-size: 7pt; letter-spacing: .28em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .8rem; line-height: 2; display: block;
+}
+.raiz-digital .port-titulo {
+  font-size: 24pt; font-weight: 900; color: #0e0a1e; line-height: 1.1;
+  margin-bottom: .2rem; display: block;
+}
+.raiz-digital .port-sub {
+  font-size: 10pt; color: #1a1060; margin-bottom: .3rem; font-weight: 700; display: block;
+}
+.raiz-digital .proposito-strip {
+  background: #1a1060; color: #ffffff;
+  padding: .55rem .85rem; margin: .5rem 0; font-size: 8pt; line-height: 1.7;
+}
+.raiz-digital .proposito-strip .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #ffc090; display: block; margin-bottom: .2rem; font-weight: bold;
+}
+.raiz-digital .ficha-est {
+  border: 1.5pt solid #8080c0; padding: .6rem .8rem; margin: .8rem 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem;
+}
+.raiz-digital .campo { border-bottom: 1pt solid #6060a8; padding-bottom: .2rem; font-size: 8.5pt; }
+.raiz-digital .campo strong {
+  display: block; font-size: 7pt; letter-spacing: .1em;
+  text-transform: uppercase; color: #1a1060; margin-bottom: .1rem;
+}
+.raiz-digital h2 {
+  font-size: 13pt; font-weight: 900; color: #0e0a1e;
+  margin: 1.1rem 0 .3rem; padding-bottom: .2rem; border-bottom: 2pt solid #1a1060;
+}
+.raiz-digital h3 { font-size: 10pt; font-weight: 700; color: #1a1060; margin: .7rem 0 .25rem; }
+.raiz-digital h4 { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; margin: .45rem 0 .15rem; }
+.raiz-digital p { margin-bottom: .45em; line-height: 1.65; font-size: 10.5pt; color: #0e0a1e; }
+.raiz-digital .actividad { border: 1.5pt solid #8080c0; margin: .7rem 0; overflow: hidden; }
+.raiz-digital .act-header {
+  background: #dcdaf8; padding: .3rem .6rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.raiz-digital .act-num {
+  background: #1a1060; color: #ffffff; min-width: 2rem; min-height: 2rem;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 11pt; flex-shrink: 0;
+}
+.raiz-digital .act-titulo { font-size: 9.5pt; font-weight: 700; color: #0e0a1e; line-height: 1.3; flex: 1; }
+.raiz-digital .act-tipo-badges { display: flex; gap: .3rem; flex-wrap: wrap; align-items: center; }
+.raiz-digital .tipo-badge {
+  font-size: 6.5pt; letter-spacing: .1em; text-transform: uppercase;
+  padding: .15rem .38rem; font-weight: 700; border: 1.5pt solid;
+}
+.raiz-digital .badge-ind    { border-color: #1a1060; color: #1a1060; }
+.raiz-digital .badge-col    { border-color: #083840; color: #083840; }
+.raiz-digital .badge-refl   { border-color: #b85010; color: #b85010; }
+.raiz-digital .badge-prod   { border-color: #5a10a0; color: #5a10a0; }
+.raiz-digital .badge-debate { border-color: #1a1060; color: #1a1060; }
+.raiz-digital .act-body { padding: .5rem .6rem; font-size: 9.5pt; }
+.raiz-digital .act-body p { margin-bottom: .4em; }
+.raiz-digital .espacio-respuesta {
+  border: 1pt solid #8080c0; padding: .3rem .5rem; margin: .4rem 0; background: #f8f7fc;
+}
+.raiz-digital .esp-label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #1a1060; margin-bottom: .2rem; font-weight: bold; display: block;
+}
+.raiz-digital .lineas { display: flex; flex-direction: column; gap: .6rem; }
+.raiz-digital .linea { border-bottom: 1pt solid #a0a0d8; height: .6rem; }
+.raiz-digital table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: .5rem 0; }
+.raiz-digital th {
+  background: #1a1060; color: #ffffff;
+  padding: .28rem .4rem; text-align: left; font-size: 7.5pt; font-weight: 700;
+}
+.raiz-digital td {
+  border: 1pt solid #8080c0; padding: .3rem .4rem;
+  vertical-align: top; line-height: 1.5; color: #0e0a1e;
+}
+.raiz-digital tr:nth-child(even) td { background: #f0eef8; }
+/* tabla teal */
+.raiz-digital .t-teal th { background: #083840; color: #ffffff; }
+.raiz-digital .t-teal td { border: 1pt solid #50a090; }
+.raiz-digital .t-teal tr:nth-child(even) td { background: #e8f8f4; }
+/* fragmento */
+.raiz-digital .fragmento {
+  background: #eeeaf8; border: 1pt solid #8080c0; border-left: 4pt solid #1a1060;
+  padding: .55rem .75rem; margin: .4rem 0; font-size: 8.5pt; line-height: 1.7; color: #0e0a1e;
+}
+.raiz-digital .fragmento .label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #1a1060; font-weight: bold; display: block; margin-bottom: .25rem;
+}
+.raiz-digital .fragmento p { text-indent: 0 !important; margin-bottom: .3em; }
+.raiz-digital .fragmento .nota-pie {
+  font-size: 7.5pt; color: #3a3070; border-top: .5pt solid #8080c0; margin-top: .3rem; padding-top: .2rem;
+}
+/* dato ambiental teal */
+.raiz-digital .dato-ambiental {
+  background: #083840; color: #ffffff; border-left: 4pt solid #50c0a0;
+  padding: .6rem .8rem; margin: .5rem 0; font-family: Arial, sans-serif;
+  font-size: 8.5pt; line-height: 1.7;
+}
+.raiz-digital .dato-ambiental .label {
+  font-size: 7pt; letter-spacing: .2em; text-transform: uppercase;
+  color: #b0f0d8; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .dato-ambiental p { text-indent: 0 !important; margin-bottom: .3em; }
+.raiz-digital .dato-ambiental .nota-pie {
+  font-size: 7.5pt; color: #90d8c0; border-top: .5pt solid #2a6858; margin-top: .3rem; padding-top: .2rem;
+}
+/* semilla CS-III: cobre oscuro → BLANCO */
+.raiz-digital .semilla-cs3 {
+  background: #5a2000; color: #ffffff; border-left: 4pt solid #e08040;
+  padding: .7rem 1rem; margin: 1rem 0; font-family: Arial, sans-serif; font-size: 8.5pt; line-height: 1.75;
+}
+.raiz-digital .semilla-cs3 .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #ffc890; display: block; margin-bottom: .35rem; font-weight: bold;
+}
+.raiz-digital .semilla-cs3 h3 { color: #ffffff; font-size: 10.5pt; margin: 0 0 .35rem; }
+.raiz-digital .semilla-cs3 p { font-size: 9pt; line-height: 1.7; color: #f0d8b8; }
+/* checklist del reto: ÍNDIGO → BLANCO */
+.raiz-digital .reto-checklist {
+  background: #1a1060; color: #ffffff; padding: .7rem 1rem; margin: 1rem 0;
+}
+.raiz-digital .reto-checklist .label {
+  font-size: 6.5pt; letter-spacing: .25em; text-transform: uppercase;
+  color: #ffc090; display: block; margin-bottom: .3rem; font-weight: bold;
+}
+.raiz-digital .reto-checklist h3 { color: #ffffff; font-size: 10.5pt; margin: 0 0 .3rem; }
+.raiz-digital .reto-checklist p  { font-size: 9pt; line-height: 1.65; color: #d0c8f8; }
+.raiz-digital .check-table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: .4rem 0; }
+.raiz-digital .check-table th { background: #4040a0; color: #ffffff; padding: .22rem .4rem; font-size: 7.5pt; font-weight: 700; text-align: left; }
+.raiz-digital .check-table td { border: .5pt solid #6060c0; padding: .28rem .4rem; vertical-align: top; line-height: 1.5; color: #0e0a1e; background: #ffffff; }
+.raiz-digital .check-table .cb-cell { width: 2.5rem; text-align: center; }
+.raiz-digital .checkbox { width: 1rem; height: 1rem; border: 1.5pt solid #6060a8; display: inline-block; }
+/* cierre ámbar */
+.raiz-digital .cierre-semana {
+  border: 1.5pt solid #d08020; padding: .6rem .8rem; margin: 1rem 0; background: #fff8e8;
+}
+.raiz-digital .cierre-semana .label {
+  font-size: 7pt; letter-spacing: .15em; text-transform: uppercase;
+  color: #b85010; font-weight: bold; display: block; margin-bottom: .3rem;
+}
+.raiz-digital .nota-pie-cuadernillo {
+  font-size: 8pt; color: #3a3070; border-top: .5pt solid #8080c0;
+  margin-top: .5rem; padding-top: .3rem; font-style: italic;
+}
+.raiz-digital .pie-pagina {
+  font-size: 8pt; color: #3a3070; border-top: 1pt solid #8080c0;
+  padding-top: .4rem; margin-top: .5rem; text-align: center;
+}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-digital .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-digital .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-digital .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-digital .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-digital .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-digital .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-contacto a:hover { text-decoration: underline; }
+.raiz-digital .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-digital .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-digital .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-digital .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+
+/* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
+textarea.cuad-r {
+  width: 100%;
+  border: 1px solid rgba(42,32,16,0.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.7);
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #1a1208;
+  padding: 0.45rem 0.7rem;
+  resize: vertical;
+  min-height: 3.5rem;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  display: block;
+  box-sizing: border-box;
+  margin-top: 0.2rem;
+}
+textarea.cuad-r:focus {
+  border-color: #5c3a1e;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(92,58,30,0.08);
+}
+/* Textarea dentro de celda de tabla */
+textarea.cuad-r.td-r {
+  min-height: 5rem;
+  border-radius: 2px;
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.85);
+}
+/* Eliminar height fijo de celdas ahora que tienen textarea */
+.raiz-cs1 td[style*="height"] { height: auto !important; }
+
+/* Input dentro de ficha del estudiante */
+input.cuad-r.ficha-r {
+  width: 100%;
+  border: none;
+  border-bottom: 0.5pt solid #8c7a60;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1208;
+  padding: 0.3rem 0 0.15rem 0;
+  outline: none;
+  transition: border-color .2s;
+  display: block;
+  box-sizing: border-box;
+  min-height: 1.4rem;
+}
+input.cuad-r.ficha-r:focus {
+  border-bottom-color: #5c3a1e;
+  border-bottom-width: 1pt;
+}
+input.cuad-r.ficha-r::placeholder {
+  color: transparent;
+}
+
+.cuad-guardar-barra {
+  text-align: center;
+  padding: 1rem 1.2rem;
+  background: #f5ead8;
+  border-top: 1px solid rgba(92,58,30,0.15);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+.cuad-btn-guardar {
+  background: #5c3a1e;
+  color: #fff;
+  font-family: monospace;
+  font-size: .48rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: .6rem 1.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .2s;
+}
+.cuad-btn-guardar:hover { background: #3d2210; }
+.cuad-btn-limpiar {
+  background: transparent;
+  color: #888;
+  font-family: monospace;
+  font-size: .42rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: .6rem;
+}
+.cuad-aviso {
+  font-family: monospace;
+  font-size: .38rem;
+  color: #666;
+  margin-top: .4rem;
+  display: block;
+}
+@media print {
+  textarea.cuad-r, textarea.cuad-r.td-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
+    border-radius: 0;
+    background: transparent !important;
+    resize: none;
+    min-height: 1.5rem;
+    box-shadow: none;
+  }
+  .cuad-guardar-barra { display: none !important; }
+  input.cuad-r.ficha-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
+    background: transparent !important;
+  }
+}
+
+</style>
+
+<div class="raiz-digital">
+
+<div class="portadilla">
+  <span class="col-label">Ciencias Sociales II · Organización, relaciones económicas y sociales<br>MCCEMS 2025 · DGETAYCM · Trilogía Raíz Digital · La Cadena Rota</span>
+  <span class="port-titulo">Cuadernillo<br>del Estudiante</span>
+  <span class="port-sub">Capítulo 6 · "La tierra que nos cuesta"</span>
+  <span style="font-size:8.5pt;color:#2a2050;font-style:italic;display:block;margin-top:.4rem;">Sesiones 11 y 12 · Semana 9 · PF-4 central + revisión final del Reto Central</span>
+
+  <div class="ficha-est">
+    <div class="campo"><strong>Nombre completo</strong><input type="text" class="cuad-r ficha-r" id="ficha_nombre_completo" placeholder=""></div>
+    <div class="campo"><strong>Grupo</strong><input type="text" class="cuad-r ficha-r" id="ficha_grupo" placeholder=""></div>
+    <div class="campo"><strong>Producto que mapeas en el Reto Central</strong><input type="text" class="cuad-r ficha-r" id="ficha_producto_que_mapeas_en_el_reto" placeholder=""></div>
+    <div class="campo"><strong>Fecha</strong><input type="text" class="cuad-r ficha-r" id="ficha_fecha" placeholder=""></div>
+  </div>
+  <div class="proposito-strip">
+    <span class="label">Propósito central · Capítulo 6 · PF-4 y puente a CS-III</span>
+    PF-4 · Reconoce y problematiza las relaciones de poder: interseccionalidad territorial, desafíos demográficos, relación sociedad-naturaleza y degradación ambiental.<br>
+    Este es el último capítulo de contenido nuevo antes de las presentaciones del Capítulo 7.
+  </div>
+</div>
+
+
+<!-- APERTURA: EL CANAL TIENE NOTICIAS -->
+<h2>Apertura · Los tres idiomas del mismo problema</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">El canal de CS-I visto desde CS-II</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">Síntesis</span></div>
+  </div>
+  <div class="act-body">
+    <p>El canal de riego de María aparecía en CS-I como problema jurídico. Ahora lo ves también desde CS-II. Completa la tabla:</p>
+    <table>
+      <thead><tr><th>Ángulo de análisis</th><th>La pregunta que hace</th><th>Lo que encuentra en el caso del canal</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CS-I · Sistema jurídico</strong></td><td>¿Quién tiene el papel?</td><td style="height:2cm;"><textarea class="cuad-r td-r" id="r1" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td><strong>CS-II · Sistema económico</strong></td><td>¿Quién controla el factor de producción?</td><td style="height:2cm;"><textarea class="cuad-r td-r" id="r2" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td><strong>CS-III · Sistema socioambiental</strong></td><td>¿Qué pasa cuando el recurso se agota?</td><td style="height:2cm;"><textarea class="cuad-r td-r" id="r3" placeholder="Escribe aquí..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Qué añade el ángulo de CS-II que el ángulo de CS-I no podía ver?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r4" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r5" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r6" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- COOPERATIVA Y TERRITORIO -->
+<h2>Estación 1 · Precio justo y sostenibilidad: ¿van juntos?</h2>
+<p style="font-size:9pt;color:#1a1060;font-weight:700;"><em>PF-4 · Relación sociedad-naturaleza · Tensiones no resueltas del modelo cooperativo</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">Si la cooperativa crece, ¿crece también el impacto ambiental?</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-debate">Debate grupal</span><span class="tipo-badge badge-refl">Análisis crítico</span></div>
+  </div>
+  <div class="act-body">
+    <div class="fragmento">
+      <span class="label">La tensión no resuelta</span>
+      <p>El modelo cooperativo de Doña Esperanza resuelve el problema del precio (distribución del valor). Pero no resuelve automáticamente el problema ambiental: si la cooperativa crece y más familias producen más aguacate, el consumo de agua y la presión sobre el suelo pueden aumentar aunque el precio al productor sea justo.</p>
+      <p>Precio justo + mayor volumen = mayor impacto ambiental, salvo que el modelo productivo cambie (agroecología, rotación de cultivos, captación de agua de lluvia, etc.).</p>
+      <p class="nota-pie">Esta tensión está documentada en estudios de impacto del comercio justo en distintos países. El precio justo es condición necesaria pero no suficiente para la sostenibilidad.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">En tu opinión: ¿puede haber un modelo económico que sea justo en la distribución del valor Y sostenible ambientalmente al mismo tiempo? ¿Qué condiciones necesitaría?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r7" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r8" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r9" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r10" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿La cadena que estás mapeando en el Reto Central tiene un impacto ambiental que tu propuesta alternativa mejoraría, empeoraría o dejaría igual? ¿Por qué?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r11" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r12" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r13" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DEMOGRAFÍA -->
+<h2>Estación 2 · Los que se van: el desafío demográfico</h2>
+<p style="font-size:9pt;color:#1a1060;font-weight:700;"><em>PF-4 · Desafíos demográficos · Migración rural-urbana · Interseccionalidad territorial</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">La migración como decisión económica</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-col">Grupal</span><span class="tipo-badge badge-refl">Diagnóstico</span></div>
+  </div>
+  <div class="act-body">
+    <div class="dato-ambiental">
+      <span class="label">Datos · Migración rural y envejecimiento del campo mexicano</span>
+      <p>· La edad promedio del productor agrícola en México pasó de 44 años en 2007 a 52 en 2022: el campo envejeció 8 años en 15 años.</p>
+      <p>· Las remesas sumaron $63,313 millones de dólares en 2023: más del 4% del PIB. En muchas comunidades rurales son el ingreso más importante y estable.</p>
+      <p>· En municipios con alta migración, el porcentaje de adultos mayores en la población rural llega al 18%: casi el doble que en zonas urbanas.</p>
+      <p class="nota-pie">INEGI · Censo 2020 · CONAPO · Banco de México · Remesas 2023.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Cuántos miembros de tu familia o comunidad cercana han migrado a otra ciudad o estado en los últimos cinco años? ¿Cuál fue la razón principal?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r14" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r15" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r16" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Irse es "traición al territorio" o es una "decisión económica racional"? ¿O las dos cosas a la vez? Argumenta.</span>
+      <div class="lineas"><textarea class="cuad-r" id="r17" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r18" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r19" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r20" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Qué tendría que cambiar en tu comunidad para que quedarse fuera una decisión igualmente racional que irse?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r21" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r22" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r23" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">La trampa demográfica y la interseccionalidad territorial</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-refl">Análisis</span></div>
+  </div>
+  <div class="act-body">
+    <div class="fragmento">
+      <span class="label">Trampa demográfica en zonas rurales · Concepto</span>
+      <p>Se llama <strong>trampa demográfica</strong> al ciclo donde: la migración de jóvenes cualificados debilita la capacidad de la comunidad para mejorar sus condiciones → las condiciones deterioradas generan más migración → la comunidad pierde progresivamente la masa crítica necesaria para sostener proyectos colectivos.</p>
+      <p>El <strong>territorio</strong> como dimensión de la interseccionalidad significa que vivir en zona rural no es un dato neutral: implica menor acceso a servicios, menor inversión pública per cápita, mayor distancia a los mercados y menor poder político frente al Estado y las empresas. Esa desventaja se combina con las otras dimensiones (género, clase, etnia, edad) de forma multiplicada.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Cuántas dimensiones de la interseccionalidad tienes tú? ¿El territorio es una de ellas? ¿Cómo interactúa con las otras?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r24" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r25" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r26" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">La propuesta de tu Reto Central, ¿sería viable en tu comunidad dentro de 20 años si la migración continúa al ritmo actual? ¿Por qué sí o por qué no?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r27" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r28" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r29" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r30" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DEGRADACIÓN AMBIENTAL -->
+<h2>Estación 3 · El precio verdadero del territorio</h2>
+<p style="font-size:9pt;color:#1a1060;font-weight:700;"><em>PF-4 · Relación sociedad-naturaleza · Degradación ambiental · Externalidades de largo plazo</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">5</div>
+    <div class="act-titulo">Los costos que el mercado transfiere al futuro</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-ind">Individual</span><span class="tipo-badge badge-prod">Ficha de cierre</span></div>
+  </div>
+  <div class="act-body">
+    <table class="t-teal">
+      <thead>
+        <tr>
+          <th>Costo ambiental</th>
+          <th>¿Está incluido en el precio actual?</th>
+          <th>¿Quién lo pagará y cuándo?</th>
+          <th>¿Aparece en la cadena que mapeas?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Agua subterránea consumida (no repuesta)</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r31" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r32" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r33" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Degradación del suelo por monocultivo</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r34" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r35" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r36" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Pérdida de biodiversidad</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r37" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r38" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r39" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Trabajo de cuidados no remunerado</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r40" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r41" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r42" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Costo social de la migración rural</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r43" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r44" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r45" placeholder="Escribe aquí..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">Si todos esos costos se incluyeran en el precio, ¿quiénes perderían poder? ¿Quiénes ganarían?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r46" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r47" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r48" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Quién tendría que hacer cumplir que esos costos se incluyeran? ¿Tiene esa institución el poder suficiente para hacerlo?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r49" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r50" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r51" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SEMILLA CS-III -->
+<div class="semilla-cs3">
+  <span class="label">Semilla para CS-III · Las preguntas que siguen</span>
+  <h3>¿Qué pasa cuando el territorio ya no puede sostener ninguna decisión económica?</h3>
+  <p>CS-III estudia las dinámicas de la realidad actual: crisis climática, migración forzada, tecnologías disruptivas, soberanía alimentaria, nueva ruralidad. Las preguntas que CS-II no puede responder son exactamente las que CS-III abre.</p>
+  <div style="background:#3a1000;padding:.5rem .7rem;margin-top:.5rem;">
+    <div class="espacio-respuesta" style="border-color:#8a5030;background:#2a0800;">
+      <span class="esp-label" style="color:#ffc890;">Las tres preguntas que llevas de CS-II a CS-III</span>
+      <div class="lineas"><div class="linea" style="border-color:#6a4020;"></div><div class="linea" style="border-color:#6a4020;"></div><div class="linea" style="border-color:#6a4020;"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REVISIÓN FINAL DEL RETO CENTRAL -->
+<div class="reto-checklist">
+  <span class="label">Revisión Final · Reto Central CS-II · Antes de las presentaciones del Capítulo 7</span>
+  <h3>Lista de verificación del Diagnóstico Económico</h3>
+  <p>Usa esta lista para revisar que tu Reto Central está completo. Marca lo que ya tienes.</p>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">6</div>
+    <div class="act-titulo">Checklist del Reto Central antes del Cap. 7</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-prod">Revisión final</span><span class="tipo-badge badge-ind">Individual / Equipo</span></div>
+  </div>
+  <div class="act-body">
+    <table class="check-table">
+      <thead><tr><th class="cb-cell">✓</th><th>Elemento del Reto Central</th><th style="width:35%;">Observación o pendiente</th></tr></thead>
+      <tbody>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 1: elección del producto con justificación y primera hipótesis</td><td><textarea class="cuad-r td-r" id="r52" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 2: trabajo invisible identificado (quién, qué hace, cuántas horas)</td><td><textarea class="cuad-r td-r" id="r53" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 3: primera versión de la cadena de valor con al menos dos eslabones con precio real</td><td><textarea class="cuad-r td-r" id="r54" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha 4: interseccionalidad (más de una dimensión) y externalidades (al menos una con nombre propio)</td><td><textarea class="cuad-r td-r" id="r55" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Ficha Final: propuesta de distribución justa con mecanismo específico (número o proceso concreto)</td><td><textarea class="cuad-r td-r" id="r56" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Respuesta preparada: ¿qué costaría que la propuesta funcionara en 20 años? (en agua, suelo, personas, instituciones)</td><td><textarea class="cuad-r td-r" id="r57" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td class="cb-cell"><span class="checkbox"></span></td><td>Presentación de 3 minutos estructurada: diagnóstico → patrón → propuesta → sostenibilidad</td><td><textarea class="cuad-r td-r" id="r58" placeholder="Escribe aquí..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <span class="esp-label">¿Qué elemento del checklist está menos completo? ¿Cómo lo resolverás antes del Cap. 7?</span>
+      <div class="lineas"><textarea class="cuad-r" id="r59" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r60" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r61" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="cierre-semana">
+  <span class="label">Cierre · Sesiones 11 y 12 · Semana 9</span>
+  <div class="espacio-respuesta">
+    <span class="esp-label">De todo lo que aprendiste en CS-II, ¿qué cambió de forma más permanente en la forma en que ves la economía de tu comunidad?</span>
+    <div class="lineas"><textarea class="cuad-r" id="r62" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r63" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r64" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <span class="esp-label">¿Tu propuesta del Reto Central tendría algún efecto positivo en al menos uno de los costos ambientales o sociales que identificaste en este capítulo? ¿Cuál y cómo?</span>
+    <div class="lineas"><textarea class="cuad-r" id="r65" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r66" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r67" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <p style="font-size:8.5pt;color:#3a2010;margin-top:.5rem;"><strong>Capítulo 7:</strong> El día de las presentaciones. Lleva tus cinco fichas completas, la presentación de 3 minutos preparada y la respuesta a la pregunta de los 20 años. Es el momento en que el diagnóstico se vuelve propuesta pública.</p>
+</div>
+
+<p class="pie-pagina">
+  Cuadernillo del Estudiante · Capítulo 6 · CS-II · La Cadena Rota · MCCEMS 2025 · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 6 · Trilogía Raíz Digital · Ciencias Sociales II · La Cadena Rota.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div>
+
+<!-- BARRA GUARDAR -->
+<div class="cuad-guardar-barra">
+  <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
+  <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
+  <span class="cuad-aviso" id="cuad-aviso"></span>
+</div>
+<script>
+(function(){
+  var C='cuad_cs2_cap6_';
+  function guardar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id) localStorage.setItem(C+el.id,el.value);
+    });
+    var av=document.getElementById('cuad-aviso');
+    if(av){av.textContent='✓ Respuestas guardadas';setTimeout(function(){av.textContent='';},3000);}
+  }
+  function limpiar(){
+    if(!confirm('¿Borrar todas las respuestas?'))return;
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      el.value='';if(el.id)localStorage.removeItem(C+el.id);
+    });
+  }
+  function cargar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id){var v=localStorage.getItem(C+el.id);if(v)el.value=v;}
+    });
+  }
+  window.cuadGuardar=guardar;window.cuadLimpiar=limpiar;
+  window.addEventListener('load',cargar);
+  setInterval(guardar,30000);
+})();
+</script>
+</body>
+</html>

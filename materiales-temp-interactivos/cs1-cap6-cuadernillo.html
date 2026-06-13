@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  © 2025 Letras Necias · Todos los derechos reservados               ║
+║  www.letrasnecias.com · contacto@letrasnecias.com                   ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Ecosistema Pedagógico · Trilogía Raíz Digital                      ║
+║  Ciencias Sociales I · El Código del Ejido                            ║
+║  Capítulo 6 · Cuadernillo del Estudiante                              ║
+║  MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico            ║
+║  ─────────────────────────────────────────────────────────────────  ║
+║  Diseño instruccional, narrativa y desarrollo: Letras Necias         ║
+║  Prohibida la reproducción total o parcial sin autorización          ║
+║  expresa y por escrito de Letras Necias.                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Cuadernillo del Estudiante · Capítulo 6 · CS-I</title>
+<meta name="author" content="Letras Necias">
+<meta name="copyright" content="© 2025 Letras Necias. Todos los derechos reservados.">
+</head>
+<body>
+
+<!-- ═══ COPIAR DESDE AQUÍ PARA WORDPRESS (bloque HTML personalizado) ═══ -->
+
+<style>
+/*
+ * ══════════════════════════════════════════════════════════════════
+ * © 2025 Letras Necias · Todos los derechos reservados
+ * www.letrasnecias.com · contacto@letrasnecias.com
+ * ──────────────────────────────────────────────────────────────────
+ * Trilogía Raíz Digital · MCCEMS 2025 · SEP · DGETAYCM
+ * Clase contenedora: .raiz-cs1
+ * ──────────────────────────────────────────────────────────────────
+ * Prohibida la reproducción total o parcial sin autorización
+ * expresa y por escrito de Letras Necias.
+ * ══════════════════════════════════════════════════════════════════
+ */
+
+/* ── CS-I · El Código del Ejido · WordPress-compatible ──────────────────
+   Todos los selectores llevan prefijo .raiz-cs1 para aislarlos del tema
+   de Letras Necias sin cambiar ningún aspecto visual del documento.
+──────────────────────────────────────────────────────────────────────── */
+.raiz-cs1 *, .raiz-cs1 *::before, .raiz-cs1 *::after {box-sizing:border-box;margin:0;padding:0;}
+
+
+.raiz-cs1 {font-family:'Arial','Helvetica',sans-serif;background:#ffffff;color:#1a1208;font-size:10.5pt;line-height:1.7;max-width:min(960px, 100%);margin:0 auto;padding:1.2cm 1.8cm;}
+
+
+/* PORTADILLA */
+.raiz-cs1 .portadilla {min-height:90vh;display:flex;flex-direction:column;justify-content:space-between;padding:1.5cm 0 1cm;border-bottom:3pt solid #4a1e00;margin-bottom:1cm;page-break-after:always;}
+
+.raiz-cs1 .col-label {font-size:7pt;letter-spacing:.28em;text-transform:uppercase;color:#6b2e00;margin-bottom:.8cm;line-height:2;}
+
+.raiz-cs1 .port-titulo {font-size:24pt;font-weight:900;color:#1a1208;line-height:1.1;margin-bottom:.2cm;}
+
+.raiz-cs1 .port-sub {font-size:10pt;color:#4a1e00;margin-bottom:.3cm;font-weight:700;}
+
+.raiz-cs1 .port-cap {font-size:8.5pt;color:#382010;font-style:italic;}
+
+.raiz-cs1 .ficha-est {border:1.5pt solid #9a7040;padding:.6cm .8cm;margin:.8cm 0;display:grid;grid-template-columns:1fr 1fr;gap:.5cm 1cm;}
+
+.raiz-cs1 .campo {border-bottom:1pt solid #6a4820;padding-bottom:.2cm;font-size:8.5pt;color:#1a1208;}
+
+.raiz-cs1 .campo strong {display:block;font-size:7pt;letter-spacing:.1em;text-transform:uppercase;color:#6b2e00;margin-bottom:.1cm;}
+
+/* FONDO OSCURO → BLANCO */
+.raiz-cs1 .proposito-strip {background:#3a1400;color:#ffffff;padding:.55cm .85cm;margin:.5cm 0;font-size:8pt;line-height:1.7;}
+
+.raiz-cs1 .proposito-strip .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#ffd070;display:block;margin-bottom:.2cm;font-weight:bold;}
+
+
+/* ENCABEZADOS */
+.raiz-cs1 h2 {font-size:13pt;font-weight:900;color:#1a1208;margin:1.1cm 0 .3cm;padding-bottom:.2cm;border-bottom:2pt solid #4a1e00;}
+
+.raiz-cs1 h3 {font-size:10pt;font-weight:700;color:#4a1e00;margin:.7cm 0 .25cm;}
+
+.raiz-cs1 h4 {font-size:9.5pt;font-weight:700;color:#1a1208;margin:.45cm 0 .15cm;}
+
+.raiz-cs1 p {margin-bottom:.45em;line-height:1.65;}
+
+
+/* ACTIVIDADES */
+.raiz-cs1 .actividad {border:1.5pt solid #9a7040;margin:.7cm 0;overflow:hidden;}
+
+.raiz-cs1 .act-header {background:#ede0c0;padding:.3cm .6cm;display:flex;align-items:center;gap:.5cm;}
+
+/* NÚMERO: OSCURO → BLANCO */
+.raiz-cs1 .act-num {background:#4a1e00;color:#ffffff;width:1.4cm;height:1.4cm;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11pt;flex-shrink:0;}
+
+.raiz-cs1 .act-titulo {font-size:9.5pt;font-weight:700;color:#1a1208;line-height:1.3;flex:1;}
+
+.raiz-cs1 .act-tipo-badges {display:flex;gap:.3cm;flex-wrap:wrap;align-items:center;}
+
+.raiz-cs1 .tipo-badge {font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;padding:.15cm .38cm;font-weight:700;border:1.5pt solid;}
+
+.raiz-cs1 .badge-analog {border-color:#4a1e00;color:#4a1e00;}
+
+.raiz-cs1 .badge-colectivo {border-color:#0a3010;color:#0a3010;}
+
+.raiz-cs1 .badge-reflexion {border-color:#4a1e00;color:#4a1e00;}
+
+.raiz-cs1 .badge-debate {border-color:#0a2a50;color:#0a2a50;}
+
+.raiz-cs1 .badge-puente {border-color:#1a4010;color:#1a4010;}
+
+.raiz-cs1 .act-body {padding:.5cm .6cm;font-size:9.5pt;}
+
+.raiz-cs1 .act-body p {margin-bottom:.4em;}
+
+
+/* ESPACIOS */
+.raiz-cs1 .espacio-respuesta {border:1pt solid #9a7040;padding:.3cm .5cm;margin:.4cm 0;background:#fdfaf2;}
+
+.raiz-cs1 .esp-label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b2e00;margin-bottom:.2cm;font-weight:bold;}
+
+.raiz-cs1 .lineas {display:flex;flex-direction:column;gap:.6cm;}
+
+.raiz-cs1 .linea {border-bottom:1pt solid #b09060;height:.6cm;}
+
+
+/* DATO AZUL: OSCURO → BLANCO */
+.raiz-cs1 .dato-azul {background:#0a2040;color:#ffffff;border-left:4pt solid #60a8e0;padding:.6cm .8cm;margin:.5cm 0;font-family:'Arial',sans-serif;font-size:8.5pt;line-height:1.7;}
+
+.raiz-cs1 .dato-azul .label {font-size:7pt;letter-spacing:.2em;text-transform:uppercase;color:#90d0ff;margin-bottom:.3cm;display:block;font-weight:bold;}
+
+.raiz-cs1 .dato-azul p {text-indent:0!important;margin-bottom:.3em;}
+
+.raiz-cs1 .dato-azul .nota-pie {font-size:7.5pt;color:#a8d0f8;border-top:.5pt solid #304060;margin-top:.3cm;padding-top:.2cm;}
+
+
+/* ALT DIGITAL: OSCURO → BLANCO */
+.raiz-cs1 .alt-digital {background:#0a2040;color:#ffffff;border-left:3pt solid #60a8e0;padding:.35cm .55cm;margin:.35cm 0;font-size:8.5pt;line-height:1.6;}
+
+.raiz-cs1 .alt-digital .label {font-size:6.5pt;letter-spacing:.15em;text-transform:uppercase;color:#90d0ff;font-weight:bold;display:block;margin-bottom:.15cm;}
+
+
+/* RECUADRO CREMA → NEGRO */
+.raiz-cs1 .fragmento {background:#f0e8d0;border:1pt solid #9a7040;border-left:4pt solid #4a1e00;padding:.55cm .75cm;margin:.4cm 0;font-size:8.5pt;line-height:1.7;color:#1a1208;}
+
+.raiz-cs1 .fragmento .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#4a1e00;font-weight:bold;display:block;margin-bottom:.25cm;}
+
+.raiz-cs1 .fragmento p {text-indent:0!important;margin-bottom:.3em;}
+
+.raiz-cs1 .fragmento .nota-pie {font-size:7.5pt;color:#3e2810;border-top:.5pt solid #9a7040;margin-top:.3cm;padding-top:.2cm;}
+
+
+/* TABLA */
+.raiz-cs1 table {width:100%;border-collapse:collapse;font-size:9pt;margin:.5cm 0;}
+
+/* ENCABEZADO TABLA: OSCURO → BLANCO */
+.raiz-cs1 th {background:#3a1400;color:#ffffff;padding:.28cm .4cm;text-align:left;font-size:7.5pt;font-weight:700;}
+
+.raiz-cs1 td {border:1pt solid #9a7040;padding:.3cm .4cm;vertical-align:top;line-height:1.5;color:#1a1208;}
+
+.raiz-cs1 tr:nth-child(even) td {background:#faf4e8;}
+
+
+/* PUENTE CS-II: VERDE OSCURO → BLANCO */
+.raiz-cs1 .puente-cs2 {background:#0f2808;color:#ffffff;padding:.7cm 1cm;margin:1cm 0;}
+
+.raiz-cs1 .puente-cs2 .label {font-size:6.5pt;letter-spacing:.25em;text-transform:uppercase;color:#a0f060;display:block;margin-bottom:.3cm;font-weight:bold;}
+
+.raiz-cs1 .puente-cs2 h3 {color:#ffffff;font-size:10.5pt;margin:0 0 .3cm;}
+
+.raiz-cs1 .puente-cs2 p {font-size:9pt;line-height:1.65;color:#d0f0c8;}
+
+.raiz-cs1 .puente-cs2 ul {padding-left:1.2em;margin:.2cm 0;}
+
+.raiz-cs1 .puente-cs2 li {font-size:9pt;color:#d0f0c8;margin-bottom:.2em;}
+
+
+/* COMPARACIÓN 2 COLUMNAS */
+.raiz-cs1 .comparacion {display:grid;grid-template-columns:1fr 1fr;gap:.4cm;margin:.4cm 0;}
+
+.raiz-cs1 .comp-col {padding:.4cm .5cm;font-size:8.5pt;line-height:1.55;}
+
+.raiz-cs1 .comp-col .label {font-size:7pt;letter-spacing:.12em;text-transform:uppercase;font-weight:bold;margin-bottom:.2cm;display:block;}
+
+.raiz-cs1 .comp-sabe {background:#f0e8d0;border:1pt solid #9a7040;color:#1a1208;}
+
+.raiz-cs1 .comp-sabe .label {color:#4a1e00;}
+
+.raiz-cs1 .comp-nosabe {background:#0a2040;color:#ffffff;border:1pt solid #304060;}
+
+.raiz-cs1 .comp-nosabe .label {color:#90d0ff;}
+
+
+/* CIERRE: AMARILLO PÁLIDO → NEGRO */
+.raiz-cs1 .cierre-semana {border:1.5pt solid #b09030;padding:.6cm .8cm;margin:1cm 0;background:#fffbe8;}
+
+.raiz-cs1 .cierre-semana .label {font-size:7pt;letter-spacing:.15em;text-transform:uppercase;color:#6b4000;font-weight:bold;display:block;margin-bottom:.3cm;}
+
+
+.raiz-cs1 .nota-pie-cuadernillo {font-size:8pt;color:#3e2810;border-top:.5pt solid #9a7040;margin-top:.5cm;padding-top:.3cm;font-style:italic;}
+
+/* ── FIRMA LETRAS NECIAS · Identidad visual del logo ──────────────────────── */
+.raiz-cs1 .ln-firma {
+  margin-top: 2.5rem; padding: 1.2rem 1rem 1rem;
+  border-top: 1.5pt solid #3d2d1e; background: #f5ede0;
+  text-align: center; font-family: Arial, Helvetica, sans-serif;
+}
+.raiz-cs1 .ln-logotipo { line-height: 1.05; margin-bottom: .55rem; }
+.raiz-cs1 .ln-letras {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #3d2d1e; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-necias {
+  display: block;
+  font-family: 'Garamond','EB Garamond','Palatino Linotype',
+               'Book Antiqua','Palatino',Georgia,serif;
+  font-style: italic; font-weight: normal;
+  font-size: 22pt; color: #7a1818; letter-spacing: .01em;
+}
+.raiz-cs1 .ln-contacto {
+  font-size: 8.5pt; color: #3d2d1e; margin-bottom: .35rem; line-height: 1.8;
+}
+.raiz-cs1 .ln-contacto a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-contacto a:hover { text-decoration: underline; }
+.raiz-cs1 .ln-nombre {
+  font-weight: 900; font-size: 10pt; letter-spacing: .15em;
+  text-transform: uppercase; display: block; margin-bottom: .15rem; color: #3d2d1e;
+}
+.raiz-cs1 .ln-links { display: block; margin-bottom: .35rem; }
+.raiz-cs1 .ln-links a { color: #7a1818; text-decoration: none; font-weight: 700; }
+.raiz-cs1 .ln-derechos {
+  font-size: 7pt; color: #5a4030; line-height: 1.65;
+  max-width: 560px; margin: 0 auto; display: block;
+}
+
+/* ── INTERACTIVIDAD DIGITAL ─────────────────────────────── */
+textarea.cuad-r {
+  width: 100%;
+  border: 1px solid rgba(42,32,16,0.18);
+  border-radius: 3px;
+  background: rgba(255,255,255,0.7);
+  font-family: inherit;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #1a1208;
+  padding: 0.45rem 0.7rem;
+  resize: vertical;
+  min-height: 3.5rem;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  display: block;
+  box-sizing: border-box;
+  margin-top: 0.2rem;
+}
+textarea.cuad-r:focus {
+  border-color: #5c3a1e;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(92,58,30,0.08);
+}
+/* Textarea dentro de celda de tabla */
+textarea.cuad-r.td-r {
+  min-height: 5rem;
+  border-radius: 2px;
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.85);
+}
+/* Eliminar height fijo de celdas ahora que tienen textarea */
+.raiz-cs1 td[style*="height"] { height: auto !important; }
+
+/* Input dentro de ficha del estudiante */
+input.cuad-r.ficha-r {
+  width: 100%;
+  border: none;
+  border-bottom: 0.5pt solid #8c7a60;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1208;
+  padding: 0.3rem 0 0.15rem 0;
+  outline: none;
+  transition: border-color .2s;
+  display: block;
+  box-sizing: border-box;
+  min-height: 1.4rem;
+}
+input.cuad-r.ficha-r:focus {
+  border-bottom-color: #5c3a1e;
+  border-bottom-width: 1pt;
+}
+input.cuad-r.ficha-r::placeholder {
+  color: transparent;
+}
+
+.cuad-guardar-barra {
+  text-align: center;
+  padding: 1rem 1.2rem;
+  background: #f5ead8;
+  border-top: 1px solid rgba(92,58,30,0.15);
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+.cuad-btn-guardar {
+  background: #5c3a1e;
+  color: #fff;
+  font-family: monospace;
+  font-size: .48rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: .6rem 1.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background .2s;
+}
+.cuad-btn-guardar:hover { background: #3d2210; }
+.cuad-btn-limpiar {
+  background: transparent;
+  color: #888;
+  font-family: monospace;
+  font-size: .42rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: .5rem 1rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: .6rem;
+}
+.cuad-aviso {
+  font-family: monospace;
+  font-size: .38rem;
+  color: #666;
+  margin-top: .4rem;
+  display: block;
+}
+@media print {
+  textarea.cuad-r, textarea.cuad-r.td-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
+    border-radius: 0;
+    background: transparent !important;
+    resize: none;
+    min-height: 1.5rem;
+    box-shadow: none;
+  }
+  .cuad-guardar-barra { display: none !important; }
+  input.cuad-r.ficha-r {
+    border: none !important;
+    border-bottom: 0.5pt solid #999 !important;
+    background: transparent !important;
+  }
+}
+
+</style>
+
+<div class="raiz-cs1">
+<!-- PORTADILLA -->
+<div class="portadilla">
+  <div>
+    <div class="col-label">Ciencias Sociales I · Estado, ciudadanía y relaciones de poder<br>MCCEMS 2025 · Bachillerato Tecnológico Agropecuario · DGETAYCM · Trilogía Raíz Digital</div>
+    <div class="port-titulo">Cuadernillo<br>del Estudiante</div>
+    <div class="port-sub">Capítulo 6 · "Lo que el Estado ve y lo que no"</div>
+    <div class="port-cap" style="margin-top:.4cm;">Sesiones 11 y 12 · Semana 9 · Antes de las presentaciones</div>
+  </div>
+  <div>
+    <div class="ficha-est">
+      <div class="campo"><strong>Nombre completo</strong><input type="text" class="cuad-r ficha-r" id="ficha_nombre_completo" placeholder=""></div>
+      <div class="campo"><strong>Grupo</strong><input type="text" class="cuad-r ficha-r" id="ficha_grupo" placeholder=""></div>
+      <div class="campo"><strong>¿Tienes internet estable en casa?</strong><input type="text" class="cuad-r ficha-r" id="ficha_tienes_internet_estable_en_cas" placeholder=""></div>
+      <div class="campo"><strong>Fecha</strong><input type="text" class="cuad-r ficha-r" id="ficha_fecha" placeholder=""></div>
+    </div>
+    <div class="proposito-strip">
+      <span class="label">Propósitos activos y puente curricular · Capítulo 6</span>
+      PF-2 extendido · Ciudadanía digital como dimensión de la ciudadanía contemporánea.<br>
+      PF-4 extendido · Brecha digital como forma de exclusión estructural.<br>
+      Puente CS-II · Organización económica y cadena de valor (semilla para el segundo semestre).
+    </div>
+    <p style="font-size:8.5pt;color:#382010;font-style:italic;margin-top:.3cm;">Materiales: cuadernillo, dato INEGI incluido abajo, cuaderno personal. El apagón digital de la novela es también el punto de partida de este cuadernillo: primero responde sin internet, después verifica.</p>
+  </div>
+</div>
+
+
+<!-- APERTURA -->
+<h2>Apertura · El apagón y los derechos que no dependen de señal</h2>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">1</div>
+    <div class="act-titulo">¿Qué derechos digitales conocías antes de leer este capítulo?</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-analog">Individual</span><span class="tipo-badge badge-reflexion">Diagnóstico</span></div>
+  </div>
+  <div class="act-body">
+    <p>Responde sin buscar en internet ni en el capítulo. Es un diagnóstico de lo que ya sabes.</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Conoces alguna ley mexicana que proteja tus datos personales en internet? ¿Cuál?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r1" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r2" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Leíste los "términos y condiciones" la última vez que aceptaste una app o red social? ¿Por qué sí o por qué no?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r3" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r4" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r5" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Cuántos trámites del gobierno que conoces solo se pueden hacer en línea? Anota los que puedas recordar.</div>
+      <div class="lineas"><textarea class="cuad-r" id="r6" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r7" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r8" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Miranda dice: "cuando un servicio es gratis, el producto eres tú." ¿Qué significa eso en tu propia experiencia con redes sociales o apps?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r9" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r10" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r11" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PF-4 EXTENDIDO: BRECHA DIGITAL -->
+<h2>Estación · La brecha digital como exclusión estructural</h2>
+<p style="font-size:9pt;color:#4a1e00;font-weight:700;"><em>PF-4 extendido · Accesos diferenciados · Claves de exclusión · Diversidad en el espacio democrático digital</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">2</div>
+    <div class="act-titulo">Los datos de la brecha y lo que significan</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-colectivo">Equipos de 3</span><span class="tipo-badge badge-reflexion">Análisis</span></div>
+  </div>
+  <div class="act-body">
+    <p>Lee los datos del INEGI y responde las preguntas.</p>
+    <div class="dato-azul">
+      <span class="label">INEGI ENDUTIH 2023 · Brecha digital en México</span>
+      <p>Usuarios de internet: <strong>60.6% nacional</strong> · 40.2% zonas rurales · 28.7% comunidades indígenas.</p>
+      <p>Hogares con dispositivo fijo (computadora / tablet): <strong>94.8% urbanos</strong> · <strong>44.3% rurales</strong>.</p>
+      <p>Trámites del gobierno federal con versión exclusiva en línea (sin ventanilla presencial): <strong>69% del total</strong>.</p>
+      <p class="nota-pie">Fuente: Encuesta Nacional sobre Disponibilidad y Uso de Tecnologías de la Información en los Hogares · INEGI 2023 · Disponible en www.inegi.org.mx · El docente puede imprimir la tabla por entidad federativa para consulta sin internet.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Cuántos estudiantes de tu salón tienen internet estable en casa? (hagan el conteo en grupo)</div>
+      <div class="lineas"><textarea class="cuad-r" id="r12" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Si el 69% de los trámites del gobierno solo están en línea y el 60% de la población usa internet, ¿qué pasa con el 40% restante?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r13" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r14" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r15" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Es la brecha digital una forma de exclusión estructural con el mismo patrón que las situaciones de tu Mapa de Derechos? Argumenta con los datos.</div>
+      <div class="lineas"><textarea class="cuad-r" id="r16" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r17" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r18" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r19" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Qué acción afirmativa concreta podría proponer el Estado para reducir esa brecha en comunidades rurales como la tuya?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r20" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r21" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r22" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="alt-digital">
+      <span class="label">Con conectividad (opcional)</span>
+      Busca en www.inegi.org.mx la tabla ENDUTIH 2023 filtrada por tu estado. ¿Qué porcentaje de hogares en tu entidad tiene internet? ¿Coincide con lo que observas en tu comunidad? Imprime o copia el dato para el portafolio.
+    </div>
+  </div>
+</div>
+
+
+<!-- LO QUE EL ESTADO NO VE -->
+<h2>Estación · Lo que el Estado mide y lo que no puede medir</h2>
+<p style="font-size:9pt;color:#4a1e00;font-weight:700;"><em>PF-2 extendido · Políticas públicas · El Estado de datos y sus límites</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">3</div>
+    <div class="act-titulo">La tabla de lo visible y lo invisible</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-colectivo">Grupal</span><span class="tipo-badge badge-debate">Debate</span></div>
+  </div>
+  <div class="act-body">
+    <p>El Estado diseña sus políticas con base en lo que puede medir. Completa esta tabla y después debate la pregunta final.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>¿Qué sí mide el Estado?</th>
+          <th>¿Qué NO puede medir con sus sistemas actuales?</th>
+          <th>¿Qué consecuencia tiene esa ceguera para las políticas públicas?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Quién vota en cada elección</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r23" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r24" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Cuántos kilos de aguacate se exportaron</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r25" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r26" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Quién recibe una beca del gobierno</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r27" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r28" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td>Cuántas personas tienen seguridad social</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r29" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r30" placeholder="Escribe aquí..."></textarea></td></tr>
+        <tr><td style="font-style:italic;color:#6b2e00;">Añade uno propio</td><td style="height:1.5cm;"><textarea class="cuad-r td-r" id="r31" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r32" placeholder="Escribe aquí..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Los Mapas de Derechos que construyeron en el taller documentan cosas que el Estado no puede ver con sus propios datos? ¿Cómo podrían usarse como insumo para una política pública?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r33" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r34" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r35" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r36" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Yesenia propone que el Estado "pregunte de verdad, no con encuestas que nadie diseña con las comunidades." ¿Cómo sería una consulta bien hecha para tu comunidad?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r37" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r38" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r39" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- VERIFICACIÓN DE IA -->
+<h2>Estación · IA y ciudadanía: cómo no firmar sin leer en versión digital</h2>
+<p style="font-size:9pt;color:#4a1e00;font-weight:700;"><em>Pensamiento crítico digital · Verificación de fuentes · Ciudadanía activa en entornos tecnológicos</em></p>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">4</div>
+    <div class="act-titulo">Protocolo de verificación: IA, internet y ciudadanía</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-reflexion">Individual</span><span class="tipo-badge badge-analog">Pensamiento crítico</span></div>
+  </div>
+  <div class="act-body">
+    <p>Miranda señala que las "alucinaciones" de la IA son la versión digital del documento firmado sin leer: texto que suena seguro pero no corresponde a ningún hecho real.</p>
+    <div class="fragmento">
+      <span class="label">Protocolo de verificación construido por el grupo en clase</span>
+      <p><strong>1. Fuente primaria:</strong> busca el texto de la ley en portales oficiales. Leyes federales: www.diputados.gob.mx · Diario Oficial: www.dof.gob.mx · Convenios OIT: www.ilo.org · Todos gratuitos.</p>
+      <p><strong>2. Fuente secundaria:</strong> una persona con formación jurídica (abogado, orientador, Procuraduría). Si la IA y la persona coinciden, hay más seguridad.</p>
+      <p><strong>3. Señal de alerta:</strong> si la IA cita un artículo con número muy específico pero no aparece en la ley real, probablemente es inventado. Las alucinaciones frecuentemente incluyen números de artículo plausibles pero falsos.</p>
+      <p><strong>4. Sin internet:</strong> cualquier ley federal puede imprimirse con anticipación. Una copia en papel es tan válida como la versión digital para verificar.</p>
+      <p class="nota-pie">Este protocolo es transferible: aplica para verificar noticias, datos estadísticos, información médica, historia. Verificar fuentes es una habilidad ciudadana, no solo académica.</p>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Usaste IA en algún momento de este semestre para buscar información de tus actividades? ¿Cómo lo verificaste (o por qué no lo verificaste)?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r40" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r41" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r42" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿En qué situaciones es útil la IA para ejercer ciudadanía? ¿En qué situaciones puede ser peligrosa sin verificación?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r43" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r44" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r45" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r46" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">El Profe Ramírez dice que el protocolo de verificación aplica también "para lo que les diga cualquier persona en posición de autoridad, incluido yo." ¿Qué significa eso para la ciudadanía?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r47" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r48" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r49" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+
+    <h4>Ejercicio práctico de verificación (con conectividad eventual)</h4>
+    <p>El docente presentará una afirmación jurídica generada por IA. Verifica si es correcta usando el portal oficial y registra el resultado aquí.</p>
+    <table>
+      <thead><tr><th>Afirmación de la IA</th><th>¿Dónde buscaste para verificar?</th><th>¿Es correcta, parcialmente correcta o falsa?</th><th>¿Qué dice realmente la ley?</th></tr></thead>
+      <tbody>
+        <tr><td style="height:2.5cm;font-style:italic;color:#6b2e00;">[El docente dicta la afirmación]<textarea class="cuad-r td-r" id="r50" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r51" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r52" placeholder="Escribe aquí..."></textarea></td><td><textarea class="cuad-r td-r" id="r53" placeholder="Escribe aquí..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <p class="nota-pie-cuadernillo">Si no hay conectividad, el docente puede presentar la afirmación y los estudiantes hacen la búsqueda como tarea en casa o en la próxima sesión con conexión.</p>
+  </div>
+</div>
+
+
+<!-- COMPARACIÓN: DERECHOS DIGITALES VS. FÍSICOS -->
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">5</div>
+    <div class="act-titulo">El mismo patrón en el mundo digital</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-reflexion">Individual</span></div>
+  </div>
+  <div class="act-body">
+    <p>En los capítulos 1–4 identificaste exclusiones en el mundo físico. ¿Existe el mismo patrón en el mundo digital?</p>
+    <div class="comparacion">
+      <div class="comp-col comp-sabe">
+        <span class="label">Exclusiones que documenté en mi Mapa de Derechos (mundo físico)</span>
+        <div class="lineas"><textarea class="cuad-r" id="r54" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r55" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r56" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r57" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r58" placeholder="Escribe aquí..."></textarea></div>
+      </div>
+      <div class="comp-col comp-nosabe">
+        <span class="label">Exclusiones equivalentes en el mundo digital (que identifico ahora)</span>
+        <div class="lineas"><textarea class="cuad-r" id="r59" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r60" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r61" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r62" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r63" placeholder="Escribe aquí..."></textarea></div>
+      </div>
+    </div>
+    <div class="espacio-respuesta" style="margin-top:.5cm;">
+      <div class="esp-label">¿Es el mismo patrón de fondo? ¿O son exclusiones diferentes? Argumenta.</div>
+      <div class="lineas"><textarea class="cuad-r" id="r64" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r65" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r66" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r67" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PUENTE CS-II -->
+<div class="puente-cs2">
+  <span class="label">Semilla para Ciencias Sociales II · La cadena de valor</span>
+  <h3>La misma pregunta, otro terreno</h3>
+  <p>En CS-II analizarán cómo se organiza la economía: quién produce, quién distribuye, quién se queda con qué y por qué. La lógica es la misma que en CS-I:</p>
+  <ul>
+    <li>¿Quién controla el "idioma" (en CS-I: jurídico; en CS-II: económico)?</li>
+    <li>¿Quién diseña las reglas del intercambio?</li>
+    <li>¿Quién queda sistemáticamente del lado que pierde?</li>
+  </ul>
+  <p>El aguacate de Ulises (32 pesos al productor / 178 en el supermercado) es el caso de entrada de CS-II.</p>
+</div>
+
+<div class="actividad">
+  <div class="act-header">
+    <div class="act-num">6</div>
+    <div class="act-titulo">Semilla de CS-II: la cadena del aguacate</div>
+    <div class="act-tipo-badges"><span class="tipo-badge badge-puente">Puente CS-II</span><span class="tipo-badge badge-reflexion">Individual / Parejas</span></div>
+  </div>
+  <div class="act-body">
+    <p>Antes de aprender nada de economía formal, usa el sentido común para responder. No hay respuestas incorrectas: son hipótesis que CS-II confirmará o corregirá.</p>
+    <div class="espacio-respuesta">
+      <div class="esp-label">El papá de Ulises recibe 32 pesos por kilo. En el supermercado cuesta 178. ¿Por qué crees que existe esa diferencia?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r68" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r69" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r70" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r71" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Quiénes son los actores entre el productor y el consumidor final? Intenta hacer una lista ordenada.</div>
+      <div class="lineas"><textarea class="cuad-r" id="r72" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r73" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r74" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r75" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">¿Es ese problema parecido al del canal de María? ¿Tienen el mismo patrón o son distintos? ¿Por qué?</div>
+      <div class="lineas"><textarea class="cuad-r" id="r76" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r77" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r78" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <div class="espacio-respuesta">
+      <div class="esp-label">Las preguntas del pizarrón del Profe Ramírez: "¿Cuánto vale el trabajo de tu familia? ¿Quién decide ese valor? ¿Cómo se decide?" Respóndelas para tu familia, aunque no sepas todavía el lenguaje económico formal.</div>
+      <div class="lineas"><textarea class="cuad-r" id="r79" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r80" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r81" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r82" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r83" placeholder="Escribe aquí..."></textarea></div>
+    </div>
+    <p class="nota-pie-cuadernillo">Guarda esta hoja. Al inicio de CS-II, el docente pedirá estas respuestas como punto de partida. Son el puente entre lo que aprendiste este semestre y lo que aprenderás el siguiente.</p>
+  </div>
+</div>
+
+
+<!-- CIERRE -->
+<div class="cierre-semana">
+  <span class="label">Cierre del Capítulo 6 · Preparación para el día de presentaciones</span>
+  <h4 style="color:#4a1e00;margin-bottom:.3cm;">Reflexión final antes de las presentaciones</h4>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Qué aprendiste este semestre que no sabías en agosto y que ya no puedes "desaprender"? Una sola cosa, pero la más importante.</div>
+    <div class="lineas"><textarea class="cuad-r" id="r84" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r85" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r86" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Hay algo en tu mapa o en tu carta que todavía quieras mejorar antes del día de presentaciones?</div>
+    <div class="lineas"><textarea class="cuad-r" id="r87" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r88" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r89" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <div class="espacio-respuesta">
+    <div class="esp-label">¿Vas a enviar tu carta a la institución correspondiente? ¿Por qué sí o por qué no?</div>
+    <div class="lineas"><textarea class="cuad-r" id="r90" placeholder="Escribe aquí..."></textarea><textarea class="cuad-r" id="r91" placeholder="Escribe aquí..."></textarea></div>
+  </div>
+  <p style="font-size:8.5pt;color:#4a2010;margin-top:.5cm;"><strong>Recordatorio:</strong> Las presentaciones del Reto Central son en la Semana 10 (Cap. 7, Sesiones 13 y 14). Lleva el Mapa de Derechos (equipo), la Carta de Acción Afirmativa (individual) y las fichas 1–4 completas.</p>
+</div>
+
+<p style="font-size:8pt;color:#3e2810;border-top:1pt solid #9a7040;padding-top:.4cm;margin-top:.5cm;text-align:center;">
+  Cuadernillo del Estudiante · Capítulo 6 · "Lo que el Estado ve y lo que no"<br>
+  Ciencias Sociales I · El Código del Ejido · Marco Curricular Común · MCCEMS 2025 · SEP · DGETAYCM<br>
+  Materiales fotocopiables para uso educativo sin fines de lucro.
+</p>
+
+<!-- ── FIRMA LETRAS NECIAS ─────────────────────────────────────────── -->
+<footer class="ln-firma">
+  <div class="ln-logotipo">
+    <span class="ln-letras">Letras</span>
+    <span class="ln-necias">Necias</span>
+  </div>
+  <div class="ln-contacto">
+    <a href="https://www.letrasnecias.com" target="_blank">www.letrasnecias.com</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:contacto@letrasnecias.com">contacto@letrasnecias.com</a>
+  </div>
+  <span class="ln-derechos">
+    © 2025 Letras Necias. Todos los derechos reservados.<br>
+    Cuadernillo del Estudiante · Capítulo 6 · Trilogía Raíz Digital · Ciencias Sociales I · El Código del Ejido.<br>
+    MCCEMS 2025 · SEP · DGETAYCM · Bachillerato Tecnológico Agropecuario y Científico.<br>
+    Prohibida la reproducción total o parcial sin autorización expresa y por escrito de Letras Necias.
+  </span>
+</footer>
+</div><!-- /.raiz-cs1 -->
+
+<!-- ═══ FIN DEL BLOQUE WORDPRESS ═══ -->
+
+
+<!-- BARRA GUARDAR -->
+<div class="cuad-guardar-barra">
+  <button class="cuad-btn-guardar" onclick="cuadGuardar()">↓ Guardar mis respuestas</button>
+  <button class="cuad-btn-limpiar" onclick="cuadLimpiar()">Borrar todo</button>
+  <span class="cuad-aviso" id="cuad-aviso"></span>
+</div>
+<script>
+(function(){
+  var C='cuad_cs1_cap6_';
+  function guardar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id) localStorage.setItem(C+el.id,el.value);
+    });
+    var av=document.getElementById('cuad-aviso');
+    if(av){av.textContent='✓ Respuestas guardadas';setTimeout(function(){av.textContent='';},3000);}
+  }
+  function limpiar(){
+    if(!confirm('¿Borrar todas las respuestas?'))return;
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      el.value='';if(el.id)localStorage.removeItem(C+el.id);
+    });
+  }
+  function cargar(){
+    document.querySelectorAll('textarea.cuad-r,input[type="text"]').forEach(function(el){
+      if(el.id){var v=localStorage.getItem(C+el.id);if(v)el.value=v;}
+    });
+  }
+  window.cuadGuardar=guardar;window.cuadLimpiar=limpiar;
+  window.addEventListener('load',cargar);
+  setInterval(guardar,30000);
+})();
+</script>
+</body>
+</html>
