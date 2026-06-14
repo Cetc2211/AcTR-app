@@ -54,3 +54,23 @@ Stage Summary:
 - 2 archivos modificados: pagina-estacion.tsx, ecosistema-page.tsx
 - Commit b5b8156: feat: acceso preview a estaciones
 - Usuario necesita hacer git push desde su terminal local
+---
+Task ID: 2
+Agent: main
+Task: Incorporar estaciones PFH2 y PFH3 al ecosistema
+
+Work Log:
+- Renombrado titulo PFH2 → "Lo que somos mientras decidimos" en ecosistema-page.tsx y seed script
+- Renombrado titulo PFH3 → "Lo que hacemos con lo que sabemos" en ecosistema-page.tsx y seed script
+- Agregadas reglas Firestore para ecosistema_materiales_pfh2 y ecosistema_materiales_pfh3
+- Actualizado comentario en storage.rules documentando PFH2 y PFH3
+- Commit y push de todos los cambios (remote corregido a Cetc2211/AcTR-app)
+- Ejecutado seed-pfh2-materiales.js: 24 documentos creados en ecosistema_materiales_pfh2
+- Ejecutado seed-pfh3-materiales.js: 24 documentos creados en ecosistema_materiales_pfh3
+- Deploy de reglas Firestore via Admin SDK (releaseFirestoreRulesetFromSource)
+- Deploy de reglas Storage via Admin SDK (releaseStorageRulesetFromSource, bucket: academic-tracker-qeoxi.firebasestorage.app)
+
+Stage Summary:
+- PFH2 y PFH3 completamente operativos: Firestore docs, reglas deployadas, Storage ya accesible
+- 3 commits pushados: c488b62, fee2606, 82579cf, cd6eeb4
+- Remote corregido: github.com/Cetc2211/AcTR-app.git
