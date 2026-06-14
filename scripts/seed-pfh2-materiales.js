@@ -46,7 +46,7 @@ for (let cap = 1; cap <= TOTAL_CAPS; cap++) {
 
     documentos.push({
       id: slug,
-      titulo: `Capitulo ${cap} · El Espejo y la Grieta · ${tituloTipo}`,
+      titulo: `Capitulo ${cap} · Lo que somos mientras decidimos · ${tituloTipo}`,
       tipo,
       orden,
       slug,

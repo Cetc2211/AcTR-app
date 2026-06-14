@@ -46,7 +46,7 @@ for (let cap = 1; cap <= TOTAL_CAPS; cap++) {
 
     documentos.push({
       id: slug,
-      titulo: `Capitulo ${cap} · La Llama y la Sombra · ${tituloTipo}`,
+      titulo: `Capitulo ${cap} · Lo hacemos con lo que sabemos · ${tituloTipo}`,
       tipo,
       orden,
       slug,
