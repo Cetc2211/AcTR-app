@@ -7,6 +7,7 @@ import { signOut } from 'firebase/auth';
 import {
   BookOpen,
   ChevronDown,
+  FileText,
   LogOut,
   Menu,
   User,
@@ -26,9 +27,17 @@ type EstacionLink = {
   color: string;
 };
 
+type DocumentoLink = {
+  id: string;
+  nombre: string;
+  url: string;
+  color: string;
+};
+
 type SeccionDisciplina = {
   titulo: string;
   estaciones: EstacionLink[];
+  documentos?: DocumentoLink[];
 };
 
 /* ─── Datos del menú ───────────────────────────────────────────── */
@@ -40,6 +49,14 @@ const SECCIONES: SeccionDisciplina[] = [
       { id: 'cs1', href: '/ecosistema/cs1', label: 'CS I', nombre: 'Ciencias Sociales I', color: '#4a2e10' },
       { id: 'cs2', href: '/ecosistema/cs2', label: 'CS II', nombre: 'Ciencias Sociales II', color: '#1a1060' },
       { id: 'cs3', href: '/ecosistema/cs3', label: 'CS III', nombre: 'Ciencias Sociales III', color: '#0a5040' },
+    ],
+    documentos: [
+      {
+        id: 'art-cs1',
+        nombre: 'Art. Curricular CS1',
+        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf',
+        color: '#4a2e10',
+      },
     ],
   },
   {
@@ -257,6 +274,53 @@ export default function EcosistemaNav() {
                     </Link>
                   );
                 })}
+
+                {/* Documentos complementarios (ej. articulación curricular) */}
+                {seccion.documentos && seccion.documentos.length > 0 && (
+                  <>
+                    <div
+                      style={{
+                        height: 1,
+                        background: '#e8dcc8',
+                        margin: '0.4rem 1.75rem 0.35rem',
+                      }}
+                    />
+                    {seccion.documentos.map((doc) => (
+                      <a
+                        key={doc.id}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setSidebarAbierto(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.6rem',
+                          padding: '0.45rem 1.25rem 0.45rem 1.75rem',
+                          textDecoration: 'none',
+                          fontSize: '0.8rem',
+                          fontWeight: 500,
+                          color: '#707070',
+                          transition: 'color 0.15s',
+                        }}
+                      >
+                        <FileText
+                          size={13}
+                          style={{ flexShrink: 0, color: doc.color, opacity: 0.7 }}
+                        />
+                        <span
+                          style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {doc.nombre}
+                        </span>
+                      </a>
+                    ))}
+                  </>
+                )}
               </div>
             )}
           </div>
