@@ -180,6 +180,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    match /ecosistema_materiales_pfh2/{documento} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /ecosistema_materiales_pfh3/{documento} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
     // Accesos pendientes — solo Admin SDK (backend) escribe
     match /ecosistema_accesos_pendientes/{documento} {
       allow read, write: if false;
