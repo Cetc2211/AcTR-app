@@ -104,7 +104,7 @@ const ECOSISTEMAS = [
     href: '/ecosistema/pfh3',
     claveAcceso: 'estacion_pfh3',
     label: 'Pensamiento Filosófico y Humanidades 3',
-    titulo: 'Lo hacemos con lo que sabemos',
+    titulo: 'Lo que hacemos con lo que sabemos',
     subtitulo: 'Ética, estética y filosofía política contemporánea',
     descripcion: 'Ocho capítulos sobre ética aplicada, estética y filosofía política. Novela narrativa, cuadernillo interactivo y guía docente.',
     caps: '8 capítulos · 3 materiales por capítulo',
