@@ -12,6 +12,10 @@ const ACCESOS_POR_PRODUCTO: Record<string, Record<string, boolean>> = {
   trilogia_docente:{ estacion_cs1: true, estacion_cs2: true, estacion_cs3: true },
   pfh1_estudiante: { estacion_pfh1: true },
   pfh1_docente:    { estacion_pfh1: true },
+  pfh2_estudiante: { estacion_pfh2: true },
+  pfh2_docente:    { estacion_pfh2: true },
+  pfh3_estudiante: { estacion_pfh3: true },
+  pfh3_docente:    { estacion_pfh3: true },
 };
 
 export async function POST(request: Request) {
@@ -83,6 +87,8 @@ export async function POST(request: Request) {
           estacion_cs2: false,
           estacion_cs3: false,
           estacion_pfh1: false,
+          estacion_pfh2: false,
+          estacion_pfh3: false,
           ...accesosNuevos,
         },
         fechaRegistro: new Date().toISOString(),

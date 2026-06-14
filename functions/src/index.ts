@@ -25,6 +25,8 @@ const NIVELES_VALIDOS = new Set([
   'estacion_cs2',
   'estacion_cs3',
   'estacion_pfh1',
+  'estacion_pfh2',
+  'estacion_pfh3',
 ]);
 
 const ACCESOS_INICIALES = {
@@ -34,6 +36,8 @@ const ACCESOS_INICIALES = {
   estacion_cs2: false,
   estacion_cs3: false,
   estacion_pfh1: false,
+  estacion_pfh2: false,
+  estacion_pfh3: false,
 };
 
 type RolEcosistema =
@@ -71,6 +75,9 @@ const PRODUCTO_ACCESOS: Record<string, (keyof AccesosEcosistema)[]> = {
   cs2: ['estacion_cs2'],
   cs3: ['estacion_cs3'],
   full: ['estacion_cs1', 'estacion_cs2', 'estacion_cs3'],
+  pfh1: ['estacion_pfh1'],
+  pfh2: ['estacion_pfh2'],
+  pfh3: ['estacion_pfh3'],
 };
 
 const EVENTOS_PAGO_EXITOSO = new Set([
@@ -197,6 +204,16 @@ function foldersForNivel(nivel: string): string[] {
       return [
         'ecosistema/materiales/estacion_PFH1',
         'ecosistema/materiales/estacion_pfh1',
+      ];
+    case 'estacion_pfh2':
+      return [
+        'ecosistema/materiales/estacion_PFH2',
+        'ecosistema/materiales/estacion_pfh2',
+      ];
+    case 'estacion_pfh3':
+      return [
+        'ecosistema/materiales/estacion_PFH3',
+        'ecosistema/materiales/estacion_pfh3',
       ];
     default:
       return [];

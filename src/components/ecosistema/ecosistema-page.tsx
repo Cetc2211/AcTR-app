@@ -80,6 +80,44 @@ const ECOSISTEMAS = [
       { titulo: 'Guía', href: '/ecosistema/pfh1/pfh1-cap1-guia' },
     ],
   },
+  {
+    id: 'pfh2',
+    href: '/ecosistema/pfh2',
+    claveAcceso: 'estacion_pfh2',
+    label: 'Pensamiento Filosófico y Humanidades 2',
+    titulo: 'El espejo y la grieta',
+    subtitulo: 'Racionalismo, empirismo y crítica de la razón',
+    descripcion: 'Ocho capítulos que recorren la tradición racionalista y empirista hasta Kant. Novela narrativa, cuadernillo interactivo y guía docente.',
+    caps: '8 capítulos · 3 materiales por capítulo',
+    color: '#2a1a50',
+    colorClaro: '#f0eaf8',
+    acento: '#8b6cc7',
+    semestre: 'Pensamiento Filosófico II · DGB',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/pfh2/pfh2-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/pfh2/pfh2-cap1-cuadernillo' },
+      { titulo: 'Guía', href: '/ecosistema/pfh2/pfh2-cap1-guia' },
+    ],
+  },
+  {
+    id: 'pfh3',
+    href: '/ecosistema/pfh3',
+    claveAcceso: 'estacion_pfh3',
+    label: 'Pensamiento Filosófico y Humanidades 3',
+    titulo: 'La llama y la sombra',
+    subtitulo: 'Ética, estética y filosofía política contemporánea',
+    descripcion: 'Ocho capítulos sobre ética aplicada, estética y filosofía política. Novela narrativa, cuadernillo interactivo y guía docente.',
+    caps: '8 capítulos · 3 materiales por capítulo',
+    color: '#3a2060',
+    colorClaro: '#f2eaf8',
+    acento: '#b07de0',
+    semestre: 'Pensamiento Filosófico III · DGB',
+    previews: [
+      { titulo: 'Novela', href: '/ecosistema/pfh3/pfh3-cap1-novela' },
+      { titulo: 'Cuadernillo', href: '/ecosistema/pfh3/pfh3-cap1-cuadernillo' },
+      { titulo: 'Guía', href: '/ecosistema/pfh3/pfh3-cap1-guia' },
+    ],
+  },
 ];
 
 export default function EcosistemaPage() {
@@ -160,7 +198,7 @@ export default function EcosistemaPage() {
                   color: 'rgba(255,255,255,.06)',
                   userSelect: 'none', pointerEvents: 'none',
                 }}>
-                  {eco.id === 'pfh1' ? 'PF' : eco.id.toUpperCase()}
+                  {eco.id.startsWith('pfh') ? 'PF' : eco.id.toUpperCase()}
                 </span>
 
                 {/* Badge semestre */}

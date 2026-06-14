@@ -57,6 +57,26 @@ export const CONFIG_PFH1: ConfigEstacion = {
   rutaBase: '/ecosistema/pfh1',
 };
 
+export const CONFIG_PFH2: ConfigEstacion = {
+  id: 'pfh2',
+  nombre: 'Pensamiento Filosófico y Humanidades II',
+  color: '#2a1a50',
+  numeroRomano: 'II',
+  claveAcceso: 'estacion_pfh2',
+  coleccionFirestore: 'ecosistema_materiales_pfh2',
+  rutaBase: '/ecosistema/pfh2',
+};
+
+export const CONFIG_PFH3: ConfigEstacion = {
+  id: 'pfh3',
+  nombre: 'Pensamiento Filosófico y Humanidades III',
+  color: '#3a2060',
+  numeroRomano: 'III',
+  claveAcceso: 'estacion_pfh3',
+  coleccionFirestore: 'ecosistema_materiales_pfh3',
+  rutaBase: '/ecosistema/pfh3',
+};
+
 type TipoMaterial = 'libro' | 'articulo' | 'ensayo' | 'curso' | 'novela' | 'cuadernillo' | 'guia';
 
 interface MaterialItem {

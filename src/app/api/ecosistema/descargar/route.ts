@@ -7,6 +7,8 @@ const NIVEL_POR_ESTACION: Record<string, string> = {
   cs2: 'estacion_cs2',
   cs3: 'estacion_cs3',
   pfh1: 'estacion_pfh1',
+  pfh2: 'estacion_pfh2',
+  pfh3: 'estacion_pfh3',
 };
 
 function methodNotAllowed() {

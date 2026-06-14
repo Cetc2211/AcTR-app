@@ -11,6 +11,8 @@ export interface EcosistemaAccessMap {
   estacion_cs2?: boolean;
   estacion_cs3?: boolean;
   estacion_pfh1?: boolean;
+  estacion_pfh2?: boolean;
+  estacion_pfh3?: boolean;
   preview_cap1?: boolean;
   articulacion?: boolean;
   [key: string]: boolean | undefined;
@@ -94,6 +96,8 @@ export function useEcosistema() {
                 estacion_cs2: true,
                 estacion_cs3: true,
                 estacion_pfh1: true,
+                estacion_pfh2: true,
+                estacion_pfh3: true,
                 preview_cap1: true,
                 articulacion: true,
               },

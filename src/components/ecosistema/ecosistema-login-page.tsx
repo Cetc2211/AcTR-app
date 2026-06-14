@@ -17,6 +17,8 @@ const ACCESOS_FREE: EcosistemaAccessMap = {
   estacion_cs2: false,
   estacion_cs3: false,
   estacion_pfh1: false,
+  estacion_pfh2: false,
+  estacion_pfh3: false,
   preview_cap1: true,
   articulacion: true,
 };
