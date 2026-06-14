@@ -34,7 +34,7 @@ const app = getApps().length
 const db = getFirestore(app);
 
 const TIPOS = ['novela', 'cuadernillo', 'guia'];
-const TOTAL_CAPS = 8;
+const TOTAL_CAPS = 16;
 
 const documentos = [];
 
@@ -72,7 +72,7 @@ async function seed() {
 
   console.log('✓ Seed completado exitosamente.');
   console.log(`  Documentos creados: ${documentos.length}`);
-  console.log(`  Rango: pfh2-cap1-novela (orden 1) → pfh2-cap8-guia (orden ${orden - 1})`);
+  console.log(`  Rango: pfh2-cap1-novela (orden 1) → pfh2-cap16-guia (orden ${orden - 1})`);
 
   const snapshot = await colRef.count().get();
   console.log(`  Verificación: colección tiene ${snapshot.data().count} documentos`);
