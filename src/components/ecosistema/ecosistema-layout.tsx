@@ -67,10 +67,12 @@ export default function EcosistemaLayout({
       <style dangerouslySetInnerHTML={{ __html: ecosistemaCSS }} />
       {!esLogin && <EcosistemaNav />}
       <main
-        className="mx-auto max-w-7xl"
         style={{
           fontFamily: 'var(--font-body)',
-          minHeight: esLogin ? 'auto' : 'calc(100vh - 4.25rem)',
+          minHeight: esLogin ? 'auto' : 'calc(100vh - 3.5rem)',
+          padding: esLogin ? 0 : '1.5rem',
+          maxWidth: 1200,
+          margin: '0 auto',
         }}
       >
         {esLogin ? children : <EcosistemaAuthGuard>{children}</EcosistemaAuthGuard>}
