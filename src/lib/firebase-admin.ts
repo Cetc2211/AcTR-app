@@ -41,11 +41,16 @@ function getServiceAccount(): ServiceAccount {
 
 let _adminDb: Firestore | null = null;
 
-export function getAdminDb(): Firestore {
-  if (_adminDb) return _adminDb;
+const STORAGE_BUCKET = 'academic-tracker-qeoxi.firebasestorage.app';
+
+export function getAdminDb(): Firestore & { app: App } {
+  if (_adminDb) return _adminDb as Firestore & { app: App };
   const app: App = getApps().length
     ? getApps()[0]
-    : initializeApp({ credential: cert(getServiceAccount()) });
+    : initializeApp({
+        credential: cert(getServiceAccount()),
+        storageBucket: STORAGE_BUCKET,
+      });
   _adminDb = getFirestore(app);
-  return _adminDb;
+  return _adminDb as Firestore & { app: App };
 }
