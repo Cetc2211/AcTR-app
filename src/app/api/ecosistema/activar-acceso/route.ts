@@ -28,9 +28,14 @@ export async function POST(request: Request) {
       secret: string;
     };
 
-    // Verificar secret
-    const expectedSecret = process.env.EDD_WEBHOOK_SECRET || '';
-    if (expectedSecret && secret !== expectedSecret) {
+    // Verificar secret — obligatorio, falla ruidosamente si no está configurado
+    const expectedSecret = process.env.EDD_WEBHOOK_SECRET;
+    if (!expectedSecret) {
+      console.error('[activar-acceso] EDD_WEBHOOK_SECRET no configurado — endpoint inseguro');
+      return NextResponse.json({ error: 'Servidor mal configurado' }, { status: 500 });
+    }
+    if (secret !== expectedSecret) {
+      console.warn('[activar-acceso] Secret inválido para email:', email);
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
