@@ -13,6 +13,13 @@ export interface EcosistemaAccessMap {
   estacion_pfh1?: boolean;
   estacion_pfh2?: boolean;
   estacion_pfh3?: boolean;
+  // Distinción estudiante/docente para PFH (filtro de guías docentes)
+  pfh1_estudiante?: boolean;
+  pfh1_docente?: boolean;
+  pfh2_estudiante?: boolean;
+  pfh2_docente?: boolean;
+  pfh3_estudiante?: boolean;
+  pfh3_docente?: boolean;
   preview_cap1?: boolean;
   articulacion?: boolean;
   [key: string]: boolean | undefined;
