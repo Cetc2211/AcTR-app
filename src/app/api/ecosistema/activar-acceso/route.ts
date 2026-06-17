@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuth } from 'firebase-admin/auth';
+import { Timestamp } from 'firebase-admin/firestore';
 import { getAdminDb } from '@/lib/firebase-admin';
 
 const ACCESOS_POR_PRODUCTO: Record<string, Record<string, boolean>> = {
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
       await docRef.update({
         accesos: { ...accesosActuales, ...accesosNuevos },
         rol: producto.includes('docente') || producto.includes('trilogia') ? 'lector_premium' : 'lector_cs1',
-        fechaExpiracion: new Date('2027-08-01').toISOString(),
+        fechaExpiracion: Timestamp.fromDate(new Date('2027-08-01')),
       });
     } else {
       // Crear documento si no existe
@@ -98,8 +99,8 @@ export async function POST(request: Request) {
           estacion_pfh3: false,
           ...accesosNuevos,
         },
-        fechaRegistro: new Date().toISOString(),
-        fechaExpiracion: new Date('2027-08-01').toISOString(),
+        fechaRegistro: Timestamp.now(),
+        fechaExpiracion: Timestamp.fromDate(new Date('2027-08-01')),
         activo: true,
       });
     }

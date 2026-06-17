@@ -38,8 +38,8 @@ export interface EcosistemaUserProfile {
   email: string;
   rol: EcosistemaRole;
   accesos: EcosistemaAccessMap;
-  fechaRegistro?: Timestamp;
-  fechaExpiracion?: Timestamp;
+  fechaRegistro?: Timestamp | string;
+  fechaExpiracion?: Timestamp | string;
   activo?: boolean;
 }
 
@@ -140,8 +140,17 @@ export function useEcosistema() {
   );
 
   const suscripcionExpirada = useMemo(() => {
-    const expirationDate = perfil?.fechaExpiracion?.toDate();
-    if (!expirationDate) {
+    const raw = perfil?.fechaExpiracion;
+    if (!raw) return false;
+
+    let expirationDate: Date;
+    if (typeof raw === 'object' && typeof (raw as any).toDate === 'function') {
+      // Firestore Timestamp
+      expirationDate = (raw as any).toDate();
+    } else if (typeof raw === 'string' || typeof raw === 'number') {
+      // ISO string o epoch — Firestore a veces entrega strings si se guardaron sin Timestamp
+      expirationDate = new Date(raw as string | number);
+    } else {
       return false;
     }
 
