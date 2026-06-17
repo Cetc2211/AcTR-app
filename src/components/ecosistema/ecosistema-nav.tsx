@@ -66,6 +66,26 @@ const SECCIONES: SeccionDisciplina[] = [
       { id: 'pfh2', href: '/ecosistema/pfh2', label: 'PFH II', nombre: 'P. Filosófico y Humanidades II', color: '#2a1a50' },
       { id: 'pfh3', href: '/ecosistema/pfh3', label: 'PFH III', nombre: 'P. Filosófico y Humanidades III', color: '#3a2060' },
     ],
+    documentos: [
+      {
+        id: 'art-pfh1',
+        nombre: 'Art. Curricular PFH1',
+        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh1-articulacion.pdf',
+        color: '#1a1440',
+      },
+      {
+        id: 'art-pfh2',
+        nombre: 'Art. Curricular PFH2',
+        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh2-articulacion-.pdf',
+        color: '#2a1a50',
+      },
+      {
+        id: 'art-pfh3',
+        nombre: 'Art. Curricular PFH3',
+        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/pfh3-articulacion.pdf',
+        color: '#3a2060',
+      },
+    ],
   },
 ];
 

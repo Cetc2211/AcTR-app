@@ -317,29 +317,39 @@ export default function EcosistemaPage() {
             textTransform: 'uppercase', color: '#888',
             marginBottom: '1rem',
           }}>
-            Articulación
+            Articulación Curricular
           </p>
-          <a
-            href="https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.65rem 1.25rem',
-              background: '#3d2d1e',
-              color: '#fdf8f0',
-              borderRadius: 6,
-              textDecoration: 'none',
-              fontSize: '0.9rem',
-              fontFamily: 'var(--font-body)',
-              fontWeight: 600,
-              transition: 'background 0.2s',
-            }}
-          >
-            ↓ Descargar Articulación Pedagógica
-          </a>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            {[
+              { label: 'CS — Trilogía Raíz Digital', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf', bg: '#3d2d1e' },
+              { label: 'PFH I', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh1-articulacion.pdf', bg: '#1a1440' },
+              { label: 'PFH II', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh2-articulacion-.pdf', bg: '#2a1a50' },
+              { label: 'PFH III', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/pfh3-articulacion.pdf', bg: '#3a2060' },
+            ].map((art) => (
+              <a
+                key={art.url}
+                href={art.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1.25rem',
+                  background: art.bg,
+                  color: '#fdf8f0',
+                  borderRadius: 6,
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
+                  transition: 'background 0.2s',
+                }}
+              >
+                ↓ {art.label}
+              </a>
+            ))}
+          </div>
         </div>
       )}
 
