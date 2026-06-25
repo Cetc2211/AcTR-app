@@ -216,18 +216,13 @@ export default function MaterialReader({
 
   function handleImprimir() {
     if (!html) return;
-    const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
-    if (!ventanaImpresion) {
-      console.warn('[MaterialReader] No se pudo abrir la ventana de impresion — bloqueador de popups?');
-      return;
-    }
     const watermark = escapeHtml(perfil?.email || '');
-    ventanaImpresion.document.write(`<!doctype html>
+    const printHtml = `<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${escapeHtml(titulo)} — Imprimir</title>
+    <title>${escapeHtml(titulo)}</title>
     <style>
       html, body { margin: 0; padding: 0; }
       body {
@@ -256,12 +251,37 @@ export default function MaterialReader({
   <body>
     <div class="watermark">${watermark}</div>
     ${html}
-    <script>
-      window.onload = function() { window.print(); };
-    </script>
   </body>
-</html>`);
-    ventanaImpresion.document.close();
+</html>`;
+
+    // Usar iframe oculto para imprimir sin abandonar la página
+    let iframe = document.getElementById('print-frame') as HTMLIFrameElement | null;
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.id = 'print-frame';
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = 'none';
+      document.body.appendChild(iframe);
+    }
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+    doc.open();
+    doc.write(printHtml);
+    doc.close();
+
+    iframe.onload = () => {
+      try {
+        iframe?.contentWindow?.focus();
+        iframe?.contentWindow?.print();
+      } catch (e) {
+        console.error('[MaterialReader] Error al imprimir:', e);
+      }
+    };
   }
 
   async function handleDescargarOffline() {
