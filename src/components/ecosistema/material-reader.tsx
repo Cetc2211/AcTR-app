@@ -216,6 +216,11 @@ export default function MaterialReader({
 
   function handleImprimir() {
     if (!html) return;
+
+    // Limpiar iframe anterior si existe
+    const previo = document.getElementById('print-frame');
+    if (previo) previo.remove();
+
     const watermark = escapeHtml(perfil?.email || '');
     const printHtml = `<!doctype html>
 <html lang="es">
@@ -254,34 +259,40 @@ export default function MaterialReader({
   </body>
 </html>`;
 
-    // Usar iframe oculto para imprimir sin abandonar la página
-    let iframe = document.getElementById('print-frame') as HTMLIFrameElement | null;
-    if (!iframe) {
-      iframe = document.createElement('iframe');
-      iframe.id = 'print-frame';
-      iframe.style.position = 'fixed';
-      iframe.style.right = '0';
-      iframe.style.bottom = '0';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = 'none';
-      document.body.appendChild(iframe);
-    }
+    // Crear iframe fresco cada vez
+    const iframe = document.createElement('iframe');
+    iframe.id = 'print-frame';
+    iframe.style.position = 'fixed';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '0';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+    iframe.style.border = 'none';
+    iframe.style.opacity = '0';
+    document.body.appendChild(iframe);
 
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!doc) return;
+    if (!doc) {
+      iframe.remove();
+      return;
+    }
     doc.open();
     doc.write(printHtml);
     doc.close();
 
-    iframe.onload = () => {
+    // Delay para que Safari/iOS renderice el contenido antes de imprimir
+    setTimeout(() => {
       try {
-        iframe?.contentWindow?.focus();
-        iframe?.contentWindow?.print();
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
       } catch (e) {
         console.error('[MaterialReader] Error al imprimir:', e);
       }
-    };
+      // Limpiar iframe después de imprimir
+      setTimeout(() => {
+        iframe.remove();
+      }, 1000);
+    }, 500);
   }
 
   async function handleDescargarOffline() {
