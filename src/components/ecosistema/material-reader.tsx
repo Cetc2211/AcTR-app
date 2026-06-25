@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { doc, getDoc } from 'firebase/firestore';
-import { Download, RefreshCw } from 'lucide-react';
+import { Download, Printer, RefreshCw } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { useEcosistema } from '@/hooks/use-ecosistema';
 import {
@@ -45,6 +45,7 @@ export default function MaterialReader({
   solicitarUrlDescarga,
 }: MaterialReaderProps) {
   const { perfil } = useEcosistema();
+  const esAdmin = perfil?.rol === 'admin';
   const [estado, setEstado] = useState<EstadoCarga>('cargando');
   const [html, setHtml] = useState('');
   const [cacheDisponible, setCacheDisponible] = useState(false);
@@ -213,6 +214,56 @@ export default function MaterialReader({
 </html>`;
   }, [html, perfil?.email]);
 
+  function handleImprimir() {
+    if (!html) return;
+    const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+    if (!ventanaImpresion) {
+      console.warn('[MaterialReader] No se pudo abrir la ventana de impresion — bloqueador de popups?');
+      return;
+    }
+    const watermark = escapeHtml(perfil?.email || '');
+    ventanaImpresion.document.write(`<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${escapeHtml(titulo)} — Imprimir</title>
+    <style>
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: Georgia, serif;
+        line-height: 1.65;
+        color: #2b2b2b;
+        padding: 1.25rem;
+      }
+      .watermark {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        pointer-events: none;
+        color: rgba(0, 0, 0, 0.15);
+        font-size: 10px;
+        font-family: monospace;
+        z-index: 9999;
+      }
+      @media print {
+        body { padding: 0; }
+        .watermark { display: none; }
+        .no-print { display: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="watermark">${watermark}</div>
+    ${html}
+    <script>
+      window.onload = function() { window.print(); };
+    </script>
+  </body>
+</html>`);
+    ventanaImpresion.document.close();
+  }
+
   async function handleDescargarOffline() {
     try {
       setDescargando(true);
@@ -368,6 +419,31 @@ export default function MaterialReader({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {esAdmin && (
+            <button
+              onClick={handleImprimir}
+              disabled={!html}
+              title="Imprimir material (solo administrador)"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.45rem 0.75rem',
+                border: '1px solid #8b1a1a',
+                borderRadius: 7,
+                background: '#8b1a1a',
+                color: '#fdf8f0',
+                cursor: html ? 'pointer' : 'not-allowed',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                opacity: html ? 1 : 0.5,
+              }}
+            >
+              <Printer size={14} />
+              Imprimir
+            </button>
+          )}
+
           <button
             onClick={() => void handleDescargarOffline()}
             disabled={descargando}
