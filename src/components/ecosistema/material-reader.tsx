@@ -247,9 +247,41 @@ export default function MaterialReader({
         z-index: 9999;
       }
       @media print {
-        body { padding: 0; }
+        *, *::before, *::after {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        body {
+          padding: 0;
+          background: white !important;
+        }
         .watermark { display: none; }
         .no-print { display: none !important; }
+        /* Evitar superposición de fondos y elementos posicionados */
+        [style*="position: fixed"],
+        [style*="position:fixed"],
+        [style*="position: absolute"],
+        [style*="position:absolute"] {
+          position: static !important;
+        }
+        [style*="z-index"] {
+          z-index: auto !important;
+        }
+        /* Fondos oscuros → texto legible */
+        [style*="background"] {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        img, svg {
+          max-width: 100% !important;
+          page-break-inside: avoid;
+        }
+        h1, h2, h3, h4, h5, h6 {
+          page-break-after: avoid;
+        }
+        p, li, blockquote {
+          page-break-inside: avoid;
+        }
       }
     </style>
   </head>
