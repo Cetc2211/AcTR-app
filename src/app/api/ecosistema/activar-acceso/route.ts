@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getAuth } from 'firebase-admin/auth';
-import { Timestamp } from 'firebase-admin/firestore';
 import { getAdminDb } from '@/lib/firebase-admin';
 
 const ACCESOS_POR_PRODUCTO: Record<string, Record<string, boolean>> = {
@@ -11,8 +10,6 @@ const ACCESOS_POR_PRODUCTO: Record<string, Record<string, boolean>> = {
   cs3_estudiante:  { estacion_cs3: true },
   cs3_docente:     { estacion_cs3: true },
   trilogia_docente:{ estacion_cs1: true, estacion_cs2: true, estacion_cs3: true },
-  // PFH: se mantiene estacion_pfhN para retrocompatibilidad con EcosistemaAuthGuard,
-  // y se agrega pfhN_estudiante/pfhN_docente para el filtro de descarga de guías.
   pfh1_estudiante: { estacion_pfh1: true, pfh1_estudiante: true },
   pfh1_docente:    { estacion_pfh1: true, pfh1_docente: true },
   pfh2_estudiante: { estacion_pfh2: true, pfh2_estudiante: true },
@@ -21,32 +18,60 @@ const ACCESOS_POR_PRODUCTO: Record<string, Record<string, boolean>> = {
   pfh3_docente:    { estacion_pfh3: true, pfh3_docente: true },
 };
 
+/**
+ * Mapeo de download_id + price_id de EDD a accesos PFH.
+ * EDD productos: PFH1=475, PFH2=748, PFH3=751
+ * price_id: 0=estudiante ($80), 1=docente ($100)
+ */
+const EDD_PRICE_ACCESOS: Record<string, Record<string, boolean>> = {
+  '475_0': { estacion_pfh1: true, pfh1_estudiante: true },
+  '475_1': { estacion_pfh1: true, pfh1_docente: true },
+  '748_0': { estacion_pfh2: true, pfh2_estudiante: true },
+  '748_1': { estacion_pfh2: true, pfh2_docente: true },
+  '751_0': { estacion_pfh3: true, pfh3_estudiante: true },
+  '751_1': { estacion_pfh3: true, pfh3_docente: true },
+};
+
 export async function POST(request: Request) {
   try {
-    const { email, producto, secret } = (await request.json()) as {
+    const { email, producto, secret, download_id, price_id } = (await request.json()) as {
       email: string;
-      producto: string;
+      producto?: string;
       secret: string;
+      download_id?: string | number;
+      price_id?: string | number;
     };
 
-    // Verificar secret — obligatorio, falla ruidosamente si no está configurado
-    const expectedSecret = process.env.EDD_WEBHOOK_SECRET;
-    if (!expectedSecret) {
-      console.error('[activar-acceso] EDD_WEBHOOK_SECRET no configurado — endpoint inseguro');
-      return NextResponse.json({ error: 'Servidor mal configurado' }, { status: 500 });
-    }
-    if (secret !== expectedSecret) {
-      console.warn('[activar-acceso] Secret inválido para email:', email);
+    // Verificar secret
+    const expectedSecret = process.env.EDD_WEBHOOK_SECRET || '';
+    if (expectedSecret && secret !== expectedSecret) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    if (!email || !producto) {
-      return NextResponse.json({ error: 'Faltan campos' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Falta el campo email' }, { status: 400 });
     }
 
-    const accesosNuevos = ACCESOS_POR_PRODUCTO[producto];
+    // Resolver accesos: por nombre de producto o por download_id + price_id de EDD
+    let accesosNuevos: Record<string, boolean> | undefined;
+    let productoLabel: string;
+
+    if (download_id !== undefined && price_id !== undefined) {
+      const eddKey = `${download_id}_${price_id}`;
+      accesosNuevos = EDD_PRICE_ACCESOS[eddKey];
+      productoLabel = `EDD:${eddKey}`;
+    } else if (producto) {
+      accesosNuevos = ACCESOS_POR_PRODUCTO[producto];
+      productoLabel = producto;
+    } else {
+      return NextResponse.json(
+        { error: 'Falta producto o download_id + price_id' },
+        { status: 400 }
+      );
+    }
+
     if (!accesosNuevos) {
-      return NextResponse.json({ error: `Producto no reconocido: ${producto}` }, { status: 400 });
+      return NextResponse.json({ error: `Producto no reconocido: ${productoLabel}` }, { status: 400 });
     }
 
     const db = getAdminDb();
@@ -60,7 +85,7 @@ export async function POST(request: Request) {
       // Usuario no registrado aún — guardar acceso pendiente
       await db.collection('ecosistema_accesos_pendientes').doc(email.trim().toLowerCase()).set({
         email: email.trim().toLowerCase(),
-        producto,
+        producto: productoLabel,
         accesos: accesosNuevos,
         fechaPago: new Date().toISOString(),
         aplicado: false,
@@ -78,8 +103,8 @@ export async function POST(request: Request) {
       const accesosActuales = (docSnap.data() as any)?.accesos || {};
       await docRef.update({
         accesos: { ...accesosActuales, ...accesosNuevos },
-        rol: producto.includes('docente') || producto.includes('trilogia') ? 'lector_premium' : 'lector_cs1',
-        fechaExpiracion: Timestamp.fromDate(new Date('2027-08-01')),
+        rol: (productoLabel.includes('docente') || productoLabel.includes('trilogia')) ? 'lector_premium' : 'lector_free',
+        fechaExpiracion: new Date('2027-08-01').toISOString(),
       });
     } else {
       // Crear documento si no existe
@@ -87,7 +112,7 @@ export async function POST(request: Request) {
         uid,
         email: email.trim().toLowerCase(),
         nombre: email.split('@')[0],
-        rol: producto.includes('docente') || producto.includes('trilogia') ? 'lector_premium' : 'lector_cs1',
+        rol: (productoLabel.includes('docente') || productoLabel.includes('trilogia')) ? 'lector_premium' : 'lector_free',
         accesos: {
           preview_cap1: true,
           articulacion: true,
@@ -97,15 +122,21 @@ export async function POST(request: Request) {
           estacion_pfh1: false,
           estacion_pfh2: false,
           estacion_pfh3: false,
+          pfh1_estudiante: false,
+          pfh1_docente: false,
+          pfh2_estudiante: false,
+          pfh2_docente: false,
+          pfh3_estudiante: false,
+          pfh3_docente: false,
           ...accesosNuevos,
         },
-        fechaRegistro: Timestamp.now(),
-        fechaExpiracion: Timestamp.fromDate(new Date('2027-08-01')),
+        fechaRegistro: new Date().toISOString(),
+        fechaExpiracion: new Date('2027-08-01').toISOString(),
         activo: true,
       });
     }
 
-    console.log(`[activar-acceso] Accesos activados: ${email} → ${producto}`);
+    console.log(`[activar-acceso] Accesos activados: ${email} → ${productoLabel}`);
     return NextResponse.json({ ok: true });
 
   } catch (error) {

@@ -12,16 +12,18 @@ const NIVEL_POR_ESTACION: Record<string, string> = {
   pfh3: 'estacion_pfh3',
 };
 
-/** Estaciones PFH que tienen distinción estudiante/docente para guías. */
+/**
+ * Estaciones PFH que requieren distinción estudiante/docente.
+ * Estudiante (pfhN_estudiante) → novela + cuadernillo.
+ * Docente (pfhN_docente) → novela + cuadernillo + guía.
+ */
 const ESTACIONES_PFH = new Set(['pfh1', 'pfh2', 'pfh3']);
 
-/**
- * Determina si un archivo es una guía docente restringida.
- * Las guías siguen el patrón: pfhN-capM-guia.html
- */
-function esGuiaDocente(clave: string): boolean {
-  return /-guia$/i.test(clave);
-}
+const CLAVE_DOCENTE_POR_ESTACION: Record<string, string> = {
+  pfh1: 'pfh1_docente',
+  pfh2: 'pfh2_docente',
+  pfh3: 'pfh3_docente',
+};
 
 const URL_EXPIRACION_SEGUNDOS = 15 * 60;
 
@@ -169,31 +171,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // ── Filtro estudiante/docente para guías PFH ──
-    // Los archivos *-guia.html en estaciones PFH requieren acceso de docente.
-    // Estudiantes (pfhN_estudiante) solo pueden descargar novela y cuadernillo.
-    // Usuarios existentes con solo estacion_pfhN:true (sin campo de tipo) conservan acceso completo.
-    if (ESTACIONES_PFH.has(estacion) && esGuiaDocente(clave)) {
+    const archivo = `${clave}.html`;
+
+    // ── Filtro estudiante/docente para PFH ──────────────────────
+    // Si el archivo es una guía y la estación es PFH, verificar acceso docente.
+    if (ESTACIONES_PFH.has(estacion) && clave.endsWith('-guia')) {
+      const claveDocente = CLAVE_DOCENTE_POR_ESTACION[estacion];
       const db = getAdminDb();
       const userDoc = await db.collection('ecosistema_usuarios').doc(decodedToken.uid).get();
-      const accesos = userDoc.exists ? (userDoc.data() as any)?.accesos ?? {} : {};
-      const claveDocente = `${estacion}_docente` as string;
+      const accesos = userDoc.exists ? (userDoc.data()?.accesos ?? {}) : {};
 
-      const esDocente = accesos[claveDocente] === true;
-      const tieneAccesoHeredado = accesos[nivel] === true && accesos[claveDocente] === undefined && accesos[`${estacion}_estudiante`] === undefined;
-
-      if (!esDocente && !tieneAccesoHeredado) {
+      if (!accesos[claveDocente]) {
         console.warn(
-          `[ecosistema/descargar] Acceso denegado a guía: uid=${decodedToken.uid}, estacion=${estacion}, clave=${clave}`
+          '[ecosistema/descargar] Acceso denegado a guía PFH:',
+          decodedToken.uid, estacion, clave
         );
         return NextResponse.json(
-          { error: 'Acceso restringido: las guías docentes no están disponibles para estudiantes.' },
+          { error: 'No tienes acceso a la guía docente. Adquiere la versión docente para desbloquearla.' },
           { status: 403 }
         );
       }
     }
-
-    const archivo = `${clave}.html`;
 
     // Buscar archivo en Storage directamente (sin Cloud Function)
     const filePath = await findExistingFilePath(nivel, archivo);

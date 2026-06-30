@@ -27,6 +27,12 @@ const NIVELES_VALIDOS = new Set([
   'estacion_pfh1',
   'estacion_pfh2',
   'estacion_pfh3',
+  'pfh1_estudiante',
+  'pfh1_docente',
+  'pfh2_estudiante',
+  'pfh2_docente',
+  'pfh3_estudiante',
+  'pfh3_docente',
 ]);
 
 const ACCESOS_INICIALES = {
@@ -38,6 +44,12 @@ const ACCESOS_INICIALES = {
   estacion_pfh1: false,
   estacion_pfh2: false,
   estacion_pfh3: false,
+  pfh1_estudiante: false,
+  pfh1_docente: false,
+  pfh2_estudiante: false,
+  pfh2_docente: false,
+  pfh3_estudiante: false,
+  pfh3_docente: false,
 };
 
 type RolEcosistema =
@@ -78,6 +90,12 @@ const PRODUCTO_ACCESOS: Record<string, (keyof AccesosEcosistema)[]> = {
   pfh1: ['estacion_pfh1'],
   pfh2: ['estacion_pfh2'],
   pfh3: ['estacion_pfh3'],
+  pfh1_estudiante: ['estacion_pfh1', 'pfh1_estudiante'],
+  pfh1_docente: ['estacion_pfh1', 'pfh1_docente'],
+  pfh2_estudiante: ['estacion_pfh2', 'pfh2_estudiante'],
+  pfh2_docente: ['estacion_pfh2', 'pfh2_docente'],
+  pfh3_estudiante: ['estacion_pfh3', 'pfh3_estudiante'],
+  pfh3_docente: ['estacion_pfh3', 'pfh3_docente'],
 };
 
 const EVENTOS_PAGO_EXITOSO = new Set([

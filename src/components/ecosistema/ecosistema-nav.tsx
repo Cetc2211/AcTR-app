@@ -30,7 +30,10 @@ type EstacionLink = {
 type DocumentoLink = {
   id: string;
   nombre: string;
-  url: string;
+  /** URL externa directa (ej. PDF en WordPress) */
+  url?: string;
+  /** Archivo en Storage — se obtiene via API articulación */
+  estacionStorage?: string;
   color: string;
 };
 
@@ -70,20 +73,14 @@ const SECCIONES: SeccionDisciplina[] = [
       {
         id: 'art-pfh1',
         nombre: 'Art. Curricular PFH1',
-        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh1-articulacion.pdf',
+        estacionStorage: 'pfh1',
         color: '#1a1440',
       },
       {
         id: 'art-pfh2',
         nombre: 'Art. Curricular PFH2',
-        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh2-articulacion-.pdf',
+        estacionStorage: 'pfh2',
         color: '#2a1a50',
-      },
-      {
-        id: 'art-pfh3',
-        nombre: 'Art. Curricular PFH3',
-        url: 'https://letrasnecias.com/wp-content/uploads/2026/06/pfh3-articulacion.pdf',
-        color: '#3a2060',
       },
     ],
   },
@@ -305,29 +302,62 @@ export default function EcosistemaNav() {
                         margin: '0.4rem 1.75rem 0.35rem',
                       }}
                     />
-                    {seccion.documentos.map((doc) => (
-                      <a
-                        key={doc.id}
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setSidebarAbierto(false)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.6rem',
-                          padding: '0.45rem 1.25rem 0.45rem 1.75rem',
-                          textDecoration: 'none',
-                          fontSize: '0.8rem',
-                          fontWeight: 500,
-                          color: '#707070',
-                          transition: 'color 0.15s',
-                        }}
-                      >
-                        <FileText
-                          size={13}
-                          style={{ flexShrink: 0, color: doc.color, opacity: 0.7 }}
-                        />
+                    {seccion.documentos.map((doc) => {
+                      // ── Documento en Storage (PFH) — obtener signed URL ──
+                      const esStorage = Boolean(doc.estacionStorage);
+
+                      const handleDocClick = async (e: React.MouseEvent) => {
+                        if (esStorage && doc.estacionStorage) {
+                          e.preventDefault();
+                          try {
+                            const user = auth.currentUser;
+                            if (!user) return;
+                            const token = await user.getIdToken();
+                            const resp = await fetch(
+                              `/api/ecosistema/articulacion?estacion=${doc.estacionStorage}`,
+                              { headers: { Authorization: `Bearer ${token}` } }
+                            );
+                            if (resp.ok) {
+                              const url = resp.redirected
+                                ? resp.url
+                                : (await resp.json())?.url;
+                              if (url) {
+                                window.open(url, '_blank', 'noopener,noreferrer');
+                              }
+                            } else {
+                              console.error('[EcosistemaNav] Error articulación:', resp.status);
+                            }
+                          } catch (err) {
+                            console.error('[EcosistemaNav] Error al obtener articulación:', err);
+                          }
+                          setSidebarAbierto(false);
+                        }
+                      };
+
+                      return (
+                        <a
+                          key={doc.id}
+                          href={esStorage ? '#' : doc.url}
+                          target={esStorage ? undefined : '_blank'}
+                          rel={esStorage ? undefined : 'noopener noreferrer'}
+                          onClick={esStorage ? handleDocClick : () => setSidebarAbierto(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.6rem',
+                            padding: '0.45rem 1.25rem 0.45rem 1.75rem',
+                            textDecoration: 'none',
+                            fontSize: '0.8rem',
+                            fontWeight: 500,
+                            color: '#707070',
+                            cursor: esStorage ? 'pointer' : undefined,
+                            transition: 'color 0.15s',
+                          }}
+                        >
+                          <FileText
+                            size={13}
+                            style={{ flexShrink: 0, color: doc.color, opacity: 0.7 }}
+                          />
                         <span
                           style={{
                             overflow: 'hidden',
@@ -338,7 +368,8 @@ export default function EcosistemaNav() {
                           {doc.nombre}
                         </span>
                       </a>
-                    ))}
+                    );
+                    })}
                   </>
                 )}
               </div>

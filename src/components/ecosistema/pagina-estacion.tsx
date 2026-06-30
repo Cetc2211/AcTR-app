@@ -118,9 +118,15 @@ const TIPO_ORDEN: Record<string, number> = {
 };
 
 export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
-  const { tieneAcceso } = useEcosistema();
+  const { tieneAcceso, perfil } = useEcosistema();
   const accesoCompleto = tieneAcceso(config.claveAcceso);
   const esPreview = !accesoCompleto && tieneAcceso('preview_cap1');
+
+  // ── Distinción estudiante/docente para PFH ──
+  const esPFH = config.id.startsWith('pfh');
+  const claveDocente = esPFH ? `${config.id}_docente` as string : null;
+  const esDocentePFH = claveDocente ? tieneAcceso(claveDocente) : false;
+  const esEstudiantePFH = esPFH && accesoCompleto && !esDocentePFH;
 
   const [materiales, setMateriales] = useState<MaterialItem[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -426,7 +432,56 @@ export default function PaginaEstacion({ config }: { config: ConfigEstacion }) {
                       }}>
                         {cap.materiales.map((mat) => {
                           const tipoLabel = TIPO_LABEL[mat.tipo] || mat.tipo;
+                          const esGuia = mat.tipo === 'guia';
+                          const guiaBloqueada = esEstudiantePFH && esGuia;
 
+                          // ── Guía bloqueada para estudiante PFH ──
+                          if (guiaBloqueada) {
+                            return (
+                              <div
+                                key={mat.id}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  padding: '.65rem 1.2rem',
+                                  color: '#aaa',
+                                  fontFamily: 'var(--font-body)',
+                                  fontSize: '.82rem',
+                                  borderBottom: '1px solid rgba(0,0,0,.04)',
+                                  background: 'rgba(0,0,0,.02)',
+                                  cursor: 'not-allowed',
+                                }}
+                                title="Disponible solo en la versión docente"
+                              >
+                                <span style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '.5rem',
+                                }}>
+                                  <span style={{
+                                    display: 'inline-block',
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: '50%',
+                                    background: '#ccc',
+                                  }} />
+                                  {tipoLabel}
+                                </span>
+                                <span style={{
+                                  fontSize: '.65rem',
+                                  color: '#bbb',
+                                  fontFamily: 'var(--font-mono, monospace)',
+                                  letterSpacing: '.05em',
+                                  textTransform: 'uppercase',
+                                }}>
+                                  Solo docente
+                                </span>
+                              </div>
+                            );
+                          }
+
+                          // ── Material accesible ──
                           return (
                             <Link
                               key={mat.id}

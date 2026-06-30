@@ -13,7 +13,6 @@ export interface EcosistemaAccessMap {
   estacion_pfh1?: boolean;
   estacion_pfh2?: boolean;
   estacion_pfh3?: boolean;
-  // Distinción estudiante/docente para PFH (filtro de guías docentes)
   pfh1_estudiante?: boolean;
   pfh1_docente?: boolean;
   pfh2_estudiante?: boolean;
@@ -38,8 +37,8 @@ export interface EcosistemaUserProfile {
   email: string;
   rol: EcosistemaRole;
   accesos: EcosistemaAccessMap;
-  fechaRegistro?: Timestamp | string;
-  fechaExpiracion?: Timestamp | string;
+  fechaRegistro?: Timestamp;
+  fechaExpiracion?: Timestamp;
   activo?: boolean;
 }
 
@@ -105,6 +104,12 @@ export function useEcosistema() {
                 estacion_pfh1: true,
                 estacion_pfh2: true,
                 estacion_pfh3: true,
+                pfh1_docente: true,
+                pfh2_docente: true,
+                pfh3_docente: true,
+                pfh1_estudiante: true,
+                pfh2_estudiante: true,
+                pfh3_estudiante: true,
                 preview_cap1: true,
                 articulacion: true,
               },
@@ -140,17 +145,8 @@ export function useEcosistema() {
   );
 
   const suscripcionExpirada = useMemo(() => {
-    const raw = perfil?.fechaExpiracion;
-    if (!raw) return false;
-
-    let expirationDate: Date;
-    if (typeof raw === 'object' && typeof (raw as any).toDate === 'function') {
-      // Firestore Timestamp
-      expirationDate = (raw as any).toDate();
-    } else if (typeof raw === 'string' || typeof raw === 'number') {
-      // ISO string o epoch — Firestore a veces entrega strings si se guardaron sin Timestamp
-      expirationDate = new Date(raw as string | number);
-    } else {
+    const expirationDate = perfil?.fechaExpiracion?.toDate();
+    if (!expirationDate) {
       return false;
     }
 
