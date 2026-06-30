@@ -74,3 +74,31 @@ Stage Summary:
 - PFH2 y PFH3 completamente operativos: Firestore docs, reglas deployadas, Storage ya accesible
 - 3 commits pushados: c488b62, fee2606, 82579cf, cd6eeb4
 - Remote corregido: github.com/Cetc2211/AcTR-app.git
+---
+Task ID: 3
+Agent: main
+Task: Implementar distinción estudiante/docente para PFH + articulaciones PFH1/PFH2
+
+Work Log:
+- Modificado activar-acceso/route.ts: ACCESOS_POR_PRODUCTO ahora agrega pfhN_estudiante o pfhN_docente según la variante de producto
+- Agregado mapeo EDD_PRICE_ACCESOS con 6 price_ids: 475_0/1 (PFH1), 748_0/1 (PFH2), 751_0/1 (PFH3)
+- Ruta ahora acepta download_id + price_id además de producto string
+- Nuevo usuario incluye campos pfhN_estudiante/pfhN_docente en schema de accesos
+- Modificado descargar/route.ts: filtro 403 para archivos *-guia.html en estaciones PFH sin acceso docente
+- Lee ecosistema_usuarios/{uid} para verificar accesos antes de generar signed URL
+- Modificado use-ecosistema.ts: 6 campos explícitos (pfh1_estudiante/docente, etc.) en EcosistemaAccessMap
+- Fallback admin incluye todos los campos nuevos
+- Modificado pagina-estacion.tsx: guías bloqueadas visualmente para estudiantes PFH ("Solo docente")
+- Modificado ecosistema-nav.tsx: DocumentoLink soporta url externa y estacionStorage
+- Agregadas articulaciones PFH1 y PFH2 al sidebar de Pensamiento Filosófico
+- Creada ruta /api/ecosistema/articulacion/route.ts: genera signed URLs para archivos de articulación PFH en Storage
+- Sincronizada Cloud Function: NIVELES_VALIDOS, ACCESOS_INICIALES, PRODUCTO_ACCESOS con nuevos campos PFH
+- Build exitoso sin errores, commit 0eba230, push a Cetc2211/AcTR-app
+
+Stage Summary:
+- Distinción estudiante/docente completamente implementada en backend y frontend
+- Estudiante PFH: novela + cuadernillo (guía bloqueada con "Solo docente")
+- Docente PFH: novela + cuadernillo + guía
+- Mapeo de 6 price_ids EDD configurado (475_0/1, 748_0/1, 751_0/1)
+- Articulaciones PFH1/PFH2 en sidebar (via Storage signed URLs)
+- CS no afectada — sigue funcionando igual
