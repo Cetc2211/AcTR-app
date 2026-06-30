@@ -7,13 +7,15 @@ import { getAdminDb } from '@/lib/firebase-admin';
  * GET /api/ecosistema/articulacion?estacion=pfh1
  *
  * Genera una signed URL para el archivo de articulación de una estación PFH
- * y redirige al usuario. Requiere autenticación.
+ * y la devuelve como JSON. Requiere autenticación.
+ *
+ * El cliente usa window.open(url) para abrir la URL directamente,
+ * lo que evita problemas de CORS que ocurrirían con fetch() + redirect.
  *
  * Busca en orden:
- *   1. articulacion-{estacion}.html  (versión HTML interactiva)
- *   2. articulacion-{estacion}.pdf   (versión PDF)
- *   3. Articulacion-{Estacion}.html  (mayúsculas)
- *   4. Articulacion-{Estacion}.pdf
+ *   1. "Articulacion Curricular PFH1.html" (nombre con espacios)
+ *   2. articulacion-{estacion}.html  (legacy con guiones)
+ *   ... y variantes PDF / mayúsculas
  */
 export async function GET(request: Request) {
   try {
@@ -108,8 +110,13 @@ export async function GET(request: Request) {
 
     console.log('[articulacion] Signed URL generada:', estacion, '→', foundPath);
 
-    // Redirigir al archivo
-    return NextResponse.redirect(url);
+    // Devolver JSON con la signed URL — el cliente abre con window.open()
+    // Esto evita el problema de CORS que ocurre cuando fetch() sigue un redirect
+    // a un origen cruzado (Google Cloud Storage).
+    return NextResponse.json(
+      { url, expira: new Date(expiresAt).toISOString() },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('[articulacion] Error interno:', error);
     return NextResponse.json(

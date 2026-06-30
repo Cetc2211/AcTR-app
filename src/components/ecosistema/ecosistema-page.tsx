@@ -138,8 +138,8 @@ export default function EcosistemaPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (resp.ok) {
-        const url = resp.redirected ? resp.url : (await resp.json())?.url;
-        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+        const data = await resp.json();
+        if (data?.url) window.open(data.url, '_blank', 'noopener,noreferrer');
       } else {
         console.error('[EcosistemaPage] Error articulación:', resp.status);
       }
