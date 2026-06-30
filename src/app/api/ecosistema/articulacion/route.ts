@@ -53,10 +53,16 @@ export async function GET(request: Request) {
     const app = getAdminDb().app;
     const bucket = getStorage(app).bucket();
 
-    const estacionUpper = estacion.toUpperCase().replace('PFH', 'PFH');
-    const EstacionTitle = estacion.charAt(0).toUpperCase() + estacion.slice(1);
+    const estacionUpper = estacion.toUpperCase(); // e.g. "PFH1"
+    const EstacionTitle = estacion.charAt(0).toUpperCase() + estacion.slice(1); // e.g. "Pfh1"
 
     const candidates = [
+      // Patrón nuevo: "Articulacion Curricular PFH1.html" (con espacios)
+      `ecosistema/materiales/estacion_${estacion}/Articulacion Curricular ${estacionUpper}.html`,
+      `ecosistema/materiales/estacion_${estacion}/Articulacion Curricular ${estacionUpper}.pdf`,
+      `ecosistema/materiales/estacion_${estacionUpper}/Articulacion Curricular ${estacionUpper}.html`,
+      `ecosistema/materiales/estacion_${estacionUpper}/Articulacion Curricular ${estacionUpper}.pdf`,
+      // Patrones legacy: guiones
       `ecosistema/materiales/estacion_${estacionUpper}/articulacion-${estacion}.html`,
       `ecosistema/materiales/estacion_${estacionUpper}/articulacion-${estacion}.pdf`,
       `ecosistema/materiales/estacion_${estacionUpper}/Articulacion-${EstacionTitle}.html`,

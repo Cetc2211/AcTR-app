@@ -1,6 +1,8 @@
 'use client';
 
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
 import { useEcosistema } from '@/hooks/use-ecosistema';
 
 const ECOSISTEMAS = [
@@ -123,6 +125,30 @@ const ECOSISTEMAS = [
 export default function EcosistemaPage() {
   const router = useRouter();
   const { perfil, tieneAcceso, suscripcionExpirada, rolLegible } = useEcosistema();
+  const [cargandoArt, setCargandoArt] = useState<string | null>(null);
+
+  const abrirArticulacionStorage = useCallback(async (estacion: string) => {
+    const user = auth.currentUser;
+    if (!user) return;
+    setCargandoArt(estacion);
+    try {
+      const token = await user.getIdToken();
+      const resp = await fetch(
+        `/api/ecosistema/articulacion?estacion=${estacion}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (resp.ok) {
+        const url = resp.redirected ? resp.url : (await resp.json())?.url;
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        console.error('[EcosistemaPage] Error articulación:', resp.status);
+      }
+    } catch (err) {
+      console.error('[EcosistemaPage] Error al obtener articulación:', err);
+    } finally {
+      setCargandoArt(null);
+    }
+  }, []);
 
   return (
     <div style={{
@@ -320,35 +346,97 @@ export default function EcosistemaPage() {
             Articulación Curricular
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-            {[
-              { label: 'CS — Trilogía Raíz Digital', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf', bg: '#3d2d1e' },
-              { label: 'PFH I', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh1-articulacion.pdf', bg: '#1a1440' },
-              { label: 'PFH II', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/Pfh2-articulacion-.pdf', bg: '#2a1a50' },
-              { label: 'PFH III', url: 'https://letrasnecias.com/wp-content/uploads/2026/06/pfh3-articulacion.pdf', bg: '#3a2060' },
-            ].map((art) => (
-              <a
-                key={art.url}
-                href={art.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.65rem 1.25rem',
-                  background: art.bg,
-                  color: '#fdf8f0',
-                  borderRadius: 6,
-                  textDecoration: 'none',
-                  fontSize: '0.9rem',
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 600,
-                  transition: 'background 0.2s',
-                }}
-              >
-                ↓ {art.label}
-              </a>
-            ))}
+            {/* CS — enlace directo a WordPress */}
+            <a
+              href="https://letrasnecias.com/wp-content/uploads/2026/06/Articulacion-Pedagogica-TrilogiaRaizDigital.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.25rem',
+                background: '#3d2d1e',
+                color: '#fdf8f0',
+                borderRadius: 6,
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                transition: 'background 0.2s',
+              }}
+            >
+              ↓ CS — Trilogía Raíz Digital
+            </a>
+
+            {/* PFH I — articulación desde Storage */}
+            <button
+              onClick={() => abrirArticulacionStorage('pfh1')}
+              disabled={cargandoArt === 'pfh1'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.25rem',
+                background: '#1a1440',
+                color: '#fdf8f0',
+                borderRadius: 6,
+                border: 'none',
+                fontSize: '0.9rem',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                cursor: cargandoArt === 'pfh1' ? 'wait' : 'pointer',
+                transition: 'background 0.2s',
+              }}
+            >
+              {cargandoArt === 'pfh1' ? '…' : '↓'} PFH I
+            </button>
+
+            {/* PFH II — articulación desde Storage */}
+            <button
+              onClick={() => abrirArticulacionStorage('pfh2')}
+              disabled={cargandoArt === 'pfh2'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.25rem',
+                background: '#2a1a50',
+                color: '#fdf8f0',
+                borderRadius: 6,
+                border: 'none',
+                fontSize: '0.9rem',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                cursor: cargandoArt === 'pfh2' ? 'wait' : 'pointer',
+                transition: 'background 0.2s',
+              }}
+            >
+              {cargandoArt === 'pfh2' ? '…' : '↓'} PFH II
+            </button>
+
+            {/* PFH III — enlace directo a WordPress (aún no subido a Storage) */}
+            <a
+              href="https://letrasnecias.com/wp-content/uploads/2026/06/pfh3-articulacion.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 1.25rem',
+                background: '#3a2060',
+                color: '#fdf8f0',
+                borderRadius: 6,
+                textDecoration: 'none',
+                fontSize: '0.9rem',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                transition: 'background 0.2s',
+              }}
+            >
+              ↓ PFH III
+            </a>
           </div>
         </div>
       )}
